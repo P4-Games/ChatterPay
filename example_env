@@ -1,0 +1,16 @@
+# server-side
+SKIP_PREFLIGHT_CHECK=true
+GENERATE_SOURCEMAP=false
+npm_config_user_agent=yarn
+PORT=3000
+NODE_ENV='development'
+APP_ENV='development'
+BOT_API_TOKEN={api token}
+MONGODB='mongodb://localhost:27017'
+
+# client-side
+NEXT_PUBLIC_USE_MOCK=true
+NEXT_PUBLIC_UI_URL=http://localhost:3000
+NEXT_PUBLIC_BOT_API_URL=http://localhost:3000
+NEXT_PUBLIC_ALLOWED_ORIGINS=http://localhost:3000
+

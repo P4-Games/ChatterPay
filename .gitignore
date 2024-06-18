@@ -1,0 +1,47 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+node_modules
+.pnp
+.pnp.js
+
+# testing
+coverage
+
+# production
+.next
+.swc
+_static
+out
+dist
+build
+
+# environment variables
+.env*
+
+# vercel
+.vercel
+
+# misc
+.DS_Store
+.vercel
+.netlify
+.unimportedrc.json
+tsconfig.tsbuildinfo
+.vscode
+.todo*
+scripts/genders.json
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# PWA files
+**/public/sw.js
+**/public/workbox-*.js
+**/public/worker-*.js
+**/public/sw.js.map
+**/public/workbox-*.js.map
+**/public/worker-*.js.map
+
