@@ -15,11 +15,11 @@ import Logo from 'src/components/logo'
 import NavMobile from './nav/mobile'
 import NavDesktop from './nav/desktop'
 import { HEADER } from '../config-layout'
-import { navConfig } from './config-navigation'
 import LoginButton from '../common/login-button'
 import HeaderShadow from '../common/header-shadow'
 import SettingsButton from '../common/settings-button'
 import LanguagePopover from '../common/language-popover'
+import { navConfigMobile, navConfigDesktop } from './config-navigation'
 // ----------------------------------------------------------------------
 
 export default function Header() {
@@ -56,12 +56,12 @@ export default function Header() {
           <Logo />
           <Box sx={{ flexGrow: 1 }} />
 
-          {mdUp && <NavDesktop data={navConfig} />}
+          {mdUp && <NavDesktop data={navConfigDesktop} />}
 
           <Stack alignItems='right' direction={{ xs: 'row', md: 'row-reverse' }}>
             {mdUp && <LoginButton />}
 
-            {!mdUp && <NavMobile data={navConfig} />}
+            {!mdUp && <NavMobile data={navConfigMobile} />}
           </Stack>
         </Container>
 

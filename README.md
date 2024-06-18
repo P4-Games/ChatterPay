@@ -4,27 +4,27 @@
 
 # ChatterPay
 
-Crypto a un mensaje de distancia!
+Crypto just a message away!
 
 # Introduction
 
 ## Build With
-  - Framework - [Next.js 14](https://nextjs.org/14)
-  - Language - [TypeScript](https://www.typescriptlang.org)
-  - database - [mongodb](https://www.mongodb.com)
-  - Styling - [CSS]
-  - Components - [MUI v5](https://mui.com/)
-  - State Management - [React Context API](https://react.dev/reference/react/useContext)
-  - Authentication - *TBD*
-  - Authorization - *TBD*
-  - Routing - [React router v6](https://reactrouter.com/en/main/start/overview)
-  - Linting - [ESLint](https://eslint.org)
-  - Formatting - [Prettier](https://prettier.io)
 
+- Framework - [Next.js 14](https://nextjs.org/14)
+- Language - [TypeScript](https://www.typescriptlang.org)
+- database - [mongodb](https://www.mongodb.com)
+- Styling - [CSS]
+- Components - [MUI v5](https://mui.com/)
+- State Management - [React Context API](https://react.dev/reference/react/useContext)
+- Authentication - *TBD*
+- Authorization - *TBD*
+- Routing - [React router v6](https://reactrouter.com/en/main/start/overview)
+- Linting - [ESLint](https://eslint.org)
+- Formatting - [Prettier](https://prettier.io)
 
 ## Live demo
 
-- https://app.chatterpay.com/
+- <https://chatterpay.vercel.app>
 
 # Requirements
 
@@ -111,8 +111,7 @@ Please make sure your contributions adhere to our [coding guidelines](./.doc/dev
 
 [P4Troy](https://github.com/mpefaur) - [dappsar](https://github.com/dappsar) - [tomasDmArg](https://github.com/TomasDmArg)
 
-see more in: https://github.com/P4-Games/chatterPay/graphs/contributors
-
+see more in: <https://github.com/P4-Games/chatterPay/graphs/contributors>
 
 # Maintenance
 
