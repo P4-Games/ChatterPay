@@ -6,26 +6,17 @@ import { Theme, alpha, SxProps, useTheme } from '@mui/material/styles'
 
 import { useBoolean } from 'src/hooks/use-boolean'
 
-import { fCurrency } from 'src/utils/format-number'
-
 import { bgGradient } from 'src/theme/css'
 
 import Iconify from 'src/components/iconify'
 import Carousel, { useCarousel, CarouselDots } from 'src/components/carousel'
 
+import { IBalance } from 'src/types/wallet'
+
 // ----------------------------------------------------------------------
 
-type ItemProps = {
-  id: string
-  cardType: string
-  balance: number
-  cardHolder: string
-  cardNumber: string
-  cardValid: string
-}
-
 type Props = {
-  list: ItemProps[]
+  list: IBalance[]
   sx?: SxProps<Theme>
 }
 
@@ -92,11 +83,11 @@ export default function BankingCurrentBalance({ list, sx }: Props) {
 // ----------------------------------------------------------------------
 
 type CardItemProps = {
-  card: ItemProps
+  card: IBalance
 }
 
 function CardItem({ card }: CardItemProps) {
-  const { id, cardType, balance, cardHolder, cardNumber, cardValid } = card
+  const { token, balance } = card
 
   const currency = useBoolean()
 
@@ -108,8 +99,10 @@ function CardItem({ card }: CardItemProps) {
         </Typography>
 
         <Stack direction='row' alignItems='center' spacing={1}>
+          <Typography sx={{ typography: 'h3' }}>{token}</Typography>
+
           <Typography sx={{ typography: 'h3' }}>
-            {currency.value ? '********' : fCurrency(balance)}
+            {currency.value ? '********' : balance /* fCurrency(balance) */}
           </Typography>
 
           <IconButton color='inherit' onClick={currency.onToggle} sx={{ opacity: 0.48 }}>

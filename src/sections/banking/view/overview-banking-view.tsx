@@ -5,13 +5,13 @@ import { useTheme } from '@mui/material/styles'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Unstable_Grid2'
 
-import {
-  _bankingContacts,
-  _bankingCreditCard,
-  _bankingRecentTransitions
-} from 'src/api/_data/_mock'
+import { useGetWalletBalance } from 'src/hooks/services/'
+
+import { _bankingContacts, _bankingRecentTransitions } from 'src/app/api/_data/_mock'
 
 import { useSettingsContext } from 'src/components/settings'
+
+import { IBalance } from 'src/types/wallet'
 
 import BankingContacts from '../banking-contacts'
 import BankingQuickTransfer from '../banking-quick-transfer'
@@ -26,8 +26,10 @@ import BankingExpensesCategories from '../banking-expenses-categories'
 
 export default function OverviewBankingView() {
   const theme = useTheme()
-
   const settings = useSettingsContext()
+
+  const { data: balances }: { data: IBalance[]; isLoading: boolean } =
+    useGetWalletBalance('dummyWalletId')
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
@@ -88,7 +90,7 @@ export default function OverviewBankingView() {
         </Grid>
 
         <Grid xs={12} md={5}>
-          <BankingCurrentBalance list={_bankingCreditCard} />
+          <BankingCurrentBalance list={balances ?? []} />
         </Grid>
 
         <Grid xs={12} md={8}>
