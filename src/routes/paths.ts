@@ -1,6 +1,6 @@
 import { paramCase } from 'src/utils/change-case'
 
-import { _id, _postTitles } from 'src/api/_data/_mock/assets'
+import { _id, _postTitles } from 'src/app/api/_data/_mock/assets'
 
 // ----------------------------------------------------------------------
 

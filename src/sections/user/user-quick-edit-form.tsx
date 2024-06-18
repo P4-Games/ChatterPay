@@ -14,7 +14,7 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 
 import { countries } from 'src/assets/data'
-import { USER_STATUS_OPTIONS } from 'src/api/_data/_mock'
+import { USER_STATUS_OPTIONS } from 'src/app/api/_data/_mock'
 
 import { useSnackbar } from 'src/components/snackbar'
 import FormProvider, { RHFSelect, RHFTextField, RHFAutocomplete } from 'src/components/hook-form'

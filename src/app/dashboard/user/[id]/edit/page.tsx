@@ -1,4 +1,4 @@
-import { _userList } from 'src/api/_data/_mock/_user'
+import { _userList } from 'src/app/api/_data/_mock/_user'
 
 import { UserEditView } from 'src/sections/user/view'
 

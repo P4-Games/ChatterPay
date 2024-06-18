@@ -3,7 +3,7 @@ import Typography from '@mui/material/Typography'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
 
-import { _faqs } from 'src/api/_data/_mock'
+import { _faqs } from 'src/app/api/_data/_mock'
 
 import Iconify from 'src/components/iconify'
 

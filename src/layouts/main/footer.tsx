@@ -12,7 +12,7 @@ import { paths } from 'src/routes/paths'
 import { usePathname } from 'src/routes/hooks'
 import { RouterLink } from 'src/routes/components'
 
-import { _socials } from 'src/api/_data/_mock'
+import { _socials } from 'src/app/api/_data/_mock'
 
 import Logo from 'src/components/logo'
 import Iconify from 'src/components/iconify'

@@ -10,7 +10,7 @@ import { alpha, useTheme } from '@mui/material/styles'
 
 import { fShortenNumber } from 'src/utils/format-number'
 
-import { _socials } from 'src/api/_data/_mock'
+import { _socials } from 'src/app/api/_data/_mock'
 import { AvatarShape } from 'src/assets/illustrations'
 
 import Image from 'src/components/image'

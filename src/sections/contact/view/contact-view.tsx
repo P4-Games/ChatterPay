@@ -3,7 +3,7 @@
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 
-import { _mapContact } from 'src/api/_data/_mock'
+import { _mapContact } from 'src/app/api/_data/_mock'
 
 import ContactMap from '../contact-map'
 import ContactHero from '../contact-hero'

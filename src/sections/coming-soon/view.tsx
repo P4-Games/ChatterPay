@@ -12,7 +12,7 @@ import { outlinedInputClasses } from '@mui/material/OutlinedInput'
 
 import { useCountdownDate } from 'src/hooks/use-countdown'
 
-import { _socials } from 'src/api/_data/_mock'
+import { _socials } from 'src/app/api/_data/_mock'
 import { ComingSoonIllustration } from 'src/assets/illustrations'
 
 import Iconify from 'src/components/iconify'

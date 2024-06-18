@@ -4,7 +4,7 @@ import Container from '@mui/material/Container'
 
 import { paths } from 'src/routes/paths'
 
-import { _invoices } from 'src/api/_data/_mock'
+import { _invoices } from 'src/app/api/_data/_mock'
 
 import { useSettingsContext } from 'src/components/settings'
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs'

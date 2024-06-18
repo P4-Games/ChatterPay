@@ -17,7 +17,7 @@ import {
   _userFriends,
   _userGallery,
   _userFollowers
-} from 'src/api/_data/_mock'
+} from 'src/app/api/_data/_mock'
 
 import Iconify from 'src/components/iconify'
 import { useSettingsContext } from 'src/components/settings'

@@ -1,4 +1,4 @@
-import { _invoices } from 'src/api/_data/_mock/_invoice'
+import { _invoices } from 'src/app/api/_data/_mock/_invoice'
 
 import { InvoiceDetailsView } from 'src/sections/invoice/view'
 

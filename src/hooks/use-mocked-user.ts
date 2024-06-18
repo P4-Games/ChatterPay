@@ -1,4 +1,4 @@
-import { _mock } from 'src/api/_data/_mock'
+import { _mock } from 'src/app/api/_data/_mock'
 
 // TO GET THE USER FROM THE AUTHCONTEXT, YOU CAN USE
 

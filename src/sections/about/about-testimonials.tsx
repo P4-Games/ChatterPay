@@ -16,7 +16,7 @@ import { useResponsive } from 'src/hooks/use-responsive'
 
 import { fDate } from 'src/utils/format-time'
 
-import { _testimonials } from 'src/api/_data/_mock'
+import { _testimonials } from 'src/app/api/_data/_mock'
 import { bgBlur, bgGradient, hideScroll } from 'src/theme/css'
 
 import Iconify from 'src/components/iconify'

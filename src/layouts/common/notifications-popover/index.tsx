@@ -17,7 +17,7 @@ import Typography from '@mui/material/Typography'
 import { useBoolean } from 'src/hooks/use-boolean'
 import { useResponsive } from 'src/hooks/use-responsive'
 
-import { _notifications } from 'src/api/_data/_mock'
+import { _notifications } from 'src/app/api/_data/_mock'
 
 import Label from 'src/components/label'
 import Iconify from 'src/components/iconify'

@@ -17,7 +17,7 @@ import TableContainer from '@mui/material/TableContainer'
 import { fDate } from 'src/utils/format-time'
 import { fCurrency } from 'src/utils/format-number'
 
-import { INVOICE_STATUS_OPTIONS } from 'src/api/_data/_mock'
+import { INVOICE_STATUS_OPTIONS } from 'src/app/api/_data/_mock'
 
 import Label from 'src/components/label'
 import Scrollbar from 'src/components/scrollbar'

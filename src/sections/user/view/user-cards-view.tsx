@@ -6,7 +6,7 @@ import Container from '@mui/material/Container'
 import { paths } from 'src/routes/paths'
 import { RouterLink } from 'src/routes/components'
 
-import { _userCards } from 'src/api/_data/_mock'
+import { _userCards } from 'src/app/api/_data/_mock'
 
 import Iconify from 'src/components/iconify'
 import { useSettingsContext } from 'src/components/settings'

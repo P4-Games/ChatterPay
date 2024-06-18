@@ -50,6 +50,10 @@ function getFullBotEndpoint(schemaName: string, endpoint: string): string {
 export const endpoints = {
   dashboard: {
     root: getFullUIEndpoint('app'),
+    wallet: {
+      balance: (walletId: string) => getFullUIEndpoint(`wallet/${walletId}/balance`),
+      dummy: (walletId: string) => getFullUIEndpoint(`wallet/${walletId}/dummy`)
+    },
     analytics: {
       bar: {
         // conversationsStatistics: (schemaId: string) => getFullUIEndpoint(`bot/${schemaId}/analytics/bar/cs`),
