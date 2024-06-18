@@ -1,0 +1,69 @@
+steps:
+  # Para para generar un .env para que sea tomado por el step de build.
+  # Las variables serán tomadas de la definición del "trigger",  
+  # "variables de sustitución", en Google Cloud Build.
+  # en gcp, se tiene que poner como nombre de cada variable, el unserscore 
+  # como prefijo. Ejemplo: "_APP_ENV"
+  #
+  - name: 'gcr.io/cloud-builders/npm'
+    id: CreateEnv
+    args: ['run', 'create-env']
+    env:
+      - APP_ENV=${_APP_ENV}
+      - MONGODB=${_MONGODB}
+      - BOT_API_TOKEN=${_BOT_API_TOKEN}
+      - NEXT_PUBLIC_USE_MOCK=${_NEXT_PUBLIC_USE_MOCK}
+      - NEXT_PUBLIC_UI_URL=${_NEXT_PUBLIC_UI_URL}
+      - NEXT_PUBLIC_BOT_API_URL=${_NEXT_PUBLIC_BOT_API_URL}
+      - NEXT_PUBLIC_ALLOWED_ORIGINS=${_NEXT_PUBLIC_ALLOWED_ORIGINS}
+
+  # build the container images
+  - name: "gcr.io/cloud-builders/docker"
+    id: Build
+    args: [
+      "build", 
+      "--no-cache", 
+      "-t", 
+      "$_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA", 
+      "--build-arg", "APP_ENV=${_APP_ENV}",
+      "--build-arg", "MONGODB=${_MONGODB}",
+      "--build-arg", "BOT_API_TOKEN=${_BOT_API_TOKEN}",
+      "--build-arg", "NEXT_PUBLIC_USE_MOCK=${_NEXT_PUBLIC_USE_MOCK}",
+      "--build-arg", "NEXT_PUBLIC_UI_URL=${_NEXT_PUBLIC_UI_URL}",
+      "--build-arg", "NEXT_PUBLIC_BOT_API_URL=${_NEXT_PUBLIC_BOT_API_URL}",
+      "--build-arg", "NEXT_PUBLIC_ALLOWED_ORIGINS=${_NEXT_PUBLIC_ALLOWED_ORIGINS}",
+      "."
+    ]
+
+  # push the container images to Container Registry
+  - name: "gcr.io/cloud-builders/docker"
+    id: Push
+    args: [
+      "push", 
+      "$_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA"
+    ]
+
+  # Deploy container images to Cloud Run
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: Deploy
+    entrypoint: gcloud
+    args: [
+      "run",
+      "deploy",
+      "$_SERVICE_NAME",
+      "--platform",
+      "managed",
+      "--region",
+      "$_DEPLOY_REGION",
+      "--image",
+      "$_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA",
+      "--labels",
+      "managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID,gcb-trigger-id=$_TRIGGER_ID",
+      "--quiet",
+      "--allow-unauthenticated",
+    ]
+images:
+  - $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
+
+options:
+  logging: CLOUD_LOGGING_ONLY
