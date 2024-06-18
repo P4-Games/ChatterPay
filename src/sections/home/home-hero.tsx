@@ -199,6 +199,7 @@ export default function HomeHero() {
             duration: 20,
             repeat: Infinity
           }}
+          sx={{ fontSize: mdUp ? '64px' : '54px' }}
         >
           ChatterPay
         </StyledTextGradient>
