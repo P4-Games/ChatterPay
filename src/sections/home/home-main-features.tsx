@@ -7,6 +7,8 @@ import { alpha } from '@mui/material/styles'
 import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
 
+import { useResponsive } from 'src/hooks/use-responsive'
+
 import { useTranslate } from 'src/locales'
 
 import { varFade, MotionViewport } from 'src/components/animate'
@@ -15,6 +17,7 @@ import { varFade, MotionViewport } from 'src/components/animate'
 
 export default function HomeMainFeatures() {
   const { t } = useTranslate()
+  const mdUp = useResponsive('up', 'md')
 
   const CARDS = [
     {
@@ -39,99 +42,102 @@ export default function HomeMainFeatures() {
       <Card
         sx={{
           textAlign: 'center',
-          boxShadow: { md: 'none' },
           bgcolor: 'background.default',
-          p: (theme) => theme.spacing(10, 5),
-          ...(index === 1 && {
-            boxShadow: (theme) => ({
-              md: `-40px 40px 80px ${
-                theme.palette.mode === 'light'
-                  ? alpha(theme.palette.grey[500], 0.16)
-                  : alpha(theme.palette.common.black, 0.4)
-              }`
-            })
-          }),
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center'
+          p: (th) => th.spacing(5, 6),
+
+          boxShadow: (th) => ({
+            md: `-10px 10px 3px 3px ${
+              th.palette.mode === 'light'
+                ? alpha(th.palette.grey[900], 0.16)
+                : alpha(th.palette.common.black, 0.4)
+            }`,
+            xs: `-10px 10px 3px 3px ${
+              th.palette.mode === 'light'
+                ? alpha(th.palette.grey[500], 0.04)
+                : alpha(th.palette.common.black, 0.4)
+            }`
+          })
         }}
       >
         <Box
           component='img'
           src={card.icon}
           alt={card.title}
-          sx={{ mb: 1, width: 48, height: 48 }}
+          sx={{ mx: 'auto', my: 'auto', width: 48, height: 48 }}
         />
 
         <Typography
           variant='h5'
           sx={{
+            minHeight: mdUp ? '6rem' : '2rem',
             mt: 6,
-            mb: 3,
-            fontSize: {
-              md: card.description.length > 120 ? '0.875rem' : '1rem',
-              xs: '1.4rem'
-            }
+            mb: 3
           }}
         >
           {card.title}
         </Typography>
 
-        <Box sx={{ flexGrow: 1, maxWidth: '100%' }}>
-          <Typography
-            sx={{
-              color: 'text.secondary',
-              fontSize: {
-                md: card.description.length > 120 ? '0.875rem' : '1rem',
-                xs: '1.2rem'
-              }
-            }}
-          >
-            {card.description}
-          </Typography>
-        </Box>
+        <Typography
+          sx={{
+            color: 'text.secondary',
+            fontSize: mdUp ? '0.875rem' : '1.1rem',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            display: '-webkit-box',
+            WebkitBoxOrient: 'vertical',
+            minHeight: mdUp ? '9rem' : '2rem'
+          }}
+        >
+          {card.description}
+        </Typography>
       </Card>
     </m.div>
   ))
 
   return (
-    <Container
-      component={MotionViewport}
+    <Box
       sx={{
-        py: { xs: 10, md: 15 }
+        py: { xs: 5, md: 5 }
       }}
     >
-      <Stack
-        spacing={3}
+      <Container
+        component={MotionViewport}
         sx={{
-          textAlign: 'center',
-          mb: { xs: 5, md: 10 }
+          py: { xs: 10, md: 15 }
         }}
       >
-        <m.div variants={varFade().inUp}>
-          <Typography component='div' variant='overline' sx={{ color: 'text.disabled' }}>
-            {t('home.main-features.tag')}
-          </Typography>
-        </m.div>
+        <Stack
+          spacing={3}
+          sx={{
+            textAlign: 'center',
+            mb: { xs: 5, md: 10 }
+          }}
+        >
+          <m.div variants={varFade().inUp}>
+            <Typography component='div' variant='overline' sx={{ color: 'text.disabled' }}>
+              {t('home.main-features.tag')}
+            </Typography>
+          </m.div>
 
-        <m.div variants={varFade().inDown}>
-          <Typography variant='h2'>
-            {t('home.main-features.title1')} <br /> {t('home.main-features.title2')}
-          </Typography>
-        </m.div>
-      </Stack>
+          <m.div variants={varFade().inDown}>
+            <Typography variant='h2'>
+              {t('home.main-features.title1')} <br /> {t('home.main-features.title2')}
+            </Typography>
+          </m.div>
+        </Stack>
 
-      <Box
-        gap={{ xs: 3, lg: 10 }}
-        display='grid'
-        alignItems='center'
-        gridTemplateColumns={{
-          xs: 'repeat(1, 1fr)',
-          md: 'repeat(3, 1fr)'
-        }}
-      >
-        {renderCardItems}
-      </Box>
-    </Container>
+        <Box
+          gap={{ xs: 3, lg: 7 }}
+          display='grid'
+          gridTemplateColumns={{
+            xs: '1fr',
+            sm: '1fr',
+            md: 'repeat(3, 1fr)'
+          }}
+        >
+          {renderCardItems}
+        </Box>
+      </Container>
+    </Box>
   )
 }
