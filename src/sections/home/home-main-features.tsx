@@ -15,28 +15,27 @@ import { varFade } from 'src/components/animate'
 
 export default function HomeMainFeatures() {
   const { t } = useTranslate()
-  
+
   const CARDS = [
     {
       icon: ' /assets/icons/home/ic_design.svg',
       title: t('home.main-features.card-1.title'),
-      description: t('home.main-features.card-1.description'),
+      description: t('home.main-features.card-1.description')
     },
     {
       icon: ' /assets/icons/home/ic_chat.svg',
       title: t('home.main-features.card-2.title'),
-      description: t('home.main-features.card-2.description'),
+      description: t('home.main-features.card-2.description')
     },
     {
       icon: ' /assets/icons/home/ic_make_brand.svg',
       title: t('home.main-features.card-3.title'),
-      description: t('home.main-features.card-3.description'),
+      description: t('home.main-features.card-3.description')
     }
   ]
-{ /* component={MotionViewport} */ }
+  /* component={MotionViewport} */
   return (
     <Container
-      
       sx={{
         py: { xs: 10, md: 15 }
       }}
@@ -56,7 +55,7 @@ export default function HomeMainFeatures() {
 
         <m.div variants={varFade().inDown}>
           <Typography variant='h2'>
-          {t('home.main-features.title1')} <br /> {t('home.main-features.title2')}
+            {t('home.main-features.title1')} <br /> {t('home.main-features.title2')}
           </Typography>
         </m.div>
       </Stack>
