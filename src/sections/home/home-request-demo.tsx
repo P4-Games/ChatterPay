@@ -9,6 +9,7 @@ import { alpha, useTheme } from '@mui/material/styles'
 
 import { useResponsive } from 'src/hooks/use-responsive'
 
+import { useTranslate } from 'src/locales'
 import { bgGradient, textGradient } from 'src/theme/css'
 
 import { varFade, MotionViewport } from 'src/components/animate'
@@ -52,7 +53,7 @@ const StyledPolygon = styled('div')<StyledPolygonProps>(({ anchor = 'top', theme
 export default function HomeRequestDemo() {
   const theme = useTheme()
   const mdUp = useResponsive('up', 'md')
-  // const { t } = useTranslate()
+  const { t } = useTranslate()
 
   const contactUsBtn = (
     <m.div variants={varFade().inUp}>
@@ -64,7 +65,7 @@ export default function HomeRequestDemo() {
         rel='noopener'
         href='#'
       >
-        Contact Us
+        {t('home.common.contact-us')}
       </Button>
     </m.div>
   )
@@ -73,7 +74,7 @@ export default function HomeRequestDemo() {
     <Box sx={{ textAlign: { xs: 'center', md: 'unset' }, mt: { xs: 10, md: 20 } }}>
       <m.div variants={varFade().inUp}>
         <Typography component='div' variant='overline' sx={{ color: 'text.disabled' }}>
-          Test It
+          {t('home.request-demo.tag')}
         </Typography>
       </m.div>
 
@@ -88,7 +89,7 @@ export default function HomeRequestDemo() {
             )
           }}
         >
-          Request a Demo
+          {t('home.request-demo.title')}
         </Typography>
         <m.div variants={varFade().inUp}>
           <Typography
@@ -97,8 +98,8 @@ export default function HomeRequestDemo() {
               color: 'text.secondary'
             }}
           >
-            Contact our team for a product demo. <br />
-            It&apos;s the wallet you need to enter the Web3 world.
+            {t('home.request-demo.description1')} <br />
+            {t('home.request-demo.description2')}
           </Typography>
         </m.div>
       </m.div>

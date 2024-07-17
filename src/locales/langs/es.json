@@ -22,6 +22,9 @@
     "logout": "Cerrar Sesión"
   },
   "home": {
+    "common": {
+      "contact-us": "Contáctanos"
+    },
     "hero": {
       "title1": "Enviar dinero",
       "title2": "con un mensaje",
@@ -32,7 +35,7 @@
       "title1": "¿Cómo puede ChatterPay",
       "title2": "ayudarte?",
       "card-1": {
-        "title": "Simplificación del uso de blockchain",
+        "title": "Simplificar el uso de blockchain",
         "description": "Eliminamos la necesidad de frases secretas y ventanas emergentes de aprobación, gestionamos las tarifas de gas y los aspectos técnicos por ti para que puedas concentrarte en lo importante."
       },
       "card-2": {
@@ -43,6 +46,98 @@
         "title": "Facturar y notificar pagos sin esfuerzo",
         "description": "Solicita pagos en criptomonedas vía WhatsApp. Emite facturas dinámicas, recibe pagos en diversas monedas y obtén notificaciones al completarse."
       }
+    },
+    "all-features": {
+
+    },
+    "request-demo": {
+      "tag": "Pruébalo",
+      "title": "Solicitar una Demostración",
+      "description1": "Contacta a nuestro equipo para una demostración del producto.",
+      "description2": "Es la billetera que necesitas para entrar al mundo Web3."
+    },
+    "tech": {
+      "tag": "Tech",
+      "title": "Tecnologías en las que nos apoyamos",
+      "cards": {
+        "ethereum": {
+          "title": "Ethereum",
+          "description": "Blockchain de capa 1 para contratos inteligentes y aplicaciones descentralizadas. Asegura la seguridad de las transacciones."
+        },
+        "scroll": {
+          "title": "Scroll",
+          "description": "Solución de capa 2 para Ethereum, que ofrece transacciones más rápidas y económicas. Diseñada para mejorar la eficiencia y la usabilidad."
+        },
+        "whatsapp": {
+          "title": "WhatsApp",
+          "description": "Plataforma global de mensajería para comunicación. Proporciona mensajería segura y fácil integración con otros servicios."
+        },
+        "openai": {
+          "title": "OpenAI",
+          "description": "Plataforma de IA que comprende y genera texto similar al humano. Impulsa capacidades avanzadas de procesamiento de lenguaje y aprendizaje."
+        },
+        "the-graph": {
+          "title": "The Graph",
+          "description": "Protocolo para encontrar y acceder fácilmente a datos de blockchain. Simplifica el acceso a datos tanto para desarrolladores como usuarios."
+        },
+        "account-abstraction": {
+          "title": "Account Abstraction",
+          "description": "Concepto que permite interactuar con blockchains sin necesidad de criptomonedas específicas. Mejora la flexibilidad y usabilidad para los usuarios."
+        }
+      }
+    },
+    "faq": {
+      "tag": "FaQ",
+      "title": "Preguntas frecuentes",
+      "still-title": "¿Todavía tienes preguntas?",
+      "still-description": "Por favor, describe tu caso para recibir el consejo más preciso.",
+      "faqs": {
+        "faq1": {
+          "question": "¿Qué es ChatterPay?",
+          "answer": "ChatterPay es una billetera para WhatsApp que integra IA y Abstracción de Cuentas para permitir a cualquier usuario gestionar fondos en blockchain de manera fácil y segura sin conocimientos técnicos."
+        },
+        "faq2": {
+          "question": "¿Cómo puedo crear una billetera?",
+          "answer": "Para crear una billetera, puedes hacerlo directamente desde el Bot de ChatterPay en WhatsApp."
+        },
+        "faq3": {
+          "question": "¿Cuáles son las comisiones asociadas con recibir pagos?",
+          "answer": "ChatterPay cobra una tarifa del 0.01% por cada transferencia recibida."
+        },
+        "faq4": {
+          "question": "¿Puedo intercambiar entre diferentes tokens?",
+          "answer": "Sí, puedes intercambiar entre USDT, DAI, MATIC, ETH, BTC, ADA y DOT sin límites de transacción."
+        },
+        "faq5": {
+          "question": "¿Cómo puedo verificar mi saldo y transacciones?",
+          "answer": "Puedes verificar tu saldo y transacciones en cualquier momento a través de nuestro panel en https://chatterpay.vercel.app/."
+        },
+        "faq6": {
+          "question": "¿Qué sucede si pierdo mis tokens?",
+          "answer": "El sistema es descentralizado y el usuario es completamente responsable de gestionar sus cuentas. No ofrecemos seguro ni soporte en caso de pérdidas debido a errores del usuario."
+        },
+        "faq7": {
+          "question": "¿Dónde puedo obtener más información sobre cómo usar ChatterPay?",
+          "answer": "Puedes visitar nuestra aplicación web en https://chatterpay.vercel.app/ para más información y guías futuras."
+        },
+        "faq8": {
+          "question": "¿Dónde se guarda la clave privada de mi billetera?",
+          "answer": "Tu clave privada se guarda de forma segura utilizando la tecnología de Abstracción de Cuentas en una blockchain de capa 2 llamada Scroll con la tecnología 'KeyStore', garantizando alta seguridad y control del usuario."
+        },
+        "faq9": {
+          "question": "¿Qué puedo hacer en el sitio web?",
+          "answer": "Puedes ver el saldo de tu billetera, verificar tu historial de transacciones, ver la dirección de tu billetera y ver la información de tu usuario."
+        },
+        "faq10": {
+          "question": "¿Cómo inicio sesión en el sitio web?",
+          "answer": "Ingresa tu número de teléfono registrado. Se enviará un código de 6 dígitos a tu teléfono por seguridad; una vez que lo ingreses, podrás acceder al sitio."
+        }
+      }
+    },    
+    "get-started": {
+      "title": "Comienza",
+      "description": "Todo el poder de Web3 sin complicaciones.",
+      "cta": "Regístrate ahora"
     }
   },
   "login": {

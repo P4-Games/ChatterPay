@@ -22,6 +22,9 @@
     "logout": "Sair"
   },
   "home": {
+    "common": {
+      "contact-us": "Contate-nos"
+    },
     "hero": {
       "title1": "Enviar dinheiro",
       "title2": "com uma mensagem",
@@ -43,6 +46,98 @@
         "title": "Faturar e notificar pagamentos facilmente",
         "description": "Solicite pagamentos em criptomoedas via WhatsApp. Emita faturas dinâmicas, receba pagamentos em várias moedas e receba notificações ao serem concluídos."
       }
+    },
+    "all-features": {
+
+    },
+    "request-demo": {
+      "tag": "Teste-o",
+      "title": "Solicitar uma Demonstração",
+      "description1": "Entre em contato com nossa equipe para uma demonstração do produto.",
+      "description2": "É a carteira que você precisa para entrar no mundo Web3."
+    },
+    "tech": {
+      "tag": "Tech",
+      "title": "Tecnologias em que Confiamos",
+      "cards": {
+        "ethereum": {
+          "title": "Ethereum",
+          "description": "Blockchain de camada 1 para contratos inteligentes e aplicações descentralizadas. Garante a segurança das transações."
+        },
+        "scroll": {
+          "title": "Scroll",
+          "description": "Solução de camada 2 para Ethereum, oferecendo transações mais rápidas e econômicas. Projetada para melhorar a eficiência e usabilidade."
+        },
+        "whatsapp": {
+          "title": "WhatsApp",
+          "description": "Plataforma global de mensagens para comunicação. Fornece mensagens seguras e integração fácil com outros serviços."
+        },
+        "openai": {
+          "title": "OpenAI",
+          "description": "Plataforma de IA que compreende e gera texto semelhante ao humano. Impulsiona capacidades avançadas de processamento de linguagem e aprendizado."
+        },
+        "the-graph": {
+          "title": "The Graph",
+          "description": "Protocolo para encontrar e acessar facilmente dados de blockchain. Simplifica o acesso a dados tanto para desenvolvedores quanto para usuários."
+        },
+        "account-abstraction": {
+          "title": "Abstração de Conta",
+          "description": "Conceito que permite interagir com blockchains sem a necessidade de criptomoedas específicas. Melhora a flexibilidade e usabilidade para os usuários."
+        }
+      }
+    },
+    "faq": {
+      "tag": "FaQ",
+      "title": "Perguntas frequentes",
+      "still-title": "Ainda tem perguntas?",
+      "still-description": "Por favor, descreva seu caso para receber o conselho mais preciso.",
+      "faqs": {
+        "faq1": {
+          "question": "O que é ChatterPay?",
+          "answer": "ChatterPay é uma carteira para WhatsApp que integra IA e Abstração de Contas para permitir que qualquer usuário gerencie fundos em blockchain de forma fácil e segura, sem conhecimento técnico."
+        },
+        "faq2": {
+          "question": "Como posso criar uma carteira?",
+          "answer": "Para criar uma carteira, você pode fazê-lo diretamente pelo Bot ChatterPay no WhatsApp."
+        },
+        "faq3": {
+          "question": "Quais são as taxas associadas ao recebimento de pagamentos?",
+          "answer": "ChatterPay cobra uma taxa de 0,01% para cada transferência recebida."
+        },
+        "faq4": {
+          "question": "Posso trocar entre diferentes tokens?",
+          "answer": "Sim, você pode trocar entre USDT, DAI, MATIC, ETH, BTC, ADA e DOT sem limites de transação."
+        },
+        "faq5": {
+          "question": "Como posso verificar meu saldo e transações?",
+          "answer": "Você pode verificar seu saldo e transações a qualquer momento através do nosso painel em https://chatterpay.vercel.app/."
+        },
+        "faq6": {
+          "question": "O que acontece se eu perder meus tokens?",
+          "answer": "O sistema é descentralizado e o usuário é totalmente responsável por gerenciar suas contas. Não oferecemos seguro ou suporte em caso de perdas devido a erros do usuário."
+        },
+        "faq7": {
+          "question": "Onde posso obter mais informações sobre como usar o ChatterPay?",
+          "answer": "Você pode visitar nosso aplicativo da web em https://chatterpay.vercel.app/ para mais informações e guias futuros."
+        },
+        "faq8": {
+          "question": "Onde está armazenada a chave privada da minha carteira?",
+          "answer": "Sua chave privada é armazenada de forma segura usando a tecnologia de Abstração de Contas em uma blockchain de camada 2 chamada Scroll com a tecnologia 'KeyStore', garantindo alta segurança e controle do usuário."
+        },
+        "faq9": {
+          "question": "O que posso fazer no site?",
+          "answer": "Você pode ver o saldo da sua carteira, verificar seu histórico de transações, ver o endereço da sua carteira e ver as informações do seu usuário."
+        },
+        "faq10": {
+          "question": "Como faço para fazer login no site?",
+          "answer": "Digite seu número de telefone registrado. Um código de 6 dígitos será enviado para o seu telefone por segurança; depois de inseri-lo, você poderá acessar o site."
+        }
+      }
+    },    
+    "get-started": {
+      "title": "Comece",
+      "description": "Todo o poder do Web3 sem complicações.",
+      "cta": "Cadastre-se agora"
     }
   },
   "login": {

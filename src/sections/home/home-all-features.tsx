@@ -26,6 +26,7 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 
 import { useResponsive } from 'src/hooks/use-responsive'
 
+import { useTranslate } from 'src/locales'
 import { _mock } from 'src/app/api/_data/_mock'
 
 import Label from 'src/components/label'
@@ -45,6 +46,8 @@ export default function HomeAllFeatures() {
 
   const [currentTab, setCurrentTab] = useState('Angular')
 
+  const { t } = useTranslate()
+
   const handleChangeTab = useCallback((event: React.SyntheticEvent, newValue: string) => {
     setCurrentTab(newValue)
   }, [])
@@ -59,7 +62,7 @@ export default function HomeAllFeatures() {
         rel='noopener'
         href='/'
       >
-        Contact Us
+        {t('home.common.contact-us')}
       </Button>
     </m.div>
   )

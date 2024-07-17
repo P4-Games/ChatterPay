@@ -22,6 +22,9 @@
     "logout": "Logout"
   },
   "home": {
+    "common": {
+      "contact-us": "Contact Us"
+    },
     "hero": {
       "title1": "Send Money",
       "title2": "with a message",
@@ -43,6 +46,98 @@
         "title": "Invoice and notify payments effortlessly",
         "description": "Request Crypto payments via WhatsApp. Issue dynamic invoices, get paid in various currencies, and receive notifications on completion."
       }
+    },
+    "all-features": {
+
+    },
+    "request-demo": {
+      "tag": "Pruébalo",
+      "title": "Solicitar una Demostración",
+      "description1": "Contacta a nuestro equipo para una demostración del producto.",
+      "description2": "Es la billetera que necesitas para entrar al mundo Web3."
+    },
+    "tech": {
+      "tag": "Tech",
+      "title": "Technologies We Rely On",
+      "cards": {
+        "ethereum": {
+          "title": "Ethereum",
+          "description": "Layer 1 Blockchain for smart contracts and decentralized applications. Ensures security for transactions."
+        },
+        "scroll": {
+          "title": "Scroll",
+          "description": "Layer 2 blockchain solution for Ethereum, offering faster and cheaper transactions. Designed to improve efficiency and usability."
+        },
+        "whatsapp": {
+          "title": "WhatsApp",
+          "description": "Global messaging platform for communication. Provides secure messaging and easy integration with other services"
+        },
+        "openai": {
+          "title": "OpenAI",
+          "description": "AI platform that understands and generates human-like text. Powers advanced language processing and learning capabilities."
+        },
+        "the-graph": {
+          "title": "The Graph",
+          "description": "Protocol for easily finding and accessing blockchain data. Simplifies data access for developers and users alike."
+        },
+        "account-abstraction": {
+          "title": "Account Abstraction",
+          "description": "Concept allowing interaction with blockchains without needing specific cryptocurrencies. Enhances flexibility and usability for users."
+        }
+      }
+    },
+    "faq": {
+      "tag": "FaQ",
+      "title": "Frequently asked questions",
+      "still-title": "Still have questions?",
+      "still-description": "Please describe your case to receive the most accurate advice.",
+      "faqs": {
+        "faq1": {
+          "question": "What is ChatterPay?",
+          "answer": "ChatterPay is a Wallet for WhatsApp that integrates AI and Account Abstraction to allow any user to easily and securely manage funds on the blockchain without technical knowledge."
+        },
+        "faq2": {
+          "question": "How can I create a wallet?",
+          "answer": "To create a wallet, you can do it directly from the ChatterPay Bot on WhatsApp."
+        },
+        "faq3": {
+          "question": "What are the fees associated with receiving payments?",
+          "answer": "ChatterPay charges a 0.01% fee for each received transfer."
+        },
+        "faq4": {
+          "question": "Can I swap between different tokens?",
+          "answer": "Yes, you can swap between USDT, DAI, MATIC, ETH, BTC, ADA, and DOT without transaction limits."
+        },
+        "faq5": {
+          "question": "How can I check my balance and transactions?",
+          "answer": "You can check your balance and transactions at any time through our dashboard at https://chatterpay.vercel.app/."
+        },
+        "faq6": {
+          "question": "What happens if I lose my tokens?",
+          "answer": "The system is decentralized, and the user is entirely responsible for managing their accounts. We do not offer insurance or support in case of losses due to user error."
+        },
+        "faq7": {
+          "question": "Where can I get more information about how to use ChatterPay?",
+          "answer": "You can visit our WebApp at https://chatterpay.vercel.app/ for more information and future guides."
+        },
+        "faq8": {
+          "question": "Where is my wallet's private key stored?",
+          "answer": "Your private key is stored securely using Account Abstraction technology on a layer 2 blockchain called Scroll with the 'KeyStore' technology, ensuring high security and user control."
+        },
+        "faq9": {
+          "question": "What can I do on the website?",
+          "answer": "You can view your wallet balance, check your transaction history, see your wallet address, and view your user information."
+        },
+        "faq10": {
+          "question": "How do I log in to the website?",
+          "answer": "Enter your registered phone number. A 6-digit code will be sent to your phone for security; once you enter it, you will be able to access the site."
+        }
+      }
+    },
+    "get-started": {
+      "title": "Get started with",
+      "description": "All the power of Web3 with none of the hassle.",
+      "cta": "Sign Up Now"
     }
   },
   "login": {
