@@ -221,8 +221,8 @@ export default function HomeHero() {
           alt='chatterpay'
           sx={{
             mt: 0,
-            width: '80%', // Escala la imagen a un 80% de su tamaño original
-            borderRadius: '50%', // Redondea la imagen
+            width: '80%',
+            borderRadius: '50%',
             display: 'block', // Asegura que el margin auto funcione
             mx: 'auto' // Centra la imagen horizontalmente
           }}

@@ -11,14 +11,16 @@ import { paths } from 'src/routes/paths'
 import { useResponsive } from 'src/hooks/use-responsive'
 
 import { bgGradient } from 'src/theme/css'
+import { useTranslate } from 'src/locales'
 
 import { varFade, MotionViewport } from 'src/components/animate'
 
 // ----------------------------------------------------------------------
 
-export default function HomeGetStarter() {
+export default function HomeGetStarted() {
   const theme = useTheme()
   const mdUp = useResponsive('up', 'md')
+  const { t } = useTranslate()
 
   const renderSignUpBtn = (
     <Box
@@ -37,7 +39,7 @@ export default function HomeGetStarter() {
           rel='noopener'
           href={paths.auth.jwt.register}
         >
-          Sign Up Now
+          {t('home.get-started.cta')}
         </Button>
       </m.div>
     </Box>
@@ -57,14 +59,12 @@ export default function HomeGetStarter() {
         variants={varFade().inDown}
         sx={{ color: 'common.white', mb: mdUp ? 5 : 2, typography: 'h2' }}
       >
-        Get started with
+        {t('home.get-started.title')}
         <br /> ChatterPay
       </Box>
 
       <m.div variants={varFade().inDown}>
-        <Typography sx={{ color: 'grey.500' }}>
-          All the power of Web3 with none of the hassle.
-        </Typography>
+        <Typography sx={{ color: 'grey.400' }}>{t('home.get-started.description')}</Typography>
       </m.div>
 
       {renderSignUpBtn}
@@ -87,7 +87,7 @@ export default function HomeGetStarter() {
         transition={{ duration: 4, repeat: Infinity }}
         alt='rocket'
         src='/assets/images/home/rocket.webp'
-        sx={{ maxWidth: mdUp ? 460 : 420 }}
+        sx={{ maxWidth: mdUp ? 460 : 380 }}
       />
     </Stack>
   )
@@ -95,8 +95,8 @@ export default function HomeGetStarter() {
   return (
     <Box
       sx={{
-        py: { xs: 10, md: 15 },
-        bgcolor: (t) => alpha(t.palette.grey[500], 0.04)
+        py: { xs: 5, md: 15 },
+        bgcolor: (th) => alpha(th.palette.grey[500], 0.04)
       }}
     >
       <Container component={MotionViewport}>
