@@ -8,24 +8,36 @@ import { useOffSetTop } from 'src/hooks/use-off-set-top'
 import { useResponsive } from 'src/hooks/use-responsive'
 
 import { bgBlur } from 'src/theme/css'
+import { useTranslate } from 'src/locales'
 
 import Logo from 'src/components/logo'
+import Iconify from 'src/components/iconify'
 
 import NavMobile from './nav/mobile'
 import { HEADER } from '../config-layout'
 import LoginButton from '../common/login-button'
 import HeaderShadow from '../common/header-shadow'
-import { navConfigMobile } from './config-navigation'
 import LanguagePopover from '../common/language-popover'
 import SettingsModeButton from '../common/settings-mode-button'
+
 // ----------------------------------------------------------------------
 
 export default function Header() {
   const theme = useTheme()
 
+  const { t } = useTranslate()
+
   const mdUp = useResponsive('up', 'md')
 
   const offsetTop = useOffSetTop(HEADER.H_DESKTOP)
+
+  const navConfigMobile = [
+    {
+      title: t('login.my-wallet'),
+      icon: <Iconify icon='solar:wallet-bold-duotone' />,
+      path: '/dashboard'
+    }
+  ]
 
   return (
     <AppBar>
@@ -67,7 +79,7 @@ export default function Header() {
                 <LoginButton />
               </Stack>
             )}
-            <Stack direction='row'>
+            <Stack spacing={1} direction='row'>
               <LanguagePopover />
               <SettingsModeButton />
             </Stack>

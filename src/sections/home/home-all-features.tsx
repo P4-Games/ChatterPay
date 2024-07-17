@@ -77,13 +77,13 @@ export default function HomeAllFeatures() {
     >
       <m.div variants={varFade().inUp}>
         <Typography component='div' variant='overline' sx={{ color: 'text.disabled' }}>
-          Functionalities
+          {t('home.all-features.tag')}
         </Typography>
       </m.div>
 
       <m.div variants={varFade().inUp}>
         <Typography variant='h2' sx={{ my: 3 }}>
-          Discover all features
+          {t('home.all-features.title')}
         </Typography>
       </m.div>
 
@@ -96,26 +96,30 @@ export default function HomeAllFeatures() {
           }}
         >
           <ul>
-            <li>Transfer funds to any WhatsApp contact</li>
-            <li>Receive payments and transfers directly in your WhatsApp</li>
-            <li>Easily swap between different tokens in a user-friendly way</li>
-            <li>Securely hold your tokens while maintaining full control over your assets</li>
-            <li>Dashboard for balance and transaction history tracking</li>
+            <li>{t('home.all-features.features.f1')}</li>
+            <li>{t('home.all-features.features.f2')}</li>
+            <li>{t('home.all-features.features.f3')}</li>
+            <li>{t('home.all-features.features.f4')}</li>
+            <li>{t('home.all-features.features.f5')}</li>
             <li>
-              {' '}
-              Internal Administration Panel{' '}
-              <a target='_blank' href='https://app.chatizalo.com/' rel='noreferrer'>
+              {t('home.all-features.features.f6')}{' '}
+              <a
+                target='_blank'
+                href='https://app.chatizalo.com/'
+                rel='noreferrer'
+                style={{ color: 'inherit', textDecoration: 'underline' }}
+              >
                 (Chatizalo)
               </a>{' '}
-              for supervising and managing user accounts
+              {t('home.all-features.features.f6-2')}
             </li>
-            <li>Provides personalized and efficient support</li>
-            <li>WhatsApp-based MFA for WebApp authentication</li>
-            <li>Email-based MFA for account recovery</li>
-            <li>Transaction notifications</li>
-            <li>Fee management and payment</li>
-            <li>Multi-agent message processing</li>
-            <li>Private key management with Account Abstraction Technology</li>
+            <li>{t('home.all-features.features.f7')}</li>
+            <li>{t('home.all-features.features.f8')}</li>
+            <li>{t('home.all-features.features.f9')}</li>
+            <li>{t('home.all-features.features.f10')}</li>
+            <li>{t('home.all-features.features.f11')}</li>
+            <li>{t('home.all-features.features.f12')}</li>
+            <li>{t('home.all-features.features.f13')}</li>
           </ul>
         </Typography>
       </m.div>

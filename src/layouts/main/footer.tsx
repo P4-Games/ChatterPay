@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography'
 import { usePathname } from 'src/routes/hooks'
 import { RouterLink } from 'src/routes/components'
 
+import { useTranslate } from 'src/locales'
 import { _socials } from 'src/app/api/_data/_mock'
 
 import Logo from 'src/components/logo'
@@ -20,7 +21,8 @@ import Iconify from 'src/components/iconify'
 
 export default function Footer() {
   const pathname = usePathname()
-  // const { t } = useTranslate()
+
+  const { t } = useTranslate()
 
   const homePage = pathname === '/'
 
@@ -28,20 +30,20 @@ export default function Footer() {
     {
       headline: 'ChatterPay',
       children: [
-        { name: 'About us', href: '#' },
-        { name: 'Contact us', href: '#' },
-        { name: 'FAQs', href: '#' }
+        { name: t('home.footer.links.about-us'), href: '#' },
+        { name: t('home.footer.links.contact-us'), href: '#' },
+        { name: t('home.footer.links.faqs'), href: '#' }
       ]
     },
     {
-      headline: 'Legal',
+      headline: t('home.footer.links.legal'),
       children: [
-        { name: 'Terms and Condition', href: '#' },
-        { name: 'Privacy Policy', href: '#' }
+        { name: t('home.footer.links.terms'), href: '#' },
+        { name: t('home.footer.privacy'), href: '#' }
       ]
     },
     {
-      headline: 'Contact',
+      headline: t('home.footer.links.contact'),
       children: [{ name: 'support@chatterpay.com', href: '#' }]
     }
   ]
@@ -58,11 +60,11 @@ export default function Footer() {
     >
       <Container>
         <Logo sx={{ mb: 1, mx: 'auto' }} />
-
         <Typography variant='caption' component='div'>
-          © All rights reserved
-          <br /> made by
-          <Link href='https://p4techsolutions.com/'> P4 Tech Solutions </Link>
+          © {t('home.footer.all-rights')}
+          <br />
+          {t('home.footer.made-by')}{' '}
+          <Link href='https://p4techsolutions.com/'>P4 Tech Solutions</Link>
         </Typography>
       </Container>
     </Box>
@@ -102,7 +104,7 @@ export default function Footer() {
                 mx: { xs: 'auto', md: 'unset' }
               }}
             >
-              Transfer crypto easily through WhatsApp using our Web3 platform.
+              {t('home.footer.description')}
             </Typography>
 
             <Stack
@@ -159,7 +161,7 @@ export default function Footer() {
         </Grid>
 
         <Typography variant='body2' sx={{ mt: 10 }}>
-          © 2024. All rights reserved
+          © 2024. {t('home.footer.all-rights')}
         </Typography>
       </Container>
     </Box>

@@ -22,8 +22,25 @@
     "logout": "Logout"
   },
   "home": {
+    "help": {
+      "need-help": "Need help?"
+    },
     "common": {
       "contact-us": "Contact Us"
+    },
+    "footer": {
+      "description": "Transfer crypto easily through WhatsApp using our Web3 platform.",
+      "all-rights": "All rights reserved",
+      "made-by": "made by",
+      "links": {
+        "about-us": "About us",
+        "contact-us": "Contact us",
+        "faqs": "FAQs",
+        "legal": "Legal",
+        "terms": "Terms and Conditions",
+        "privacy": "Privacy Policy",
+        "contact": "Contact"
+      }
     },
     "hero": {
       "title1": "Send Money",
@@ -48,7 +65,24 @@
       }
     },
     "all-features": {
-
+      "tag": "Functionalities",
+      "title": "Discover all features",
+      "features": {
+        "f1": "Transfer funds to any WhatsApp contact",
+        "f2": "Receive payments and transfers directly in your WhatsApp",
+        "f3": "Easily swap between different tokens in a user-friendly way",
+        "f4": "Securely hold your tokens while maintaining full control over your assets",
+        "f5": "Dashboard for balance and transaction history tracking",
+        "f6": "Internal Administration Panel",
+        "f6-2": "for supervising and managing user accounts",
+        "f7": "Personalized and efficient support",
+        "f8": "WhatsApp-based MFA for WebApp authentication",
+        "f9": "Email-based MFA for account recovery",
+        "f10": "Transaction notifications",
+        "f11": "Fee management and payment",
+        "f12": "Multi-agent message processing",
+        "f13": "Private key management with Account Abstraction Technology"
+      }
     },
     "request-demo": {
       "tag": "Pruébalo",
@@ -141,6 +175,7 @@
     }
   },
   "login": {
+    "my-wallet": "My Wallet",
     "hi": "Hi, Welcome back",
     "title": "Sign in to ChatterPay",
     "new-user": "New User?",
