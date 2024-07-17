@@ -18,34 +18,33 @@ import Iconify from 'src/components/iconify'
 
 // ----------------------------------------------------------------------
 
-const LINKS = [
-  {
-    headline: 'ChatterPay',
-    children: [
-      { name: 'About us', href: '#' },
-      { name: 'Contact us', href: '#' },
-      { name: 'FAQs', href: '#' }
-    ]
-  },
-  {
-    headline: 'Legal',
-    children: [
-      { name: 'Terms and Condition', href: '#' },
-      { name: 'Privacy Policy', href: '#' }
-    ]
-  },
-  {
-    headline: 'Contact',
-    children: [{ name: 'support@chatterpay.com', href: '#' }]
-  }
-]
-
-// ----------------------------------------------------------------------
-
 export default function Footer() {
   const pathname = usePathname()
+  // const { t } = useTranslate()
 
   const homePage = pathname === '/'
+
+  const LINKS = [
+    {
+      headline: 'ChatterPay',
+      children: [
+        { name: 'About us', href: '#' },
+        { name: 'Contact us', href: '#' },
+        { name: 'FAQs', href: '#' }
+      ]
+    },
+    {
+      headline: 'Legal',
+      children: [
+        { name: 'Terms and Condition', href: '#' },
+        { name: 'Privacy Policy', href: '#' }
+      ]
+    },
+    {
+      headline: 'Contact',
+      children: [{ name: 'support@chatterpay.com', href: '#' }]
+    }
+  ]
 
   const simpleFooter = (
     <Box

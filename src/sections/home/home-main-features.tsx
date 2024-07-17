@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography'
 
 import { useTranslate } from 'src/locales'
 
-import { varFade } from 'src/components/animate'
+import { varFade, MotionViewport } from 'src/components/animate'
 
 // ----------------------------------------------------------------------
 
@@ -33,9 +33,70 @@ export default function HomeMainFeatures() {
       description: t('home.main-features.card-3.description')
     }
   ]
-  /* component={MotionViewport} */
+
+  const renderCardItems = CARDS.map((card, index) => (
+    <m.div variants={varFade().inUp} key={card.title}>
+      <Card
+        sx={{
+          textAlign: 'center',
+          boxShadow: { md: 'none' },
+          bgcolor: 'background.default',
+          p: (theme) => theme.spacing(10, 5),
+          ...(index === 1 && {
+            boxShadow: (theme) => ({
+              md: `-40px 40px 80px ${
+                theme.palette.mode === 'light'
+                  ? alpha(theme.palette.grey[500], 0.16)
+                  : alpha(theme.palette.common.black, 0.4)
+              }`
+            })
+          }),
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center'
+        }}
+      >
+        <Box
+          component='img'
+          src={card.icon}
+          alt={card.title}
+          sx={{ mb: 1, width: 48, height: 48 }}
+        />
+
+        <Typography
+          variant='h5'
+          sx={{
+            mt: 6,
+            mb: 3,
+            fontSize: {
+              md: card.description.length > 120 ? '0.875rem' : '1rem',
+              xs: '1.4rem'
+            }
+          }}
+        >
+          {card.title}
+        </Typography>
+
+        <Box sx={{ flexGrow: 1, maxWidth: '100%' }}>
+          <Typography
+            sx={{
+              color: 'text.secondary',
+              fontSize: {
+                md: card.description.length > 120 ? '0.875rem' : '1rem',
+                xs: '1.2rem'
+              }
+            }}
+          >
+            {card.description}
+          </Typography>
+        </Box>
+      </Card>
+    </m.div>
+  ))
+
   return (
     <Container
+      component={MotionViewport}
       sx={{
         py: { xs: 10, md: 15 }
       }}
@@ -69,40 +130,7 @@ export default function HomeMainFeatures() {
           md: 'repeat(3, 1fr)'
         }}
       >
-        {CARDS.map((card, index) => (
-          <m.div variants={varFade().inUp} key={card.title}>
-            <Card
-              sx={{
-                textAlign: 'center',
-                boxShadow: { md: 'none' },
-                bgcolor: 'background.default',
-                p: (theme) => theme.spacing(10, 5),
-                ...(index === 1 && {
-                  boxShadow: (theme) => ({
-                    md: `-40px 40px 80px ${
-                      theme.palette.mode === 'light'
-                        ? alpha(theme.palette.grey[500], 0.16)
-                        : alpha(theme.palette.common.black, 0.4)
-                    }`
-                  })
-                })
-              }}
-            >
-              <Box
-                component='img'
-                src={card.icon}
-                alt={card.title}
-                sx={{ mx: 'auto', width: 48, height: 48 }}
-              />
-
-              <Typography variant='h5' sx={{ mt: 8, mb: 2 }}>
-                {card.title}
-              </Typography>
-
-              <Typography sx={{ color: 'text.secondary' }}>{card.description}</Typography>
-            </Card>
-          </m.div>
-        ))}
+        {renderCardItems}
       </Box>
     </Container>
   )
