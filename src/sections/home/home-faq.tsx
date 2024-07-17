@@ -20,8 +20,8 @@ export default function HomeFaQ() {
     const id = Math.random().toString(36).substr(2, 9)
     return {
       id,
-      question: t(`home.faq.faqs.faq${index + 1}.question`),
-      answer: t(`home.faq.faqs.faq${index + 1}.answer`)
+      question: t(`home.faq.faqs.faq${index + 1}.question`) || '',
+      answer: t(`home.faq.faqs.faq${index + 1}.answer`) || ''
     }
   })
 
@@ -41,7 +41,7 @@ export default function HomeFaQ() {
 
   const renderFaQ = (
     <div>
-      {t &&
+      {_faqs &&
         _faqs.map((accordion: any) => (
           <Accordion key={accordion.id}>
             <AccordionSummary expandIcon={<Iconify icon='eva:arrow-ios-downward-fill' />}>
