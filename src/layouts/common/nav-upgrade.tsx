@@ -8,7 +8,6 @@ import { useAuthContext } from 'src/auth/hooks'
 // ----------------------------------------------------------------------
 
 export default function NavUpgrade() {
-  // const { user } = useMockedUser()
   const { user } = useAuthContext()
 
   return (

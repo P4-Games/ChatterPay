@@ -14,7 +14,6 @@ import NavToggleButton from '../common/nav-toggle-button'
 // ----------------------------------------------------------------------
 
 export default function NavMini() {
-  // const { user } = useMockedUser()
   const { user } = useAuthContext()
 
   const navData = useNavData()

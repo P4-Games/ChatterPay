@@ -32,7 +32,6 @@ export default function AccountPopover() {
     }
   ]
 
-  // const { user } = useMockedUser()
   const { user } = useAuthContext()
 
   const { logout } = useAuthContext()

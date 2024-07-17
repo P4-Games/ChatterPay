@@ -19,7 +19,6 @@ import HeaderShadow from '../common/header-shadow'
 function NavHorizontal() {
   const theme = useTheme()
 
-  // const { user } = useMockedUser()
   const { user } = useAuthContext()
 
   const navData = useNavData()
