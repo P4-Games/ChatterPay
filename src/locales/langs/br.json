@@ -22,8 +22,25 @@
     "logout": "Sair"
   },
   "home": {
+    "help": {
+      "need-help": "Precisa de ajuda?"
+    },
     "common": {
       "contact-us": "Contate-nos"
+    },
+    "footer": {
+      "description": "Transfira criptomoedas facilmente pelo WhatsApp usando nossa plataforma Web3.",
+      "all-rights": "Todos os direitos reservados",
+      "made-by": "feito por",
+      "links": {
+        "about-us": "Sobre nós",
+        "contact-us": "Contate-nos",
+        "faqs": "Perguntas frequentes",
+        "legal": "Legal",
+        "terms": "Termos e condições",
+        "privacy": "Política de privacidade",
+        "contact": "Contato"
+      }
     },
     "hero": {
       "title1": "Enviar dinheiro",
@@ -48,7 +65,24 @@
       }
     },
     "all-features": {
-
+      "tag": "Funcionalidades",
+      "title": "Descubra todas as funcionalidades",
+      "features": {
+        "f1": "Transferir fundos para qualquer contato do WhatsApp",
+        "f2": "Receber pagamentos e transferências diretamente no seu WhatsApp",
+        "f3": "Trocar facilmente entre diferentes tokens de maneira amigável ao usuário",
+        "f4": "Manter seus tokens de forma segura mantendo o controle total sobre seus ativos",
+        "f5": "Painel para acompanhamento de saldo e histórico de transações",
+        "f6": "Painel de Administração Interna",
+        "f6-2": "para supervisar e gerenciar contas de usuário",
+        "f7": "Suporte personalizado e eficiente",
+        "f8": "MFA baseado no WhatsApp para autenticação de WebApp",
+        "f9": "MFA baseado em e-mail para recuperação de conta",
+        "f10": "Notificações de transações",
+        "f11": "Gestão e pagamento de taxas",
+        "f12": "Processamento de mensagens multiagente",
+        "f13": "Gestão de chaves privadas com Tecnologia de Abstração de Contas"
+      }
     },
     "request-demo": {
       "tag": "Teste-o",
@@ -135,12 +169,13 @@
       }
     },    
     "get-started": {
-      "title": "Comece",
+      "title": "Comece com",
       "description": "Todo o poder do Web3 sem complicações.",
       "cta": "Cadastre-se agora"
     }
   },
   "login": {
+    "my-wallet": "Minha Carteira",
     "hi": "Oi, bem-vindo de volta",
     "title": "Entrar no ChatterPay",
     "new-user": "Novo usuário?",

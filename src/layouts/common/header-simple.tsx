@@ -9,6 +9,7 @@ import { RouterLink } from 'src/routes/components'
 import { useOffSetTop } from 'src/hooks/use-off-set-top'
 
 import { bgBlur } from 'src/theme/css'
+import { useTranslate } from 'src/locales'
 
 import Logo from 'src/components/logo'
 
@@ -19,8 +20,8 @@ import HeaderShadow from './header-shadow'
 
 export default function HeaderSimple() {
   const theme = useTheme()
-
   const offsetTop = useOffSetTop(HEADER.H_DESKTOP)
+  const { t } = useTranslate()
 
   return (
     <AppBar>
@@ -49,7 +50,7 @@ export default function HeaderSimple() {
 
         <Stack direction='row' alignItems='center' spacing={1}>
           <Link href='#' component={RouterLink} color='inherit' sx={{ typography: 'subtitle2' }}>
-            Need help?
+            {t('home.help.need-help')}
           </Link>
         </Stack>
       </Toolbar>

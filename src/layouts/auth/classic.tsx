@@ -21,7 +21,6 @@ type Props = {
 }
 
 export default function AuthClassicLayout({ children, image, title }: Props) {
-  // const { method } = useAuthContext()
   const { t } = useTranslate()
   const theme = useTheme()
   const mdUp = useResponsive('up', 'md')

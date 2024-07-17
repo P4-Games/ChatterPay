@@ -27,7 +27,6 @@ type Props = {
 }
 
 export default function NavVertical({ openNav, onCloseNav }: Props) {
-  // const { user } = useMockedUser()
   const { user } = useAuthContext()
 
   const pathname = usePathname()
@@ -40,8 +39,7 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
     if (openNav) {
       onCloseNav()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname])
+  }, [onCloseNav, openNav, pathname])
 
   const renderContent = (
     <Scrollbar
