@@ -16,8 +16,8 @@ Crypto just a message away!
 - Styling - [CSS]
 - Components - [MUI v5](https://mui.com/)
 - State Management - [React Context API](https://react.dev/reference/react/useContext)
-- Authentication - *TBD*
-- Authorization - *TBD*
+- Authentication - cellphone + MFA whatsapp
+- Authorization - [jwt](https://jwt.io/)
 - Routing - [React router v6](https://reactrouter.com/en/main/start/overview)
 - Linting - [ESLint](https://eslint.org)
 - Formatting - [Prettier](https://prettier.io)
