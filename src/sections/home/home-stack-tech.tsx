@@ -59,10 +59,48 @@ export default function HomeStackTech() {
     }
   ]
 
+  const renderCardIems = CARDS.map((card) => (
+    <m.div variants={varFade().inUp} key={card.title}>
+      <Card
+        sx={{
+          textAlign: 'center',
+          bgcolor: 'background.default',
+          p: (th) => th.spacing(5),
+          boxShadow: (th) => ({
+            md: `-10px 10px 3px 3px ${
+              th.palette.mode === 'light'
+                ? alpha(th.palette.grey[900], 0.16)
+                : alpha(th.palette.common.black, 0.4)
+            }`,
+            xs: `-10px 10px 3px 3px ${
+              th.palette.mode === 'light'
+                ? alpha(th.palette.grey[500], 0.04)
+                : alpha(th.palette.common.black, 0.4)
+            }`
+          })
+        }}
+      >
+        <Box
+          component='img'
+          src={theme.palette.mode === 'light' ? card.icon_light : card.icon_dark}
+          alt={card.title}
+          sx={{ mx: 'auto', width: 48, height: 48 }}
+        />
+
+        <Typography variant='h6' sx={{ mt: 1, mb: 1 }}>
+          {card.title}
+        </Typography>
+
+        <Typography variant={mdUp ? 'caption' : 'body2'} sx={{ color: 'text.secondary' }}>
+          {card.description}
+        </Typography>
+      </Card>
+    </m.div>
+  ))
+
   return (
     <Box
       sx={{
-        py: { xs: 10, md: 15 },
         bgcolor: (th) => alpha(th.palette.grey[500], 0.04)
       }}
     >
@@ -76,7 +114,7 @@ export default function HomeStackTech() {
           spacing={3}
           sx={{
             textAlign: 'center',
-            mb: { xs: 2, md: 5 }
+            mb: { xs: 5, md: 10 }
           }}
         >
           <m.div variants={varFade().inUp}>
@@ -100,44 +138,7 @@ export default function HomeStackTech() {
             md: 'repeat(3, 1fr)'
           }}
         >
-          {CARDS.map((card) => (
-            <m.div variants={varFade().inUp} key={card.title}>
-              <Card
-                sx={{
-                  textAlign: 'center',
-                  bgcolor: 'background.default',
-                  p: (th) => th.spacing(5),
-                  boxShadow: (th) => ({
-                    md: `-10px 10px 3px 3px ${
-                      th.palette.mode === 'light'
-                        ? alpha(th.palette.grey[900], 0.16)
-                        : alpha(th.palette.common.black, 0.4)
-                    }`,
-                    xs: `-10px 10px 3px 3px ${
-                      th.palette.mode === 'light'
-                        ? alpha(theme.palette.grey[500], 0.04)
-                        : alpha(th.palette.common.black, 0.4)
-                    }`
-                  })
-                }}
-              >
-                <Box
-                  component='img'
-                  src={theme.palette.mode === 'light' ? card.icon_light : card.icon_dark}
-                  alt={card.title}
-                  sx={{ mx: 'auto', width: 48, height: 48 }}
-                />
-
-                <Typography variant='h6' sx={{ mt: 1, mb: 1 }}>
-                  {card.title}
-                </Typography>
-
-                <Typography variant={mdUp ? 'caption' : 'body2'} sx={{ color: 'text.secondary' }}>
-                  {card.description}
-                </Typography>
-              </Card>
-            </m.div>
-          ))}
+          {renderCardIems}
         </Box>
       </Container>
     </Box>

@@ -16,6 +16,8 @@ import { varFade, MotionViewport } from 'src/components/animate'
 
 // ----------------------------------------------------------------------
 
+const usePolygons = false
+
 type StyledPolygonProps = {
   anchor?: 'top' | 'bottom'
 }
@@ -71,7 +73,7 @@ export default function HomeRequestDemo() {
   )
 
   const renderDescription = (
-    <Box sx={{ textAlign: { xs: 'center', md: 'unset' }, mt: { xs: 10, md: 20 } }}>
+    <Box sx={{ textAlign: { xs: 'center', md: 'unset' }, mt: { xs: 10, md: 15 } }}>
       <m.div variants={varFade().inUp}>
         <Typography component='div' variant='overline' sx={{ color: 'text.disabled' }}>
           {t('home.request-demo.tag')}
@@ -91,11 +93,12 @@ export default function HomeRequestDemo() {
         >
           {t('home.request-demo.title')}
         </Typography>
+
         <m.div variants={varFade().inUp}>
           <Typography
             sx={{
-              mb: 5,
-              color: 'text.secondary'
+              mb: 10,
+              color: theme.palette.grey[400]
             }}
           >
             {t('home.request-demo.description1')} <br />
@@ -127,7 +130,7 @@ export default function HomeRequestDemo() {
 
   return (
     <Box sx={{ position: 'relative' }}>
-      <StyledPolygon anchor='top' />
+      {usePolygons && <StyledPolygon anchor='top' />}
       <Box
         sx={{
           minHeight: 600,
@@ -159,7 +162,7 @@ export default function HomeRequestDemo() {
         </Container>
       </Box>
 
-      <StyledPolygon anchor='bottom' />
+      {usePolygons && <StyledPolygon anchor='bottom' />}
     </Box>
   )
 }
