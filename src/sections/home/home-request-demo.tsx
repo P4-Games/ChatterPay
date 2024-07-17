@@ -9,7 +9,6 @@ import { alpha, useTheme } from '@mui/material/styles'
 
 import { useResponsive } from 'src/hooks/use-responsive'
 
-import { useTranslate } from 'src/locales'
 import { bgGradient, textGradient } from 'src/theme/css'
 
 import { varFade, MotionViewport } from 'src/components/animate'
@@ -53,7 +52,7 @@ const StyledPolygon = styled('div')<StyledPolygonProps>(({ anchor = 'top', theme
 export default function HomeRequestDemo() {
   const theme = useTheme()
   const mdUp = useResponsive('up', 'md')
-  const { t } = useTranslate()
+  // const { t } = useTranslate()
 
   const contactUsBtn = (
     <m.div variants={varFade().inUp}>

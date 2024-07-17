@@ -46,8 +46,8 @@ export default function AccountChangePassword() {
 
   const {
     reset,
-    handleSubmit,
-    formState: { isSubmitting }
+    handleSubmit
+    // formState: { isSubmitting }
   } = methods
 
   const onSubmit = handleSubmit(async (data) => {
