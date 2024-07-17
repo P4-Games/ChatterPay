@@ -1,0 +1,97 @@
+{
+  "common": {
+    "country": "Country",
+    "phone-number": "Phone Number",
+    "first-name": "First Name",
+    "last-name": "Last Name",
+    "email-address": "Email Address",
+    "password": "Password",
+    "name": "Name",
+    "wallet": "Wallet",
+    "required": "required",
+    "must-be-numeric": "Must be numeric",
+    "must-be-max-ten": "Must be a maximum of 10 digits",
+    "must-be-valid-email": "Email must be a valid email address"
+  },
+  "menu": {
+    "overview": "overview",
+    "_dashboard": "Dashborad",
+    "management": "Management",
+    "user": "User",
+    "account": "Account",
+    "logout": "Logout"
+  },
+  "home": {
+    "hero": {
+      "title1": "Send Money",
+      "title2": "with a message",
+      "legend": "Transfer crypto easily through WhatsApp using our Web3 platform."
+    },
+    "main-features": {
+      "tag": "Main Features",
+      "title1": "How can ChatterPay",
+      "title2": "helps you?",
+      "card-1": {
+        "title": "Make the blockchain complexity invisible",
+        "description": "Hide passphrases, transaction approval pop-ups, and sponsor gas fees for transactions. We handle all the technical stuff for you."
+      },
+      "card-2": {
+        "title": "Transfer money easily",
+        "description": "Simply send a text message via WhatsApp to transfer, receive, swap and store value."
+      },
+      "card-3": {
+        "title": "Invoice and notify payments effortlessly",
+        "description": "Request Crypto payments via WhatsApp. Issue dynamic invoices, get paid in various currencies, and receive notifications on completion."
+      }
+    }
+  },
+  "login": {
+    "hi": "Hi, Welcome back",
+    "title": "Sign in to ChatterPay",
+    "new-user": "New User?",
+    "create-account": "Create an account",
+    "send-code": "Send Code to Whatsapp",
+    "login": "login",
+    "resend-code": "Resend Code",
+    "dont-have-code": "Don't have a code?",
+    "msg": {
+      "enter-phone": "Enter phone number with area code, without 0 and without 15",
+      "code-sent": "We sent a 6-digit code to the phone number",
+      "code-info": "Please enter the 6-digit code we sent to the WhatsApp number provided.",
+      "invalid-user": "User not found with that phone number",
+      "invalid-code": "Invalid code"
+    }
+  },
+  "register": {
+    "title": "Facilitate seamless payments and transfers through ChatterPay",
+    "get-started": "Get started",
+    "already-account": "Already have an account?",
+    "sign-in": "Sign in",
+    "create-account": "Create Account",
+    "terms-of-service": "Terms of Service",
+    "privacy-policy": "Privacy Policy",
+    "by-signing": "By signing up, I agree to",
+    "and": "and"
+  },
+  "balances": {
+    "title": "Estimated Balance",
+    "deposit": "Deposit",
+    "send": "Send"
+  }, 
+  "transactions": {
+    "title": "Recent Transactions",
+    "table-transaction": "Transaction",
+    "table-amount": "Amount",
+    "table-date": "Date", 
+    "table-status": "Status",
+    "table-view-all": "View All",
+    "table-download": "Download",
+    "table-print": "Print",
+    "table-share": "Share",
+    "receive-from": "Recived money from",
+    "sent-to": "Sent money to"
+  },
+  "account": {
+    "title": "Account"
+  }
+}

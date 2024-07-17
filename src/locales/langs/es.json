@@ -1,0 +1,97 @@
+{
+  "common": {
+    "country": "País",
+    "phone-number": "Número de Teléfono",
+    "first-name": "Nombre",
+    "last-name": "Apellido",
+    "email-address": "Correo Electrónico",
+    "password": "Contraseña",
+    "name": "Nombre",
+    "wallet": "Billetera",
+    "required": "requerido",
+    "must-be-numeric": "Debe ser numérico",
+    "must-be-max-ten": "Debe tener un máximo de 10 dígitos",
+    "must-be-valid-email": "El correo electrónico debe ser una dirección de correo válida"
+  },
+  "menu": {
+    "overview": "Visión general",
+    "_dashboard": "Tablero",
+    "management": "Gestión",
+    "user": "Usuario",
+    "account": "Cuenta",
+    "logout": "Cerrar Sesión"
+  },
+  "home": {
+    "hero": {
+      "title1": "Enviar dinero",
+      "title2": "con un mensaje",
+      "legend": "Transfiere criptomonedas fácilmente a través de WhatsApp usando nuestra plataforma Web3."
+    },
+    "main-features": {
+      "tag": "Funciones Principales",
+      "title1": "¿Cómo puede ChatterPay",
+      "title2": "ayudarte?",
+      "card-1": {
+        "title": "Simplificación del uso de blockchain",
+        "description": "Eliminamos la necesidad de frases secretas y ventanas emergentes de aprobación, gestionamos las tarifas de gas y los aspectos técnicos por ti para que puedas concentrarte en lo importante."
+      },
+      "card-2": {
+        "title": "Transferir dinero fácilmente",
+        "description": "Simplemente envía un mensaje de texto vía WhatsApp para transferir, recibir, intercambiar y almacenar valor."
+      },
+      "card-3": {
+        "title": "Facturar y notificar pagos sin esfuerzo",
+        "description": "Solicita pagos en criptomonedas vía WhatsApp. Emite facturas dinámicas, recibe pagos en diversas monedas y obtén notificaciones al completarse."
+      }
+    }
+  },
+  "login": {
+    "hi": "Hola, bienvenido de nuevo",
+    "title": "Iniciar sesión en ChatterPay",
+    "new-user": "¿Nuevo usuario?",
+    "create-account": "Crear una cuenta",
+    "send-code": "Enviar código por WhatsApp",
+    "login": "Iniciar sesión",
+    "resend-code": "Reenviar código",
+    "dont-have-code": "¿No tienes código?",
+    "msg": {
+      "enter-phone": "Ingrese el número de teléfono con código de área, sin 0 y sin 15",
+      "code-sent": "Enviamos un código de 6 dígitos al teléfono",
+      "code-info": "Por favor, ingresa el código de 6 dígitos que enviamos al número de WhatsApp proporcionado.",
+      "invalid-user": "Usuario no encontrado con ese número de teléfono",
+      "invalid-code": "Código inválido"
+    }
+  },
+  "register": {
+    "title": "Realiza pagos y transferencias sin problemas a través de ChatterPay",
+    "get-started": "Empezar",
+    "already-account": "¿Ya tienes una cuenta?",
+    "sign-in": "Iniciar sesión",
+    "create-account": "Crear cuenta",
+    "terms-of-service": "Términos de Servicio",
+    "privacy-policy": "Política de Privacidad",
+    "by-signing": "Al registrarme, acepto los",
+    "and": "y"
+  },
+  "balances": {
+    "title": "Balance Estimado",
+    "deposit": "Depositar",
+    "send": "Enviar"
+  },
+  "transactions": {
+    "title": "Transacciones Recientes",
+    "table-transaction": "Transacción",
+    "table-amount": "Monto",
+    "table-date": "Fecha",
+    "table-status": "Estado",
+    "table-view-all": "Ver Todo",
+    "table-download": "Descargar",
+    "table-print": "Imprimir",
+    "table-share": "Compartir",
+    "receive-from": "Recibido dinero de",
+    "sent-to": "Enviado dinero a"
+  },
+  "account": {
+    "title": "Cuenta"
+  }
+}
