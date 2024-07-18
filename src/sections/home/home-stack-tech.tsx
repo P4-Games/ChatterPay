@@ -84,14 +84,27 @@ export default function HomeStackTech() {
           component='img'
           src={theme.palette.mode === 'light' ? card.icon_light : card.icon_dark}
           alt={card.title}
-          sx={{ mx: 'auto', width: 48, height: 48 }}
+          sx={{ mx: 'auto', my: 'auto', width: 48, height: 48 }}
         />
 
-        <Typography variant='h6' sx={{ mt: 1, mb: 1 }}>
+        <Typography variant='h6' sx={{ mt: 1, mb: 1, minHeight: mdUp ? '3rem' : '2rem' }}>
           {card.title}
         </Typography>
 
-        <Typography variant={mdUp ? 'caption' : 'body2'} sx={{ color: 'text.secondary' }}>
+        <Typography
+          variant={mdUp ? 'caption' : undefined}
+          sx={{
+            ...(mdUp
+              ? {}
+              : {
+                  fontSize: '1.1rem',
+                  display: '-webkit-box',
+                  WebkitBoxOrient: 'vertical',
+                  minHeight: mdUp ? '9rem' : '2rem'
+                }),
+            color: 'text.secondary'
+          }}
+        >
           {card.description}
         </Typography>
       </Card>

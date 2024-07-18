@@ -181,7 +181,8 @@ export default function HomeHero() {
         <Typography
           variant='h2'
           sx={{
-            textAlign: 'center'
+            textAlign: 'center',
+            mb: mdUp ? 0 : 5
           }}
         >
           {t('home.hero.title1')} <br />
@@ -205,13 +206,9 @@ export default function HomeHero() {
       </m.div>
 
       <m.div variants={varFade().in}>
-        <Typography variant='body2' sx={{ textAlign: 'center' }}>
+        <Typography variant='body2' sx={{ textAlign: 'center', mb: 5 }}>
           {t('home.hero.legend')}
         </Typography>
-      </m.div>
-
-      <m.div variants={varFade().in}>
-        <Stack spacing={1.5} direction={{ xs: 'column-reverse', sm: 'row' }} sx={{ mb: 5 }} />
       </m.div>
 
       <m.div variants={varFade().in}>
@@ -250,7 +247,7 @@ export default function HomeHero() {
         component={m.div}
         variants={varFade().in}
         sx={{
-          width: 200,
+          width: 280, // original: 344
           position: 'relative'
         }}
       >
@@ -283,7 +280,7 @@ export default function HomeHero() {
       <Stack
         component={m.div}
         variants={varFade().in}
-        sx={{ width: 600, position: 'relative', ml: -5 }}
+        sx={{ width: 600, position: 'relative', ml: -5 }} // original: width: 720
       >
         <Box
           component={m.img}
@@ -342,15 +339,11 @@ export default function HomeHero() {
         <StyledWrapper>
           <Container component={MotionContainer} sx={{ height: 1 }}>
             <Grid container columnSpacing={{ md: 10 }} sx={{ height: 1 }}>
-              <Grid xs={12} md={6} sx={{ pr: { md: 25 } }}>
+              <Grid xs={12} md={6}>
                 {renderDescription}
               </Grid>
 
-              {mdUp && (
-                <Grid md={6} sx={{ pl: { md: 0 } }}>
-                  {renderSlides}
-                </Grid>
-              )}
+              {mdUp && <Grid md={6}>{renderSlides}</Grid>}
             </Grid>
           </Container>
 

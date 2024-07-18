@@ -70,8 +70,8 @@ export default function HomeMainFeatures() {
           variant='h5'
           sx={{
             minHeight: mdUp ? '6rem' : '2rem',
-            mt: 6,
-            mb: 3
+            mt: 4,
+            mb: 2
           }}
         >
           {card.title}
