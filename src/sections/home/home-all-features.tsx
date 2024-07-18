@@ -135,7 +135,7 @@ export default function HomeAllFeatures() {
       <m.div variants={varFade().in}>
         <Box
           component={m.img}
-          src='/assets/images/home/all-features.png'
+          src='/assets/images/home/all-features-blue.png'
           alt='chatterpay'
           sx={{
             mt: 15,
@@ -231,7 +231,8 @@ export default function HomeAllFeatures() {
   return (
     <Box
       sx={{
-        py: { xs: 10, md: 15 },
+        pt: { xs: 10, md: 3 },
+        pb: { xs: 10, md: 15 },
         bgcolor: (th) => alpha(th.palette.grey[500], 0.04)
       }}
     >
