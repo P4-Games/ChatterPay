@@ -50,7 +50,7 @@
     "main-features": {
       "tag": "Main Features",
       "title1": "How can ChatterPay",
-      "title2": "helps you?",
+      "title2": "help you?",
       "card-1": {
         "title": "Make the blockchain complexity invisible",
         "description": "Hide passphrases, transaction approval pop-ups, and sponsor gas fees for transactions. We handle all the technical stuff for you."
@@ -207,12 +207,12 @@
     "title": "Estimated Balance",
     "deposit": "Deposit",
     "send": "Send"
-  }, 
+  },
   "transactions": {
     "title": "Recent Transactions",
     "table-transaction": "Transaction",
     "table-amount": "Amount",
-    "table-date": "Date", 
+    "table-date": "Date",
     "table-status": "Status",
     "table-view-all": "View All",
     "table-download": "Download",
