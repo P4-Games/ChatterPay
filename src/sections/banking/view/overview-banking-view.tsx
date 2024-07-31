@@ -60,6 +60,7 @@ export default function OverviewBankingView() {
           <Stack spacing={3}>
             <BankingRecentTransitions
               title={t('transactions.title')}
+              isLoading={isLoadingTrxs}
               tableData={isLoadingTrxs ? [] : transactions}
               tableLabels={[
                 { id: 'description', label: t('transactions.table-transaction') },
