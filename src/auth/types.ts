@@ -26,7 +26,7 @@ export type AuthStateType = {
 type CanRemove = {
   login?: (email: string, password: string) => Promise<void>
   loginWithCode?: (phone: string, code: string) => Promise<void>
-  generateCode?: (email: string) => Promise<void>
+  generateCode?: (email: string, codeMsg: string) => Promise<void>
   register?: (email: string, password: string, firstName: string, lastName: string) => Promise<void>
   //
   loginWithGoogle?: () => Promise<void>
@@ -48,7 +48,7 @@ export type JWTContextType = CanRemove & {
   unauthenticated: boolean
   login: (email: string, password: string) => Promise<void>
   loginWithCode: (phone: string, code: string) => Promise<void>
-  generateCode: (email: string) => Promise<void>
+  generateCode: (email: string, codeMsg: string) => Promise<void>
   register: (email: string, password: string, firstName: string, lastName: string) => Promise<void>
   logout: () => Promise<void>
 }

@@ -158,9 +158,10 @@ export function AuthProvider({ children }: Props) {
   }, [])
 
   // Generate whatsapp Code
-  const generateCode = useCallback(async (phone: string) => {
+  const generateCode = useCallback(async (phone: string, codeMsg: string) => {
     const data = {
-      phone
+      phone,
+      codeMsg
     }
 
     console.log('sent to phone', phone, endpoints.auth.code())
