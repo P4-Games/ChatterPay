@@ -6,14 +6,10 @@ import Stack from '@mui/material/Stack'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Unstable_Grid2'
 
-import {
-  useGetWalletBalance,
-  useGetWalletTranscations as useGetWalletTransactions
-} from 'src/hooks/services/'
-
 import { useTranslate } from 'src/locales'
 import { AuthUserType } from 'src/auth/types'
 import { useAuthContext } from 'src/auth/hooks'
+import { useGetWalletBalance, useGetWalletTransactions } from 'src/app/api/_hooks'
 
 import { useSettingsContext } from 'src/components/settings'
 
