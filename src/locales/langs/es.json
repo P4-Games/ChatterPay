@@ -10,8 +10,9 @@
     "wallet": "Billetera",
     "required": "requerido",
     "must-be-numeric": "Debe ser numérico",
-    "must-be-max-ten": "Debe tener un máximo de 10 dígitos",
-    "must-be-valid-email": "El correo electrónico debe ser una dirección de correo válida"
+    "must-be-max": "Debe tener un máximo de {MAX_DIGITS} dígitos",
+    "must-be-valid-email": "El correo electrónico debe ser una dirección de correo válida",
+    "nodata": "Sin Datos"
   },
   "menu": {
     "overview": "Visión general",
@@ -189,7 +190,8 @@
       "code-sent": "Enviamos un código de 6 dígitos al teléfono",
       "code-info": "Por favor, ingresa el código de 6 dígitos que enviamos al número de WhatsApp proporcionado.",
       "invalid-user": "Usuario no encontrado con ese número de teléfono",
-      "invalid-code": "Código inválido"
+      "invalid-code": "Código inválido",
+      "code-bot": "Ingresá este código *{2FA_CODE}* en la app de Chatterpay para iniciar sesión. Es muy importante que no compartas esta información con nadie. Si no solicitaste el código, desestimá este mensaje y contactate con nosotros para que podamos ayudarte!"
     }
   },
   "register": {

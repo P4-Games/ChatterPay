@@ -10,8 +10,9 @@
     "wallet": "Wallet",
     "required": "required",
     "must-be-numeric": "Must be numeric",
-    "must-be-max-ten": "Must be a maximum of 10 digits",
-    "must-be-valid-email": "Email must be a valid email address"
+    "must-be-max": "Must be a maximum of {MAX_DIGITS} digits",
+    "must-be-valid-email": "Email must be a valid email address",
+    "nodata": "No Data"
   },
   "menu": {
     "overview": "overview",
@@ -189,7 +190,8 @@
       "code-sent": "We sent a 6-digit code to the phone number",
       "code-info": "Please enter the 6-digit code we sent to the WhatsApp number provided.",
       "invalid-user": "User not found with that phone number",
-      "invalid-code": "Invalid code"
+      "invalid-code": "Invalid code",
+      "code-bot": "Enter this code *{2FA_CODE}* in the Chatterpay app to log in. It is very important that you do not share this information with anyone. If you did not request the code, disregard this message and contact us so we can help you!"
     }
   },
   "register": {
@@ -207,12 +209,12 @@
     "title": "Estimated Balance",
     "deposit": "Deposit",
     "send": "Send"
-  },
+  }, 
   "transactions": {
     "title": "Recent Transactions",
     "table-transaction": "Transaction",
     "table-amount": "Amount",
-    "table-date": "Date",
+    "table-date": "Date", 
     "table-status": "Status",
     "table-view-all": "View All",
     "table-download": "Download",
