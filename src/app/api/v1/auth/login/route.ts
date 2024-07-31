@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 import { NextResponse } from 'next/server'
 
 import { JWT_SECRET } from 'src/config-global'
-import { getUserByPhone } from 'src/app/api/_data/data.-service'
+import { getUserByPhone, updateUserCode } from 'src/app/api/_data/data.-service'
 
 import { IAccount } from 'src/types/account'
 // ----------------------------------------------------------------------
@@ -56,6 +56,9 @@ export async function POST(req: any, res: any) {
       },
       accessToken: generateAccessToken(user)
     }
+
+    // clean 2fa code used in bdd
+    updateUserCode(user.id, undefined)
 
     return NextResponse.json(data)
   } catch (ex) {
