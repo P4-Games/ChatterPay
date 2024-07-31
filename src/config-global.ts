@@ -7,18 +7,23 @@ import { Network } from './types/networks'
 // environment: server-side
 export const { APP_ENV } = process.env || 'development'
 export const { NODE_ENV } = process.env || 'development'
-export const { MONGODB } = process.env
-export const { BOT_API_TOKEN } = process.env
-
+export const { MONGODB, MONGODB_BOT } = process.env
+export const { BOT_API_TOKEN, BOT_API_URL } = process.env
+export const botApiWappEnabled = (process.env.BOT_API_WAPP_ENABLED || 'true') === 'true'
 export const nodeProviderUrlSepolia = process.env.NODE_PROVIDER_SEPOLIA_URL
 export const nodeProviderUrlPolygon = process.env.NODE_PROVIDER_MUMBAI_URL
 export const nodeProviderUrlScroll = process.env.NODE_PROVIDER_SCROLL_URL
+
+// Vercel has a timeout of 10 seconds (only for free plan) in the APIs.
+// The login has certain logic between ChatterPay and the backend of the Chatizalo,
+// which may cause it to take about 10 seconds, so this variable is used to improve that logic.
+export const handleVercelFreePlanTimeOut =
+  (process.env.HANDLE_VERCEL_FREE_PLAN_TIMEOUT || 'true') === 'true'
 
 // ----------------------------------------------------------------------
 
 // environment: client-side
 export const UI_API_URL = process.env.NEXT_PUBLIC_UI_URL
-export const BOT_API_URL = process.env.NEXT_PUBLIC_BOT_API_URL
 export const USE_MOCK = (process.env.NEXT_PUBLIC_USE_MOCK || 'true') === 'true'
 export const ALLOWED_ORIGINS = process.env.NEXT_PUBLIC_ALLOWED_ORIGINS || '*'
 
