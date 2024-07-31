@@ -19,9 +19,7 @@ export default axiosInstance
 
 export const fetcher = async (args: string | [string, AxiosRequestConfig]) => {
   const [url, config] = Array.isArray(args) ? args : [args]
-
   const res = await axiosInstance.get(url, { ...config })
-
   return res.data
 }
 
@@ -41,6 +39,10 @@ function getFullUIEndpoint(endpoint: string): string {
   return `${UI_API_URL}/api/v1/${endpoint}`
 }
 
+function getFullBotEndpoint(endpoint: string): string {
+  return `${BOT_API_URL}/${endpoint}`
+}
+
 export const endpoints = {
   auth: {
     code: () => getFullUIEndpoint(`auth/code`),
@@ -55,5 +57,9 @@ export const endpoints = {
       balance: (id: string) => getFullUIEndpoint(`wallet/${id}/balance`),
       transactions: (id: string) => getFullUIEndpoint(`wallet/${id}/transactions`)
     }
+  },
+  backend: {
+    sendMessage: () => getFullBotEndpoint('chatbot/conversations/operator-reply'),
+    control: () => getFullBotEndpoint('chatbot/conversations/control')
   }
 }
