@@ -115,15 +115,12 @@ async function send2FACode(phone: string, code: number, codeMsg: string) {
   }
 
   // Set control to operator
-  console.log('lastUserConversation OK 1', lastUserConversation)
   const botControlData = {
     data_token: BOT_API_TOKEN,
     id: lastUserConversation.id,
     control: 'operator'
   }
-  console.log('lastUserConversation OK 2', lastUserConversation)
   const botControlEndpoint = endpoints.backend.control()
-  console.log('lastUserConversation OK 3', lastUserConversation)
   console.log('lastUserConversation pre-post', botControlEndpoint, botControlData)
   const botControlOperatorResult = await post(botControlEndpoint, botControlData)
   console.log('botControlOperatorResult', botControlOperatorResult)
