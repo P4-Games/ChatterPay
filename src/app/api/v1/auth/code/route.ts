@@ -5,7 +5,7 @@ import {
   getUserByPhone,
   updateUserCode,
   getLastConversacionUserId
-} from 'src/app/api/_data/data.-service'
+} from 'src/app/api/_data/data-service'
 import {
   BOT_API_URL,
   BOT_API_TOKEN,

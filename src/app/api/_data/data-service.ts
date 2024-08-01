@@ -14,7 +14,7 @@ const DB_CHATTERPAY_NAME: string = 'chatterpay'
 const SCHEMA_USERS: string = 'users'
 const SCHEMA_TRANSACTIONS: string = 'transactions'
 
-const DB_BOT_NAME: string = 'demo'
+const DB_BOT_NAME: string = 'chatterpay'
 const SCHEMA_USER_CONVERSATIONS: string = 'user_conversations'
 
 // ----------------------------------------------------------------------
