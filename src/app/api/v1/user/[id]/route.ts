@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-import { getUserByPhone } from 'src/app/api/_data/data.-service'
+import { getUserByPhone } from 'src/app/api/_data/data-service'
 
 import { IAccount } from 'src/types/account'
 
