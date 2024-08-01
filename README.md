@@ -56,12 +56,14 @@ PORT=3000
 NODE_ENV='development'
 APP_ENV='development'
 MONGODB='mongodb://localhost:27017'
+MONGODB_BOT='BOT mongo db url'
 BOT_API_TOKEN={api token}
+BOT_API_URL=http://localhost:3000
+BOT_API_WAPP_ENABLED=TRUE
 
 # client side
 NEXT_PUBLIC_USE_MOCK=true
 NEXT_PUBLIC_UI_URL=http://localhost:3000
-NEXT_PUBLIC_BOT_API_URL=http://localhost:3000
 NEXT_PUBLIC_ALLOWED_ORIGINS=http://localhost:3000
 ```
 

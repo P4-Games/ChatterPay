@@ -4,7 +4,7 @@ import axios from 'axios'
 import { useMemo, useEffect, useReducer, useCallback } from 'react'
 
 import { STORAGE_KEY_TOKEN } from 'src/config-global'
-import { post, fetcher, endpoints } from 'src/app/api/api-resolver'
+import { post, fetcher, endpoints } from 'src/app/api/_hooks/api-resolver'
 
 import { AuthContext } from './auth-context'
 import { jwtDecode, setSession, isValidToken } from './utils'
@@ -158,9 +158,10 @@ export function AuthProvider({ children }: Props) {
   }, [])
 
   // Generate whatsapp Code
-  const generateCode = useCallback(async (phone: string) => {
+  const generateCode = useCallback(async (phone: string, codeMsg: string) => {
     const data = {
-      phone
+      phone,
+      codeMsg
     }
 
     console.log('sent to phone', phone, endpoints.auth.code())

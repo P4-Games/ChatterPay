@@ -14,6 +14,17 @@ type IParams = {
   id: string
 }
 
+const defaultBalance = {
+  network: '',
+  token: '',
+  balance: 0,
+  balance_conv: {
+    usd: 0,
+    ars: 0,
+    brl: 0
+  }
+}
+
 // ----------------------------------------------------------------------
 
 export async function GET(request: Request, { params }: { params: IParams }) {
@@ -33,22 +44,13 @@ export async function GET(request: Request, { params }: { params: IParams }) {
     })
   }
 
+  // avoid slow context-user load issues
   if (params.id === 'none') {
-    // avoid slow context-user load issues
-    return NextResponse.json({
-      network: '',
-      token: '',
-      balance: 0,
-      balance_conv: {
-        usd: 0,
-        ars: 0,
-        brl: 0
-      }
-    })
+    return NextResponse.json([defaultBalance])
   }
 
   try {
-    let balances: IBalance[] = []
+    let balances: IBalance[] = [defaultBalance]
     if (USE_MOCK) {
       balances = _balances
     } else {

@@ -1,14 +1,21 @@
+import { ObjectId, Collection } from 'mongodb'
+
 import { IAccount } from 'src/types/account'
 import { ITransaction } from 'src/types/wallet'
+import { LastUserConversation } from 'src/types/chat'
 
 import { getClientPromise } from './mongo-connection'
+import { getClientPromiseBot } from './mongo-connection-bot'
 import { getObjectId, getFormattedId, updateOneCommon } from './mongo-utils'
 
 // ----------------------------------------------------------------------
 
-const DB_NAME: string = 'chatterpay'
+const DB_CHATTERPAY_NAME: string = 'chatterpay'
 const SCHEMA_USERS: string = 'users'
 const SCHEMA_TRANSACTIONS: string = 'transactions'
+
+const DB_BOT_NAME: string = 'demo'
+const SCHEMA_USER_CONVERSATIONS: string = 'user_conversations'
 
 // ----------------------------------------------------------------------
 
@@ -18,9 +25,19 @@ interface IAccountDB extends Omit<IAccount, 'id'> {
 interface ITransactionDB extends Omit<ITransaction, 'id'> {
   _id: any
 }
+
+interface UserConversation {
+  _id: ObjectId
+  channel_user_id: string
+  phone_number: string
+  last_message_ts: Date
+}
+
+// ----------------------------------------------------------------------
+
 export async function getUserByPhone(phone: string): Promise<IAccount | undefined> {
   const client = await getClientPromise()
-  const db = client.db(DB_NAME)
+  const db = client.db(DB_CHATTERPAY_NAME)
 
   // Intenta encontrar el número de teléfono completo
   let data: IAccountDB | null = await db.collection(SCHEMA_USERS).findOne({ phone_number: phone })
@@ -45,7 +62,7 @@ export async function getUserByPhone(phone: string): Promise<IAccount | undefine
 
 export async function getUserById(id: string): Promise<IAccount | undefined> {
   const client = await getClientPromise()
-  const db = client.db(DB_NAME)
+  const db = client.db(DB_CHATTERPAY_NAME)
 
   const data: IAccountDB | null = await db
     .collection(SCHEMA_USERS)
@@ -60,10 +77,10 @@ export async function getUserById(id: string): Promise<IAccount | undefined> {
   return user
 }
 
-export async function updateUserCode(userId: string, code: number): Promise<boolean> {
+export async function updateUserCode(userId: string, code: number | undefined): Promise<boolean> {
   const setValue = { $set: { code } }
   const result = await updateOneCommon(
-    DB_NAME,
+    DB_CHATTERPAY_NAME,
     SCHEMA_USERS,
     { _id: getObjectId(userId) },
     setValue
@@ -73,7 +90,7 @@ export async function updateUserCode(userId: string, code: number): Promise<bool
 
 export async function geUserTransactions(wallet: string): Promise<ITransaction[] | undefined> {
   const client = await getClientPromise()
-  const db = client.db(DB_NAME)
+  const db = client.db(DB_CHATTERPAY_NAME)
 
   const cursor: ITransactionDB[] | null = await db
     .collection(SCHEMA_TRANSACTIONS)
@@ -143,4 +160,51 @@ export async function geUserTransactions(wallet: string): Promise<ITransaction[]
   }))
 
   return transactions
+}
+
+export async function getLastConversacionUserId(
+  channel_user_id: string
+): Promise<LastUserConversation> {
+  try {
+    const client = await getClientPromiseBot()
+    const db = await client.db(DB_BOT_NAME)
+    const collection = (await db.collection(
+      SCHEMA_USER_CONVERSATIONS
+    )) as unknown as Collection<UserConversation>
+
+    // Obtiene los últimos 8 caracteres del número de teléfono
+    const last8Chars = channel_user_id.slice(-8)
+    const partialPhoneRegex = new RegExp(last8Chars, 'i')
+    console.log('looking for channel_user_id', partialPhoneRegex)
+
+    const pipeline = [
+      {
+        $match: {
+          channel_user_id: { $regex: partialPhoneRegex }
+        }
+      },
+      {
+        $sort: { last_message_ts: -1 }
+      },
+      {
+        $limit: 1
+      },
+      {
+        $project: {
+          _id: 0,
+          id: { $toString: '$_id' },
+          channel_user_id: 1,
+          phone_number: {
+            $ifNull: ['$phone_number', '$channel_user_id']
+          }
+        }
+      }
+    ]
+
+    const result = await collection.aggregate<LastUserConversation>(pipeline).toArray()
+    return result[0] || null
+  } catch (ex) {
+    console.error('Error in getLastConversacionUserId', ex)
+    throw ex
+  }
 }

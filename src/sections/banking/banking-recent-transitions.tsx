@@ -1,16 +1,16 @@
 import Box from '@mui/material/Box'
 import Table from '@mui/material/Table'
-import Button from '@mui/material/Button'
 import Avatar from '@mui/material/Avatar'
+import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
 import MenuItem from '@mui/material/MenuItem'
 import TableRow from '@mui/material/TableRow'
 import { Link, Skeleton } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
-import TableCell from '@mui/material/TableCell'
 import TableBody from '@mui/material/TableBody'
-import IconButton from '@mui/material/IconButton'
+import TableCell from '@mui/material/TableCell'
 import CardHeader from '@mui/material/CardHeader'
+import IconButton from '@mui/material/IconButton'
 import Card, { CardProps } from '@mui/material/Card'
 import ListItemText from '@mui/material/ListItemText'
 import Badge, { badgeClasses } from '@mui/material/Badge'
@@ -27,8 +27,14 @@ import { TRX_EXPLORER } from 'src/config-global'
 import Label from 'src/components/label'
 import Iconify from 'src/components/iconify'
 import Scrollbar from 'src/components/scrollbar'
-import { TableHeadCustom } from 'src/components/table'
 import CustomPopover, { usePopover } from 'src/components/custom-popover'
+import {
+  useTable,
+  emptyRows,
+  TableNoData,
+  TableEmptyRows,
+  TableHeadCustom
+} from 'src/components/table'
 
 import { ITransaction } from 'src/types/wallet'
 
@@ -37,6 +43,7 @@ import { ITransaction } from 'src/types/wallet'
 interface Props extends CardProps {
   title?: string
   subheader?: string
+  isLoading: boolean
   tableData: ITransaction[]
   tableLabels: any
   userWallet: string
@@ -46,12 +53,19 @@ export default function BankingRecentTransitions({
   title,
   subheader,
   tableLabels,
+  isLoading,
   tableData,
   userWallet,
   ...other
 }: Props) {
   const mdUp = useResponsive('up', 'md')
   const { t } = useTranslate()
+  const table = useTable()
+
+  const denseHeight = table.dense ? 56 : 56 + 20
+  const notFound = !tableData || !tableData.length
+
+  // ----------------------------------------------------------------------
 
   const renderTitle = <CardHeader title={title} subheader={subheader} sx={{ mb: 2 }} />
 
@@ -70,6 +84,13 @@ export default function BankingRecentTransitions({
                 mdUp={mdUp}
               />
             ))}
+
+            <TableEmptyRows
+              height={denseHeight}
+              emptyRows={emptyRows(table.page, table.rowsPerPage, tableData.length)}
+            />
+
+            <TableNoData notFound={notFound} />
           </TableBody>
         </Table>
       </Scrollbar>
@@ -130,7 +151,7 @@ export default function BankingRecentTransitions({
     <Card {...other}>
       {renderTitle}
 
-      {tableData.length ? renderConent : renderContentSkeleton}
+      {isLoading ? renderContentSkeleton : renderConent}
 
       <Divider sx={{ borderStyle: 'dashed' }} />
       {renderActions}

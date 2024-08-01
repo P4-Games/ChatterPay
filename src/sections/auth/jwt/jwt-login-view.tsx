@@ -45,8 +45,8 @@ export default function JwtLoginView() {
 
   const LoginSchema = Yup.object().shape({
     phone: Yup.string()
+      .max(12, t('common.must-be-max').replace('{MAX_DIGITS}', '12'))
       .matches(/^[0-9]+$/, t('common.must-be-numeric'))
-      .max(10, t('common.must-be-max-ten'))
       .required(t('common.required')),
     // @ts-ignore
     code: Yup.string().when('codeSent', {
@@ -84,7 +84,7 @@ export default function JwtLoginView() {
         startCountdown()
         setErrorMsg('')
         setValue('code', '')
-        await generateCode?.(`${selectedCountry}${data.phone}`)
+        await generateCode?.(`${selectedCountry}${data.phone}`, t('login.msg.code-bot'))
         enqueueSnackbar(`${t('login.msg.code-sent')} ${phone.toString()}`, { variant: 'info' })
         setCodeSent(true)
       } catch (ex) {
