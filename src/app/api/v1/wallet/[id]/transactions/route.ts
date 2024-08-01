@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 
 import { USE_MOCK } from 'src/config-global'
 import { _transactions } from 'src/app/api/_data/_mock'
-import { geUserTransactions } from 'src/app/api/_data/data.-service'
+import { geUserTransactions } from 'src/app/api/_data/data-service'
 
 import { IErrorResponse } from 'src/types/api'
 import { ITransaction } from 'src/types/wallet'

@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 import { NextResponse } from 'next/server'
 
 import { JWT_SECRET } from 'src/config-global'
-import { getUserByPhone, updateUserCode } from 'src/app/api/_data/data.-service'
+import { getUserByPhone, updateUserCode } from 'src/app/api/_data/data-service'
 
 import { IAccount } from 'src/types/account'
 // ----------------------------------------------------------------------
