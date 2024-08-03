@@ -35,6 +35,7 @@ export const TRX_EXPLORER = 'https://sepolia.etherscan.io'
 export const STORAGE_KEY_TOKEN = 'accessToken'
 export const STORAGE_KEY_SETTINGS = 'settings'
 export const JWT_SECRET = '65OcvHlcxqkBhniJBRtSc1HkzgjoKt2GmL2vV3COdw1BbKPs2etUxnVlynJUT1I'
+export const API3_ENABLED = (process.env.API3_ENABLED || 'false') === 'true'
 
 export const defaultBalance = {
   network: '',
