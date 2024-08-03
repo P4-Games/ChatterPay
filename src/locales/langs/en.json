@@ -111,9 +111,9 @@
           "title": "OpenAI",
           "description": "AI platform that understands and generates human-like text. Powers advanced language processing and learning capabilities."
         },
-        "the-graph": {
-          "title": "The Graph",
-          "description": "Protocol for easily finding and accessing blockchain data. Simplifies data access for developers and users alike."
+        "api3": {
+          "title": "api3",
+          "description": "A decentralized data oracle network that facilitates direct integration of APIs with blockchain applications."
         },
         "account-abstraction": {
           "title": "Account Abstraction",
