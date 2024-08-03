@@ -74,11 +74,16 @@ PORT=3000
 # server-side
 NODE_ENV='development'
 APP_ENV='development'
-MONGODB='mongodb://localhost:27017'
-MONGODB_BOT='BOT mongo db url'
 BOT_API_TOKEN={api token}
 BOT_API_URL=http://localhost:3000
 BOT_API_WAPP_ENABLED=TRUE
+MONGODB='mongodb://localhost:27017'
+MONGODB_BOT='BOT mongo db url'
+NODE_PROVIDER_SEPOLIA_URL='https://sepolia.infura.io/v3/YOUR_API_KEY'
+NODE_PROVIDER_MUMBAI_URL='https://stylish-dawn-bush.bsc-testnet.quiknode.pro/YOUR_API_KEY/'
+NODE_PROVIDER_SCROLL_URL='https://lb.drpc.org/ogrpc?network=scroll-sepolia&dkey=YOUR_API_KEY'
+HANDLE_VERCEL_FREE_PLAN_TIMEOUT=true
+API3_ENABLED=false
 
 # client side
 NEXT_PUBLIC_USE_MOCK=true
