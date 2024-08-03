@@ -36,10 +36,21 @@ export const STORAGE_KEY_TOKEN = 'accessToken'
 export const STORAGE_KEY_SETTINGS = 'settings'
 export const JWT_SECRET = '65OcvHlcxqkBhniJBRtSc1HkzgjoKt2GmL2vV3COdw1BbKPs2etUxnVlynJUT1I'
 
+export const defaultBalance = {
+  network: '',
+  token: '',
+  balance: 0,
+  balance_conv: {
+    usd: 0,
+    ars: 0,
+    brl: 0
+  }
+}
+
 export const tokensByNetwork: { [networkKey: string]: Network } = {
   scroll_testnet: {
     config: {
-      enabled: 'true',
+      enabled: 'false',
       chainName: 'Scroll-Sepolia',
       chainId: '8292f', // '534351'
       chainCurrency: 'ETH',
@@ -72,7 +83,7 @@ export const tokensByNetwork: { [networkKey: string]: Network } = {
   },
   mumbai: {
     config: {
-      enabled: 'true',
+      enabled: 'false',
       chainName: 'mumbai',
       chainId: '0x13881',
       chainCurrency: 'MATIC',
@@ -123,15 +134,21 @@ export const tokensByNetwork: { [networkKey: string]: Network } = {
         decimals: 6
       },
       usdt: {
-        enabled: 'false',
+        enabled: 'true',
         token: 'USDT',
         contract: '0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0',
         decimals: 6
       },
       dai: {
-        enabled: 'false',
+        enabled: 'true',
         token: 'DAI',
         contract: '0xFF34B3d4Aee8ddCd6F9AFFFB6Fe49bD371b8a357',
+        decimals: 18
+      },
+      wbtc: {
+        enabled: 'true',
+        token: 'WBTC',
+        contract: '0x931a39323cbed457e77c52a7586e7732e3e4dbbb',
         decimals: 18
       }
     }
