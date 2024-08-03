@@ -41,8 +41,13 @@ export async function getConversationRates(): Promise<any> {
 
 async function getBalances(walletAddress: string): Promise<any[]> {
   const coinGeckoRates = await getCoingeckoConversionRates()
-  const api3Rates = await getApi3ConversationRates()
-  console.log('rates', walletAddress, coinGeckoRates, api3Rates)
+  const api3Rates = await getApi3ConversationRates() // check inside only if enabled!
+
+  console.info(`Wallet ${walletAddress}, coinGecko Rates:`, coinGeckoRates)
+  console.info(
+    `Wallet ${walletAddress}, api3 enabled?: ${API3_ENABLED.toString()}, api3 Rates:`,
+    api3Rates
+  )
 
   if (!coinGeckoRates) {
     throw new Error('Could not fetch conversion rates')
@@ -51,6 +56,7 @@ async function getBalances(walletAddress: string): Promise<any[]> {
   const balances: any[] = []
   const tokenAbi = ['function balanceOf(address) view returns (uint256)']
 
+  // Code that need to be refactored by performance
   await Promise.all(
     Object.entries(tokensByNetwork)
       .filter(([networkKey, network]) => network.config.enabled === 'true')
@@ -60,15 +66,18 @@ async function getBalances(walletAddress: string): Promise<any[]> {
         const ethBalanceFormatted = parseFloat(ethers.formatUnits(ethBalance, 18))
         const ethRateCoinGecko = getRateByKey(coinGeckoRates, 'eth')
         const ethRateApi3 = getRateByKey(api3Rates, 'eth')
+        const ethRateApi3Usd = parseFloat(ethers.formatUnits(ethRateApi3.usd, 18)) // API3: no rate in ARS or BRL
+
+        // console.log('ethBalance, ethBalanceFormatted, ethRateCoinGecko.usd, ethBalanceFormatted*ethRateCoinGecko.usd' , ethBalance, ethBalanceFormatted, ethRateCoinGecko.usd, ethRateCoinGecko.usd * ethBalanceFormatted)
 
         balances.push({
           network: network.config.chainName,
           token: network.config.chainCurrency,
           balance: ethers.formatUnits(ethBalance, 18),
           balance_conv: {
-            usd: (API3_ENABLED ? ethRateApi3.usd : ethRateCoinGecko.usd) * ethBalanceFormatted,
-            ars: ethRateCoinGecko.ars * ethBalanceFormatted, // API3: no rate in ARS
-            brl: ethRateCoinGecko.brl * ethBalanceFormatted // API3: no rate in BRL
+            usd: (API3_ENABLED ? ethRateApi3Usd : ethRateCoinGecko.usd) * ethBalanceFormatted,
+            ars: ethRateCoinGecko.ars * ethBalanceFormatted,
+            brl: ethRateCoinGecko.brl * ethBalanceFormatted
           }
         })
 
@@ -87,7 +96,9 @@ async function getBalances(walletAddress: string): Promise<any[]> {
                   ethers.formatUnits(tokenBalance, token.decimals)
                 )
                 const tokenRateCoinGecko = getRateByKey(coinGeckoRates, token.token)
-                const tokenRateApi3 = getRateByKey(api3Rates, 'eth')
+                const tokenRateApi3 = getRateByKey(api3Rates, token.token)
+                const tokenRateApi3Usd = parseFloat(ethers.formatUnits(tokenRateApi3.usd, 18)) // API3: no rate in ARS or BRL
+                // console.log('tokenRateApi3, tokenRateApi3Usd, token', tokenRateApi3, tokenRateApi3Usd, token.token)
 
                 balances.push({
                   network: network.config.chainName,
@@ -95,10 +106,11 @@ async function getBalances(walletAddress: string): Promise<any[]> {
                   balance: ethers.formatUnits(tokenBalance, token.decimals),
                   balance_conv: {
                     usd:
-                      (API3_ENABLED ? tokenRateApi3.usd : tokenRateCoinGecko.usd) *
-                      tokenBalanceFormatted,
-                    ars: tokenRateCoinGecko.ars * tokenBalanceFormatted, // API3: no rate in ARS
-                    brl: tokenRateCoinGecko.brl * tokenBalanceFormatted // API3: no rate in BRL
+                      (API3_ENABLED && token.api3Exists
+                        ? tokenRateApi3Usd
+                        : tokenRateCoinGecko.usd) * tokenBalanceFormatted,
+                    ars: tokenRateCoinGecko.ars * tokenBalanceFormatted,
+                    brl: tokenRateCoinGecko.brl * tokenBalanceFormatted
                   }
                 })
               } catch (error) {
@@ -147,7 +159,7 @@ function getRateByKey(rates: any, rateKey: string): any {
     case 'wbtc':
       return rates['wrapped-bitcoin']
     default:
-      return 0
+      return { usd: 0, ars: 0, brl: 0 }
   }
 }
 
@@ -216,8 +228,23 @@ async function getCoingeckoConversionRates() {
     const response = await axios.get(ratesConvCompleteUrl)
     return response.data
   } catch (error) {
-    console.error('Error fetching conversion rates:', error)
-    return null
+    return {
+      ethereum: {
+        usd: 0,
+        ars: 0,
+        brl: 0
+      },
+      'wrapped-bitcoin': {
+        usd: 0,
+        ars: 0,
+        brl: 0
+      },
+      'usd-coin': {
+        usd: 0,
+        ars: 0,
+        brl: 0
+      }
+    }
   }
 }
 

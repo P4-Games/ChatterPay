@@ -64,18 +64,21 @@ export const tokensByNetwork: { [networkKey: string]: Network } = {
     tokens: {
       usdc: {
         enabled: 'false',
+        api3Exists: false,
         token: 'USDC',
         contract: '0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4',
         decimals: 6
       },
       usdt: {
         enabled: 'false',
+        api3Exists: false,
         token: 'USDT',
         contract: '0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df',
         decimals: 6
       },
       dai: {
         enabled: 'false',
+        api3Exists: false,
         token: 'DAI',
         contract: '0xcA77eB3fEFe3725Dc33bccB54eDEFc3D9f764f97',
         decimals: 18
@@ -97,18 +100,21 @@ export const tokensByNetwork: { [networkKey: string]: Network } = {
     tokens: {
       usdc: {
         enabled: 'false',
+        api3Exists: false,
         token: 'USDC',
         contract: '0xe6b8a5CF854791412c1f6EFC7CAf629f5Df1c747 ',
         decimals: 6
       },
       usdt: {
         enabled: 'false',
+        api3Exists: false,
         token: 'USDT',
         contract: '',
         decimals: 6
       },
       dai: {
         enabled: 'false',
+        api3Exists: false,
         token: 'DAI',
         contract: '0xEa4c35c858E15Cef77821278A88435dE57bc8707',
         decimals: 18
@@ -130,30 +136,30 @@ export const tokensByNetwork: { [networkKey: string]: Network } = {
     tokens: {
       usdc: {
         enabled: 'true',
+        api3Exists: true,
         token: 'USDC',
         contract: '0x94a9D9AC8a22534E3FaCa9F4e7F2E2cf85d5E4C8',
-        api3Proxy: '0xe8a3E41e620fF07765651a35334c9B6578790ECF',
         decimals: 6
       },
       usdt: {
         enabled: 'true',
+        api3Exists: false,
         token: 'USDT',
         contract: '0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0',
-        api3Proxy: '', // not available
         decimals: 6
       },
       dai: {
-        enabled: 'false',
+        enabled: 'true',
+        api3Exists: false,
         token: 'DAI',
         contract: '0xFF34B3d4Aee8ddCd6F9AFFFB6Fe49bD371b8a357',
-        api3Proxy: '', // not available
         decimals: 18
       },
       wbtc: {
         enabled: 'true',
+        api3Exists: true,
         token: 'WBTC',
         contract: '0x931a39323cbed457e77c52a7586e7732e3e4dbbb',
-        api3Proxy: '0xF33979e0751687500F4dB02B9669837744d4f478',
         decimals: 18
       }
     }
