@@ -12,29 +12,49 @@ import {
 import { IBalance, IBalances, CurrencyKey } from 'src/types/wallet'
 
 import { _balances } from './_mock'
+import { cache } from './cache-connection'
 import TokenPriceFeedsAbi from './_abis/TokenPriceFeedsAbi.json'
 
 // ---------------------------------------------------------------------------------------------
 
 export async function getBalancesWithTotals(walletAddress: string): Promise<IBalances> {
   let balances: IBalance[] = [defaultBalance]
+  const cacheKey = `getBalancesWithTotals.${walletAddress}`
 
   if (USE_MOCK) {
     balances = _balances
   } else {
+    const fromCache = cache.get(cacheKey) as IBalances
+
+    if (fromCache) {
+      console.info('cache:', cacheKey)
+      return fromCache
+    }
+
     balances = await getBalances(walletAddress)
   }
 
   const totals: Record<CurrencyKey, number> = calculateTotals(balances)
-
-  return {
+  const result = {
     balances,
     totals
   }
+  cache.set(cacheKey, result, 60) // 1 minute
+
+  return result
 }
 
 export async function getConversationRates(): Promise<any> {
-  return getCoingeckoConversionRates()
+  const cacheKey = `getConversationRates`
+  const fromCache = cache.get(cacheKey)
+
+  if (fromCache) {
+    return fromCache
+  }
+
+  const result = await getCoingeckoConversionRates()
+  cache.set(cacheKey, result)
+  return result
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -226,6 +246,7 @@ async function getCoingeckoConversionRates() {
     const ratesConvResultCurrencies = 'usd,ars,brl'
     const ratesConvCompleteUrl = `${ratesConvBaseUrl}?ids=${ratesConvTokensIds}&vs_currencies=${ratesConvResultCurrencies}`
     const response = await axios.get(ratesConvCompleteUrl)
+
     return response.data
   } catch (error) {
     return {
