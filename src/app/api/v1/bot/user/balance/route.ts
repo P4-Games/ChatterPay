@@ -12,6 +12,9 @@ type IParams = {
   id: string
 }
 
+// Specific endpoint with query params to be called by a Bot function-
+// (for now, the bot function is not enabled to call endpoints with path params)
+
 export async function GET(request: Request, { params }: { params: IParams }) {
   const url = new URL(request.url)
   const id = url.searchParams.get('id')
