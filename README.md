@@ -1,50 +1,69 @@
-![](https://img.shields.io/badge/NextJs-informational?style=flat&logo=next&logoColor=white&color=6aa6f8)
+![](https://img.shields.io/badge/Next.js-informational?style=flat&logo=next.js&logoColor=white&color=6aa6f8)
 ![](https://img.shields.io/badge/Typescript-informational?style=flat&logo=typescript&logoColor=white&color=6aa6f8)
 ![](https://img.shields.io/badge/scss-informational?style=flat&logo=scss&logoColor=white&color=6aa6f8)
+![](https://img.shields.io/badge/mui-informational?style=flat&logo=mui&logoColor=white&color=6aa6f8)
+![](https://img.shields.io/badge/react.js-informational?style=flat&logo=react&logoColor=white&color=6aa6f8)
 
 # ChatterPay
 
-Crypto just a message away!
 
-# Introduction
+Chatterpay is a Wallet for WhatsApp that integrates AI and Account Abstraction, enabling any user to use blockchain easily and securely without technical knowledge.
 
-## Build With
+> Built for: [Level Up Hackathon - Ethereum Argentina 2024](https://ethereumargentina.org/) 
 
-- Framework - [Next.js 14](https://nextjs.org/14)
-- Language - [TypeScript](https://www.typescriptlang.org)
-- database - [mongodb](https://www.mongodb.com)
-- Styling - [CSS]
-- Components - [MUI v5](https://mui.com/)
-- State Management - [React Context API](https://react.dev/reference/react/useContext)
-- Authentication - cellphone + MFA whatsapp
-- Authorization - [jwt](https://jwt.io/)
-- Routing - [React router v6](https://reactrouter.com/en/main/start/overview)
-- Linting - [ESLint](https://eslint.org)
-- Formatting - [Prettier](https://prettier.io)
+> Build By: [mpefaur](https://github.com/mpefaur), [tomasfrancizco](https://github.com/tomasfrancizco), [TomasDmArg](https://github.com/TomasDmArg), [gonzageraci](https://github.com/gonzageraci),  [dappsar](https://github.com/dappsar)
 
-## Live demo
 
-- <https://chatterpay.vercel.app>
 
-# Requirements
+__Components__:
 
-## Software
+- Landing Page ([product](https://chatterpay-front-ylswtey2za-uc.a.run.app/), [source code](https://github.com/P4-Games/ChatterPay))  (this Repo)
+- User Dashboard Website ([product](https://chatterpay-front-ylswtey2za-uc.a.run.app/dashboard), [source code](https://github.com/P4-Games/ChatterPay))  (this Repo)
+- Backend API ([source code](https://github.com/P4-Games/ChatterPay-Backend)) 
+- Smart Contracts ([source code](https://github.com/P4-Games/ChatterPay-SmartContracts))
+- Bot AI (Chatizalo) ([product](https://chatizalo.com/))
+- Bot AI Admin Dashboard Website ([product](https://app.chatizalo.com/))
 
-This App requires:
 
+# About this repo
+
+This repository contains the source code for the landing page and user dashboard.
+
+__Build With__:
+
+- Framework: [Next.js 14](https://nextjs.org/14)
+- Language: [TypeScript](https://www.typescriptlang.org)
+- database: [mongodb](https://www.mongodb.com)
+- Styling: [CSS]
+- Components: [MUI v5](https://mui.com/)
+- State Management: [React Context API](https://react.dev/reference/react/useContext)
+- Authentication: cellphone + MFA whatsapp
+- Authorization: [jwt](https://jwt.io/)
+- Routing: [React router v6](https://reactrouter.com/en/main/start/overview)
+- Linting: [ESLint](https://eslint.org)
+- Formatting: [Prettier](https://prettier.io)
+
+# Getting Started
+
+__1. Install these Requirements__:
+
+- [git](https://git-scm.com/)
 - [nvm](https://github.com/nvm-sh/nvm) (allows you to quickly install and use different versions of node via the command line.)
 - node js & npm (insalled with nvm)
-- [mongo db](https://www.mongodb.com/docs/manual/installation/) (It will be used for endpoints that are consumed from the discord bot)
+- [mongoDb](https://www.mongodb.com/docs/manual/installation/)
 
-## Environment variables
 
-Create a .env file running the command in terminal
+__2. Clone repository__:
 
-```sh
-touch .env
+```bash
+   git clone https://github.com/P4-Games/ChatterPay
+   cd ChatterPay
 ```
 
-The environment variables bellow needs to be set in the .env file when project is running locally:
+__3. Complete .env file__: 
+
+Create a .env file in the root folder and populate it with the following keys and values:
+
 
 ```sh
 SKIP_PREFLIGHT_CHECK=true
@@ -67,9 +86,8 @@ NEXT_PUBLIC_UI_URL=http://localhost:3000
 NEXT_PUBLIC_ALLOWED_ORIGINS=http://localhost:3000
 ```
 
-## Quick commands
+__4. Install Dependencies__:
 
-### Install dependencies
 
 ```sh
 - yarn install # with yarn
@@ -89,19 +107,17 @@ yarn config delete proxy
 yarn --network-timeout 100000
 ```
 
-### Run App
+__5. Start App__:
 
 ```sh
 npm run dev / yarn dev
 ```
 
-### Use App
+Then, open brower in: `http://localhost:3000`.
 
-```sh
-Open browser in http://localhost:3000/
-```
+# Additional Info
 
-# Contribution
+## Contribution
 
 Thank you for considering helping out with the source code! We welcome contributions from anyone on the internet, and are grateful for even the smallest of fixes!
 
@@ -115,6 +131,6 @@ Please make sure your contributions adhere to our [coding guidelines](./.doc/dev
 
 see more in: <https://github.com/P4-Games/chatterPay/graphs/contributors>
 
-# Maintenance
+## Maintenance
 
 - [Maintenance Scripts](./.doc/maintenance/maintenance-scripts.md)
