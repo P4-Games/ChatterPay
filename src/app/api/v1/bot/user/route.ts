@@ -1,10 +1,8 @@
 import { NextResponse } from 'next/server'
 
 import { getUserByPhone } from 'src/app/api/_data/data-service'
-import { getBalancesWithTotals } from 'src/app/api/_data/blk-service'
 
 import { IAccount } from 'src/types/account'
-import { IBalances } from 'src/types/wallet'
 
 // ----------------------------------------------------------------------
 
@@ -34,19 +32,7 @@ export async function GET(request: Request, { params }: { params: IParams }) {
     }
 
     const user: IAccount | undefined = await getUserByPhone(id)
-
-    if (!user) {
-      return new NextResponse(
-        JSON.stringify({ code: 'USER_NOT_FOUND', error: 'user not found with that phone number' }),
-        {
-          status: 404,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      )
-    }
-
-    const balances: IBalances = await getBalancesWithTotals(user.wallet)
-    return NextResponse.json(balances)
+    return NextResponse.json(user)
   } catch (ex) {
     console.error(ex)
     return new NextResponse(JSON.stringify({ error: 'Error getting dummy' }), {
