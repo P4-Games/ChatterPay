@@ -35,8 +35,6 @@ const StyledPolygon = styled('div')<StyledPolygonProps>(({ anchor = 'top', theme
   ...(anchor === 'top' && {
     top: -1,
     transform: 'scale(-1, -1)',
-    // alpha(theme.palette.grey[500], 0.04)
-    // backgroundColor: theme.palette.mode === 'light' ? theme.palette.background.default : theme.palette.grey[900]
     backgroundColor:
       theme.palette.mode === 'light'
         ? alpha(theme.palette.grey[100], 1)
@@ -44,7 +42,6 @@ const StyledPolygon = styled('div')<StyledPolygonProps>(({ anchor = 'top', theme
   }),
   ...(anchor === 'bottom' && {
     bottom: -1,
-    // alpha(theme.palette.grey[500], 0.04)
     backgroundColor:
       theme.palette.mode === 'light'
         ? alpha(theme.palette.grey[100], 1)

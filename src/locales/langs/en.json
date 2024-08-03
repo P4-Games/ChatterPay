@@ -86,10 +86,10 @@
       }
     },
     "request-demo": {
-      "tag": "Pruébalo",
-      "title": "Solicitar una Demostración",
-      "description1": "Contacta a nuestro equipo para una demostración del producto.",
-      "description2": "Es la billetera que necesitas para entrar al mundo Web3."
+      "tag": "Try it",
+      "title": "Request a Demo",
+      "description1": "Contact our team for a product demonstration.",
+      "description2": "It's the wallet you need to enter the Web3 world."
     },
     "tech": {
       "tag": "Tech",
