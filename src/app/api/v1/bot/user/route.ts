@@ -32,6 +32,11 @@ export async function GET(request: Request, { params }: { params: IParams }) {
     }
 
     const user: IAccount | undefined = await getUserByPhone(id)
+    
+    if (user) {
+      delete user.code
+    }
+
     return NextResponse.json(user)
   } catch (ex) {
     console.error(ex)
