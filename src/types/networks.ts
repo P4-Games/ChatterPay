@@ -1,5 +1,6 @@
 export interface Token {
   contract: string
+  api3Proxy?: string
   enabled: string
   token: string
   decimals: number

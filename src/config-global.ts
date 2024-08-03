@@ -132,24 +132,28 @@ export const tokensByNetwork: { [networkKey: string]: Network } = {
         enabled: 'true',
         token: 'USDC',
         contract: '0x94a9D9AC8a22534E3FaCa9F4e7F2E2cf85d5E4C8',
+        api3Proxy: '0xe8a3E41e620fF07765651a35334c9B6578790ECF',
         decimals: 6
       },
       usdt: {
         enabled: 'true',
         token: 'USDT',
         contract: '0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0',
+        api3Proxy: '', // not available
         decimals: 6
       },
       dai: {
-        enabled: 'true',
+        enabled: 'false',
         token: 'DAI',
         contract: '0xFF34B3d4Aee8ddCd6F9AFFFB6Fe49bD371b8a357',
+        api3Proxy: '', // not available
         decimals: 18
       },
       wbtc: {
         enabled: 'true',
         token: 'WBTC',
         contract: '0x931a39323cbed457e77c52a7586e7732e3e4dbbb',
+        api3Proxy: '0xF33979e0751687500F4dB02B9669837744d4f478',
         decimals: 18
       }
     }
