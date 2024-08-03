@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 
 import { defaultBalance } from 'src/config-global'
-import { getBalances } from 'src/app/api/_data/blk-service'
+import { getBalancesWithTotals } from 'src/app/api/_data/blk-service'
 
 import { IBalances } from 'src/types/wallet'
 import { IErrorResponse } from 'src/types/api'
@@ -37,7 +37,7 @@ export async function GET(request: Request, { params }: { params: IParams }) {
   }
 
   try {
-    const balances: IBalances = await getBalances(params.id)
+    const balances: IBalances = await getBalancesWithTotals(params.id)
     return NextResponse.json(balances)
   } catch (ex) {
     console.error(ex)
