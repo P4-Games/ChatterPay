@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 
-import { getBalances } from 'src/app/api/_data/blk-service'
 import { getUserByPhone } from 'src/app/api/_data/data-service'
+import { getBalancesWithTotals } from 'src/app/api/_data/blk-service'
 
 import { IAccount } from 'src/types/account'
 import { IBalances } from 'src/types/wallet'
@@ -13,7 +13,9 @@ type IParams = {
 }
 
 export async function GET(request: Request, { params }: { params: IParams }) {
-  const { id } = params
+  const url = new URL(request.url)
+  const id = url.searchParams.get('id')
+
   try {
     if (!id) {
       return new NextResponse(
@@ -40,7 +42,7 @@ export async function GET(request: Request, { params }: { params: IParams }) {
       )
     }
 
-    const balances: IBalances = await getBalances(user.wallet)
+    const balances: IBalances = await getBalancesWithTotals(user.wallet)
     return NextResponse.json(balances)
   } catch (ex) {
     console.error(ex)

@@ -9,13 +9,13 @@ import { _balances } from './_mock'
 
 // ---------------------------------------------------------------------------------------------
 
-export async function getBalances(walletAddress: string): Promise<IBalances> {
+export async function getBalancesWithTotals(walletAddress: string): Promise<IBalances> {
   let balances: IBalance[] = [defaultBalance]
 
   if (USE_MOCK) {
     balances = _balances
   } else {
-    balances = await getBalancesInternal(walletAddress)
+    balances = await getBalances(walletAddress)
   }
 
   const balancesWithConversion: IBalance[] = await convertBalancesToUSD(balances)
@@ -29,7 +29,7 @@ export async function getBalances(walletAddress: string): Promise<IBalances> {
 
 // ---------------------------------------------------------------------------------------------
 
-async function getBalancesInternal(walletAddress: string): Promise<any[]> {
+async function getBalances(walletAddress: string): Promise<any[]> {
   const balances: any[] = []
   const tokenAbi = ['function balanceOf(address) view returns (uint256)']
 
@@ -93,9 +93,10 @@ function removeQuotes(text: string): string {
 }
 
 async function convertBalancesToUSD(balances: IBalance[]): Promise<IBalance[]> {
-  const rates = await getConversionRates()
-  console.log(rates)
-  if (!rates) {
+  const ratesCoingecko = await getCoingeckoConversionRates()
+  // const ratesApi3 = await getApi3ConversationRates()
+
+  if (!ratesCoingecko) {
     throw new Error('Could not fetch conversion rates')
   }
 
@@ -103,19 +104,19 @@ async function convertBalancesToUSD(balances: IBalance[]): Promise<IBalance[]> {
     let conversionRates = { usd: 0, ars: 0, brl: 0 }
     switch (balance.token.toLowerCase()) {
       case 'usdc':
-        conversionRates = rates['usd-coin']
+        conversionRates = ratesCoingecko['usd-coin']
         break
       case 'usdt':
-        conversionRates = rates.tether
+        conversionRates = ratesCoingecko.tether
         break
       case 'eth':
-        conversionRates = rates.ethereum
+        conversionRates = ratesCoingecko.ethereum
         break
       case 'btc':
-        conversionRates = rates.bitcoin
+        conversionRates = ratesCoingecko.bitcoin
         break
       case 'wbtc':
-        conversionRates = rates['wrapped-bitcoin']
+        conversionRates = ratesCoingecko['wrapped-bitcoin']
         break
       default:
         conversionRates = { usd: 1, ars: 1, brl: 1 } // Assuming 1 for unknown tokens for simplicity
@@ -131,7 +132,7 @@ async function convertBalancesToUSD(balances: IBalance[]): Promise<IBalance[]> {
   })
 }
 
-async function getConversionRates() {
+async function getCoingeckoConversionRates() {
   try {
     const ratesConvBaseUrl = 'https://api.coingecko.com/api/v3/simple/price'
     const ratesConvTokensIds = 'usd-coin,tether,ethereum,bitcoin,wrapped-bitcoin'
