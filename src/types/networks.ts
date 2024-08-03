@@ -1,5 +1,6 @@
 export interface Token {
   contract: string
+  api3Exists: boolean
   enabled: string
   token: string
   decimals: number
