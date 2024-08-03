@@ -109,11 +109,11 @@
         },
         "openai": {
           "title": "OpenAI",
-          "description": "Plataforma de IA que compreende e gera texto semelhante ao humano. Impulsiona capacidades avançadas de processamento de linguagem e aprendizado."
+          "description": "Conecte APIs da web diretamente a aplicativos descentralizados."
         },
-        "the-graph": {
-          "title": "The Graph",
-          "description": "Protocolo para encontrar e acessar facilmente dados de blockchain. Simplifica o acesso a dados tanto para desenvolvedores quanto para usuários."
+        "api3": {
+          "title": "api3",
+          "description": "Uma rede de oráculos de dados descentralizada que facilita a integração direta de APIs com aplicativos de blockchain."
         },
         "account-abstraction": {
           "title": "Abstração de Conta",
