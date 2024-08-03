@@ -4,7 +4,6 @@ const { ethers, JsonRpcProvider } = require('ethers')
 
 // ------------------------------------------------------------------------
 
-const walletAddress = process.env.WALLET_ADDRESS
 const nodeProviderUrlSepolia = process.env.NODE_PROVIDER_SEPOLIA_URL
 const nodeProviderUrlPolygon = process.env.NODE_PROVIDER_MUMBAI_URL
 const nodeProviderUrlScroll = process.env.NODE_PROVIDER_SCROLL_URL
