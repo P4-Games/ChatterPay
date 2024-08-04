@@ -27,7 +27,7 @@ export async function getBalancesWithTotals(walletAddress: string): Promise<IBal
     const fromCache = cache.get(cacheKey) as IBalances
 
     if (fromCache) {
-      console.info('cache:', cacheKey)
+      console.info('from cache:', cacheKey)
       return fromCache
     }
 
@@ -37,7 +37,8 @@ export async function getBalancesWithTotals(walletAddress: string): Promise<IBal
   const totals: Record<CurrencyKey, number> = calculateTotals(balances)
   const result = {
     balances,
-    totals
+    totals,
+    wallet: walletAddress
   }
   cache.set(cacheKey, result, 60) // 1 minute
 
