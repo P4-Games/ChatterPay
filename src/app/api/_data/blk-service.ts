@@ -89,7 +89,7 @@ async function getBalances(walletAddress: string): Promise<any[]> {
         const ethRateApi3 = getRateByKey(api3Rates, 'eth')
         const ethRateApi3Usd = parseFloat(ethers.formatUnits(ethRateApi3.usd, 18)) // API3: no rate in ARS or BRL
 
-        // netowrk Main Token      
+        // netowrk Main Token
         balances.push({
           network: network.config.chainName,
           token: network.config.chainCurrency,
@@ -107,18 +107,19 @@ async function getBalances(walletAddress: string): Promise<any[]> {
         console.log(cutomTokens)
         if (cutomTokens && cutomTokens.balances) {
           const customTokenBalances = cutomTokens.balances[0]
+          const customTokenRateCoinGecko = getRateByKey(coinGeckoRates, 'usdt')
           balances.push({
             network: 'Scroll',
             token: customTokenBalances.token,
             balance: customTokenBalances.balance,
             balance_conv: {
-              usd: ethRateCoinGecko.usd * customTokenBalances.balance,
-              ars: ethRateCoinGecko.ars * customTokenBalances.balance,
-              brl: ethRateCoinGecko.brl * customTokenBalances.balance
+              usd: customTokenRateCoinGecko.usd * customTokenBalances.balance,
+              ars: customTokenRateCoinGecko.ars * customTokenBalances.balance,
+              brl: customTokenRateCoinGecko.brl * customTokenBalances.balance
             }
           })
         }
-  
+
         // ERC20 Tokens
         await Promise.all(
           Object.entries(network.tokens)
@@ -167,16 +168,15 @@ async function getBalances(walletAddress: string): Promise<any[]> {
 
 const fethCustomTokens = async (address: string) => {
   try {
-    const response = await axios.get(`https://chatterpay-back-ylswtey2za-uc.a.run.app/balance/${address}`)
+    const response = await axios.get(
+      `https://chatterpay-back-ylswtey2za-uc.a.run.app/balance/${address}`
+    )
     return response.data
   } catch (error) {
     console.error('Error fetching balance:', error)
     throw error
   }
 }
-
-
-
 
 async function getTokenBalance(
   tokenContract: ethers.Contract,
