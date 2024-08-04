@@ -19,7 +19,6 @@ import { useResponsive } from 'src/hooks/use-responsive'
 
 import { fNumber } from 'src/utils/format-number'
 
-import { useTranslate } from 'src/locales'
 import { EXPLORER_L1, EXPLORER_L2 } from 'src/config-global'
 
 import Iconify from 'src/components/iconify'
