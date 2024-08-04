@@ -51,7 +51,7 @@ export default function OverviewBankingView() {
           <BankingBalances
             title={t('balances.title')}
             tableData={
-              isLoadingBalances ? { balances: [], totals: { usd: 0, ars: 0, brl: 0 } } : balances
+              isLoadingBalances ? {wallet: '', balances: [], totals: { usd: 0, ars: 0, brl: 0 } } : balances
             }
           />
         </Grid>

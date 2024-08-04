@@ -43,7 +43,7 @@ export default function BankingBalances({
   const walletLinkL1 = `${EXPLORER_L1}/address/${tableData.wallet}`
   const walletLinkL2 = `${EXPLORER_L2}/address/${tableData.wallet}`
 
-  const { t } = useTranslate()
+  // const { t } = useTranslate()
 
   const mdUp = useResponsive('up', 'md')
   const [selectedCurrency, setSelectedCurrency] = useState<CurrencyKey>('usd')
