@@ -38,6 +38,8 @@ export async function GET(request: Request, { params }: { params: IParams }) {
 
   try {
     const balances: IBalances = await getBalancesWithTotals(params.id)
+    balances.wallet = params.id
+
     return NextResponse.json(balances)
   } catch (ex) {
     console.error(ex)

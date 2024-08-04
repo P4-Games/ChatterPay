@@ -3,12 +3,24 @@ import { useState } from 'react'
 import MenuItem from '@mui/material/MenuItem'
 import IconButton from '@mui/material/IconButton'
 import Card, { CardProps } from '@mui/material/Card'
-import { Stack, Select, Button, Typography, SelectChangeEvent } from '@mui/material'
+import {
+  Box,
+  Stack,
+  Button,
+  Select,
+  Tooltip,
+  Popover,
+  Typography,
+  SelectChangeEvent
+} from '@mui/material'
 
 import { useBoolean } from 'src/hooks/use-boolean'
 import { useResponsive } from 'src/hooks/use-responsive'
 
 import { fNumber } from 'src/utils/format-number'
+
+import { useTranslate } from 'src/locales'
+import { EXPLORER_L1, EXPLORER_L2 } from 'src/config-global'
 
 import Iconify from 'src/components/iconify'
 
@@ -28,12 +40,28 @@ export default function BankingBalances({
   tableData,
   ...other
 }: Props) {
+  const walletLinkL1 = `${EXPLORER_L1}/address/${tableData.wallet}`
+  const walletLinkL2 = `${EXPLORER_L2}/address/${tableData.wallet}`
+
+  // const { t } = useTranslate()
+
   const mdUp = useResponsive('up', 'md')
   const [selectedCurrency, setSelectedCurrency] = useState<CurrencyKey>('usd')
   const currency = useBoolean()
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const open = Boolean(anchorEl)
+  const id = open ? 'wallet-links-popover' : undefined
 
   const handleCurrencyChange = (event: SelectChangeEvent<CurrencyKey>) => {
     setSelectedCurrency(event.target.value as CurrencyKey)
+  }
+
+  const handleOpenPopover = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleClosePopover = () => {
+    setAnchorEl(null)
   }
 
   const renderTitle = (
@@ -42,6 +70,41 @@ export default function BankingBalances({
       <IconButton color='inherit' onClick={currency.onToggle} sx={{ opacity: 0.48 }}>
         <Iconify icon={currency.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
       </IconButton>
+      <IconButton onClick={handleOpenPopover}>
+        <Tooltip title='View Wallet Links' arrow>
+          <Iconify icon='eva:external-link-outline' />
+        </Tooltip>
+      </IconButton>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClosePopover}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left'
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left'
+        }}
+      >
+        <Box
+          sx={{
+            p: 2,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2
+          }}
+        >
+          <Button onClick={() => window.open(walletLinkL1, '_blank')} variant='contained'>
+            l1
+          </Button>
+          <Button onClick={() => window.open(walletLinkL2, '_blank')} variant='contained'>
+            l2
+          </Button>
+        </Box>
+      </Popover>
     </Stack>
   )
 

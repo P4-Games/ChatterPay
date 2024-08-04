@@ -46,6 +46,8 @@ export async function GET(request: Request, { params }: { params: IParams }) {
     }
 
     const balances: IBalances = await getBalancesWithTotals(user.wallet)
+    balances.wallet = user.wallet
+
     return NextResponse.json(balances)
   } catch (ex) {
     console.error(ex)

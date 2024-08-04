@@ -12,6 +12,7 @@ export type IBalance = {
 export type CurrencyKey = 'usd' | 'ars' | 'brl'
 
 export type IBalances = {
+  wallet: string
   balances: IBalance[]
   totals: Record<CurrencyKey, number>
 }
