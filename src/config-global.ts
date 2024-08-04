@@ -31,7 +31,8 @@ export const ALLOWED_ORIGINS = process.env.NEXT_PUBLIC_ALLOWED_ORIGINS || '*'
 
 // internal
 export const PATH_AFTER_LOGIN = paths.dashboard.root
-export const TRX_EXPLORER = 'https://l1sload-blockscout.scroll.io'
+export const EXPLORER_L1 = 'https://sepolia.etherscan.io'
+export const EXPLORER_L2 = 'https://l1sload-blockscout.scroll.io' // Scroll devnet Explorer
 export const STORAGE_KEY_TOKEN = 'accessToken'
 export const STORAGE_KEY_SETTINGS = 'settings'
 export const JWT_SECRET = '65OcvHlcxqkBhniJBRtSc1HkzgjoKt2GmL2vV3COdw1BbKPs2etUxnVlynJUT1I'

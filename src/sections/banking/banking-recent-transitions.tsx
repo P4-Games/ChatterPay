@@ -22,7 +22,7 @@ import { fNumber } from 'src/utils/format-number'
 import { fDate, fTime } from 'src/utils/format-time'
 
 import { useTranslate } from 'src/locales'
-import { TRX_EXPLORER } from 'src/config-global'
+import { EXPLORER_L2 } from 'src/config-global'
 
 import Label from 'src/components/label'
 import Iconify from 'src/components/iconify'
@@ -177,7 +177,7 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
   const message: string = `${
     trxReceive ? t('transactions.recieve-from') : t('transactions.send-to')
   } ${contact}`
-  const trxLink = `${TRX_EXPLORER}/tx/${row.trx_hash}`
+  const trxLink = `${EXPLORER_L2}/tx/${row.trx_hash}`
 
   const popover = usePopover()
 
