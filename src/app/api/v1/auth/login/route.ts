@@ -1,10 +1,9 @@
 import jwt from 'jsonwebtoken'
 import { NextResponse } from 'next/server'
-
-import { JWT_SECRET } from 'src/config-global'
 import { getUserByPhone, updateUserCode } from 'src/app/api/_data/data-service'
-
+import { JWT_SECRET } from 'src/config-global'
 import { IAccount } from 'src/types/account'
+
 // ----------------------------------------------------------------------
 
 export async function POST(req: any, res: any) {
@@ -48,11 +47,11 @@ export async function POST(req: any, res: any) {
     const data: any = {
       user: {
         id: user.id,
-        displayName: user.name,
-        wallet: user.wallet,
+        displayName: user.name || user.phone_number,
+        wallet: user.wallet || '',
         email: user.email || '',
-        photoURL: user.photo,
-        phoneNumber: user.phone_number
+        photoURL: user.photo || '/assets/images/avatars/generic_user.jpg',
+        phoneNumber: user.phone_number || ''
       },
       accessToken: generateAccessToken(user)
     }
