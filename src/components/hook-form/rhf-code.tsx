@@ -24,8 +24,13 @@ export default function RHFCode({ name, ...other }: RHFCodesProps) {
             gap={1.5}
             length={6}
             TextFieldsProps={{
+              type: 'number',
+              inputProps: {
+                inputMode: 'numeric',
+                pattern: '[0-9]*'
+              },
               error: !!error,
-              placeholder: '-'
+              placeholder: ''
             }}
             {...other}
           />
