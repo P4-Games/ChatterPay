@@ -13,7 +13,6 @@ export const botApiWappEnabled = (process.env.BOT_API_WAPP_ENABLED || 'true') ==
 export const nodeProviderUrlSepolia = process.env.NODE_PROVIDER_SEPOLIA_URL
 export const nodeProviderUrlPolygon = process.env.NODE_PROVIDER_MUMBAI_URL
 export const nodeProviderUrlScroll = process.env.NODE_PROVIDER_SCROLL_URL
-export const fromICP = (process.env.ICP || 'false') === 'true'
 
 // Vercel has a timeout of 10 seconds (only for free plan) in the APIs.
 // The login has certain logic between ChatterPay and the backend of the Chatizalo,
@@ -27,13 +26,16 @@ export const handleVercelFreePlanTimeOut =
 export const UI_API_URL = process.env.NEXT_PUBLIC_UI_URL
 export const USE_MOCK = (process.env.NEXT_PUBLIC_USE_MOCK || 'true') === 'true'
 export const ALLOWED_ORIGINS = process.env.NEXT_PUBLIC_ALLOWED_ORIGINS || '*'
+export const fromICP = (process.env.NEXT_PUBLIC_FROM_ICP || 'false') === 'true'
 
 // ----------------------------------------------------------------------
 
 // internal
+console.log('fromICP', fromICP)
 export const PATH_AFTER_LOGIN = fromICP
   ? 'https://chatterpay-front-ylswtey2za-uc.a.run.app/dashboard'
   : paths.dashboard.root
+
 export const EXPLORER_L1 = 'https://sepolia.etherscan.io'
 export const EXPLORER_L2 = 'https://l1sload-blockscout.scroll.io' // Scroll devnet Explorer
 export const STORAGE_KEY_TOKEN = 'accessToken'
