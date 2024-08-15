@@ -175,7 +175,7 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
   const contact: string = (trxReceive ? row.contact_from_name : row.contact_to_name) || ''
   const phone: string = trxReceive ? row.contact_from_phone : row.contact_to_phone || ''
   const message: string = `${
-    trxReceive ? t('transactions.recieve-from') : t('transactions.send-to')
+    trxReceive ? t('transactions.receive-from') : t('transactions.sent-to')
   } ${contact}`
   const trxLink = `${EXPLORER_L2}/tx/${row.trx_hash}`
 
