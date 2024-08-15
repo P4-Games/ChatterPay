@@ -6,14 +6,11 @@
 
 # ChatterPay
 
-
 Chatterpay is a Wallet for WhatsApp that integrates AI and Account Abstraction, enabling any user to use blockchain easily and securely without technical knowledge.
 
 > Built for: [Level Up Hackathon - Ethereum Argentina 2024](https://ethereumargentina.org/) 
 
 > Build By: [mpefaur](https://github.com/mpefaur), [tomasfrancizco](https://github.com/tomasfrancizco), [TomasDmArg](https://github.com/TomasDmArg), [gonzageraci](https://github.com/gonzageraci),  [dappsar](https://github.com/dappsar)
-
-
 
 __Components__:
 
@@ -44,6 +41,11 @@ __Build With__:
 - Linting: [ESLint](https://eslint.org)
 - Formatting: [Prettier](https://prettier.io)
 
+__deploy with__:
+
+- Landing Page (static): [ICP](https://internetcomputer.org/)
+- User Dashboard: [Google Cloud](https://cloud.google.com/)
+
 # Getting Started
 
 __1. Install these Requirements__:
@@ -52,7 +54,6 @@ __1. Install these Requirements__:
 - [nvm](https://github.com/nvm-sh/nvm) (allows you to quickly install and use different versions of node via the command line.)
 - node js & npm (insalled with nvm)
 - [mongoDb](https://www.mongodb.com/docs/manual/installation/)
-
 
 __2. Clone repository__:
 
@@ -64,7 +65,6 @@ __2. Clone repository__:
 __3. Complete .env file__: 
 
 Create a .env file in the root folder and populate it with the following keys and values:
-
 
 ```sh
 SKIP_PREFLIGHT_CHECK=true
@@ -85,6 +85,7 @@ NODE_PROVIDER_MUMBAI_URL='https://stylish-dawn-bush.bsc-testnet.quiknode.pro/YOU
 NODE_PROVIDER_SCROLL_URL='https://lb.drpc.org/ogrpc?network=scroll-sepolia&dkey=YOUR_API_KEY'
 HANDLE_VERCEL_FREE_PLAN_TIMEOUT=true
 API3_ENABLED=false
+ICP=true
 
 # client side
 NEXT_PUBLIC_USE_MOCK=true
@@ -121,6 +122,14 @@ npm run dev / yarn dev
 
 Then, open brower in: `http://localhost:3000`.
 
+
+__6. Deploy to ICP__: 
+
+To deploy the landing (static code) to the [Internet Computer (ICP)](https://internetcomputer.org/), you can follow the steps described in the [Deployment Guidelines](./.doc/deployment/deploy-guidelines).
+
+URL of the deployed app on ICP: https://cilxj-yiaaa-aaaag-alkxq-cai.icp0.io/
+
+
 # Additional Info
 
 ## Contribution
@@ -136,6 +145,7 @@ Please make sure your contributions adhere to our [coding guidelines](./.doc/dev
 [P4Troy](https://github.com/mpefaur) - [dappsar](https://github.com/dappsar) - [tomasDmArg](https://github.com/TomasDmArg)
 
 see more in: <https://github.com/P4-Games/chatterPay/graphs/contributors>
+
 
 ## Maintenance
 
