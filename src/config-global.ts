@@ -13,7 +13,7 @@ export const botApiWappEnabled = (process.env.BOT_API_WAPP_ENABLED || 'true') ==
 export const nodeProviderUrlSepolia = process.env.NODE_PROVIDER_SEPOLIA_URL
 export const nodeProviderUrlPolygon = process.env.NODE_PROVIDER_MUMBAI_URL
 export const nodeProviderUrlScroll = process.env.NODE_PROVIDER_SCROLL_URL
-export const fromICP = (process.env.ICP || 'true') === 'true'
+export const fromICP = (process.env.ICP || 'false') === 'true'
 
 // Vercel has a timeout of 10 seconds (only for free plan) in the APIs.
 // The login has certain logic between ChatterPay and the backend of the Chatizalo,
