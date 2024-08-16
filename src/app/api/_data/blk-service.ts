@@ -30,7 +30,25 @@ export async function getBalancesWithTotalsFromBackend(walletAddress: string): P
 
   try {
     const response = await axios.get(`${BACKEND_API_URL}/balance/${walletAddress}`)
-    balances = response.data as IBalances
+    const data = response.data as IBalances
+
+    // Convert keys to lowercase
+    const normalizedTotals = Object.keys(data.totals).reduce(
+      (acc, key) => {
+        const lowerKey = key.toLowerCase() as CurrencyKey
+        if (['usd', 'ars', 'brl', 'uyu'].includes(lowerKey)) {
+          acc[lowerKey] = data.totals[key as CurrencyKey]
+        }
+        return acc
+      },
+      {} as Record<CurrencyKey, number>
+    )
+
+    balances = {
+      ...data,
+      totals: normalizedTotals
+    }
+
     cache.set(cacheKey, balances, 60) // 1 minute
     return balances
   } catch (error) {
