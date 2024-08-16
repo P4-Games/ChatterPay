@@ -13,7 +13,8 @@
     "must-be-max": "Must be a maximum of {MAX_DIGITS} digits",
     "must-be-valid-email": "Email must be a valid email address",
     "nodata": "No Data",
-    "view": "View"
+    "view": "View",
+    "share": "Share"
   },
   "menu": {
     "overview": "overview",

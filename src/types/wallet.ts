@@ -24,7 +24,8 @@ export type INFTMetadata = {
 }
 
 export type INFT = {
-  id: string
+  bddId: string
+  nftId: number
   channel_user_id: string
   wallet: string
   trxId: string

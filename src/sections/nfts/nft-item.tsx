@@ -9,7 +9,7 @@ import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 
 import { useTranslate } from 'src/locales'
-import { EXPLORER_NFTS } from 'src/config-global'
+import { NFT_MARKETPLACE, NFT_TRX_EXPLORER } from 'src/config-global'
 
 import Iconify from 'src/components/iconify'
 import CustomPopover, { usePopover } from 'src/components/custom-popover'
@@ -27,9 +27,21 @@ export default function NftItem({ nft: bot, onView }: Props) {
   const { t } = useTranslate()
   const popover = usePopover()
 
-  const { trxId, metadata } = bot
+  const { trxId, nftId, metadata } = bot
 
-  const linkTrx = `${EXPLORER_NFTS}/tx/${trxId}`
+  const linkTrx = `${NFT_TRX_EXPLORER}/tx/${trxId}`
+  const linkMarketplace = `${NFT_MARKETPLACE.replace('ID', nftId.toString())}`
+
+  const handleView = () => {
+    popover.onClose()
+    onView()
+    window.open(linkMarketplace, '_blank')
+  }
+
+  const handleShare = () => {
+    popover.onClose()
+    // todo
+  }
 
   return (
     <>
@@ -49,22 +61,30 @@ export default function NftItem({ nft: bot, onView }: Props) {
               alignItems: 'center'
             }}
           >
-            <Avatar
-              alt='nft'
-              src={metadata.image_url}
-              variant='rounded'
-              sx={{
-                position: 'absolute',
-                marginLeft: 1.5,
-                marginTop: 2.5,
-                marginBottom: 2.5,
-                width: '90%',
-                height: '90%',
-                borderRadius: 2,
-                overflow: 'hidden',
-                objectFit: 'cover'
-              }}
-            />
+            <Link
+              href={linkMarketplace}
+              target='_blank'
+              rel='noopener'
+              color='inherit'
+              underline='none'
+            >
+              <Avatar
+                alt='nft'
+                src={metadata.image_url}
+                variant='rounded'
+                sx={{
+                  position: 'absolute',
+                  marginLeft: 1.5,
+                  marginTop: 2.5,
+                  marginBottom: 2.5,
+                  width: '90%',
+                  height: '90%',
+                  borderRadius: 2,
+                  overflow: 'hidden',
+                  objectFit: 'cover'
+                }}
+              />
+            </Link>
           </Box>
         </Stack>
         <Divider sx={{ borderStyle: 'dashed' }} />
@@ -87,14 +107,13 @@ export default function NftItem({ nft: bot, onView }: Props) {
       </Card>
 
       <CustomPopover open={popover.open} onClose={popover.onClose} arrow='right-top'>
-        <MenuItem
-          onClick={() => {
-            popover.onClose()
-            onView()
-          }}
-        >
+        <MenuItem onClick={handleView}>
           <Iconify icon='solar:eye-bold' />
           {t('common.view')}
+        </MenuItem>
+        <MenuItem onClick={handleShare}>
+          <Iconify icon='solar:eye-bold' />
+          {t('common.share')}
         </MenuItem>
       </CustomPopover>
     </>
