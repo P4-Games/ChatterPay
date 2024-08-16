@@ -228,7 +228,8 @@
     "sent-to": "Enviado dinero a"
   },
   "nfts": {
-    "view-trx": "Ver detalles de la transacción"
+    "view-trx": "Ver detalles de la transacción",
+    "mint": "Hey, mira mi NFT:"
   },
   "account": {
     "title": "Cuenta"
