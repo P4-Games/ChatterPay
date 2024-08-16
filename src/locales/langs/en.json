@@ -228,7 +228,8 @@
     "sent-to": "Sent money to"
   },
   "nfts": {
-    "view-trx": "View Transacton Details"
+    "view-trx": "View Transacton Details",
+    "mint": "Hey, check out my NFT:"
   },
   "account": {
     "title": "Account"

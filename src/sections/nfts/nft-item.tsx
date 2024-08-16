@@ -9,7 +9,7 @@ import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 
 import { useTranslate } from 'src/locales'
-import { NFT_MARKETPLACE, NFT_TRX_EXPLORER } from 'src/config-global'
+import { NFT_SHARE, UI_API_URL, NFT_MARKETPLACE, NFT_TRX_EXPLORER } from 'src/config-global'
 
 import Iconify from 'src/components/iconify'
 import CustomPopover, { usePopover } from 'src/components/custom-popover'
@@ -31,6 +31,9 @@ export default function NftItem({ nft }: Props) {
   const linkTrx = `${NFT_TRX_EXPLORER}/tx/${trxId}`
   const linkMarketplace = `${NFT_MARKETPLACE.replace('ID', nftId.toString())}`
 
+  const mintUrl = `${UI_API_URL}/mint/${nftId.toString()}`
+  const linkShare = `${NFT_SHARE.replace('MESSAGE', `${t('nfts.mint')}: ${mintUrl}`)}`
+
   const handleView = () => {
     popover.onClose()
     window.open(linkMarketplace, '_blank')
@@ -38,7 +41,7 @@ export default function NftItem({ nft }: Props) {
 
   const handleShare = () => {
     popover.onClose()
-    // todo
+    window.open(linkShare, '_blank')
   }
 
   return (

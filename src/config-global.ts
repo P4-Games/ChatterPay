@@ -43,6 +43,9 @@ export const EXPLORER_L2 = 'https://l1sload-blockscout.scroll.io' // Scroll devn
 export const NFT_TRX_EXPLORER = 'https://sepolia.arbiscan.io'
 export const NFT_MARKETPLACE =
   'https://testnets.opensea.io/assets/arbitrum-sepolia/0xedeb3db84518d539c8d7a4755d4be48dc1f876c1/ID'
+
+export const NFT_SHARE = 'https://api.whatsapp.com/send/?text=MESSAGE'
+
 export const STORAGE_KEY_TOKEN = 'accessToken'
 export const STORAGE_KEY_SETTINGS = 'settings'
 export const JWT_SECRET = '65OcvHlcxqkBhniJBRtSc1HkzgjoKt2GmL2vV3COdw1BbKPs2etUxnVlynJUT1I'
