@@ -1,26 +1,24 @@
 'use client';
-
 import Image from 'next/image';
-import { redirect, useRouter } from 'next/navigation'
 import { m } from 'framer-motion'
-
-import Typography from '@mui/material/Typography'
-
-import { varFade } from 'src/components/animate'
-import { useResponsive } from 'src/hooks/use-responsive';
-import { useTranslation } from 'react-i18next';
-import { useEffect, useState } from 'react';
-import { INFT } from 'src/types/wallet';
-import { getClientPromise } from 'src/app/api/_data/mongo-connection';
-import { Button, Card } from '@mui/material';
-import MainLayout from 'src/layouts/main';
 import { Box, Stack } from '@mui/system';
+import MainLayout from 'src/layouts/main';
+import { useCallback, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button, Card } from '@mui/material';
+import { varFade } from 'src/components/animate'
+import Typography from '@mui/material/Typography'
+import { useResponsive } from 'src/hooks/use-responsive';
 
 // ----------------------------------------------------------------------
 
-export default function Mint({ params }: { params: { id: string } }) {
-    const { t } = useTranslation();
+interface MintProps {
+    params: {
+        id: string
+    }
+}
 
+export default function Mint({ params }: MintProps) {
     const mdUp = useResponsive('up', 'md')
     const router = useRouter();
 
@@ -32,8 +30,8 @@ export default function Mint({ params }: { params: { id: string } }) {
         description: ''
     });
 
-    const getData = async () => {
-        const NFTData = await fetch(`https://chatterpay-back-ylswtey2za-uc.a.run.app/nft/${parseInt(params.id)}`, {
+    const getData = useCallback(async () => {
+        const NFTData = await fetch(`https://chatterpay-back-ylswtey2za-uc.a.run.app/nft/${parseInt(params.id, 10)}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -45,15 +43,13 @@ export default function Mint({ params }: { params: { id: string } }) {
             return;
         }
 
-        console.log(NFTData);
-
         const { image, description } = NFTData;
 
         setNftData({
             image_url: image,
             description
         });
-    }
+    }, [params.id, router]);
 
     const handleOpenOpenSea = () => {
         const URL = `https://testnets.opensea.io/assets/arbitrum-sepolia/0xedeb3db84518d539c8d7a4755d4be48dc1f876c1/${params.id}`
@@ -61,13 +57,13 @@ export default function Mint({ params }: { params: { id: string } }) {
     }
 
     const handleMint = async () => {
-        const URL = `https://api.whatsapp.com/send/?phone=5491164629653&text=Me%20gustar%C3%ADa%20mintear%20el%20id%20${params.id}`
+        const URL = `https://api.whatsapp.com/send/?phone=5491164629653&text=Me%20gustar%C3%ADa%20mintear%20el%20NFT%20${params.id}`
         router.push(URL);
     }
 
     useEffect(() => {
         getData();
-    }, []);
+    }, [getData]);
 
     return (
         <MainLayout>
