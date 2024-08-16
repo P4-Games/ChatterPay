@@ -1,12 +1,6 @@
-import Box from '@mui/material/Box'
-import { Link } from '@mui/material'
-import Card from '@mui/material/Card'
-import Stack from '@mui/material/Stack'
-import Avatar from '@mui/material/Avatar'
-import Divider from '@mui/material/Divider'
-import MenuItem from '@mui/material/MenuItem'
+import { Box, Stack } from '@mui/system'
 import IconButton from '@mui/material/IconButton'
-import Typography from '@mui/material/Typography'
+import { Link, Card, Avatar, Divider, MenuItem, Typography } from '@mui/material'
 
 import { useTranslate } from 'src/locales'
 import { NFT_MARKETPLACE, NFT_TRX_EXPLORER } from 'src/config-global'
@@ -18,27 +12,21 @@ import { INFT } from 'src/types/wallet'
 
 // ----------------------------------------------------------------------
 
-type Props = {
+type NftItemProps = {
   nft: INFT
 }
 
-export default function NftItem({ nft }: Props) {
+export default function NftItemMint({ nft }: NftItemProps) {
   const { t } = useTranslate()
   const popover = usePopover()
 
-  const { trxId, nftId, metadata } = nft
-
+  const { trxId, metadata } = nft
   const linkTrx = `${NFT_TRX_EXPLORER}/tx/${trxId}`
-  const linkMarketplace = `${NFT_MARKETPLACE.replace('ID', nftId.toString())}`
+  const linkMarketplace = `${NFT_MARKETPLACE.replace('ID', nft.nftId.toString())}`
 
   const handleView = () => {
     popover.onClose()
     window.open(linkMarketplace, '_blank')
-  }
-
-  const handleShare = () => {
-    popover.onClose()
-    // todo
   }
 
   return (
@@ -108,10 +96,6 @@ export default function NftItem({ nft }: Props) {
         <MenuItem onClick={handleView}>
           <Iconify icon='solar:eye-bold' />
           {t('common.view')}
-        </MenuItem>
-        <MenuItem onClick={handleShare}>
-          <Iconify icon='solar:eye-bold' />
-          {t('common.share')}
         </MenuItem>
       </CustomPopover>
     </>

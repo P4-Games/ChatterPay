@@ -52,7 +52,7 @@ export async function POST(req: any, res: any) {
         displayName: user.name || user.phone_number,
         wallet: user.wallet || '',
         email: user.email || '',
-        photoURL: user.photo || '/assets/images/avatars/generic_user.jpg',
+        photoURL: user.photo || '/assets/images/avatars/generic-user.jpg',
         phoneNumber: user.phone_number || ''
       },
       accessToken: generateAccessToken(user)

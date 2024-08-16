@@ -42,7 +42,15 @@ export const paths = {
       root: `${ROOTS.DASHBOARD}/user/account`,
       list: `${ROOTS.DASHBOARD}/user/list`,
       profile: `${ROOTS.DASHBOARD}/user/profile`,
-      account: `${ROOTS.DASHBOARD}/user/account`
+      account: `${ROOTS.DASHBOARD}/user/account`,
+      wallet: {
+        root: (walletId: string) => `${ROOTS.DASHBOARD}/user/wallet/${walletId}`,
+        nfts: {
+          root: (walletId: string) => `${ROOTS.DASHBOARD}/user/wallet/${walletId}/nfts`,
+          item: (walletId: string, nftId: string) =>
+            `${ROOTS.DASHBOARD}/user/wallet/${walletId}/nfts/${nftId}`
+        }
+      }
     }
   }
 }

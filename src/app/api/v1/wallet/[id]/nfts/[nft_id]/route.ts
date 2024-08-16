@@ -1,13 +1,14 @@
 import { NextResponse } from 'next/server'
 
-import { getWalletNfts } from 'src/app/api/_data/data-service'
+import { getWalletNft } from 'src/app/api/_data/data-service'
 
 import { IErrorResponse } from 'src/types/api'
 
 // ----------------------------------------------------------------------
 
 type IParams = {
-  id: string
+  id: string // wallet_id
+  nft_id: string
 }
 
 // ----------------------------------------------------------------------
@@ -29,12 +30,28 @@ export async function GET(request: Request, { params }: { params: IParams }) {
     })
   }
 
+  if (!params.nft_id) {
+    const errorMessage: IErrorResponse = {
+      error: {
+        code: 'NFT_NOT_FOUND',
+        message: `NFT id '${params.nft_id}' not found`,
+        details: '',
+        stack: '',
+        url: request.url
+      }
+    }
+    return new NextResponse(JSON.stringify(errorMessage), {
+      status: 404,
+      headers: { 'Content-Type': 'application/json' }
+    })
+  }
+
   try {
-    const nfts = (await getWalletNfts(params.id)) || {}
-    return NextResponse.json(nfts)
+    const nft = (await getWalletNft(params.id, params.nft_id)) || {}
+    return NextResponse.json(nft)
   } catch (ex) {
     console.error(ex)
-    return new NextResponse(JSON.stringify({ error: 'Error getting NFTs' }), {
+    return new NextResponse(JSON.stringify({ error: 'Error getting NFT' }), {
       status: 400,
       headers: { 'Content-Type': 'application/json' }
     })

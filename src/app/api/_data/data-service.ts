@@ -131,6 +131,31 @@ export async function getWalletNfts(wallet: string): Promise<INFT[] | undefined>
   return nfts
 }
 
+export async function getWalletNft(wallet: string, nftId: string): Promise<INFT | undefined> {
+  const client = await getClientPromise()
+  const db = client.db(DB_CHATTERPAY_NAME)
+
+  const nft: INFTDB | null = await db.collection(SCHEMA_NFTS).findOne({
+    wallet,
+    id: Number(nftId)
+  })
+
+  if (!nft) {
+    return undefined
+  }
+
+  const result: INFT = {
+    bddId: getFormattedId(nft._id),
+    nftId: nft.id,
+    channel_user_id: nft.channel_user_id,
+    wallet: nft.wallet,
+    trxId: nft.trxId,
+    metadata: nft.metadata
+  }
+
+  return result
+}
+
 export async function geUserTransactions(wallet: string): Promise<ITransaction[] | undefined> {
   const client = await getClientPromise()
   const db = client.db(DB_CHATTERPAY_NAME)

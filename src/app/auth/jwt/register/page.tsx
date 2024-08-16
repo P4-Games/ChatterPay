@@ -3,7 +3,7 @@ import { JwtRegisterView } from 'src/sections/auth/jwt'
 // ----------------------------------------------------------------------
 
 export const metadata = {
-  title: 'Jwt: Register'
+  title: 'Chatterpay - Register'
 }
 
 export default function RegisterPage() {
