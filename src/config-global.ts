@@ -35,6 +35,7 @@ export const fromICP = (process.env.NEXT_PUBLIC_FROM_ICP || 'false') === 'true'
 export const PATH_AFTER_LOGIN = fromICP
   ? 'https://chatterpay-front-ylswtey2za-uc.a.run.app/dashboard'
   : paths.dashboard.root
+export const BOT_WAPP_URL = 'https://wa.me/message/QLV4YDWZWMX2B1'
 
 export const EXPLORER_L1 = 'https://sepolia.etherscan.io'
 export const EXPLORER_L2 = 'https://l1sload-blockscout.scroll.io' // Scroll devnet Explorer

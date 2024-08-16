@@ -19,7 +19,8 @@ import { useResponsive } from 'src/hooks/use-responsive'
 
 import { fNumber } from 'src/utils/format-number'
 
-import { EXPLORER_L1, EXPLORER_L2 } from 'src/config-global'
+import { useTranslate } from 'src/locales'
+import { EXPLORER_L1, EXPLORER_L2, BOT_WAPP_URL } from 'src/config-global'
 
 import Iconify from 'src/components/iconify'
 
@@ -42,10 +43,10 @@ export default function BankingBalances({
   const walletLinkL1 = `${EXPLORER_L1}/address/${tableData.wallet}`
   const walletLinkL2 = `${EXPLORER_L2}/address/${tableData.wallet}`
 
-  // const { t } = useTranslate()
+  const { t } = useTranslate()
 
   const mdUp = useResponsive('up', 'md')
-  const [selectedCurrency, setSelectedCurrency] = useState<CurrencyKey>('usd')
+  const [selectedCurrency, setSelectedCurrency] = useState<CurrencyKey>('USD')
   const currency = useBoolean()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
@@ -121,17 +122,20 @@ export default function BankingBalances({
         variant='contained'
         color='primary'
         startIcon={<Iconify icon='eva:diagonal-arrow-left-down-fill' />}
+        onClick={() => window.open(BOT_WAPP_URL, '_blank')}
       >
-        Deposit
+        {t('balances.deposit')}
       </Button>
+
       <Button
         fullWidth={!mdUp}
         sx={{ maxWidth: mdUp ? 'auto' : '200px', mx: mdUp ? 0 : 4 }}
         variant='outlined'
         color='inherit'
         startIcon={<Iconify icon='eva:diagonal-arrow-right-up-fill' />}
+        onClick={() => window.open(BOT_WAPP_URL, '_blank')}
       >
-        Send
+        {t('balances.send')}
       </Button>
     </Stack>
   )
