@@ -3,7 +3,7 @@ import { NftsView } from 'src/sections/nfts/view'
 // ----------------------------------------------------------------------
 
 export const metadata = {
-  title: 'Dashboard: Nfts'
+  title: 'Dashboard - NFTs'
 }
 
 export default function NftsPage() {
