@@ -225,6 +225,9 @@
     "receive-from": "Recibido dinero de",
     "sent-to": "Enviado dinero a"
   },
+  "nfts": {
+    "view-trx": "Ver detalles de la transacción"
+  },
   "account": {
     "title": "Cuenta"
   }
