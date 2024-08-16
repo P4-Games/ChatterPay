@@ -139,7 +139,7 @@ export default function BankingBalances({
   const renderTotal = (
     <Stack direction='row' alignItems='center' spacing={1} sx={{ mb: 2, px: 2, ml: 1 }}>
       <Typography variant='h3'>
-        {currency.value ? fNumber(tableData.totals[selectedCurrency]) : '********'}
+        {currency.value ? fNumber(tableData.totals[selectedCurrency]) || 0.0 : '********'}
       </Typography>
       <Select
         value={selectedCurrency ?? ''}
