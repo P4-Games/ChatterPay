@@ -8,47 +8,42 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import Link from '@mui/material/Link'
 import Alert from '@mui/material/Alert'
 import Stack from '@mui/material/Stack'
-import IconButton from '@mui/material/IconButton'
+import { Select, MenuItem } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import LoadingButton from '@mui/lab/LoadingButton'
-import InputAdornment from '@mui/material/InputAdornment'
 
 import { paths } from 'src/routes/paths'
+import { useRouter } from 'src/routes/hooks'
 import { RouterLink } from 'src/routes/components'
-import { useRouter, useSearchParams } from 'src/routes/hooks'
-
-import { useBoolean } from 'src/hooks/use-boolean'
 
 import { useTranslate } from 'src/locales'
-import { useAuthContext } from 'src/auth/hooks'
-import { PATH_AFTER_LOGIN } from 'src/config-global'
+import { BOT_WAPP_URL } from 'src/config-global'
+import { allCountries } from 'src/app/api/_data/_mock'
 
-import Iconify from 'src/components/iconify'
 import FormProvider, { RHFTextField } from 'src/components/hook-form'
 
 // ----------------------------------------------------------------------
 
 export default function JwtRegisterView() {
   const { t } = useTranslate()
-  const { register } = useAuthContext()
   const router = useRouter()
   const [errorMsg, setErrorMsg] = useState('')
-  const searchParams = useSearchParams()
-  const returnTo = searchParams.get('returnTo')
-  const password = useBoolean()
+
+  const [selectedCountry, setSelectedCountry] = useState('54')
+  const countryCodes = allCountries
 
   const RegisterSchema = Yup.object().shape({
     firstName: Yup.string().required(t('common.required')),
     lastName: Yup.string().required(t('common.required')),
     email: Yup.string().required(t('common.required')).email(t('common.must-be-valid-email')),
-    password: Yup.string().required(t('common.required'))
+    telephone: Yup.string().required(t('common.required'))
   })
 
   const defaultValues = {
     firstName: '',
     lastName: '',
     email: '',
-    password: ''
+    telephone: ''
   }
 
   const methods = useForm({
@@ -62,11 +57,15 @@ export default function JwtRegisterView() {
     formState: { isSubmitting }
   } = methods
 
+  const handleCountryChange = (event: any) => {
+    setSelectedCountry(event.target.value)
+  }
+
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await register?.(data.email, data.password, data.firstName, data.lastName)
-
-      router.push(returnTo || PATH_AFTER_LOGIN)
+      // await register?.(data.email, data.password, data.firstName, data.lastName)
+      // router.push(returnTo || PATH_AFTER_LOGIN)
+      router.push(BOT_WAPP_URL)
     } catch (error) {
       console.error(error)
       reset()
@@ -121,19 +120,20 @@ export default function JwtRegisterView() {
 
       <RHFTextField name='email' label={t('common.email-address')} />
 
+      <Select value={selectedCountry} onChange={handleCountryChange} label={t('common.country')}>
+        {countryCodes.map((country) => (
+          <MenuItem key={country.code} value={country.phone}>
+            {country.label} (+{country.phone})
+          </MenuItem>
+        ))}
+      </Select>
+
       <RHFTextField
-        name='password'
-        label={t('common.password')}
-        type={password.value ? 'text' : 'password'}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position='end'>
-              <IconButton onClick={password.onToggle} edge='end'>
-                <Iconify icon={password.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
-              </IconButton>
-            </InputAdornment>
-          )
-        }}
+        name='telephone'
+        label={t('common.phone-number')}
+        placeholder='1155557777'
+        type='number'
+        inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
       />
 
       <LoadingButton
