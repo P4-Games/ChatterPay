@@ -12,11 +12,13 @@
     "must-be-numeric": "Must be numeric",
     "must-be-max": "Must be a maximum of {MAX_DIGITS} digits",
     "must-be-valid-email": "Email must be a valid email address",
-    "nodata": "No Data"
+    "nodata": "No Data",
+    "view": "View"
   },
   "menu": {
     "overview": "overview",
     "_dashboard": "Dashboard",
+    "nfts": "NFTs",
     "management": "Management",
     "user": "User",
     "account": "Account",
