@@ -210,7 +210,8 @@
   "balances": {
     "title": "Estimated Balance",
     "deposit": "Deposit",
-    "send": "Send"
+    "send": "Send",
+    "wapp-msg": "Hi!"
   }, 
   "transactions": {
     "title": "Recent Transactions",
