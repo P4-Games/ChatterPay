@@ -18,6 +18,19 @@ export type IBalances = {
   totals: Record<CurrencyKey, number>
 }
 
+export type INFTMetadata = {
+  image_url: string
+  description: string
+}
+
+export type INFT = {
+  id: string
+  channel_user_id: string
+  wallet: string
+  trxId: string
+  metadata: INFTMetadata
+}
+
 export type ITransaction = {
   id: string
   trx_hash: string

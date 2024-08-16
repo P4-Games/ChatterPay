@@ -1,7 +1,7 @@
 import { ObjectId, Collection } from 'mongodb'
 
 import { IAccount } from 'src/types/account'
-import { ITransaction } from 'src/types/wallet'
+import { INFT, ITransaction } from 'src/types/wallet'
 import { LastUserConversation } from 'src/types/chat'
 
 import { getClientPromise } from './mongo-connection'
@@ -13,6 +13,7 @@ import { getObjectId, getFormattedId, updateOneCommon } from './mongo-utils'
 const DB_CHATTERPAY_NAME: string = 'chatterpay'
 const SCHEMA_USERS: string = 'users'
 const SCHEMA_TRANSACTIONS: string = 'transactions'
+const SCHEMA_NFTS: string = 'nfts'
 
 const DB_BOT_NAME: string = 'chatterpay'
 const SCHEMA_USER_CONVERSATIONS: string = 'user_conversations'
@@ -87,6 +88,39 @@ export async function updateUserCode(userId: string, code: number | undefined): 
   )
   return result
 }
+
+export async function getWalletNfts(wallet: string): Promise<INFT[] | undefined> {
+  const client = await getClientPromise()
+  const db = client.db(DB_CHATTERPAY_NAME)
+
+  const cursor: INFT[] | null = await db
+    .collection(SCHEMA_NFTS)
+    .aggregate([
+      {
+        $match: {
+          wallet
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          channel_user_id: 1,
+          wallet: 1,
+          trxId: 1,
+          metadata: 1
+        }
+      }
+    ])
+    .toArray()
+
+  if (!cursor || cursor.length === 0) {
+    return undefined
+  }
+
+  return cursor
+
+}
+
 
 export async function geUserTransactions(wallet: string): Promise<ITransaction[] | undefined> {
   const client = await getClientPromise()
