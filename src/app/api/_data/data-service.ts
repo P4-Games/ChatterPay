@@ -26,8 +26,9 @@ interface IAccountDB extends Omit<IAccount, 'id'> {
 interface ITransactionDB extends Omit<ITransaction, 'id'> {
   _id: any
 }
-interface INFTDB extends Omit<INFT, 'id'> {
-  _id: any
+interface INFTDB extends Omit<INFT, 'bddId' | 'nftId'> {
+  _id: any // bdd id
+  id: number // nft id
 }
 
 interface UserConversation {
@@ -106,7 +107,8 @@ export async function getWalletNfts(wallet: string): Promise<INFT[] | undefined>
       },
       {
         $project: {
-          _id: 1,
+          _id: 1, // bddId
+          id: 1, // nftId
           channel_user_id: 1,
           wallet: 1,
           trxId: 1,
@@ -120,8 +122,9 @@ export async function getWalletNfts(wallet: string): Promise<INFT[] | undefined>
     return undefined
   }
 
-  const nfts: INFT[] = cursor.map(({ _id, ...rest }) => ({
-    id: getFormattedId(_id),
+  const nfts: INFT[] = cursor.map(({ _id, id, ...rest }) => ({
+    bddId: getFormattedId(_id),
+    nftId: id,
     ...rest
   }))
 
