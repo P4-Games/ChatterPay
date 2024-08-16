@@ -34,6 +34,10 @@ export const paths = {
   },
   dashboard: {
     root: `${ROOTS.DASHBOARD}`,
+    nfts: {
+      root: `${ROOTS.DASHBOARD}/nfts`,
+      content: (id: string) => `${ROOTS.DASHBOARD}/nfts`
+    },
     user: {
       root: `${ROOTS.DASHBOARD}/user/account`,
       list: `${ROOTS.DASHBOARD}/user/list`,

@@ -43,6 +43,7 @@ export default function AccountView() {
         heading={t('menu.account')}
         links={[
           { name: t('menu._dashboard'), href: paths.dashboard.root },
+          { name: t('menu.nfts'), href: paths.dashboard.root },
           { name: t('menu.user'), href: paths.dashboard.user.root },
           { name: t('menu.account') }
         ]}

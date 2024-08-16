@@ -1,14 +1,8 @@
 import { NextResponse } from 'next/server'
 
-import { defaultBalance, GET_BALANCES_FROM_BACKEND } from 'src/config-global'
-import {
-  getBalancesWithTotals,
-  getBalancesWithTotalsFromBackend
-} from 'src/app/api/_data/blk-service'
-
-import { IBalances, INFT } from 'src/types/wallet'
-import { IErrorResponse } from 'src/types/api'
 import { getWalletNfts } from 'src/app/api/_data/data-service'
+
+import { IErrorResponse } from 'src/types/api'
 
 // ----------------------------------------------------------------------
 
@@ -35,9 +29,8 @@ export async function GET(request: Request, { params }: { params: IParams }) {
     })
   }
 
-
   try {
-    const nfts = await getWalletNfts(params.id) || {}
+    const nfts = (await getWalletNfts(params.id)) || {}
     console.log('nfts', nfts)
     return NextResponse.json(nfts)
   } catch (ex) {
