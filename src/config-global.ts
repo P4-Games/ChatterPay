@@ -9,6 +9,7 @@ export const { APP_ENV } = process.env || 'development'
 export const { NODE_ENV } = process.env || 'development'
 export const { MONGODB, MONGODB_BOT } = process.env
 export const { BOT_API_TOKEN, BOT_API_URL } = process.env
+export const { BACKEND_API_URL } = process.env
 export const botApiWappEnabled = (process.env.BOT_API_WAPP_ENABLED || 'true') === 'true'
 export const nodeProviderUrlSepolia = process.env.NODE_PROVIDER_SEPOLIA_URL
 export const nodeProviderUrlPolygon = process.env.NODE_PROVIDER_MUMBAI_URL
@@ -42,6 +43,7 @@ export const STORAGE_KEY_TOKEN = 'accessToken'
 export const STORAGE_KEY_SETTINGS = 'settings'
 export const JWT_SECRET = '65OcvHlcxqkBhniJBRtSc1HkzgjoKt2GmL2vV3COdw1BbKPs2etUxnVlynJUT1I'
 export const API3_ENABLED = (process.env.API3_ENABLED || 'false') === 'true'
+export const GET_BALANCES_FROM_BACKEND = true
 
 export const defaultBalance = {
   network: '',
