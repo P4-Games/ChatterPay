@@ -175,7 +175,6 @@ export async function getLastConversacionUserId(
     // Obtiene los últimos 8 caracteres del número de teléfono
     const last8Chars = channel_user_id.slice(-8)
     const partialPhoneRegex = new RegExp(last8Chars, 'i')
-    console.log('looking for channel_user_id', partialPhoneRegex)
 
     const pipeline = [
       {

@@ -160,4 +160,4 @@ async function getBalances() {
 }
 
 // { network: 'sepolia', token: 'usdc', balance: 20}, {network: ....}, {}
-getBalances().then(balances => console.log(JSON.stringify(balances, null, 2)))
+getBalances().then(balances => console.info(JSON.stringify(balances, null, 2)))
