@@ -1,3 +1,3 @@
 export { useGetContact } from './use-contact'
 
-export { useGetWalletBalance, useGetWalletTransactions } from './use-wallet'
+export { useGetWalletNfts, useGetWalletBalance, useGetWalletTransactions } from './use-wallet'

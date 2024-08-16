@@ -26,6 +26,9 @@ interface IAccountDB extends Omit<IAccount, 'id'> {
 interface ITransactionDB extends Omit<ITransaction, 'id'> {
   _id: any
 }
+interface INFTDB extends Omit<INFT, 'id'> {
+  _id: any
+}
 
 interface UserConversation {
   _id: ObjectId
@@ -93,7 +96,7 @@ export async function getWalletNfts(wallet: string): Promise<INFT[] | undefined>
   const client = await getClientPromise()
   const db = client.db(DB_CHATTERPAY_NAME)
 
-  const cursor: INFT[] | null = await db
+  const cursor: INFTDB[] | null = await db
     .collection(SCHEMA_NFTS)
     .aggregate([
       {
@@ -103,7 +106,7 @@ export async function getWalletNfts(wallet: string): Promise<INFT[] | undefined>
       },
       {
         $project: {
-          _id: 0,
+          _id: 1,
           channel_user_id: 1,
           wallet: 1,
           trxId: 1,
@@ -117,10 +120,13 @@ export async function getWalletNfts(wallet: string): Promise<INFT[] | undefined>
     return undefined
   }
 
-  return cursor
+  const nfts: INFT[] = cursor.map(({ _id, ...rest }) => ({
+    id: getFormattedId(_id),
+    ...rest
+  }))
 
+  return nfts
 }
-
 
 export async function geUserTransactions(wallet: string): Promise<ITransaction[] | undefined> {
   const client = await getClientPromise()
