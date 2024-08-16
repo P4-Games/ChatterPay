@@ -13,5 +13,9 @@ export function useGetWalletTransactions(walletId: string) {
 }
 
 export function useGetWalletNfts(walletId: string) {
-  return useGetCommon(endpoints.dashboard.wallet.nfts(walletId))
+  return useGetCommon(endpoints.dashboard.wallet.nfts.root(walletId))
+}
+
+export function useGetWalletNft(walletId: string, nftId: string) {
+  return useGetCommon(endpoints.dashboard.wallet.nfts.id(walletId, nftId))
 }

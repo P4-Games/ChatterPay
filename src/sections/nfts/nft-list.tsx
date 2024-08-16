@@ -1,10 +1,7 @@
-import { useState, useCallback } from 'react'
+import { useState } from 'react'
 
 import Box from '@mui/material/Box'
 import Pagination, { paginationClasses } from '@mui/material/Pagination'
-
-import { paths } from 'src/routes/paths'
-import { useRouter } from 'src/routes/hooks'
 
 import { INFT } from 'src/types/wallet'
 
@@ -17,22 +14,12 @@ type Props = {
 }
 
 export default function NftList({ nfts }: Props) {
-  const router = useRouter()
   const [page, setPage] = useState(1)
   const itemsPerPage = 6
-
-  const handleView = useCallback(
-    (id: string) => {
-      router.push(paths.dashboard.nfts.content(id))
-    },
-    [router]
-  )
 
   const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value)
   }
-
-  console.log(nfts)
 
   const paginatedNfts = nfts.slice((page - 1) * itemsPerPage, page * itemsPerPage)
 
@@ -48,7 +35,7 @@ export default function NftList({ nfts }: Props) {
         }}
       >
         {paginatedNfts.map((nft) => (
-          <NftItem key={nft.bddId} nft={nft} onView={() => handleView(nft.bddId)} />
+          <NftItem key={nft.bddId} nft={nft} />
         ))}
       </Box>
 
