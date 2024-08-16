@@ -64,10 +64,10 @@ export async function POST(req: Request) {
         // The login has certain logic between ChatterPay and the backend of the Chatizalo,
         // which may cause it to take about 10 seconds, so this variable is used to improve that logic.
         // send async
-        console.log('calling send2FACode ASYNC', phone, code)
+        console.info('calling send2FACode ASYNC', phone, code)
         send2FACode(phone, code, codeMsg)
       } else {
-        console.log('calling send2FACode SYNC', phone, code)
+        console.info('calling send2FACode SYNC', phone, code)
         botSentCodeResult = await send2FACode(phone, code, codeMsg)
       }
 
@@ -104,13 +104,13 @@ export async function POST(req: Request) {
 
 async function send2FACode(phone: string, code: number, codeMsg: string) {
   // Search last conversationIn User in bot}
-  console.log('entered send2FACode', phone, code)
+  console.info('entered send2FACode', phone, code)
   const lastUserConversation: LastUserConversation = await getLastConversacionUserId(phone)
-  console.log('lastUserConversation', phone, lastUserConversation)
+  console.info('lastUserConversation', phone, lastUserConversation)
 
   if (!lastUserConversation) {
     // user not found
-    console.log('lastUserConversation NOT_FOUND', phone, lastUserConversation)
+    console.info('lastUserConversation NOT_FOUND', phone, lastUserConversation)
     return false
   }
 
@@ -121,9 +121,9 @@ async function send2FACode(phone: string, code: number, codeMsg: string) {
     control: 'operator'
   }
   const botControlEndpoint = endpoints.backend.control()
-  console.log('lastUserConversation pre-post', botControlEndpoint, botControlData)
+  console.info('lastUserConversation pre-post', botControlEndpoint, botControlData)
   const botControlOperatorResult = await post(botControlEndpoint, botControlData)
-  console.log('botControlOperatorResult', botControlOperatorResult)
+  console.info('botControlOperatorResult', botControlOperatorResult)
 
   // Send 2FA code by whatsapp with operator-reply endpoint
   const botSendMsgEndpoint = endpoints.backend.sendMessage()
@@ -132,14 +132,14 @@ async function send2FACode(phone: string, code: number, codeMsg: string) {
     channel_user_id: lastUserConversation.channel_user_id,
     message: codeMsg.replace('{2FA_CODE}', code.toString())
   }
-  console.log('botSendMsgData', botSendMsgData)
+  console.info('botSendMsgData', botSendMsgData)
   const botSendMsgResult = await post(botSendMsgEndpoint, botSendMsgData)
-  console.log('botSendMsgResult', botSendMsgResult)
+  console.info('botSendMsgResult', botSendMsgResult)
 
   // Restore control to assitance
   botControlData.control = 'assistant'
   const botControlAssistantResult = await post(botControlEndpoint, botControlData)
-  console.log('botControlAssistantResult', botControlAssistantResult)
+  console.info('botControlAssistantResult', botControlAssistantResult)
 
   return true
 }

@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server'
 
+import { GET_BALANCES_FROM_BACKEND } from 'src/config-global'
 import { getUserByPhone } from 'src/app/api/_data/data-service'
-import { getBalancesWithTotals } from 'src/app/api/_data/blk-service'
+import {
+  getBalancesWithTotals,
+  getBalancesWithTotalsFromBackend
+} from 'src/app/api/_data/blk-service'
 
 import { IAccount } from 'src/types/account'
 import { IBalances } from 'src/types/wallet'
@@ -12,7 +16,7 @@ type IParams = {
   id: string
 }
 
-// Specific endpoint with query params to be called by a Bot function-
+// Specific endpoint with query params to be called by a Bot function.
 // (for now, the bot function is not enabled to call endpoints with path params)
 
 export async function GET(request: Request, { params }: { params: IParams }) {
@@ -45,7 +49,14 @@ export async function GET(request: Request, { params }: { params: IParams }) {
       )
     }
 
-    const balances: IBalances = await getBalancesWithTotals(user.wallet)
+    let balances: IBalances
+
+    if (GET_BALANCES_FROM_BACKEND) {
+      balances = await getBalancesWithTotalsFromBackend(user.wallet)
+    } else {
+      balances = await getBalancesWithTotals(user.wallet)
+    }
+
     balances.wallet = user.wallet
 
     return NextResponse.json(balances)

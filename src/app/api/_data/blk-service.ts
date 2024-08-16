@@ -6,6 +6,7 @@ import {
   API3_ENABLED,
   defaultBalance,
   tokensByNetwork,
+  BACKEND_API_URL,
   nodeProviderUrlSepolia
 } from 'src/config-global'
 
@@ -16,6 +17,27 @@ import { cache } from './cache-connection'
 import TokenPriceFeedsAbi from './_abis/TokenPriceFeedsAbi.json'
 
 // ---------------------------------------------------------------------------------------------
+
+export async function getBalancesWithTotalsFromBackend(walletAddress: string): Promise<IBalances> {
+  let balances: IBalances
+  const cacheKey = `getBalancesWithTotalsFromBackend.${walletAddress}`
+  const fromCache = cache.get(cacheKey) as IBalances
+
+  if (fromCache) {
+    console.info('from cache:', cacheKey)
+    return fromCache
+  }
+
+  try {
+    const response = await axios.get(`${BACKEND_API_URL}/balance/${walletAddress}`)
+    balances = response.data as IBalances
+    cache.set(cacheKey, balances, 60) // 1 minute
+    return balances
+  } catch (error) {
+    console.error('Error fetching balance from backend:', error)
+    throw error
+  }
+}
 
 export async function getBalancesWithTotals(walletAddress: string): Promise<IBalances> {
   let balances: IBalance[] = [defaultBalance]
@@ -97,14 +119,14 @@ async function getBalances(walletAddress: string): Promise<any[]> {
           balance_conv: {
             usd: (API3_ENABLED ? ethRateApi3Usd : ethRateCoinGecko.usd) * ethBalanceFormatted,
             ars: ethRateCoinGecko.ars * ethBalanceFormatted,
-            brl: ethRateCoinGecko.brl * ethBalanceFormatted
+            brl: ethRateCoinGecko.brl * ethBalanceFormatted,
+            uyu: ethRateCoinGecko.uyu * ethBalanceFormatted
           }
         })
 
         // custom tokens (l2)
         // TODO: to be improved
         const cutomTokens = await fethCustomTokens(walletAddress)
-        console.log(cutomTokens)
         if (cutomTokens && cutomTokens.balances) {
           const customTokenBalances = cutomTokens.balances[0]
           const customTokenRateCoinGecko = getRateByKey(coinGeckoRates, 'usdt')
@@ -115,7 +137,8 @@ async function getBalances(walletAddress: string): Promise<any[]> {
             balance_conv: {
               usd: customTokenRateCoinGecko.usd * customTokenBalances.balance,
               ars: customTokenRateCoinGecko.ars * customTokenBalances.balance,
-              brl: customTokenRateCoinGecko.brl * customTokenBalances.balance
+              brl: customTokenRateCoinGecko.brl * customTokenBalances.balance,
+              uyu: customTokenRateCoinGecko.uyu * customTokenBalances.balance
             }
           })
         }
@@ -138,7 +161,6 @@ async function getBalances(walletAddress: string): Promise<any[]> {
                 const tokenRateCoinGecko = getRateByKey(coinGeckoRates, token.token)
                 const tokenRateApi3 = getRateByKey(api3Rates, token.token)
                 const tokenRateApi3Usd = parseFloat(ethers.formatUnits(tokenRateApi3.usd, 18)) // API3: no rate in ARS or BRL
-                // console.log('tokenRateApi3, tokenRateApi3Usd, token', tokenRateApi3, tokenRateApi3Usd, token.token)
 
                 balances.push({
                   network: network.config.chainName,
@@ -150,7 +172,8 @@ async function getBalances(walletAddress: string): Promise<any[]> {
                         ? tokenRateApi3Usd
                         : tokenRateCoinGecko.usd) * tokenBalanceFormatted,
                     ars: tokenRateCoinGecko.ars * tokenBalanceFormatted,
-                    brl: tokenRateCoinGecko.brl * tokenBalanceFormatted
+                    brl: tokenRateCoinGecko.brl * tokenBalanceFormatted,
+                    uyu: tokenRateCoinGecko.uyu * tokenBalanceFormatted
                   }
                 })
               } catch (error) {
@@ -168,9 +191,7 @@ async function getBalances(walletAddress: string): Promise<any[]> {
 
 const fethCustomTokens = async (address: string) => {
   try {
-    const response = await axios.get(
-      `https://chatterpay-back-ylswtey2za-uc.a.run.app/balance/${address}`
-    )
+    const response = await axios.get(`${BACKEND_API_URL}/balance/${address}`)
     return response.data
   } catch (error) {
     console.error('Error fetching balance:', error)
@@ -211,7 +232,7 @@ function getRateByKey(rates: any, rateKey: string): any {
     case 'wbtc':
       return rates['wrapped-bitcoin']
     default:
-      return { usd: 0, ars: 0, brl: 0 }
+      return { usd: 0, ars: 0, brl: 0, uyu: 0 }
   }
 }
 
@@ -221,17 +242,20 @@ async function getApi3ConversationRates() {
       ethereum: {
         usd: 0,
         ars: 0,
-        brl: 0
+        brl: 0,
+        uyu: 0
       },
       'wrapped-bitcoin': {
         usd: 0,
         ars: 0,
-        brl: 0
+        brl: 0,
+        uyu: 0
       },
       'usd-coin': {
         usd: 0,
         ars: 0,
-        brl: 0
+        brl: 0,
+        uyu: 0
       }
     }
   }
@@ -254,17 +278,20 @@ async function getApi3ConversationRates() {
     ethereum: {
       usd: ethData.price.toString(),
       ars: 0,
-      brl: 0
+      brl: 0,
+      uyu: 0
     },
     'wrapped-bitcoin': {
       usd: wbtcData.price.toString(),
       ars: 0,
-      brl: 0
+      brl: 0,
+      uyu: 0
     },
     'usd-coin': {
       usd: usdcData.price.toString(),
       ars: 0,
-      brl: 0
+      brl: 0,
+      uyu: 0
     }
   }
 
@@ -275,7 +302,7 @@ async function getCoingeckoConversionRates() {
   try {
     const ratesConvBaseUrl = 'https://api.coingecko.com/api/v3/simple/price'
     const ratesConvTokensIds = 'usd-coin,tether,ethereum,bitcoin,wrapped-bitcoin,dai'
-    const ratesConvResultCurrencies = 'usd,ars,brl'
+    const ratesConvResultCurrencies = 'usd,ars,brl,uyu'
     const ratesConvCompleteUrl = `${ratesConvBaseUrl}?ids=${ratesConvTokensIds}&vs_currencies=${ratesConvResultCurrencies}`
     const response = await axios.get(ratesConvCompleteUrl)
 
@@ -285,31 +312,40 @@ async function getCoingeckoConversionRates() {
       ethereum: {
         usd: 0,
         ars: 0,
-        brl: 0
+        brl: 0,
+        uyu: 0
       },
       'wrapped-bitcoin': {
         usd: 0,
         ars: 0,
-        brl: 0
+        brl: 0,
+        uyu: 0
       },
       'usd-coin': {
         usd: 0,
         ars: 0,
-        brl: 0
+        brl: 0,
+        uyu: 0
       }
     }
   }
 }
 
-function calculateTotals(balances: IBalance[]): { usd: number; ars: number; brl: number } {
+function calculateTotals(balances: IBalance[]): {
+  usd: number
+  ars: number
+  brl: number
+  uyu: number
+} {
   const totals = balances.reduce(
     (acc, balance) => {
       acc.usd += balance.balance_conv.usd
       acc.ars += balance.balance_conv.ars
       acc.brl += balance.balance_conv.brl
+      acc.uyu += balance.balance_conv.uyu
       return acc
     },
-    { usd: 0, ars: 0, brl: 0 }
+    { usd: 0, ars: 0, brl: 0, uyu: 0 }
   )
 
   return totals

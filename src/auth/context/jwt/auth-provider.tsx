@@ -163,11 +163,7 @@ export function AuthProvider({ children }: Props) {
       phone,
       codeMsg
     }
-
-    console.log('sent to phone', phone, endpoints.auth.code())
-    const res = await post(endpoints.auth.code(), data)
-    console.log('sent to phone, result', res)
-
+    await post(endpoints.auth.code(), data)
     dispatch({
       type: Types.GENERATE_CODE,
       payload: {
