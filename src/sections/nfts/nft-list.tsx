@@ -48,7 +48,7 @@ export default function NftList({ nfts }: Props) {
         }}
       >
         {paginatedNfts.map((nft) => (
-          <NftItem key={nft.id} nft={nft} onView={() => handleView(nft.id)} />
+          <NftItem key={nft.bddId} nft={nft} onView={() => handleView(nft.bddId)} />
         ))}
       </Box>
 
