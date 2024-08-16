@@ -14,6 +14,16 @@ module.exports = {
     },
   },
   output: 'standalone',
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'storage.googleapis.com',
+        port: '',
+        pathname: '/**',
+      },
+    ],
+  },
   webpack(config, options) {
     const { isServer } = options
     config.resolve.modules.push(path.resolve('./src'))
