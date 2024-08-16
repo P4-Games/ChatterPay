@@ -46,7 +46,7 @@ export default function BankingBalances({
   const { t } = useTranslate()
 
   const mdUp = useResponsive('up', 'md')
-  const [selectedCurrency, setSelectedCurrency] = useState<CurrencyKey>('USD')
+  const [selectedCurrency, setSelectedCurrency] = useState<CurrencyKey>('usd')
   const currency = useBoolean()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
