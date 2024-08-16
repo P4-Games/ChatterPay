@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server'
 
-import { defaultBalance } from 'src/config-global'
-import { getBalancesWithTotals } from 'src/app/api/_data/blk-service'
+import { defaultBalance, GET_BALANCES_FROM_BACKEND } from 'src/config-global'
+import {
+  getBalancesWithTotals,
+  getBalancesWithTotalsFromBackend
+} from 'src/app/api/_data/blk-service'
 
 import { IBalances } from 'src/types/wallet'
 import { IErrorResponse } from 'src/types/api'
@@ -37,7 +40,14 @@ export async function GET(request: Request, { params }: { params: IParams }) {
   }
 
   try {
-    const balances: IBalances = await getBalancesWithTotals(params.id)
+    let balances: IBalances
+
+    if (GET_BALANCES_FROM_BACKEND) {
+      balances = await getBalancesWithTotalsFromBackend(params.id)
+    } else {
+      balances = await getBalancesWithTotals(params.id)
+    }
+
     balances.wallet = params.id
 
     return NextResponse.json(balances)
