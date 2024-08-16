@@ -39,7 +39,7 @@ export const BOT_WAPP_URL = 'https://wa.me/message/QLV4YDWZWMX2B1'
 
 export const EXPLORER_L1 = 'https://sepolia.etherscan.io'
 export const EXPLORER_L2 = 'https://l1sload-blockscout.scroll.io' // Scroll devnet Explorer
-export const EXPLORER_NFTS = 'https://sepolia.scrollscan.com/'
+export const EXPLORER_NFTS = 'https://sepolia.arbiscan.io'
 export const STORAGE_KEY_TOKEN = 'accessToken'
 export const STORAGE_KEY_SETTINGS = 'settings'
 export const JWT_SECRET = '65OcvHlcxqkBhniJBRtSc1HkzgjoKt2GmL2vV3COdw1BbKPs2etUxnVlynJUT1I'
