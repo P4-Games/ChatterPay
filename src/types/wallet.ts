@@ -6,10 +6,11 @@ export type IBalance = {
     usd: number
     ars: number
     brl: number
+    uyu: number
   }
 }
 
-export type CurrencyKey = 'usd' | 'ars' | 'brl'
+export type CurrencyKey = 'usd' | 'ars' | 'brl' | 'uyu'
 
 export type IBalances = {
   wallet: string

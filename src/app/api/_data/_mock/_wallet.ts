@@ -10,7 +10,8 @@ export const _balances: IBalance[] = [
     balance_conv: {
       usd: 1,
       ars: 1,
-      brl: 1
+      brl: 1,
+      uyu: 1
     }
   },
   {
@@ -20,7 +21,8 @@ export const _balances: IBalance[] = [
     balance_conv: {
       usd: 1,
       ars: 1,
-      brl: 1
+      brl: 1,
+      uyu: 1
     }
   },
   {
@@ -30,7 +32,8 @@ export const _balances: IBalance[] = [
     balance_conv: {
       usd: 1,
       ars: 1,
-      brl: 1
+      brl: 1,
+      uyu: 1
     }
   }
 ]

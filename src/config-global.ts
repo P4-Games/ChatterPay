@@ -32,7 +32,6 @@ export const fromICP = (process.env.NEXT_PUBLIC_FROM_ICP || 'false') === 'true'
 // ----------------------------------------------------------------------
 
 // internal
-console.log('fromICP', fromICP)
 export const PATH_AFTER_LOGIN = fromICP
   ? 'https://chatterpay-front-ylswtey2za-uc.a.run.app/dashboard'
   : paths.dashboard.root
@@ -52,7 +51,8 @@ export const defaultBalance = {
   balance_conv: {
     usd: 0,
     ars: 0,
-    brl: 0
+    brl: 0,
+    uyu: 0
   }
 }
 

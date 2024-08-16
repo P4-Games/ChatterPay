@@ -232,7 +232,7 @@ function getRateByKey(rates: any, rateKey: string): any {
     case 'wbtc':
       return rates['wrapped-bitcoin']
     default:
-      return { usd: 0, ars: 0, brl: 0 }
+      return { usd: 0, ars: 0, brl: 0, uyu: 0 }
   }
 }
 
@@ -242,17 +242,20 @@ async function getApi3ConversationRates() {
       ethereum: {
         usd: 0,
         ars: 0,
-        brl: 0
+        brl: 0,
+        uyu: 0
       },
       'wrapped-bitcoin': {
         usd: 0,
         ars: 0,
-        brl: 0
+        brl: 0,
+        uyu: 0
       },
       'usd-coin': {
         usd: 0,
         ars: 0,
-        brl: 0
+        brl: 0,
+        uyu: 0
       }
     }
   }
@@ -275,17 +278,20 @@ async function getApi3ConversationRates() {
     ethereum: {
       usd: ethData.price.toString(),
       ars: 0,
-      brl: 0
+      brl: 0,
+      uyu: 0
     },
     'wrapped-bitcoin': {
       usd: wbtcData.price.toString(),
       ars: 0,
-      brl: 0
+      brl: 0,
+      uyu: 0
     },
     'usd-coin': {
       usd: usdcData.price.toString(),
       ars: 0,
-      brl: 0
+      brl: 0,
+      uyu: 0
     }
   }
 
@@ -296,7 +302,7 @@ async function getCoingeckoConversionRates() {
   try {
     const ratesConvBaseUrl = 'https://api.coingecko.com/api/v3/simple/price'
     const ratesConvTokensIds = 'usd-coin,tether,ethereum,bitcoin,wrapped-bitcoin,dai'
-    const ratesConvResultCurrencies = 'usd,ars,brl'
+    const ratesConvResultCurrencies = 'usd,ars,brl,uyu'
     const ratesConvCompleteUrl = `${ratesConvBaseUrl}?ids=${ratesConvTokensIds}&vs_currencies=${ratesConvResultCurrencies}`
     const response = await axios.get(ratesConvCompleteUrl)
 
@@ -306,31 +312,40 @@ async function getCoingeckoConversionRates() {
       ethereum: {
         usd: 0,
         ars: 0,
-        brl: 0
+        brl: 0,
+        uyu: 0
       },
       'wrapped-bitcoin': {
         usd: 0,
         ars: 0,
-        brl: 0
+        brl: 0,
+        uyu: 0
       },
       'usd-coin': {
         usd: 0,
         ars: 0,
-        brl: 0
+        brl: 0,
+        uyu: 0
       }
     }
   }
 }
 
-function calculateTotals(balances: IBalance[]): { usd: number; ars: number; brl: number } {
+function calculateTotals(balances: IBalance[]): {
+  usd: number
+  ars: number
+  brl: number
+  uyu: number
+} {
   const totals = balances.reduce(
     (acc, balance) => {
       acc.usd += balance.balance_conv.usd
       acc.ars += balance.balance_conv.ars
       acc.brl += balance.balance_conv.brl
+      acc.uyu += balance.balance_conv.uyu
       return acc
     },
-    { usd: 0, ars: 0, brl: 0 }
+    { usd: 0, ars: 0, brl: 0, uyu: 0 }
   )
 
   return totals
