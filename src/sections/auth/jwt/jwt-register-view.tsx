@@ -8,15 +8,13 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import Link from '@mui/material/Link'
 import Alert from '@mui/material/Alert'
 import Stack from '@mui/material/Stack'
+import { Select, MenuItem } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import LoadingButton from '@mui/lab/LoadingButton'
-import { Select, MenuItem, InputLabel } from '@mui/material'
 
 import { paths } from 'src/routes/paths'
+import { useRouter } from 'src/routes/hooks'
 import { RouterLink } from 'src/routes/components'
-import { useRouter, useSearchParams } from 'src/routes/hooks'
-
-import { useBoolean } from 'src/hooks/use-boolean'
 
 import { useTranslate } from 'src/locales'
 import { BOT_WAPP_URL } from 'src/config-global'
