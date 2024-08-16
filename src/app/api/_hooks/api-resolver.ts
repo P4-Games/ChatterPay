@@ -55,7 +55,8 @@ export const endpoints = {
     },
     wallet: {
       balance: (id: string) => getFullUIEndpoint(`wallet/${id}/balance`),
-      transactions: (id: string) => getFullUIEndpoint(`wallet/${id}/transactions`)
+      transactions: (id: string) => getFullUIEndpoint(`wallet/${id}/transactions`),
+      nfts: (id: string) => getFullUIEndpoint(`wallet/${id}/nfts`)
     }
   },
   backend: {

@@ -11,3 +11,7 @@ export function useGetWalletBalance(walletId: string) {
 export function useGetWalletTransactions(walletId: string) {
   return useGetCommon(endpoints.dashboard.wallet.transactions(walletId))
 }
+
+export function useGetWalletNfts(walletId: string) {
+  return useGetCommon(endpoints.dashboard.wallet.nfts(walletId))
+}
