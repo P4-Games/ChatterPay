@@ -186,6 +186,9 @@ export async function geUserTransactions(wallet: string): Promise<ITransaction[]
           status: 1,
           trx_hash: 1
         }
+      },
+      {
+        $sort: { date: -1 }
       }
     ])
     .toArray()
