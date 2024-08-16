@@ -24,7 +24,6 @@ export default function OverviewBankingView() {
   const { t } = useTranslate()
   const settings = useSettingsContext()
   const { user }: { user: AuthUserType } = useAuthContext()
-
   const [walletAddress, setWalletAddress] = useState<string | null>(null)
 
   useEffect(() => {
