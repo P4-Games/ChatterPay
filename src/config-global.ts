@@ -32,9 +32,7 @@ export const fromICP = (process.env.NEXT_PUBLIC_FROM_ICP || 'false') === 'true'
 // ----------------------------------------------------------------------
 
 // internal
-export const PATH_AFTER_LOGIN = fromICP
-  ? 'https://chatterpay-front-ylswtey2za-uc.a.run.app/dashboard'
-  : paths.dashboard.root
+export const PATH_AFTER_LOGIN = fromICP ? 'https://chatterpay.net/dashboard' : paths.dashboard.root
 export const BOT_WAPP_URL =
   'https://api.whatsapp.com/send/?phone=5491164629653&text=MESSAGE&type=phone_number&app_absent=0'
 
