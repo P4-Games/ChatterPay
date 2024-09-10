@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography'
 import { useResponsive } from 'src/hooks/use-responsive'
 
 import MainLayout from 'src/layouts/main'
+import { BACKEND_API_URL } from 'src/config-global'
 
 import { varFade } from 'src/components/animate'
 
@@ -31,15 +32,12 @@ export default function Mint({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     const getData = async () => {
-      const NFTData = await fetch(
-        `https://chatterpay-back-ylswtey2za-uc.a.run.app/nft/${parseInt(params.id, 10)}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          }
+      const NFTData = await fetch(`${BACKEND_API_URL}/nft/${parseInt(params.id, 10)}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
         }
-      ).then((res) => res.json())
+      }).then((res) => res.json())
 
       if (!NFTData) {
         router.push('/404')
