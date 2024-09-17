@@ -8,8 +8,7 @@ on:
       - main
 
 jobs:
-  build-check:
-    name: Docker Build
+  docker-build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -17,3 +16,9 @@ jobs:
 
       - name: Build Docker image
         run: docker build -t chatterpay-front .
+
+      - name: Report Status
+        uses: ./
+        with:
+          authToken: ${{secrets.GITHUB_TOKEN}}
+          state: 'success'
