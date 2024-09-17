@@ -11,14 +11,11 @@ jobs:
   docker-build:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - name: Checkout repository
-        uses: actions/checkout@v4
 
       - name: Build Docker image
         run: docker build -t chatterpay-front .
-
-      - name: Report Status
-        uses: ./
         with:
           authToken: ${{secrets.GITHUB_TOKEN}}
           state: 'success'
