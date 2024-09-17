@@ -19,8 +19,8 @@ jobs:
         run: docker build -t chatterpay-front .
 
       # more info: https://github.com/marketplace/actions/create-status-check
-      - name: Status Report
-      - uses: mapbox/create-status-check@v1
+      - name: Report Status Check
+        uses: mapbox/create-status-check@v1
         with:
           authToken: ${{secrets.GITHUB_TOKEN}}
           context: 'build-check'
