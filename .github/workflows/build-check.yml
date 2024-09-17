@@ -9,8 +9,8 @@ on:
 
 jobs:
   docker-build:
+    name: Docker Build
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -19,4 +19,14 @@ jobs:
         run: docker build -t chatterpay-front .
 
       - name: Status Report
-        run: echo "success"
+        run: echo "Build success"
+
+      # more info: https://github.com/marketplace/actions/create-status-check
+      - name: Status Report
+      - uses: mapbox/create-status-check@v1
+        with:
+          authToken: ${{secrets.GITHUB_TOKEN}}
+          context: 'build-check'
+          description: 'Passed'
+          state: 'success'
+          sha: ${{github.event.pull_request.head.sha || github.sha}}
