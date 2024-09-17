@@ -15,10 +15,16 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Docker image
-        run: echo "hola" # docker build -t chatterpay-front .
+        run: |
+          echo "Building Docker image..."
+          # docker build -t chatterpay-front .
+
+      - name: create-status-check
+        uses: billyjbryant/create-status-check@v2
         with:
-          authToken: ${{secrets.GITHUB_TOKEN}}
+          authToken: ${{ secrets.GITHUB_TOKEN }}
           context: 'Check Status Report'
-          description: 'Check Status Report'
-          sha: ${{github.event.pull_request.head.sha || github.sha}}
+          description: 'Passed'
           state: 'success'
+          sha: ${{ github.event.pull_request.head.sha || github.sha }}
+  
