@@ -1,4 +1,5 @@
-name: Build Check
+# This name 'build-check' is used with GitHub branch rules. Please do not change it!
+name: build-check
 
 on:
   pull_request:
