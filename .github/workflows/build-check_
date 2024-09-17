@@ -19,12 +19,14 @@ jobs:
           echo "Building Docker image..."
           # docker build -t chatterpay-front .
 
-      - name: create-status-check
-        uses: billyjbryant/create-status-check@v2
-        with:
-          authToken: ${{ secrets.GITHUB_TOKEN }}
-          context: 'Check Status Report'
-          description: 'Passed'
-          state: 'success'
-          sha: ${{ github.event.pull_request.head.sha || github.sha }}
-  
+      - name: Report Status
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          curl -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{"state": "success", "description": "Check Status Report", "context": "Check Status Report"}' \
+            https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}
+    
+          
