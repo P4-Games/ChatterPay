@@ -18,9 +18,6 @@ jobs:
       - name: Build Docker image
         run: docker build -t chatterpay-front .
 
-      - name: Status Report
-        run: echo "Build success"
-
       # more info: https://github.com/marketplace/actions/create-status-check
       - name: Status Report
       - uses: mapbox/create-status-check@v1
