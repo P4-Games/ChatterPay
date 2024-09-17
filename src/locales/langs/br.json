@@ -1,0 +1,237 @@
+{
+  "common": {
+    "country": "País",
+    "phone-number": "Número de Telefone",
+    "first-name": "Primeiro Nome",
+    "last-name": "Sobrenome",
+    "email-address": "Endereço de Email",
+    "password": "Senha",
+    "name": "Nome",
+    "wallet": "Carteira",
+    "required": "obrigatório",
+    "must-be-numeric": "Deve ser numérico",
+    "must-be-max": "Deve ter no máximo {MAX_DIGITS} dígitos",
+    "must-be-valid-email": "O email deve ser um endereço de email válido",
+    "nodata": "Sem Dados",
+    "view": "Ver",
+    "share": "Compartilhar"
+  },
+  "menu": {
+    "overview": "Visão geral",
+    "_dashboard": "Painel",
+    "nfts": "NFTs",
+    "management": "Gestão",
+    "user": "Usuário",
+    "account": "Conta",
+    "logout": "Sair"
+  },
+  "home": {
+    "help": {
+      "need-help": "Precisa de ajuda?"
+    },
+    "common": {
+      "contact-us": "Contate-nos"
+    },
+    "footer": {
+      "description": "Transfira criptomoedas facilmente pelo WhatsApp usando nossa plataforma Web3.",
+      "all-rights": "Todos os direitos reservados",
+      "made-by": "feito por",
+      "links": {
+        "about-us": "Sobre nós",
+        "contact-us": "Contate-nos",
+        "faqs": "Perguntas frequentes",
+        "legal": "Legal",
+        "terms": "Termos e condições",
+        "privacy": "Política de privacidade",
+        "contact": "Contato"
+      }
+    },
+    "hero": {
+      "title1": "Enviar dinheiro",
+      "title2": "com uma mensagem",
+      "legend": "Transfira criptomoedas facilmente pelo WhatsApp usando nossa plataforma Web3."
+    },
+    "main-features": {
+      "tag": "Principais Funcionalidades",
+      "title1": "Como ChatterPay",
+      "title2": "pode te ajudar?",
+      "card-1": {
+        "title": "Tornar invisível a complexidade do blockchain",
+        "description": "Esconda frases secretas, pop-ups de aprovação de transações e patrocine taxas de gás para transações. Nós lidamos com todos os aspectos técnicos para você."
+      },
+      "card-2": {
+        "title": "Transferir dinheiro facilmente",
+        "description": "Basta enviar uma mensagem de texto via WhatsApp para transferir, receber, trocar e armazenar valor."
+      },
+      "card-3": {
+        "title": "Solicite pagamentos facilmente",
+        "description": "Solicite pagamentos em criptomoedas via WhatsApp. Emita faturas dinâmicas, receba pagamentos em várias moedas e receba notificações ao serem concluídos."
+      }
+    },
+    "all-features": {
+      "tag": "Funcionalidades",
+      "title": "Descubra todas as funcionalidades",
+      "features": {
+        "f1": "Transferir fundos para qualquer contato do WhatsApp",
+        "f2": "Receber pagamentos e transferências diretamente no seu WhatsApp",
+        "f3": "Trocar facilmente entre diferentes tokens de maneira amigável ao usuário",
+        "f4": "Manter seus tokens de forma segura mantendo o controle total sobre seus ativos",
+        "f5": "Painel para acompanhamento de saldo e histórico de transações",
+        "f6": "Painel de Administração Interna",
+        "f6-2": "para supervisar e gerenciar contas de usuário",
+        "f7": "Suporte personalizado e eficiente",
+        "f8": "MFA baseado no WhatsApp para autenticação de WebApp",
+        "f9": "MFA baseado em e-mail para recuperação de conta",
+        "f10": "Notificações de transações",
+        "f11": "Gestão e pagamento de taxas",
+        "f12": "Processamento de mensagens multiagente",
+        "f13": "Gestão de chaves privadas com Tecnologia de Abstração de Contas"
+      }
+    },
+    "request-demo": {
+      "tag": "Experimente",
+      "title": "Solicitar uma Demonstração",
+      "description1": "Entre em contato com nossa equipe para uma demonstração do produto.",
+      "description2": "É a carteira que você precisa para entrar no mundo Web3."
+    },
+    "tech": {
+      "tag": "Tech",
+      "title": "Tecnologias em que Confiamos",
+      "cards": {
+        "ethereum": {
+          "title": "Ethereum",
+          "description": "Blockchain de camada 1 para contratos inteligentes e aplicações descentralizadas. Garante a segurança das transações."
+        },
+        "scroll": {
+          "title": "Scroll",
+          "description": "Solução de camada 2 para Ethereum, oferecendo transações mais rápidas e econômicas. Projetada para melhorar a eficiência e usabilidade."
+        },
+        "whatsapp": {
+          "title": "WhatsApp",
+          "description": "Plataforma global de mensagens para comunicação. Fornece mensagens seguras e integração fácil com outros serviços."
+        },
+        "openai": {
+          "title": "OpenAI",
+          "description": "Conecte APIs da web diretamente a aplicativos descentralizados."
+        },
+        "api3": {
+          "title": "api3",
+          "description": "Uma rede de oráculos de dados descentralizada que facilita a integração direta de APIs com aplicativos de blockchain."
+        },
+        "account-abstraction": {
+          "title": "Abstração de Conta",
+          "description": "Conceito que permite interagir com blockchains sem a necessidade de criptomoedas específicas. Melhora a flexibilidade e usabilidade para os usuários."
+        }
+      }
+    },
+    "faq": {
+      "tag": "FaQ",
+      "title": "Perguntas frequentes",
+      "still-title": "Ainda tem perguntas?",
+      "still-description": "Por favor, descreva seu caso para receber o conselho mais preciso.",
+      "faqs": {
+        "faq1": {
+          "question": "O que é ChatterPay?",
+          "answer": "ChatterPay é uma carteira para WhatsApp que integra IA e Abstração de Contas para permitir que qualquer usuário gerencie fundos em blockchain de forma fácil e segura, sem conhecimento técnico."
+        },
+        "faq2": {
+          "question": "Como posso criar uma carteira?",
+          "answer": "Para criar uma carteira, você pode fazê-lo diretamente pelo Bot ChatterPay no WhatsApp."
+        },
+        "faq3": {
+          "question": "Quais são as taxas associadas ao recebimento de pagamentos?",
+          "answer": "ChatterPay cobra uma taxa de 0,01% para cada transferência recebida."
+        },
+        "faq4": {
+          "question": "Posso trocar entre diferentes tokens?",
+          "answer": "Sim, você pode trocar entre USDT, DAI, MATIC, ETH, BTC, ADA e DOT sem limites de transação."
+        },
+        "faq5": {
+          "question": "Como posso verificar meu saldo e transações?",
+          "answer": "Você pode verificar seu saldo e transações a qualquer momento através do nosso painel em https://chatterpay.vercel.app/."
+        },
+        "faq6": {
+          "question": "O que acontece se eu perder meus tokens?",
+          "answer": "O sistema é descentralizado e o usuário é totalmente responsável por gerenciar suas contas. Não oferecemos seguro ou suporte em caso de perdas devido a erros do usuário."
+        },
+        "faq7": {
+          "question": "Onde posso obter mais informações sobre como usar o ChatterPay?",
+          "answer": "Você pode visitar nosso aplicativo da web em https://chatterpay.vercel.app/ para mais informações e guias futuros."
+        },
+        "faq8": {
+          "question": "Onde está armazenada a chave privada da minha carteira?",
+          "answer": "Sua chave privada é armazenada de forma segura usando a tecnologia de Abstração de Contas em uma blockchain de camada 2 chamada Scroll com a tecnologia 'KeyStore', garantindo alta segurança e controle do usuário."
+        },
+        "faq9": {
+          "question": "O que posso fazer no site?",
+          "answer": "Você pode ver o saldo da sua carteira, verificar seu histórico de transações, ver o endereço da sua carteira e ver as informações do seu usuário."
+        },
+        "faq10": {
+          "question": "Como faço para fazer login no site?",
+          "answer": "Digite seu número de telefone registrado. Um código de 6 dígitos será enviado para o seu telefone por segurança; depois de inseri-lo, você poderá acessar o site."
+        }
+      }
+    },    
+    "get-started": {
+      "title": "Comece com",
+      "description": "Todo o poder do Web3 sem complicações.",
+      "cta": "Cadastre-se agora"
+    }
+  },
+  "login": {
+    "my-wallet": "Minha Carteira",
+    "hi": "Oi, bem-vindo de volta",
+    "title": "Entrar no ChatterPay",
+    "new-user": "Novo usuário?",
+    "create-account": "Criar uma conta",
+    "send-code": "Enviar código para o WhatsApp",
+    "login": "Entrar",
+    "resend-code": "Reenviar código",
+    "dont-have-code": "Não tem um código?",
+    "msg": {
+      "enter-phone": "Digite o número de telefone com o código de área, sem 0 e sem 15",
+      "code-sent": "Enviamos um código de 6 dígitos para esse número de telefone",
+      "code-info": "Por favor, insira o código de 6 dígitos que enviamos para o número do WhatsApp fornecido.",
+      "invalid-user": "Usuário não encontrado com esse número de telefone",
+      "invalid-code": "Código inválido",
+      "code-bot": "Insira este código *{2FA_CODE}* no aplicativo Chatterpay para fazer login. É muito importante que você não compartilhe esta informação com ninguém. Se você não solicitou o código, desconsidere esta mensagem e entre em contato conosco para que possamos ajudá-lo!"
+    }
+  },
+  "register": {
+    "title": "Facilite pagamentos e transferências sem complicações através do ChatterPay",
+    "get-started": "Começar",
+    "already-account": "Já tem uma conta?",
+    "sign-in": "Entrar",
+    "create-account": "Criar Conta",
+    "terms-of-service": "Termos de Serviço",
+    "privacy-policy": "Política de Privacidade",
+    "by-signing": "Ao me inscrever, concordo com os",
+    "and": "e"
+  },
+  "balances": {
+    "title": "Saldo Estimado",
+    "deposit": "Depositar",
+    "send": "Enviar",
+    "wapp-msg": "Olá!"
+  },
+  "transactions": {
+    "title": "Transações Recentes",
+    "table-transaction": "Transação",
+    "table-amount": "Montante",
+    "table-date": "Data",
+    "table-status": "Status",
+    "table-view-all": "Ver Tudo",
+    "table-download": "Baixar",
+    "table-print": "Imprimir",
+    "table-share": "Compartilhar",
+    "receive-from": "Recebido dinheiro de",
+    "sent-to": "Enviado dinheiro para"
+  },
+  "nfts": {
+    "view-trx": "Ver detalhes da transação",
+    "mint": "Ei, dá uma olhada no meu NFT:"
+  },
+  "account": {
+    "title": "Conta"
+  }
+}

@@ -1,0 +1,237 @@
+{
+  "common": {
+    "country": "Country",
+    "phone-number": "Phone Number",
+    "first-name": "First Name",
+    "last-name": "Last Name",
+    "email-address": "Email Address",
+    "password": "Password",
+    "name": "Name",
+    "wallet": "Wallet",
+    "required": "required",
+    "must-be-numeric": "Must be numeric",
+    "must-be-max": "Must be a maximum of {MAX_DIGITS} digits",
+    "must-be-valid-email": "Email must be a valid email address",
+    "nodata": "No Data",
+    "view": "View",
+    "share": "Share"
+  },
+  "menu": {
+    "overview": "overview",
+    "_dashboard": "Dashboard",
+    "nfts": "NFTs",
+    "management": "Management",
+    "user": "User",
+    "account": "Account",
+    "logout": "Logout"
+  },
+  "home": {
+    "help": {
+      "need-help": "Need help?"
+    },
+    "common": {
+      "contact-us": "Contact Us"
+    },
+    "footer": {
+      "description": "Transfer crypto easily through WhatsApp using our Web3 platform.",
+      "all-rights": "All rights reserved",
+      "made-by": "made by",
+      "links": {
+        "about-us": "About us",
+        "contact-us": "Contact us",
+        "faqs": "FAQs",
+        "legal": "Legal",
+        "terms": "Terms and Conditions",
+        "privacy": "Privacy Policy",
+        "contact": "Contact"
+      }
+    },
+    "hero": {
+      "title1": "Send Money",
+      "title2": "with a message",
+      "legend": "Transfer crypto easily through WhatsApp using our Web3 platform."
+    },
+    "main-features": {
+      "tag": "Main Features",
+      "title1": "How can ChatterPay",
+      "title2": "help you?",
+      "card-1": {
+        "title": "Make the blockchain complexity invisible",
+        "description": "Hide passphrases, transaction approval pop-ups, and sponsor gas fees for transactions. We handle all the technical stuff for you."
+      },
+      "card-2": {
+        "title": "Transfer money easily",
+        "description": "Simply send a text message via WhatsApp to transfer, receive, swap and store value."
+      },
+      "card-3": {
+        "title": "Request Payments effortlessly",
+        "description": "Request Crypto payments via WhatsApp. Issue dynamic invoices, get paid in various currencies, and receive notifications on completion."
+      }
+    },
+    "all-features": {
+      "tag": "Functionalities",
+      "title": "Discover all features",
+      "features": {
+        "f1": "Transfer funds to any WhatsApp contact",
+        "f2": "Receive payments and transfers directly in your WhatsApp",
+        "f3": "Easily swap between different tokens in a user-friendly way",
+        "f4": "Securely hold your tokens while maintaining full control over your assets",
+        "f5": "Dashboard for balance and transaction history tracking",
+        "f6": "Internal Administration Panel",
+        "f6-2": "for supervising and managing user accounts",
+        "f7": "Personalized and efficient support",
+        "f8": "WhatsApp-based MFA for WebApp authentication",
+        "f9": "Email-based MFA for account recovery",
+        "f10": "Transaction notifications",
+        "f11": "Fee management and payment",
+        "f12": "Multi-agent message processing",
+        "f13": "Private key management with Account Abstraction Technology"
+      }
+    },
+    "request-demo": {
+      "tag": "Try it",
+      "title": "Request a Demo",
+      "description1": "Contact our team for a product demonstration.",
+      "description2": "It's the wallet you need to enter the Web3 world."
+    },
+    "tech": {
+      "tag": "Tech",
+      "title": "Technologies We Rely On",
+      "cards": {
+        "ethereum": {
+          "title": "Ethereum",
+          "description": "Layer 1 Blockchain for smart contracts and decentralized applications. Ensures security for transactions."
+        },
+        "scroll": {
+          "title": "Scroll",
+          "description": "Layer 2 blockchain solution for Ethereum, offering faster and cheaper transactions. Designed to improve efficiency and usability."
+        },
+        "whatsapp": {
+          "title": "WhatsApp",
+          "description": "Global messaging platform for communication. Provides secure messaging and easy integration with other services"
+        },
+        "openai": {
+          "title": "OpenAI",
+          "description": "AI platform that understands and generates human-like text. Powers advanced language processing and learning capabilities."
+        },
+        "api3": {
+          "title": "api3",
+          "description": "A decentralized data oracle network that facilitates direct integration of APIs with blockchain applications."
+        },
+        "account-abstraction": {
+          "title": "Account Abstraction",
+          "description": "Concept allowing interaction with blockchains without needing specific cryptocurrencies. Enhances flexibility and usability for users."
+        }
+      }
+    },
+    "faq": {
+      "tag": "FaQ",
+      "title": "Frequently asked questions",
+      "still-title": "Still have questions?",
+      "still-description": "Please describe your case to receive the most accurate advice.",
+      "faqs": {
+        "faq1": {
+          "question": "What is ChatterPay?",
+          "answer": "ChatterPay is a Wallet for WhatsApp that integrates AI and Account Abstraction to allow any user to easily and securely manage funds on the blockchain without technical knowledge."
+        },
+        "faq2": {
+          "question": "How can I create a wallet?",
+          "answer": "To create a wallet, you can do it directly from the ChatterPay Bot on WhatsApp."
+        },
+        "faq3": {
+          "question": "What are the fees associated with receiving payments?",
+          "answer": "ChatterPay charges a 0.01% fee for each received transfer."
+        },
+        "faq4": {
+          "question": "Can I swap between different tokens?",
+          "answer": "Yes, you can swap between USDT, DAI, MATIC, ETH, BTC, ADA, and DOT without transaction limits."
+        },
+        "faq5": {
+          "question": "How can I check my balance and transactions?",
+          "answer": "You can check your balance and transactions at any time through our dashboard at https://chatterpay.vercel.app/."
+        },
+        "faq6": {
+          "question": "What happens if I lose my tokens?",
+          "answer": "The system is decentralized, and the user is entirely responsible for managing their accounts. We do not offer insurance or support in case of losses due to user error."
+        },
+        "faq7": {
+          "question": "Where can I get more information about how to use ChatterPay?",
+          "answer": "You can visit our WebApp at https://chatterpay.vercel.app/ for more information and future guides."
+        },
+        "faq8": {
+          "question": "Where is my wallet's private key stored?",
+          "answer": "Your private key is stored securely using Account Abstraction technology on a layer 2 blockchain called Scroll with the 'KeyStore' technology, ensuring high security and user control."
+        },
+        "faq9": {
+          "question": "What can I do on the website?",
+          "answer": "You can view your wallet balance, check your transaction history, see your wallet address, and view your user information."
+        },
+        "faq10": {
+          "question": "How do I log in to the website?",
+          "answer": "Enter your registered phone number. A 6-digit code will be sent to your phone for security; once you enter it, you will be able to access the site."
+        }
+      }
+    },
+    "get-started": {
+      "title": "Get started with",
+      "description": "All the power of Web3 with none of the hassle.",
+      "cta": "Sign Up Now"
+    }
+  },
+  "login": {
+    "my-wallet": "My Wallet",
+    "hi": "Hi, Welcome back",
+    "title": "Sign in to ChatterPay",
+    "new-user": "New User?",
+    "create-account": "Create an account",
+    "send-code": "Send Code to Whatsapp",
+    "login": "login",
+    "resend-code": "Resend Code",
+    "dont-have-code": "Don't have a code?",
+    "msg": {
+      "enter-phone": "Enter phone number with area code, without 0 and without 15",
+      "code-sent": "We sent a 6-digit code to the phone number",
+      "code-info": "Please enter the 6-digit code we sent to the WhatsApp number provided.",
+      "invalid-user": "User not found with that phone number",
+      "invalid-code": "Invalid code",
+      "code-bot": "Enter this code *{2FA_CODE}* in the Chatterpay app to log in. It is very important that you do not share this information with anyone. If you did not request the code, disregard this message and contact us so we can help you!"
+    }
+  },
+  "register": {
+    "title": "Facilitate seamless payments and transfers through ChatterPay",
+    "get-started": "Get started",
+    "already-account": "Already have an account?",
+    "sign-in": "Sign in",
+    "create-account": "Create Account",
+    "terms-of-service": "Terms of Service",
+    "privacy-policy": "Privacy Policy",
+    "by-signing": "By signing up, I agree to",
+    "and": "and"
+  },
+  "balances": {
+    "title": "Estimated Balance",
+    "deposit": "Deposit",
+    "send": "Send",
+    "wapp-msg": "Hi!"
+  }, 
+  "transactions": {
+    "title": "Recent Transactions",
+    "table-transaction": "Transaction",
+    "table-amount": "Amount",
+    "table-date": "Date", 
+    "table-status": "Status",
+    "table-view-all": "View All",
+    "table-download": "Download",
+    "table-print": "Print",
+    "table-share": "Share",
+    "receive-from": "Received money from",
+    "sent-to": "Sent money to"
+  },
+  "nfts": {
+    "view-trx": "View Transacton Details",
+    "mint": "Hey, check out my NFT:"
+  },
+  "account": {
+    "title": "Account"
+  }
+}
