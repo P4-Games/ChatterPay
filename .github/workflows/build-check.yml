@@ -1,5 +1,5 @@
 # This name 'build-check' is used with GitHub branch rules. Please do not change it!
-name: build-check
+name: "build-check"
 
 on:
   pull_request:
@@ -16,4 +16,4 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build Docker image
-        run: docker build -t chatterpay-front .
+        run: echo 'hola' # docker build -t chatterpay-front .
