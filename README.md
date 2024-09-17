@@ -86,6 +86,7 @@ NODE_PROVIDER_MUMBAI_URL='https://stylish-dawn-bush.bsc-testnet.quiknode.pro/YOU
 NODE_PROVIDER_SCROLL_URL='https://lb.drpc.org/ogrpc?network=scroll-sepolia&dkey=YOUR_API_KEY'
 HANDLE_VERCEL_FREE_PLAN_TIMEOUT=true
 API3_ENABLED=false
+JWT_SECRET='some secret text'
 
 # client side
 NEXT_PUBLIC_USE_MOCK=true
