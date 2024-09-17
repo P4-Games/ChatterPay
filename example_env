@@ -11,6 +11,7 @@ BACKEND_API_URL=https://dev.back.chatterpay.net
 BOT_API_WAPP_ENABLED=true
 MONGODB='mongodb://localhost:27017'
 MONGODB_BOT='BOT mongo db url'
+DB_CHATTERPAY_NAME='chatterpay_dev'
 NODE_PROVIDER_SEPOLIA_URL='https://sepolia.infura.io/v3/YOUR_API_KEY'
 NODE_PROVIDER_MUMBAI_URL='https://stylish-dawn-bush.bsc-testnet.quiknode.pro/YOUR_API_KEY/'
 NODE_PROVIDER_SCROLL_URL='https://lb.drpc.org/ogrpc?network=scroll-sepolia&dkey=YOUR_API_KEY'
