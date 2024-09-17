@@ -14,6 +14,9 @@ export const botApiWappEnabled = (process.env.BOT_API_WAPP_ENABLED || 'true') ==
 export const nodeProviderUrlSepolia = process.env.NODE_PROVIDER_SEPOLIA_URL
 export const nodeProviderUrlPolygon = process.env.NODE_PROVIDER_MUMBAI_URL
 export const nodeProviderUrlScroll = process.env.NODE_PROVIDER_SCROLL_URL
+export const JWT_SECRET = process.env.JWT_SECRET || 'some_secr3t'
+export const API3_ENABLED = (process.env.API3_ENABLED || 'false') === 'true'
+export const DB_CHATTERPAY_NAME = process.env.DB_CHATTERPAY_NAME || 'chatterpay_dev'
 
 // Vercel has a timeout of 10 seconds (only for free plan) in the APIs.
 // The login has certain logic between ChatterPay and the backend of the Chatizalo,
@@ -46,8 +49,6 @@ export const NFT_SHARE = 'https://api.whatsapp.com/send/?text=MESSAGE'
 
 export const STORAGE_KEY_TOKEN = 'accessToken'
 export const STORAGE_KEY_SETTINGS = 'settings'
-export const JWT_SECRET = process.env.JWT_SECRET || 'some_secr3t'
-export const API3_ENABLED = (process.env.API3_ENABLED || 'false') === 'true'
 export const GET_BALANCES_FROM_BACKEND = true
 
 export const defaultBalance = {

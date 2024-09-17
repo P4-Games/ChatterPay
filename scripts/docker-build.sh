@@ -14,6 +14,7 @@ docker build \
   --build-arg APP_ENV="$APP_ENV" \
   --build-arg MONGODB="$MONGODB" \
   --build-arg MONGODB_BOT="$MONGODB_BOT" \
+  --build-arg DB_CHATTERPAY_NAME="$DB_CHATTERPAY_NAME" \
   --build-arg BOT_API_TOKEN="$BOT_API_TOKEN" \
   --build-arg BOT_API_URL="$BOT_API_URL" \
   --build-arg NODE_PROVIDER_SEPOLIA_URL="$NODE_PROVIDER_SEPOLIA_URL" \

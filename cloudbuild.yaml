@@ -12,6 +12,7 @@ steps:
       - APP_ENV=${_APP_ENV}
       - MONGODB=${_MONGODB}
       - MONGODB_BOT=${_MONGODB_BOT}
+      - DB_CHATTERPAY_NAME=${_DB_CHATTERPAY_NAME}
       - BOT_API_TOKEN=${_BOT_API_TOKEN}
       - BOT_API_URL=${_BOT_API_URL}
       - BOT_API_WAPP_ENABLED=${_BOT_API_WAPP_ENABLED}
@@ -38,6 +39,7 @@ steps:
       "--build-arg", "APP_ENV=${_APP_ENV}",
       "--build-arg", "MONGODB=${_MONGODB}",
       "--build-arg", "MONGODB_BOT=${_MONGODB_BOT}",
+      "--build-arg", "DB_CHATTERPAY_NAME=${_DB_CHATTERPAY_NAME}",
       "--build-arg", "BOT_API_TOKEN=${_BOT_API_TOKEN}",
       "--build-arg", "BOT_API_URL=${_BOT_API_URL}",
       "--build-arg", "BOT_API_WAPP_ENABLED=${_BOT_API_WAPP_ENABLED}",

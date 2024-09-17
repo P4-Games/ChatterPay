@@ -1,5 +1,7 @@
 import { ObjectId, Collection } from 'mongodb'
 
+import { DB_CHATTERPAY_NAME } from 'src/config-global'
+
 import { IAccount } from 'src/types/account'
 import { INFT, ITransaction } from 'src/types/wallet'
 import { LastUserConversation } from 'src/types/chat'
@@ -10,7 +12,6 @@ import { getObjectId, getFormattedId, updateOneCommon } from './mongo-utils'
 
 // ----------------------------------------------------------------------
 
-const DB_CHATTERPAY_NAME: string = 'chatterpay'
 const SCHEMA_USERS: string = 'users'
 const SCHEMA_TRANSACTIONS: string = 'transactions'
 const SCHEMA_NFTS: string = 'nfts'
@@ -46,7 +47,7 @@ export async function getUserByPhone(phone: string): Promise<IAccount | undefine
 
   // Intenta encontrar el número de teléfono completo
   let data: IAccountDB | null = await db.collection(SCHEMA_USERS).findOne({ phone_number: phone })
-
+  console.log(data, phone)
   // Si no se encuentra, intenta buscar por los últimos 8 caracteres del número de teléfono
   if (!data) {
     const last8Chars = phone.slice(-8) // Obtiene los últimos 8 caracteres del número de teléfono
