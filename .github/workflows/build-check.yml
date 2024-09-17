@@ -1,0 +1,19 @@
+# This name 'build-check' is used with GitHub branch rules. Please do not change it!
+name: "build-check"
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - main
+
+jobs:
+  build-check:
+    name: Docker Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t chatterpay-front .
