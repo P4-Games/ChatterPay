@@ -13,17 +13,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Build Docker image
         run: docker build -t chatterpay-front .
 
-      # more info: https://github.com/marketplace/actions/create-status-check
-      - name: Report Status Check
+  # more info: https://github.com/marketplace/actions/create-status-check
+  report-status: 
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run the action # You would run your tests before this using the output to set state/desc
         uses: mapbox/create-status-check@v1
         with:
           authToken: ${{secrets.GITHUB_TOKEN}}
-          context: 'build-check'
+          context: 'report-status run'
           description: 'Passed'
           state: 'success'
           sha: ${{github.event.pull_request.head.sha || github.sha}}
