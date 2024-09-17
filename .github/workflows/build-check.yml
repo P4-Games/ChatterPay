@@ -1,4 +1,5 @@
-name: build-check
+# This name 'build-check' is used with GitHub branch rules. Please do not change it!
+name: "build-check"
 
 on:
   pull_request:
@@ -16,20 +17,3 @@ jobs:
 
       - name: Build Docker image
         run: docker build -t chatterpay-front .
-
-      - name: Report status check
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const context = require('@actions/github').context;
-            const { owner, repo } = context.repo;
-            const sha = context.payload.pull_request.head.sha;
-            const status = process.env.GITHUB_RUN_ID === undefined ? 'success' : 'failure';  // Set status based on build results
-            await github.rest.repos.createCommitStatus({
-              owner,
-              repo,
-              sha,
-              state: status,
-              context: 'build-check',  // This is the name of the status check
-              description: 'Docker Build Check'
-            });
