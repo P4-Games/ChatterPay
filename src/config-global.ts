@@ -46,7 +46,7 @@ export const NFT_SHARE = 'https://api.whatsapp.com/send/?text=MESSAGE'
 
 export const STORAGE_KEY_TOKEN = 'accessToken'
 export const STORAGE_KEY_SETTINGS = 'settings'
-export const JWT_SECRET = '65OcvHlcxqkBhniJBRtSc1HkzgjoKt2GmL2vV3COdw1BbKPs2etUxnVlynJUT1I'
+export const JWT_SECRET = process.env.JWT_SECRET || 'some_secr3t'
 export const API3_ENABLED = (process.env.API3_ENABLED || 'false') === 'true'
 export const GET_BALANCES_FROM_BACKEND = true
 
