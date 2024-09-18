@@ -14,6 +14,7 @@ import { RouterLink } from 'src/routes/components'
 
 import { useTranslate } from 'src/locales'
 import { _socials } from 'src/app/api/_data/_mock'
+import { BOT_WAPP_URL, CONTACT_EMAIL } from 'src/config-global'
 
 import Logo from 'src/components/logo'
 import Iconify from 'src/components/iconify'
@@ -22,18 +23,18 @@ import Iconify from 'src/components/iconify'
 
 export default function Footer() {
   const pathname = usePathname()
-
   const { t } = useTranslate()
 
   const homePage = pathname === '/'
+  const contactUsUrl = BOT_WAPP_URL.replaceAll('MESSAGE', t('home.common.contact-us-wapp-msg'))
 
   const LINKS = [
     {
       headline: 'ChatterPay',
       children: [
         { name: t('home.footer.links.about-us'), href: '#' },
-        { name: t('home.footer.links.contact-us'), href: '#' },
-        { name: t('home.footer.links.faqs'), href: '#' }
+        { name: t('home.footer.links.contact-us'), href: contactUsUrl },
+        { name: t('home.footer.links.faqs'), href: '/' }
       ]
     },
     {
@@ -45,7 +46,7 @@ export default function Footer() {
     },
     {
       headline: t('home.footer.links.contact'),
-      children: [{ name: 'info@chatterpay.net', href: '#' }]
+      children: [{ name: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}` }]
     }
   ]
 

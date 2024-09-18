@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography'
 import { useResponsive } from 'src/hooks/use-responsive'
 
 import { useTranslate } from 'src/locales'
+import { BOT_WAPP_URL } from 'src/config-global'
 
 import { varFade } from 'src/components/animate'
 
@@ -19,9 +20,7 @@ import { varFade } from 'src/components/animate'
 export default function HomeAllFeatures() {
   const mdUp = useResponsive('up', 'md')
   const { t } = useTranslate()
-
-  /*
-  const theme = useTheme()
+  const contactUsUrl = BOT_WAPP_URL.replaceAll('MESSAGE', t('home.common.contact-us-wapp-msg'))
 
 
   const renderSection1 = (
@@ -158,7 +157,7 @@ export default function HomeAllFeatures() {
         variant='contained'
         target='_blank'
         rel='noopener'
-        href='/'
+        href={contactUsUrl}
       >
         {t('home.common.contact-us')}
       </Button>
