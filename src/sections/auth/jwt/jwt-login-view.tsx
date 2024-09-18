@@ -37,7 +37,7 @@ export default function JwtLoginView() {
   const router = useRouter()
   const [errorMsg, setErrorMsg] = useState('')
   const [codeSent, setCodeSent] = useState(false)
-  const { counting, countdown, startCountdown } = useCountdownSeconds(10)
+  const { counting, countdown, startCountdown } = useCountdownSeconds(120)
   const [selectedCountry, setSelectedCountry] = useState('54')
   const searchParams = useSearchParams()
   const countryCodes = allCountries

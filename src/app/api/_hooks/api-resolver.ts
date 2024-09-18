@@ -64,7 +64,7 @@ export const endpoints = {
     }
   },
   backend: {
-    sendMessage: () => getFullBotEndpoint('chatbot/conversations/operator-reply'),
+    sendMessage: () => getFullBotEndpoint('chatbot/conversations/send-message'),
     control: () => getFullBotEndpoint('chatbot/conversations/control')
   }
 }
