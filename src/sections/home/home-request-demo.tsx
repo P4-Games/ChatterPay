@@ -10,6 +10,7 @@ import { alpha, useTheme } from '@mui/material/styles'
 import { useResponsive } from 'src/hooks/use-responsive'
 
 import { useTranslate } from 'src/locales'
+import { BOT_WAPP_URL } from 'src/config-global'
 import { bgGradient, textGradient } from 'src/theme/css'
 
 import { varFade, MotionViewport } from 'src/components/animate'
@@ -53,6 +54,7 @@ export default function HomeRequestDemo() {
   const theme = useTheme()
   const mdUp = useResponsive('up', 'md')
   const { t } = useTranslate()
+  const contactUsUrl = BOT_WAPP_URL.replaceAll('MESSAGE', t('home.common.contact-us-wapp-msg'))
 
   const contactUsBtn = (
     <m.div variants={varFade().inUp}>
@@ -62,7 +64,7 @@ export default function HomeRequestDemo() {
         variant='contained'
         target='_blank'
         rel='noopener'
-        href='#'
+        href={contactUsUrl}
       >
         {t('home.common.contact-us')}
       </Button>

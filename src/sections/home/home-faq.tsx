@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography'
 import { Button, Accordion, AccordionSummary, AccordionDetails } from '@mui/material'
 
 import { useTranslate } from 'src/locales'
+import { BOT_WAPP_URL } from 'src/config-global'
 
 import Iconify from 'src/components/iconify'
 import { varFade, MotionViewport } from 'src/components/animate'
@@ -15,6 +16,7 @@ import { varFade, MotionViewport } from 'src/components/animate'
 
 export default function HomeFaQ() {
   const { t } = useTranslate()
+  const contactUsUrl = BOT_WAPP_URL.replaceAll('MESSAGE', t('home.common.contact-us-wapp-msg'))
 
   const _faqs = Array.from({ length: 10 }, (_, index) => {
     const id = Math.random().toString(36).substr(2, 9)
@@ -84,7 +86,7 @@ export default function HomeFaQ() {
             variant='contained'
             target='_blank'
             rel='noopener'
-            href='#'
+            href={contactUsUrl}
           >
             {t('home.common.contact-us')}
           </Button>

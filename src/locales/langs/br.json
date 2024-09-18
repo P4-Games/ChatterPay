@@ -83,8 +83,7 @@
     },
     "contact": {
       "title": "7. Contato",
-      "description": "Se você tiver dúvidas sobre esta Política de Privacidade, não hesite em nos contatar em",
-      "email": "suporte@chatterpay.com"
+      "description": "Se você tiver dúvidas sobre esta Política de Privacidade, não hesite em nos contatar em"
     },
     "last_updated": "Última atualização:",
     "date": "Setembro 2024"
@@ -94,7 +93,8 @@
       "need-help": "Precisa de ajuda?"
     },
     "common": {
-      "contact-us": "Contate-nos"
+      "contact-us": "Contate-nos",
+      "contact-us-wapp-msg": "Oi! Quero saber mais sobre o Chatterpay!"
     },
     "footer": {
       "description": "Transfira criptomoedas facilmente pelo WhatsApp usando nossa plataforma Web3.",
@@ -270,7 +270,8 @@
     "terms-of-service": "Termos de Serviço",
     "privacy-policy": "Política de Privacidade",
     "by-signing": "Ao me inscrever, concordo com os",
-    "and": "e"
+    "and": "e",
+    "wapp-msg": "Oi, quero me registrar no Chatterpay!"
   },
   "balances": {
     "title": "Saldo Estimado",
