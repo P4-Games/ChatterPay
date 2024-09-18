@@ -55,6 +55,40 @@
     "last_updated": "Última actualización:",
     "date": "Septiembre 2024"
   },
+  "policy": {
+    "title": "Política de Privacidad",
+    "introduction": {
+      "title": "1. Introducción",
+      "description": "En ChatterPay, respetamos tu privacidad y estamos comprometidos a proteger tus datos personales. Esta política describe cómo recopilamos, usamos y protegemos tu información."
+    },
+    "data_collection": {
+      "title": "2. Recopilación de Datos",
+      "description": "Recopilamos información personal como tu nombre, dirección de correo electrónico y detalles de las transacciones realizadas en nuestra plataforma."
+    },
+    "data_usage": {
+      "title": "3. Uso de los Datos",
+      "description": "Utilizamos tu información para mejorar nuestros servicios, asegurar la seguridad de las transacciones y ofrecerte una experiencia personalizada."
+    },
+    "third_party": {
+      "title": "4. Compartir con Terceros",
+      "description": "No compartimos tus datos con terceros sin tu consentimiento, excepto cuando sea necesario para cumplir con obligaciones legales."
+    },
+    "security": {
+      "title": "5. Seguridad",
+      "description": "Implementamos medidas de seguridad avanzadas para proteger tus datos personales contra accesos no autorizados y ataques."
+    },
+    "modifications": {
+      "title": "6. Modificaciones",
+      "description": "Nos reservamos el derecho de modificar esta Política de Privacidad en cualquier momento. Las modificaciones serán publicadas en esta página."
+    },
+    "contact": {
+      "title": "7. Contacto",
+      "description": "Si tienes preguntas sobre esta Política de Privacidad, no dudes en contactarnos en",
+      "email": "soporte@chatterpay.com"
+    },
+    "last_updated": "Última actualización:",
+    "date": "Septiembre 2024"
+  },
   "home": {
     "help": {
       "need-help": "¿Necesita ayuda?"

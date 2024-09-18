@@ -208,6 +208,40 @@
     "last_updated": "Last updated:",
     "date": "September  2024"
   },
+  "policy": {
+    "title": "Privacy Policy",
+    "introduction": {
+      "title": "1. Introduction",
+      "description": "At ChatterPay, we respect your privacy and are committed to protecting your personal data. This policy outlines how we collect, use, and safeguard your information."
+    },
+    "data_collection": {
+      "title": "2. Data Collection",
+      "description": "We collect personal information such as your name, email address, and transaction details on our platform."
+    },
+    "data_usage": {
+      "title": "3. Data Usage",
+      "description": "We use your information to enhance our services, ensure transaction security, and provide a personalized experience."
+    },
+    "third_party": {
+      "title": "4. Sharing with Third Parties",
+      "description": "We do not share your data with third parties without your consent, except where required by law."
+    },
+    "security": {
+      "title": "5. Security",
+      "description": "We implement advanced security measures to protect your personal data from unauthorized access and attacks."
+    },
+    "modifications": {
+      "title": "6. Modifications",
+      "description": "We reserve the right to modify this Privacy Policy at any time. Changes will be posted on this page."
+    },
+    "contact": {
+      "title": "7. Contact",
+      "description": "If you have any questions about this Privacy Policy, feel free to contact us at",
+      "email": "support@chatterpay.com"
+    },
+    "last_updated": "Last updated:",
+    "date": "September 2024"
+  },
   "login": {
     "my-wallet": "My Wallet",
     "hi": "Hi, Welcome back",
