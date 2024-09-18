@@ -191,7 +191,7 @@
     "msg": {
       "enter-phone": "Enter phone number with area code, without 0 and without 15",
       "code-sent": "We sent a 6-digit code to the phone number",
-      "code-info": "Please enter the 6-digit code we sent to the WhatsApp number provided.",
+      "code-info": "Please enter the 6-digit code we sent to your WhatsApp (it may take around 2 minutes to arrive).",
       "invalid-user": "User not found with that phone number",
       "invalid-code": "Invalid code",
       "code-bot": "Enter this code *{2FA_CODE}* in the Chatterpay app to log in. It is very important that you do not share this information with anyone. If you did not request the code, disregard this message and contact us so we can help you!"
