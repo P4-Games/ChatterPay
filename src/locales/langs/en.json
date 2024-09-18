@@ -30,7 +30,8 @@
       "need-help": "Need help?"
     },
     "common": {
-      "contact-us": "Contact Us"
+      "contact-us": "Contact Us",
+      "contact-us-wapp-msg": "Hi! I want to know more about Chatterpay!"
     },
     "footer": {
       "description": "Transfer crypto easily through WhatsApp using our Web3 platform.",
@@ -236,8 +237,7 @@
     },
     "contact": {
       "title": "7. Contact",
-      "description": "If you have any questions about this Privacy Policy, feel free to contact us at",
-      "email": "support@chatterpay.com"
+      "description": "If you have any questions about this Privacy Policy, feel free to contact us at"
     },
     "last_updated": "Last updated:",
     "date": "September 2024"
