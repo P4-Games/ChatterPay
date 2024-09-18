@@ -8,6 +8,7 @@ import Grid from '@mui/material/Unstable_Grid2'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 
+import { paths } from 'src/routes/paths'
 import { usePathname } from 'src/routes/hooks'
 import { RouterLink } from 'src/routes/components'
 
@@ -38,13 +39,13 @@ export default function Footer() {
     {
       headline: t('home.footer.links.legal'),
       children: [
-        { name: t('home.footer.links.terms'), href: '#' },
-        { name: t('home.footer.privacy'), href: '#' }
+        { name: t('home.footer.links.terms'), href: paths.terms },
+        { name: t('home.footer.links.privacy'), href: paths.policy }
       ]
     },
     {
       headline: t('home.footer.links.contact'),
-      children: [{ name: 'support@chatterpay.com', href: '#' }]
+      children: [{ name: 'info@chatterpay.net', href: '#' }]
     }
   ]
 
