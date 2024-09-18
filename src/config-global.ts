@@ -49,6 +49,7 @@ export const NFT_SHARE = 'https://api.whatsapp.com/send/?text=MESSAGE'
 
 export const STORAGE_KEY_TOKEN = 'accessToken'
 export const STORAGE_KEY_SETTINGS = 'settings'
+export const CONTACT_EMAIL = 'info@chatterpay.net'
 export const GET_BALANCES_FROM_BACKEND = true
 
 export const defaultBalance = {

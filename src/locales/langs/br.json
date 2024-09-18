@@ -25,6 +25,70 @@
     "account": "Conta",
     "logout": "Sair"
   },
+  "terms": {
+    "title": "Termos e Condições",
+    "introduction": {
+      "title": "1. Introdução",
+      "description": "Bem-vindo ao ChatterPay, uma wallet de Web3 para WhatsApp. Ao usar nosso aplicativo, você concorda em cumprir os seguintes Termos e Condições."
+    },
+    "usage": {
+      "title": "2. Uso do ChatterPay",
+      "description": "O ChatterPay permite que você envie, receba e gerencie ativos digitais dentro do WhatsApp utilizando a tecnologia blockchain. Você concorda que é responsável pelas transações realizadas."
+    },
+    "security": {
+      "title": "3. Segurança",
+      "description": "Você concorda em manter a confidencialidade de sua conta e chave privada. O ChatterPay não se responsabiliza por perdas devido a acessos não autorizados."
+    },
+    "privacy_policy": {
+      "title": "4. Política de Privacidade",
+      "description": "Respeitamos sua privacidade. Para mais informações sobre como tratamos seus dados pessoais, consulte nossa",
+      "link": "Política de Privacidade"
+    },
+    "modifications": {
+      "title": "5. Modificações",
+      "description": "O ChatterPay se reserva o direito de modificar estes Termos e Condições a qualquer momento. As atualizações serão publicadas nesta página."
+    },
+    "contact": {
+      "title": "6. Contato",
+      "description": "Se você tiver alguma dúvida sobre estes Termos e Condições, entre em contato conosco em"
+    },
+    "last_updated": "Última atualização:",
+    "date": "Setembro 2024"
+  },
+  "policy": {
+    "title": "Política de Privacidade",
+    "introduction": {
+      "title": "1. Introdução",
+      "description": "No ChatterPay, respeitamos sua privacidade e estamos comprometidos em proteger seus dados pessoais. Esta política descreve como coletamos, usamos e protegemos suas informações."
+    },
+    "data_collection": {
+      "title": "2. Coleta de Dados",
+      "description": "Coletamos informações pessoais, como seu nome, endereço de e-mail e detalhes das transações realizadas em nossa plataforma."
+    },
+    "data_usage": {
+      "title": "3. Uso dos Dados",
+      "description": "Usamos suas informações para melhorar nossos serviços, garantir a segurança das transações e oferecer uma experiência personalizada."
+    },
+    "third_party": {
+      "title": "4. Compartilhamento com Terceiros",
+      "description": "Não compartilhamos seus dados com terceiros sem seu consentimento, exceto quando necessário para cumprir obrigações legais."
+    },
+    "security": {
+      "title": "5. Segurança",
+      "description": "Implementamos medidas de segurança avançadas para proteger seus dados pessoais contra acessos não autorizados e ataques."
+    },
+    "modifications": {
+      "title": "6. Modificações",
+      "description": "Reservamo-nos o direito de modificar esta Política de Privacidade a qualquer momento. As modificações serão publicadas nesta página."
+    },
+    "contact": {
+      "title": "7. Contato",
+      "description": "Se você tiver dúvidas sobre esta Política de Privacidade, não hesite em nos contatar em",
+      "email": "suporte@chatterpay.com"
+    },
+    "last_updated": "Última atualização:",
+    "date": "Setembro 2024"
+  },
   "home": {
     "help": {
       "need-help": "Precisa de ajuda?"
@@ -191,7 +255,7 @@
     "msg": {
       "enter-phone": "Digite o número de telefone com o código de área, sem 0 e sem 15",
       "code-sent": "Enviamos um código de 6 dígitos para esse número de telefone",
-      "code-info": "Por favor, insira o código de 6 dígitos que enviamos para o número do WhatsApp fornecido.",
+      "code-info": "Por favor, insira o código de 6 dígitos que enviamos para o seu WhatsApp (pode demorar cerca de 2 minutos para chegar).",
       "invalid-user": "Usuário não encontrado com esse número de telefone",
       "invalid-code": "Código inválido",
       "code-bot": "Insira este código *{2FA_CODE}* no aplicativo Chatterpay para fazer login. É muito importante que você não compartilhe esta informação com ninguém. Se você não solicitou o código, desconsidere esta mensagem e entre em contato conosco para que possamos ajudá-lo!"
