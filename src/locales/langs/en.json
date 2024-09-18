@@ -270,7 +270,8 @@
     "terms-of-service": "Terms of Service",
     "privacy-policy": "Privacy Policy",
     "by-signing": "By signing up, I agree to",
-    "and": "and"
+    "and": "and",
+    "wapp-msg": "Hi, i want to register in chatterpay!"
   },
   "balances": {
     "title": "Estimated Balance",

@@ -63,9 +63,8 @@ export default function JwtRegisterView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      // await register?.(data.email, data.password, data.firstName, data.lastName)
-      // router.push(returnTo || PATH_AFTER_LOGIN)
-      router.push(BOT_WAPP_URL)
+      const registerUrl = BOT_WAPP_URL.replaceAll('MESSAGE', t('register.wapp-msg'))
+      router.push(registerUrl)
     } catch (error) {
       console.error(error)
       reset()

@@ -270,7 +270,8 @@
     "terms-of-service": "Termos de Serviço",
     "privacy-policy": "Política de Privacidade",
     "by-signing": "Ao me inscrever, concordo com os",
-    "and": "e"
+    "and": "e",
+    "wapp-msg": "Oi, quero me registrar no Chatterpay!"
   },
   "balances": {
     "title": "Saldo Estimado",
