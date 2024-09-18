@@ -178,6 +178,36 @@
       "cta": "Sign Up Now"
     }
   },
+  "terms": {
+    "title": "Terms and Conditions",
+    "introduction": {
+      "title": "1. Introduction",
+      "description": "Welcome to ChatterPay, a Web3 wallet for WhatsApp. By using our application, you agree to comply with the following Terms and Conditions."
+    },
+    "usage": {
+      "title": "2. Use of ChatterPay",
+      "description": "ChatterPay allows you to send, receive, and manage digital assets within WhatsApp using blockchain technology. You agree that you are responsible for transactions made."
+    },
+    "security": {
+      "title": "3. Security",
+      "description": "You agree to keep your account and private key confidential. ChatterPay is not liable for losses due to unauthorized access."
+    },
+    "privacy_policy": {
+      "title": "4. Privacy Policy",
+      "description": "We respect your privacy. For more information on how we handle your personal data, please refer to our",
+      "link": "Privacy Policy"
+    },
+    "modifications": {
+      "title": "5. Modifications",
+      "description": "ChatterPay reserves the right to modify these Terms and Conditions at any time. Updates will be posted on this page."
+    },
+    "contact": {
+      "title": "6. Contact",
+      "description": "If you have any questions about these Terms and Conditions, please contact us at"
+    },
+    "last_updated": "Last updated:",
+    "date": "September  2024"
+  },
   "login": {
     "my-wallet": "My Wallet",
     "hi": "Hi, Welcome back",
