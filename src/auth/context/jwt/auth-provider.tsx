@@ -158,25 +158,30 @@ export function AuthProvider({ children }: Props) {
   }, [])
 
   // Generate whatsapp Code
-  const generateCode = useCallback(async (phone: string, codeMsg: string) => {
-    const data = {
-      phone,
-      codeMsg
-    }
-    await post(endpoints.auth.code(), data)
-    dispatch({
-      type: Types.GENERATE_CODE,
-      payload: {
-        user: null
+  const generateCode = useCallback(
+    async (phone: string, codeMsg: string, recaptchaToken: string) => {
+      const data = {
+        phone,
+        codeMsg,
+        recaptchaToken
       }
-    })
-  }, [])
+      await post(endpoints.auth.code(), data)
+      dispatch({
+        type: Types.GENERATE_CODE,
+        payload: {
+          user: null
+        }
+      })
+    },
+    []
+  )
 
   // LOGIN With Code
-  const loginWithCode = useCallback(async (phone: string, code: string) => {
+  const loginWithCode = useCallback(async (phone: string, code: string, recaptchaToken: string) => {
     const data = {
       phone,
-      code
+      code,
+      recaptchaToken
     }
     const res = await post(endpoints.auth.login(), data)
 
