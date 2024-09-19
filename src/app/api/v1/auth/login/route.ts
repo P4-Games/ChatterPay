@@ -1,22 +1,38 @@
 import jwt from 'jsonwebtoken'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 import { JWT_SECRET } from 'src/config-global'
 import { getUserByPhone, updateUserCode } from 'src/app/api/_data/data-service'
+import { getIpFromRequest, validateRecaptcha } from 'src/app/api/_utils/request-utils'
 
 import { IAccount } from 'src/types/account'
 
 // ----------------------------------------------------------------------
 
-export async function POST(req: any, res: any) {
+export async function POST(req: NextRequest) {
   try {
-    const { phone, code }: { phone: string; code: string } = await req.json()
-    if (!phone || !code) {
+    const { phone, code, recaptchaToken }: { phone: string; code: string; recaptchaToken: string } =
+      await req.json()
+
+    const ip = getIpFromRequest(req)
+
+    if (!phone || !code || !recaptchaToken) {
       return new NextResponse(
         JSON.stringify({
           code: 'INVALID_REQUEST_PARAMS',
-          error: 'Missing parameters in request body'
+          error: 'Missing parameters (phone, code, recaptchaToken) in request body'
         }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
+    const recaptchaResult = await validateRecaptcha(recaptchaToken, ip)
+    if (!recaptchaResult.success) {
+      return new NextResponse(
+        JSON.stringify({ code: 'RECAPTACHA_INVALID', error: 'Invalid reCAPTCHA token' }),
         {
           status: 400,
           headers: { 'Content-Type': 'application/json' }

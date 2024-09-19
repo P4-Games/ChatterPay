@@ -24,6 +24,22 @@ function getLocaleCode() {
 
 // ----------------------------------------------------------------------
 
+export function getRecaptchaLng(currentLng: string) {
+  // https://developers.google.com/recaptcha/docs/language?hl=es-419
+  switch (currentLng.toLowerCase()) {
+    case 'en':
+      return 'en'
+    case 'es':
+      return 'es'
+    case 'br':
+      return 'pt-BR'
+    default:
+      return 'en'
+  }
+}
+
+// ----------------------------------------------------------------------
+
 export function fNumber(inputValue: InputValue) {
   const { code } = getLocaleCode()
 

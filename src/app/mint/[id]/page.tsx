@@ -44,8 +44,6 @@ export default function Mint({ params }: { params: { id: string } }) {
         return
       }
 
-      console.log(NFTData)
-
       const { image, description } = NFTData
 
       setNftData({

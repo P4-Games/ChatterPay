@@ -1,12 +1,16 @@
+'use client'
+
 import { useParams } from 'next/navigation'
 
 import { NftView } from 'src/sections/nfts/view'
 
 // ----------------------------------------------------------------------
 
+/*
 export const metadata = {
   title: 'user - NFTs'
 }
+*/
 
 export default function NftIdPage() {
   const params = useParams()

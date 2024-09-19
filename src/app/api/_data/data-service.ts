@@ -47,7 +47,7 @@ export async function getUserByPhone(phone: string): Promise<IAccount | undefine
 
   // Intenta encontrar el número de teléfono completo
   let data: IAccountDB | null = await db.collection(SCHEMA_USERS).findOne({ phone_number: phone })
-  console.log(data, phone)
+
   // Si no se encuentra, intenta buscar por los últimos 8 caracteres del número de teléfono
   if (!data) {
     const last8Chars = phone.slice(-8) // Obtiene los últimos 8 caracteres del número de teléfono
