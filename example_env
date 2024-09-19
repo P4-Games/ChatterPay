@@ -19,9 +19,11 @@ HANDLE_VERCEL_FREE_PLAN_TIMEOUT=true
 API3_ENABLED=false
 JWT_SECRET={some secret text}
 NEXT_PUBLIC_FROM_ICP=true
+RECAPTCHA_API_KEY={recaptcha api key}
 
 # client-side
 NEXT_PUBLIC_USE_MOCK=true
 NEXT_PUBLIC_UI_URL=http://localhost:3000
 NEXT_PUBLIC_ALLOWED_ORIGINS=http://localhost:3000
+NEXT_PUBLIC_RECAPTCHA_SITE_KEY={recaptcha side key}
 
