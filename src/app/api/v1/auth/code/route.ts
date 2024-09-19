@@ -1,6 +1,7 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 import { post, endpoints } from 'src/app/api/_hooks/api-resolver'
+import { getIpFromRequest, validateRecaptcha } from 'src/app/api/_utils/request-utils'
 import {
   getUserByPhone,
   updateUserCode,
@@ -18,14 +19,22 @@ import { LastUserConversation } from 'src/types/chat'
 
 // ----------------------------------------------------------------------
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const { phone, codeMsg }: { phone: string; codeMsg: string } = await req.json()
-    if (!phone || !codeMsg) {
+    const {
+      phone,
+      codeMsg,
+      recaptchaToken
+    }: { phone: string; codeMsg: string; recaptchaToken: string } = await req.json()
+
+    console.log('asd', req.body)
+    const ip = getIpFromRequest(req)
+
+    if (!phone || !codeMsg || !recaptchaToken) {
       return new NextResponse(
         JSON.stringify({
           code: 'INVALID_REQUEST_PARAMS',
-          error: 'Missing phone number or code-message in request body'
+          error: 'Missing phone number, codeMsg or recaptchaToken in request body'
         }),
         {
           status: 400,
@@ -39,6 +48,17 @@ export async function POST(req: Request) {
         status: 404,
         headers: { 'Content-Type': 'application/json' }
       })
+    }
+
+    const recaptchaResult = await validateRecaptcha(recaptchaToken, ip)
+    if (!recaptchaResult.success) {
+      return new NextResponse(
+        JSON.stringify({ code: 'RECAPTACHA_INVALID', error: 'Invalid reCAPTCHA token' }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
     }
 
     const user: IAccount | undefined = await getUserByPhone(phone)
