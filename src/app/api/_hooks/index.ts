@@ -1,3 +1,5 @@
+export { useGetNftById } from './use-nft'
+
 export { useGetContact } from './use-contact'
 
 export {
