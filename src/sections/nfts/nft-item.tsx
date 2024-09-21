@@ -31,7 +31,7 @@ export default function NftItem({ nft }: Props) {
   const linkTrx = `${NFT_TRX_EXPLORER}/tx/${trxId}`
   const linkMarketplace = `${NFT_MARKETPLACE.replace('ID', nftId.toString())}`
 
-  const mintUrl = `${UI_API_URL}/mint/${nftId.toString()}`
+  const mintUrl = `${UI_API_URL}/nfts/mint/${nftId.toString()}`
   const linkShare = `${NFT_SHARE.replace('MESSAGE', `${t('nfts.mint')}: ${mintUrl}`)}`
 
   const handleView = () => {
@@ -71,7 +71,7 @@ export default function NftItem({ nft }: Props) {
             >
               <Avatar
                 alt='nft'
-                src={metadata.image_url}
+                src={metadata.image}
                 variant='rounded'
                 sx={{
                   position: 'absolute',

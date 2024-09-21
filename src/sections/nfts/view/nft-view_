@@ -1,3 +1,4 @@
+/*
 'use client'
 
 import Container from '@mui/material/Container'
@@ -45,3 +46,4 @@ export default function NftView({ walletId, nftId }: NftItemProps) {
     </Container>
   )
 }
+*/

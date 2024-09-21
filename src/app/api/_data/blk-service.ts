@@ -98,6 +98,10 @@ export async function getConversationRates(): Promise<any> {
   return result
 }
 
+export async function getNftById(nftId: string): Promise<any> {
+  return fetchNftById(nftId)
+}
+
 // ---------------------------------------------------------------------------------------------
 
 async function getBalances(walletAddress: string): Promise<any[]> {
@@ -213,6 +217,16 @@ const fethCustomTokens = async (address: string) => {
     return response.data
   } catch (error) {
     console.error('Error fetching balance:', error)
+    throw error
+  }
+}
+
+const fetchNftById = async (id: string) => {
+  try {
+    const response = await axios.get(`${BACKEND_API_URL}/nft/${id}`)
+    return response.data
+  } catch (error) {
+    console.error('Error fetching nft id:', id, error)
     throw error
   }
 }

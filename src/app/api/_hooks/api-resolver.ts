@@ -48,6 +48,9 @@ export const endpoints = {
     code: () => getFullUIEndpoint(`auth/code`),
     login: () => getFullUIEndpoint(`auth/login`)
   },
+  nft: {
+    id: (id: string) => getFullUIEndpoint(`nft/${id}`)
+  },
   dashboard: {
     root: getFullUIEndpoint('app'),
     user: {
