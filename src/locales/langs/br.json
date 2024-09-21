@@ -294,7 +294,13 @@
   },
   "nfts": {
     "view-trx": "Ver detalhes da transação",
-    "mint": "Ei, dá uma olhada no meu NFT:"
+    "mint": "Ei, dá uma olhada no meu NFT:",
+    "claim": {
+      "cta": "Reivindicar",
+      "cta-msg": "Reivindique seu certificado na blockchain gratuitamente!",
+      "opensea-alt": "logo open sea",
+      "wapp-msg": "Gostaria de mintar o NFT"
+    }
   },
   "account": {
     "title": "Conta"

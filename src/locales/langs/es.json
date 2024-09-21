@@ -294,7 +294,13 @@
   },
   "nfts": {
     "view-trx": "Ver detalles de la transacción",
-    "mint": "Hey, mira mi NFT:"
+    "mint": "Hey, mira mi NFT:",
+    "claim": {
+      "cta": "Reclamar",
+      "cta-msg": "¡Reclamá tu certificado en blockchain gratis!",
+      "opensea-alt": "logo open sea",
+      "wapp-msg": "Me gustaría mintear el NFT"
+    }
   },
   "account": {
     "title": "Cuenta"

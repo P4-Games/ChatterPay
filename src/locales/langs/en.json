@@ -294,7 +294,13 @@
   },
   "nfts": {
     "view-trx": "View Transacton Details",
-    "mint": "Hey, check out my NFT:"
+    "mint": "Hey, check out my NFT:",
+    "claim": {
+      "cta": "Claim",
+      "cta-msg": "Claim your certificate on the blockchain for free!",
+      "opensea-alt": "open sea logo",
+      "wapp-msg": "I would like to mint the NFT"
+    }
   },
   "account": {
     "title": "Account"
