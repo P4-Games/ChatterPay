@@ -1,3 +1,4 @@
+/*
 import { Box, Stack } from '@mui/system'
 import IconButton from '@mui/material/IconButton'
 import { Link, Card, Avatar, Divider, MenuItem, Typography } from '@mui/material'
@@ -56,7 +57,7 @@ export default function NftItemMint({ nft }: NftItemProps) {
             >
               <Avatar
                 alt='nft'
-                src={metadata.image_url}
+                src={metadata.image}
                 variant='rounded'
                 sx={{
                   position: 'absolute',
@@ -101,3 +102,4 @@ export default function NftItemMint({ nft }: NftItemProps) {
     </>
   )
 }
+*/
