@@ -9,8 +9,6 @@ import EmptyContent from 'src/components/empty-content'
 import { useSettingsContext } from 'src/components/settings'
 import { LoadingScreen } from 'src/components/loading-screen'
 
-import { INFTMetadata } from 'src/types/wallet'
-
 import NftItemClaim from '../nft-item-claim'
 
 // ----------------------------------------------------------------------
@@ -22,10 +20,17 @@ export default function NftMintView({ nftId }: NftItemProps) {
   const { t } = useTranslate()
   const settings = useSettingsContext()
 
-  const { data: nftData, isLoading }: { data: INFTMetadata; isLoading: boolean } =
-    useGetNftById(nftId)
+  const {
+    data: nftData,
+    isLoading
+  }: {
+    data: {
+      image: string
+      description: string
+    }
+    isLoading: boolean
+  } = useGetNftById(nftId)
 
-  console.log('nftData', nftData)
   const notFound = !nftData
 
   const renderContent = (

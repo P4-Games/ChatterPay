@@ -71,7 +71,7 @@ export default function NftItem({ nft }: Props) {
             >
               <Avatar
                 alt='nft'
-                src={metadata.image}
+                src={metadata.image_url}
                 variant='rounded'
                 sx={{
                   position: 'absolute',

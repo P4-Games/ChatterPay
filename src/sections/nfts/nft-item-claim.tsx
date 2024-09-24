@@ -11,20 +11,16 @@ import { BOT_WAPP_URL, NFT_MARKETPLACE } from 'src/config-global'
 
 import { varFade } from 'src/components/animate'
 
-import { INFTMetadata } from 'src/types/wallet'
-
 // ----------------------------------------------------------------------
 
 type NftItemClaimProps = {
   nftId: string
-  nftData: INFTMetadata
+  nftData: { image: string; description: string }
 }
 
 export default function NftItemClaim({ nftId, nftData }: NftItemClaimProps) {
   const mdUp = useResponsive('up', 'md')
   const { t } = useTranslate()
-
-  console.log('xxxxxxxxx', nftData)
 
   const handleOpenOpenSea = () => {
     const url = `${NFT_MARKETPLACE.replace('ID', nftId)}`
