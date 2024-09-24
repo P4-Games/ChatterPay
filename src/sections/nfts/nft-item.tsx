@@ -9,12 +9,18 @@ import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 
 import { useTranslate } from 'src/locales'
-import { NFT_SHARE, UI_API_URL, NFT_MARKETPLACE, NFT_TRX_EXPLORER } from 'src/config-global'
+import {
+  NFT_SHARE,
+  UI_API_URL,
+  NFT_MARKETPLACE,
+  NFT_TRX_EXPLORER,
+  NFT_IMAGE_REPOSITORY
+} from 'src/config-global'
 
 import Iconify from 'src/components/iconify'
 import CustomPopover, { usePopover } from 'src/components/custom-popover'
 
-import { INFT } from 'src/types/wallet'
+import { INFT, ImageURLRepository } from 'src/types/wallet'
 
 // ----------------------------------------------------------------------
 
@@ -71,7 +77,7 @@ export default function NftItem({ nft }: Props) {
             >
               <Avatar
                 alt='nft'
-                src={metadata.image_url}
+                src={metadata.image_url[NFT_IMAGE_REPOSITORY as ImageURLRepository]}
                 variant='rounded'
                 sx={{
                   position: 'absolute',
