@@ -95,6 +95,7 @@ NEXT_PUBLIC_USE_MOCK=true
 NEXT_PUBLIC_UI_URL=http://localhost:3000
 NEXT_PUBLIC_ALLOWED_ORIGINS=http://localhost:3000
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY={recaptcha side key}
+NEXT_PUBLIC_NFT_IMAGE_REPOSITORY={gcp|ipfs|icp}
 ```
 
 __4. Install Dependencies__:

@@ -33,7 +33,9 @@ export const USE_MOCK = (process.env.NEXT_PUBLIC_USE_MOCK || 'true') === 'true'
 export const ALLOWED_ORIGINS = process.env.NEXT_PUBLIC_ALLOWED_ORIGINS || '*'
 export const fromICP = (process.env.NEXT_PUBLIC_FROM_ICP || 'false') === 'true'
 export const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''
-
+export const NFT_IMAGE_REPOSITORY = (
+  process.env.NEXT_PUBLIC_NFT_IMAGE_REPOSITORY || 'gcp'
+).toLowerCase()
 // ----------------------------------------------------------------------
 
 // internal
