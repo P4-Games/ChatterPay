@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
 
-import { getNftById } from 'src/app/api/_data/blk-service'
+import { getNftById } from 'src/app/api/_data/data-service'
 
+import { INFT } from 'src/types/wallet'
 import { IErrorResponse } from 'src/types/api'
 
 // ----------------------------------------------------------------------
@@ -31,12 +32,11 @@ export async function GET(request: Request, { params }: { params: IParams }) {
   }
 
   try {
-    console.log('x')
-    const response = (await getNftById(params.id)) || {}
-    console.log('response backend get Nft By Id', response.data)
-    if (response && response.image) {
-      return NextResponse.json(response)
+    const response: INFT[] | undefined = await getNftById(parseInt(params.id, 10))
+    if (response && response.length > 0 && response[0].metadata.image_url) {
+      return NextResponse.json(response[0])
     }
+
     return new NextResponse(JSON.stringify(errorMessage), {
       status: 404,
       headers: { 'Content-Type': 'application/json' }

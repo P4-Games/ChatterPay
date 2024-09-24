@@ -27,7 +27,6 @@ export async function POST(req: NextRequest) {
       recaptchaToken
     }: { phone: string; codeMsg: string; recaptchaToken: string } = await req.json()
 
-    console.log('asd', req.body)
     const ip = getIpFromRequest(req)
 
     if (!phone || !codeMsg || !recaptchaToken) {

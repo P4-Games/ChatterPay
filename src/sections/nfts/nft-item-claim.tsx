@@ -7,15 +7,17 @@ import { Card, Button, Typography } from '@mui/material'
 import { useResponsive } from 'src/hooks/use-responsive'
 
 import { useTranslate } from 'src/locales'
-import { BOT_WAPP_URL, NFT_MARKETPLACE } from 'src/config-global'
+import { BOT_WAPP_URL, NFT_MARKETPLACE, NFT_IMAGE_REPOSITORY } from 'src/config-global'
 
 import { varFade } from 'src/components/animate'
+
+import { INFT, ImageURLRepository } from 'src/types/wallet'
 
 // ----------------------------------------------------------------------
 
 type NftItemClaimProps = {
   nftId: string
-  nftData: { image: string; description: string }
+  nftData: INFT
 }
 
 export default function NftItemClaim({ nftId, nftData }: NftItemClaimProps) {
@@ -60,7 +62,7 @@ export default function NftItemClaim({ nftId, nftData }: NftItemClaimProps) {
             mb: mdUp ? 0 : 5
           }}
         >
-          {nftData.description}
+          {nftData.metadata.description}
         </Typography>
       </m.div>
       <Box
@@ -84,8 +86,8 @@ export default function NftItemClaim({ nftId, nftData }: NftItemClaimProps) {
               layout='responsive'
               width={200}
               height={200}
-              src={nftData.image}
-              alt={nftData.description}
+              src={nftData.metadata.image_url[NFT_IMAGE_REPOSITORY as ImageURLRepository]}
+              alt={nftData.metadata.description}
             />
           </Box>
           <m.button
