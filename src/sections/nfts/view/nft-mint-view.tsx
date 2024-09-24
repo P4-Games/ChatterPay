@@ -9,7 +9,7 @@ import EmptyContent from 'src/components/empty-content'
 import { useSettingsContext } from 'src/components/settings'
 import { LoadingScreen } from 'src/components/loading-screen'
 
-import { INFTMetadata } from 'src/types/wallet'
+import { INFT } from 'src/types/wallet'
 
 import NftItemClaim from '../nft-item-claim'
 
@@ -26,7 +26,7 @@ export default function NftMintView({ nftId }: NftItemProps) {
     data: nftData,
     isLoading
   }: {
-    data: INFTMetadata
+    data: INFT
     isLoading: boolean
   } = useGetNftById(nftId)
 
