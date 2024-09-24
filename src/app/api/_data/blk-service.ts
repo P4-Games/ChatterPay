@@ -5,8 +5,8 @@ import {
   USE_MOCK,
   API3_ENABLED,
   defaultBalance,
-  tokensByNetwork,
   BACKEND_API_URL,
+  tokensByNetwork,
   nodeProviderUrlSepolia
 } from 'src/config-global'
 
@@ -98,9 +98,11 @@ export async function getConversationRates(): Promise<any> {
   return result
 }
 
+/*
 export async function getNftById(nftId: string): Promise<any> {
   return fetchNftById(nftId)
 }
+*/
 
 // ---------------------------------------------------------------------------------------------
 
@@ -224,7 +226,19 @@ const fethCustomTokens = async (address: string) => {
 const fetchNftById = async (id: string) => {
   try {
     const response = await axios.get(`${BACKEND_API_URL}/nft/${id}`)
-    return response.data
+    const { image, image_url, ...rest } = response.data
+
+    const default_image_url = {
+      gcp: '/assets/images/nfts/default_nft.png',
+      ipfs: '/assets/images/nfts/default_nft.png',
+      icp: '/assets/images/nfts/default_nft.png'
+    }
+
+    const result = {
+      ...rest,
+      image_url: image_url || image || default_image_url
+    }
+    return result
   } catch (error) {
     console.error('Error fetching nft id:', id, error)
     throw error
