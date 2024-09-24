@@ -19,7 +19,7 @@ export type IBalances = {
 }
 
 export type INFTMetadata = {
-  image: string
+  image_url: string
   description: string
 }
 
