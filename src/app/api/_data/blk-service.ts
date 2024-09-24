@@ -223,6 +223,7 @@ const fethCustomTokens = async (address: string) => {
   }
 }
 
+/*
 const fetchNftById = async (id: string) => {
   try {
     const response = await axios.get(`${BACKEND_API_URL}/nft/${id}`)
@@ -244,7 +245,7 @@ const fetchNftById = async (id: string) => {
     throw error
   }
 }
-
+*/
 async function getTokenBalance(
   tokenContract: ethers.Contract,
   walletAddress: string
