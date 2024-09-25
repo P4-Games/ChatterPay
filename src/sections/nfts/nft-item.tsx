@@ -50,6 +50,24 @@ export default function NftItem({ nft }: Props) {
     window.open(linkShare, '_blank')
   }
 
+  const renderNftId = (
+    <Box
+      sx={{
+        position: 'absolute',
+        top: 30,
+        left: 25,
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        padding: '2px 6px',
+        borderRadius: '4px',
+        color: 'white',
+        fontSize: '10px',
+        zIndex: 1
+      }}
+    >
+      {`#${nftId}`}
+    </Box>
+  )
+
   return (
     <>
       <Card>
@@ -68,6 +86,7 @@ export default function NftItem({ nft }: Props) {
               alignItems: 'center'
             }}
           >
+            {renderNftId}
             <Link
               href={linkMarketplace}
               target='_blank'
