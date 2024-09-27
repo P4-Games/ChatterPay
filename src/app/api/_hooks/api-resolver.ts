@@ -48,6 +48,9 @@ export const endpoints = {
     code: () => getFullUIEndpoint(`auth/code`),
     login: () => getFullUIEndpoint(`auth/login`)
   },
+  nft: {
+    id: (id: string) => getFullUIEndpoint(`nft/${id}`)
+  },
   dashboard: {
     root: getFullUIEndpoint('app'),
     user: {
@@ -64,7 +67,7 @@ export const endpoints = {
     }
   },
   backend: {
-    sendMessage: () => getFullBotEndpoint('chatbot/conversations/operator-reply'),
+    sendMessage: () => getFullBotEndpoint('chatbot/conversations/send-message'),
     control: () => getFullBotEndpoint('chatbot/conversations/control')
   }
 }

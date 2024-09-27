@@ -1,7 +1,6 @@
 /* eslint-disable perfectionist/sort-imports */
 import 'src/global.css'
 
-// i18n
 import 'src/locales/i18n'
 
 // ----------------------------------------------------------------------

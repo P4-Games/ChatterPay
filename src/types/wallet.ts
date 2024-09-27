@@ -19,9 +19,15 @@ export type IBalances = {
 }
 
 export type INFTMetadata = {
-  image_url: string
+  image_url: {
+    gcp: string
+    ipfs: string
+    icp: string
+  }
   description: string
 }
+
+export type ImageURLRepository = keyof INFTMetadata['image_url']
 
 export type INFT = {
   bddId: string

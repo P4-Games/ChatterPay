@@ -30,7 +30,8 @@
       "need-help": "Need help?"
     },
     "common": {
-      "contact-us": "Contact Us"
+      "contact-us": "Contact Us",
+      "contact-us-wapp-msg": "Hi! I want to know more about Chatterpay!"
     },
     "footer": {
       "description": "Transfer crypto easily through WhatsApp using our Web3 platform.",
@@ -178,6 +179,69 @@
       "cta": "Sign Up Now"
     }
   },
+  "terms": {
+    "title": "Terms and Conditions",
+    "introduction": {
+      "title": "1. Introduction",
+      "description": "Welcome to ChatterPay, a Web3 wallet for WhatsApp. By using our application, you agree to comply with the following Terms and Conditions."
+    },
+    "usage": {
+      "title": "2. Use of ChatterPay",
+      "description": "ChatterPay allows you to send, receive, and manage digital assets within WhatsApp using blockchain technology. You agree that you are responsible for transactions made."
+    },
+    "security": {
+      "title": "3. Security",
+      "description": "You agree to keep your account and private key confidential. ChatterPay is not liable for losses due to unauthorized access."
+    },
+    "privacy_policy": {
+      "title": "4. Privacy Policy",
+      "description": "We respect your privacy. For more information on how we handle your personal data, please refer to our",
+      "link": "Privacy Policy"
+    },
+    "modifications": {
+      "title": "5. Modifications",
+      "description": "ChatterPay reserves the right to modify these Terms and Conditions at any time. Updates will be posted on this page."
+    },
+    "contact": {
+      "title": "6. Contact",
+      "description": "If you have any questions about these Terms and Conditions, please contact us at"
+    },
+    "last_updated": "Last updated:",
+    "date": "September  2024"
+  },
+  "policy": {
+    "title": "Privacy Policy",
+    "introduction": {
+      "title": "1. Introduction",
+      "description": "At ChatterPay, we respect your privacy and are committed to protecting your personal data. This policy outlines how we collect, use, and safeguard your information."
+    },
+    "data_collection": {
+      "title": "2. Data Collection",
+      "description": "We collect personal information such as your name, email address, and transaction details on our platform."
+    },
+    "data_usage": {
+      "title": "3. Data Usage",
+      "description": "We use your information to enhance our services, ensure transaction security, and provide a personalized experience."
+    },
+    "third_party": {
+      "title": "4. Sharing with Third Parties",
+      "description": "We do not share your data with third parties without your consent, except where required by law."
+    },
+    "security": {
+      "title": "5. Security",
+      "description": "We implement advanced security measures to protect your personal data from unauthorized access and attacks."
+    },
+    "modifications": {
+      "title": "6. Modifications",
+      "description": "We reserve the right to modify this Privacy Policy at any time. Changes will be posted on this page."
+    },
+    "contact": {
+      "title": "7. Contact",
+      "description": "If you have any questions about this Privacy Policy, feel free to contact us at"
+    },
+    "last_updated": "Last updated:",
+    "date": "September 2024"
+  },
   "login": {
     "my-wallet": "My Wallet",
     "hi": "Hi, Welcome back",
@@ -191,7 +255,7 @@
     "msg": {
       "enter-phone": "Enter phone number with area code, without 0 and without 15",
       "code-sent": "We sent a 6-digit code to the phone number",
-      "code-info": "Please enter the 6-digit code we sent to the WhatsApp number provided.",
+      "code-info": "Please enter the 6-digit code we sent to your WhatsApp (it may take around 2 minutes to arrive).",
       "invalid-user": "User not found with that phone number",
       "invalid-code": "Invalid code",
       "code-bot": "Enter this code *{2FA_CODE}* in the Chatterpay app to log in. It is very important that you do not share this information with anyone. If you did not request the code, disregard this message and contact us so we can help you!"
@@ -206,7 +270,8 @@
     "terms-of-service": "Terms of Service",
     "privacy-policy": "Privacy Policy",
     "by-signing": "By signing up, I agree to",
-    "and": "and"
+    "and": "and",
+    "wapp-msg": "Hi, i want to register in chatterpay!"
   },
   "balances": {
     "title": "Estimated Balance",
@@ -229,7 +294,13 @@
   },
   "nfts": {
     "view-trx": "View Transacton Details",
-    "mint": "Hey, check out my NFT:"
+    "mint": "Hey, check out my NFT:",
+    "claim": {
+      "cta": "Claim",
+      "cta-msg": "Claim your certificate on the blockchain for free!",
+      "opensea-alt": "open sea logo",
+      "wapp-msg": "I would like to mint the NFT"
+    }
   },
   "account": {
     "title": "Account"

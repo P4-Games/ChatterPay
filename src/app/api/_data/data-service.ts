@@ -47,7 +47,7 @@ export async function getUserByPhone(phone: string): Promise<IAccount | undefine
 
   // Intenta encontrar el número de teléfono completo
   let data: IAccountDB | null = await db.collection(SCHEMA_USERS).findOne({ phone_number: phone })
-  console.log(data, phone)
+
   // Si no se encuentra, intenta buscar por los últimos 8 caracteres del número de teléfono
   if (!data) {
     const last8Chars = phone.slice(-8) // Obtiene los últimos 8 caracteres del número de teléfono
@@ -128,6 +128,59 @@ export async function getWalletNfts(wallet: string): Promise<INFT[] | undefined>
     nftId: id,
     ...rest
   }))
+
+  return nfts
+}
+
+export async function getNftById(nftId: number): Promise<INFT[] | undefined> {
+  const client = await getClientPromise()
+  const db = client.db(DB_CHATTERPAY_NAME)
+
+  const cursor: INFTDB[] | null = await db
+    .collection(SCHEMA_NFTS)
+    .aggregate([
+      {
+        $match: {
+          id: nftId
+        }
+      },
+      {
+        $project: {
+          _id: 1, // bddId
+          id: 1, // nftId
+          channel_user_id: 1,
+          wallet: 1,
+          trxId: 1,
+          metadata: 1
+        }
+      }
+    ])
+    .toArray()
+
+  if (!cursor || cursor.length === 0) {
+    return undefined
+  }
+
+  const default_image_url = {
+    gcp: '/assets/images/nfts/default_nft.png',
+    ipfs: '/assets/images/nfts/default_nft.png',
+    icp: '/assets/images/nfts/default_nft.png'
+  }
+
+  const nfts: INFT[] = cursor.map(({ _id, id, metadata, ...rest }) => {
+    const { image_url, ...metadataRest } = metadata || {}
+    const formatted_image_url = image_url || default_image_url
+
+    return {
+      bddId: getFormattedId(_id),
+      nftId: id,
+      metadata: {
+        ...metadataRest,
+        image_url: formatted_image_url
+      },
+      ...rest
+    }
+  })
 
   return nfts
 }

@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography'
 import { useResponsive } from 'src/hooks/use-responsive'
 
 import { useTranslate } from 'src/locales'
+import { BOT_WAPP_URL } from 'src/config-global'
 
 import { varFade } from 'src/components/animate'
 
@@ -19,109 +20,8 @@ import { varFade } from 'src/components/animate'
 export default function HomeAllFeatures() {
   const mdUp = useResponsive('up', 'md')
   const { t } = useTranslate()
+  const contactUsUrl = BOT_WAPP_URL.replaceAll('MESSAGE', t('home.common.contact-us-wapp-msg'))
 
-  /*
-  const theme = useTheme()
-
-
-  const renderSection1 = (
-    <Box sx={{mt: 4, ml: 4}}>
-      <Stack direction="row" alignItems="center" spacing={2} sx={{ marginBottom: 2 }}>
-        <m.div variants={varFade().inUp}>
-          <Avatar src={_mock.image.avatar(2)} alt='Avatar 1' />
-        </m.div>
-        <m.div variants={varFade().inUp}>
-          <Iconify sx={{ mx: 'auto', width: 48, height: 48 }} icon='/assets/icons/home/ic_ethereum.svg' />
-        </m.div>
-        <m.div variants={varFade().inUp}>
-          <Avatar src={_mock.image.avatar(3)} alt='Avatar 2' />
-        </m.div>
-      </Stack>
-    </Box>
-  )
-
-  const renderSection2 = (
-    <Box sx={{mt: 4, ml: 4}}>
-      <Stack direction="row" alignItems="center" spacing={2} sx={{ marginBottom: 2 }}>
-        <m.div variants={varFade().inUp}>
-          <Avatar src={_mock.image.avatar(2)} alt='Avatar 1' />
-        </m.div>
-        <m.div variants={varFade().inUp}>
-          <Iconify sx={{ mx: 'auto', width: 48, height: 48 }} icon='/assets/icons/home/ic_ethereum.svg' />
-        </m.div>
-
-      </Stack>
-    </Box>
-  )
-
-  const renderCarouselSection = (index: number) => {
-    switch (index) {
-      case 0:
-        return renderSection1
-      case 1:
-        return renderSection2
-      default:
-        return renderSection1
-    }
-  }
-  
-  const carousel = useCarousel({
-    fade: true,
-    arrows: true,
-    speed: 500,
-    ...CarouselDots({
-      sx: {
-        right: 16,
-        bottom: 16,
-        position: 'absolute',
-        color: 'primary.light'
-      }
-    })
-  })
-  
-  const renderContent = (
-    <Box
-    sx={{
-      ...bgGradient({
-        color: alpha(theme.palette.grey[400], 0.3),
-        imgUrl: '/assets/background/overlay_2.jpg'
-      }),
-      height: '100%',
-      width: '100%',
-      borderRadius: 2,
-      position: 'relative',
-      color: 'common.white',
-      '.slick-slider, .slick-list, .slick-track, .slick-slide > div': {
-        height: 1
-      },
-      '&:before, &:after': {
-        left: 0,
-        mx: 2.5,
-        right: 0,
-        zIndex: -2,
-        height: 200,
-        bottom: -16,
-        content: "''",
-        opacity: 0.16,
-        borderRadius: 2,
-        bgcolor: 'grey.500',
-        position: 'absolute'
-      },
-      '&:after': {
-        mx: 1,
-        bottom: -8,
-        opacity: 0.24
-      }
-    }}
-  >
-    <Carousel {...carousel.carouselSettings}>
-      {[...Array(6)].map((_, index) => (
-          <div key={index}>{renderCarouselSection(index)}</div>
-        ))}
-    </Carousel>
-  </Box>
-  )
-  */
   const renderContet = (
     <Box
       sx={{
@@ -158,7 +58,7 @@ export default function HomeAllFeatures() {
         variant='contained'
         target='_blank'
         rel='noopener'
-        href='/'
+        href={contactUsUrl}
       >
         {t('home.common.contact-us')}
       </Button>

@@ -9,12 +9,18 @@ import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 
 import { useTranslate } from 'src/locales'
-import { NFT_SHARE, UI_API_URL, NFT_MARKETPLACE, NFT_TRX_EXPLORER } from 'src/config-global'
+import {
+  NFT_SHARE,
+  UI_API_URL,
+  NFT_MARKETPLACE,
+  NFT_TRX_EXPLORER,
+  NFT_IMAGE_REPOSITORY
+} from 'src/config-global'
 
 import Iconify from 'src/components/iconify'
 import CustomPopover, { usePopover } from 'src/components/custom-popover'
 
-import { INFT } from 'src/types/wallet'
+import { INFT, ImageURLRepository } from 'src/types/wallet'
 
 // ----------------------------------------------------------------------
 
@@ -31,7 +37,7 @@ export default function NftItem({ nft }: Props) {
   const linkTrx = `${NFT_TRX_EXPLORER}/tx/${trxId}`
   const linkMarketplace = `${NFT_MARKETPLACE.replace('ID', nftId.toString())}`
 
-  const mintUrl = `${UI_API_URL}/mint/${nftId.toString()}`
+  const mintUrl = `${UI_API_URL}/nfts/mint/${nftId.toString()}`
   const linkShare = `${NFT_SHARE.replace('MESSAGE', `${t('nfts.mint')}: ${mintUrl}`)}`
 
   const handleView = () => {
@@ -43,6 +49,24 @@ export default function NftItem({ nft }: Props) {
     popover.onClose()
     window.open(linkShare, '_blank')
   }
+
+  const renderNftId = (
+    <Box
+      sx={{
+        position: 'absolute',
+        top: 30,
+        left: 25,
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        padding: '2px 6px',
+        borderRadius: '4px',
+        color: 'white',
+        fontSize: '10px',
+        zIndex: 1
+      }}
+    >
+      {`#${nftId}`}
+    </Box>
+  )
 
   return (
     <>
@@ -62,6 +86,7 @@ export default function NftItem({ nft }: Props) {
               alignItems: 'center'
             }}
           >
+            {renderNftId}
             <Link
               href={linkMarketplace}
               target='_blank'
@@ -71,7 +96,7 @@ export default function NftItem({ nft }: Props) {
             >
               <Avatar
                 alt='nft'
-                src={metadata.image_url}
+                src={metadata.image_url[NFT_IMAGE_REPOSITORY as ImageURLRepository]}
                 variant='rounded'
                 sx={{
                   position: 'absolute',

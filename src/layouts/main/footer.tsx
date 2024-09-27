@@ -8,11 +8,13 @@ import Grid from '@mui/material/Unstable_Grid2'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 
+import { paths } from 'src/routes/paths'
 import { usePathname } from 'src/routes/hooks'
 import { RouterLink } from 'src/routes/components'
 
 import { useTranslate } from 'src/locales'
 import { _socials } from 'src/app/api/_data/_mock'
+import { BOT_WAPP_URL, CONTACT_EMAIL } from 'src/config-global'
 
 import Logo from 'src/components/logo'
 import Iconify from 'src/components/iconify'
@@ -21,30 +23,30 @@ import Iconify from 'src/components/iconify'
 
 export default function Footer() {
   const pathname = usePathname()
-
   const { t } = useTranslate()
 
   const homePage = pathname === '/'
+  const contactUsUrl = BOT_WAPP_URL.replaceAll('MESSAGE', t('home.common.contact-us-wapp-msg'))
 
   const LINKS = [
     {
       headline: 'ChatterPay',
       children: [
         { name: t('home.footer.links.about-us'), href: '#' },
-        { name: t('home.footer.links.contact-us'), href: '#' },
-        { name: t('home.footer.links.faqs'), href: '#' }
+        { name: t('home.footer.links.contact-us'), href: contactUsUrl },
+        { name: t('home.footer.links.faqs'), href: '/' }
       ]
     },
     {
       headline: t('home.footer.links.legal'),
       children: [
-        { name: t('home.footer.links.terms'), href: '#' },
-        { name: t('home.footer.privacy'), href: '#' }
+        { name: t('home.footer.links.terms'), href: paths.terms },
+        { name: t('home.footer.links.privacy'), href: paths.policy }
       ]
     },
     {
       headline: t('home.footer.links.contact'),
-      children: [{ name: 'support@chatterpay.com', href: '#' }]
+      children: [{ name: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}` }]
     }
   ]
 

@@ -52,7 +52,7 @@ export default function BankingBalances({
   const open = Boolean(anchorEl)
   const id = open ? 'wallet-links-popover' : undefined
 
-  const sendReciveMsg = BOT_WAPP_URL.replaceAll('MESSAGE', t('balances.wapp-msg'))
+  const sendReciveUrl = BOT_WAPP_URL.replaceAll('MESSAGE', t('balances.wapp-msg'))
 
   const handleCurrencyChange = (event: SelectChangeEvent<CurrencyKey>) => {
     setSelectedCurrency(event.target.value as CurrencyKey)
@@ -124,7 +124,7 @@ export default function BankingBalances({
         variant='contained'
         color='primary'
         startIcon={<Iconify icon='eva:diagonal-arrow-left-down-fill' />}
-        onClick={() => window.open(sendReciveMsg, '_blank')}
+        onClick={() => window.open(sendReciveUrl, '_blank')}
       >
         {t('balances.deposit')}
       </Button>
@@ -135,7 +135,7 @@ export default function BankingBalances({
         variant='outlined'
         color='inherit'
         startIcon={<Iconify icon='eva:diagonal-arrow-right-up-fill' />}
-        onClick={() => window.open(sendReciveMsg, '_blank')}
+        onClick={() => window.open(sendReciveUrl, '_blank')}
       >
         {t('balances.send')}
       </Button>

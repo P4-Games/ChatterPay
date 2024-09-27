@@ -3,8 +3,9 @@
 import * as Yup from 'yup'
 import { useSnackbar } from 'notistack'
 import { useForm } from 'react-hook-form'
-import { useState, useCallback } from 'react'
+import Captcha from 'react-google-recaptcha'
 import { yupResolver } from '@hookform/resolvers/yup'
+import React, { useRef, useState, useEffect, useCallback } from 'react'
 
 import Link from '@mui/material/Link'
 import { Alert } from '@mui/material'
@@ -22,10 +23,12 @@ import { useRouter, useSearchParams } from 'src/routes/hooks'
 
 import { useCountdownSeconds } from 'src/hooks/use-countdown'
 
-import { useTranslate } from 'src/locales'
+import { getRecaptchaLng } from 'src/utils/format-number'
+
 import { useAuthContext } from 'src/auth/hooks'
-import { PATH_AFTER_LOGIN } from 'src/config-global'
+import { useLocales, useTranslate } from 'src/locales'
 import { allCountries } from 'src/app/api/_data/_mock'
+import { PATH_AFTER_LOGIN, RECAPTCHA_SITE_KEY } from 'src/config-global'
 
 import FormProvider, { RHFCode, RHFTextField } from 'src/components/hook-form'
 
@@ -37,11 +40,15 @@ export default function JwtLoginView() {
   const router = useRouter()
   const [errorMsg, setErrorMsg] = useState('')
   const [codeSent, setCodeSent] = useState(false)
-  const { counting, countdown, startCountdown } = useCountdownSeconds(10)
+  const { counting, countdown, startCountdown } = useCountdownSeconds(120)
   const [selectedCountry, setSelectedCountry] = useState('54')
   const searchParams = useSearchParams()
   const countryCodes = allCountries
   const returnTo = searchParams.get('returnTo')
+  const captchaRef = useRef<Captcha>(null)
+  const { currentLang } = useLocales()
+  const [language, setLanguage] = useState(getRecaptchaLng(currentLang.value))
+  const [recaptchaKey, setRecaptchaKey] = useState(0) // Clave para forzar re-render
 
   const LoginSchema = Yup.object().shape({
     phone: Yup.string()
@@ -81,10 +88,16 @@ export default function JwtLoginView() {
   const handleSendCode = useCallback(
     async (data: any) => {
       try {
+        const recaptchaToken = await captchaRef.current?.executeAsync()
+
         startCountdown()
         setErrorMsg('')
         setValue('code', '')
-        await generateCode?.(`${selectedCountry}${data.phone}`, t('login.msg.code-bot'))
+        await generateCode?.(
+          `${selectedCountry}${data.phone}`,
+          t('login.msg.code-bot'),
+          recaptchaToken || ''
+        )
         enqueueSnackbar(`${t('login.msg.code-sent')} ${phone.toString()}`, { variant: 'info' })
         setCodeSent(true)
       } catch (ex) {
@@ -104,7 +117,8 @@ export default function JwtLoginView() {
   const onSubmit = handleSubmit(async (data) => {
     try {
       const fullPhoneNumber = `${selectedCountry}${data.phone}`
-      await loginWithCode?.(fullPhoneNumber, data.code || '')
+      const recaptchaToken = await captchaRef.current?.executeAsync()
+      await loginWithCode?.(fullPhoneNumber, data.code || '', recaptchaToken || '')
       router.push(returnTo || PATH_AFTER_LOGIN)
       setErrorMsg('')
     } catch (ex) {
@@ -124,6 +138,17 @@ export default function JwtLoginView() {
   const handleCountryChange = (event: any) => {
     setSelectedCountry(event.target.value)
   }
+
+  // ----------------------------------------------------------------------
+
+  // Efecto para actualizar el idioma
+  useEffect(() => {
+    const newLang = getRecaptchaLng(currentLang.value)
+    setLanguage(newLang)
+    setRecaptchaKey((prevKey) => prevKey + 1) // Cambia la clave para re-renderizar
+  }, [currentLang.value])
+
+  // ----------------------------------------------------------------------
 
   const renderHead = (
     <Stack spacing={2} sx={{ mb: 5 }}>
@@ -233,11 +258,23 @@ export default function JwtLoginView() {
     </Stack>
   )
 
+  const renderRecaptcha = (
+    <Captcha
+      key={recaptchaKey} // Usar la clave para forzar el re-montaje
+      ref={captchaRef}
+      sitekey={RECAPTCHA_SITE_KEY}
+      badge='bottomright'
+      hl={language}
+      size='invisible'
+    />
+  )
+
   return (
     <>
       {renderHead}
       <FormProvider methods={methods} onSubmit={onSubmit}>
         {renderForm}
+        {renderRecaptcha}
       </FormProvider>
     </>
   )

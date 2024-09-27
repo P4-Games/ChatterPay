@@ -38,9 +38,6 @@ export default function NftsView() {
     )
 
   const notFound = !nfts || !nfts.length
-
-  console.log('nfts', nfts, loadingNfts)
-
   const renderContent = (
     <>
       {notFound ? (

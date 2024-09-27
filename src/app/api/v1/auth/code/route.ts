@@ -1,6 +1,7 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 import { post, endpoints } from 'src/app/api/_hooks/api-resolver'
+import { getIpFromRequest, validateRecaptcha } from 'src/app/api/_utils/request-utils'
 import {
   getUserByPhone,
   updateUserCode,
@@ -18,14 +19,21 @@ import { LastUserConversation } from 'src/types/chat'
 
 // ----------------------------------------------------------------------
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const { phone, codeMsg }: { phone: string; codeMsg: string } = await req.json()
-    if (!phone || !codeMsg) {
+    const {
+      phone,
+      codeMsg,
+      recaptchaToken
+    }: { phone: string; codeMsg: string; recaptchaToken: string } = await req.json()
+
+    const ip = getIpFromRequest(req)
+
+    if (!phone || !codeMsg || !recaptchaToken) {
       return new NextResponse(
         JSON.stringify({
           code: 'INVALID_REQUEST_PARAMS',
-          error: 'Missing phone number or code-message in request body'
+          error: 'Missing phone number, codeMsg or recaptchaToken in request body'
         }),
         {
           status: 400,
@@ -39,6 +47,17 @@ export async function POST(req: Request) {
         status: 404,
         headers: { 'Content-Type': 'application/json' }
       })
+    }
+
+    const recaptchaResult = await validateRecaptcha(recaptchaToken, ip)
+    if (!recaptchaResult.success) {
+      return new NextResponse(
+        JSON.stringify({ code: 'RECAPTACHA_INVALID', error: 'Invalid reCAPTCHA token' }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
     }
 
     const user: IAccount | undefined = await getUserByPhone(phone)
@@ -103,43 +122,34 @@ export async function POST(req: Request) {
 // ----------------------------------------------------------------------
 
 async function send2FACode(phone: string, code: number, codeMsg: string) {
-  // Search last conversationIn User in bot}
+  let phoneToMsg = phone
+
+  // Search last conversationIn User in bot with last 8 phone-digits
   console.info('entered send2FACode', phone, code)
   const lastUserConversation: LastUserConversation = await getLastConversacionUserId(phone)
   console.info('lastUserConversation', phone, lastUserConversation)
 
   if (!lastUserConversation) {
-    // user not found
-    console.info('lastUserConversation NOT_FOUND', phone, lastUserConversation)
-    return false
+    console.info('lastUserConversation NOT_FOUND, using phone:', phone)
+  } else {
+    phoneToMsg = lastUserConversation.channel_user_id
+    console.info(
+      'lastUserConversation FOUND, using channel_user_id as phone:',
+      lastUserConversation.channel_user_id,
+      lastUserConversation.id
+    )
   }
-
-  // Set control to operator
-  const botControlData = {
-    data_token: BOT_API_TOKEN,
-    id: lastUserConversation.id,
-    control: 'operator'
-  }
-  const botControlEndpoint = endpoints.backend.control()
-  console.info('lastUserConversation pre-post', botControlEndpoint, botControlData)
-  const botControlOperatorResult = await post(botControlEndpoint, botControlData)
-  console.info('botControlOperatorResult', botControlOperatorResult)
 
   // Send 2FA code by whatsapp with operator-reply endpoint
   const botSendMsgEndpoint = endpoints.backend.sendMessage()
   const botSendMsgData = {
     data_token: BOT_API_TOKEN,
-    channel_user_id: lastUserConversation.channel_user_id,
+    channel_user_id: phoneToMsg,
     message: codeMsg.replace('{2FA_CODE}', code.toString())
   }
   console.info('botSendMsgData', botSendMsgData)
   const botSendMsgResult = await post(botSendMsgEndpoint, botSendMsgData)
   console.info('botSendMsgResult', botSendMsgResult)
-
-  // Restore control to assitance
-  botControlData.control = 'assistant'
-  const botControlAssistantResult = await post(botControlEndpoint, botControlData)
-  console.info('botControlAssistantResult', botControlAssistantResult)
 
   return true
 }

@@ -88,12 +88,14 @@ NODE_PROVIDER_SCROLL_URL='https://lb.drpc.org/ogrpc?network=scroll-sepolia&dkey=
 HANDLE_VERCEL_FREE_PLAN_TIMEOUT=true
 API3_ENABLED=false
 JWT_SECRET='some secret text'
+RECAPTCHA_API_KEY={recaptcha api key}
 
-# client side
+# client-side
 NEXT_PUBLIC_USE_MOCK=true
 NEXT_PUBLIC_UI_URL=http://localhost:3000
 NEXT_PUBLIC_ALLOWED_ORIGINS=http://localhost:3000
-NEXT_PUBLIC_FROM_ICP=true
+NEXT_PUBLIC_RECAPTCHA_SITE_KEY={recaptcha side key}
+NEXT_PUBLIC_NFT_IMAGE_REPOSITORY={gcp|ipfs|icp}
 ```
 
 __4. Install Dependencies__:
