@@ -13,8 +13,10 @@
     "must-be-max": "Deve ter no máximo {MAX_DIGITS} dígitos",
     "must-be-valid-email": "O email deve ser um endereço de email válido",
     "nodata": "Sem Dados",
+    "close": "Fechar",
     "view": "Ver",
-    "share": "Compartilhar"
+    "share": "Compartilhar",
+    "metadata": "Ver Metadata"
   },
   "menu": {
     "overview": "Visão geral",
@@ -298,6 +300,14 @@
   "nfts": {
     "view-trx": "Ver detalhes da transação",
     "mint": "Ei, dá uma olhada no meu NFT:",
+    "item": {
+      "metadata": "Metadados",
+      "maps": "Ver no Google Maps",
+      "geo-no-data": "Dados não fornecidos",
+      "meta-image": "Repositórios de imagem",
+      "meta-description": "Descrição",
+      "meta-geo": "Geolocalização"
+    },
     "claim": {
       "cta": "Reivindicar",
       "cta-msg": "Reivindique seu certificado na blockchain gratuitamente!",
