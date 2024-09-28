@@ -1,5 +1,6 @@
+import { useState } from 'react'
+
 import Box from '@mui/material/Box'
-import { Link } from '@mui/material'
 import Card from '@mui/material/Card'
 import Stack from '@mui/material/Stack'
 import Avatar from '@mui/material/Avatar'
@@ -7,6 +8,7 @@ import Divider from '@mui/material/Divider'
 import MenuItem from '@mui/material/MenuItem'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
+import { Link, Button, Dialog, DialogTitle, DialogActions, DialogContent } from '@mui/material'
 
 import { useTranslate } from 'src/locales'
 import {
@@ -45,6 +47,8 @@ export default function NftItem({ nft }: Props) {
     : metadata.image_url.gcp
   imageUrl = imageUrl || '/assets/images/nfts/default_nft.png'
 
+  const [openMetadata, setOpenMetadata] = useState(false)
+
   const handleView = () => {
     popover.onClose()
     window.open(linkMarketplace, '_blank')
@@ -54,6 +58,41 @@ export default function NftItem({ nft }: Props) {
     popover.onClose()
     window.open(linkShare, '_blank')
   }
+
+  const handleViewMetadata = () => {
+    popover.onClose()
+    setOpenMetadata(true)
+  }
+
+  const handleCloseMetadata = () => {
+    setOpenMetadata(false)
+  }
+
+  // ----------------------------------------------------------------------
+
+  const renderClickableLink = (url: string, name: string) => (
+    <a href={url} target='_blank' rel='noopener noreferrer'>
+      {name}
+    </a>
+  )
+
+  const renderMapLink = (longitude: string, latitude: string) => {
+    if (longitude && latitude) {
+      const mapsUrl = `https://www.google.com/maps/@${latitude},${longitude},15z`
+      return (
+        <Typography variant='body2'>
+          <a href={mapsUrl} target='_blank' rel='noopener noreferrer'>
+            {t('nfts.item.maps')}
+          </a>
+        </Typography>
+      )
+    }
+    return <Typography variant='body2'>{t('nfts.item.geo-no-data')}</Typography>
+
+    return null
+  }
+
+  // ----------------------------------------------------------------------
 
   const renderNftId = (
     <Box
@@ -143,10 +182,46 @@ export default function NftItem({ nft }: Props) {
           {t('common.view')}
         </MenuItem>
         <MenuItem onClick={handleShare}>
-          <Iconify icon='solar:eye-bold' />
+          <Iconify icon='solar:share-bold' />
           {t('common.share')}
         </MenuItem>
+        <MenuItem onClick={handleViewMetadata}>
+          <Iconify icon='arcticons:metadataremover' />
+          {t('nfts.item.metadata')}
+        </MenuItem>
       </CustomPopover>
+
+      {/* Modal for displaying metadata */}
+      <Dialog open={openMetadata} onClose={handleCloseMetadata} fullWidth maxWidth='xs'>
+        {' '}
+        <DialogTitle>{t('nfts.item.metadata')}</DialogTitle>
+        <DialogContent>
+          <Box sx={{ padding: 2 }}>
+            <Typography variant='h6'>{t('nfts.item.meta-image')}</Typography>
+            {'   '}
+            {renderClickableLink(metadata.image_url.gcp, 'Google')}
+            {', '}
+            {'   '}
+            {renderClickableLink(metadata.image_url.icp, 'ICP')}
+            {', '}
+            {'   '}
+            {renderClickableLink(metadata.image_url.ipfs, 'IPFS')}
+            <Typography variant='h6' sx={{ marginTop: 2 }}>
+              {t('nfts.item.meta-description')}
+            </Typography>
+            <Typography variant='body1'>{metadata.description}</Typography>
+            <Typography variant='h6' sx={{ marginTop: 2 }}>
+              {t('nfts.item.meta-geo')}
+            </Typography>
+            {renderMapLink(metadata?.geolocation?.longitud, metadata.geolocation.latitud)}
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button variant='outlined' color='inherit' onClick={handleCloseMetadata}>
+            {t('common.close')}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   )
 }

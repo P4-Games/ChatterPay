@@ -30,8 +30,8 @@ export default function NftItemClaim({ nftId, nftData }: NftItemClaimProps) {
   }
 
   let imageUrl = nftData.metadata.image_url[NFT_IMAGE_REPOSITORY as ImageURLRepository]
-  ? nftData.metadata.image_url[NFT_IMAGE_REPOSITORY as ImageURLRepository]
-  : nftData.metadata.image_url.gcp
+    ? nftData.metadata.image_url[NFT_IMAGE_REPOSITORY as ImageURLRepository]
+    : nftData.metadata.image_url.gcp
   imageUrl = imageUrl || '/assets/images/nfts/default_nft.png'
 
   const handleMint = async () => {

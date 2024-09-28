@@ -13,8 +13,10 @@
     "must-be-max": "Debe tener un máximo de {MAX_DIGITS} dígitos",
     "must-be-valid-email": "El correo electrónico debe ser una dirección de correo válida",
     "nodata": "Sin Datos",
+    "close": "Cerrar",
     "view": "Ver",
-    "share": "Compartir"
+    "share": "Compartir",
+    "metadata": "Ver Metadata"
   },
   "menu": {
     "overview": "Visión general",
@@ -298,6 +300,14 @@
   "nfts": {
     "view-trx": "Ver detalles de la transacción",
     "mint": "Hey, mira mi NFT:",
+    "item": {
+      "metadata": "Metadatos",
+      "maps": "Ver en Google Maps",
+      "geo-no-data": "Datos no proporcionados",
+      "meta-image": "Repositorios de imágenes",
+      "meta-description": "Descripción",
+      "meta-geo": "Geolocalización"
+    },
     "claim": {
       "cta": "Reclamar",
       "cta-msg": "¡Reclamá tu certificado en blockchain gratis!",

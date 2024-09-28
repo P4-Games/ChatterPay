@@ -13,8 +13,10 @@
     "must-be-max": "Must be a maximum of {MAX_DIGITS} digits",
     "must-be-valid-email": "Email must be a valid email address",
     "nodata": "No Data",
+    "close": "Close",
     "view": "View",
-    "share": "Share"
+    "share": "Share",
+    "metadata": "View Metadata"
   },
   "menu": {
     "overview": "overview",
@@ -298,6 +300,14 @@
   "nfts": {
     "view-trx": "View Transacton Details",
     "mint": "Hey, check out my NFT:",
+    "item": {
+      "metadata": "Metadata",
+      "maps": "View on Google Maps",
+      "geo-no-data": "No data provided",
+      "meta-image": "Image repositories",
+      "meta-description": "Description",
+      "meta-geo": "Geolocation"
+    },
     "claim": {
       "cta": "Claim",
       "cta-msg": "Claim your certificate on the blockchain for free!",
