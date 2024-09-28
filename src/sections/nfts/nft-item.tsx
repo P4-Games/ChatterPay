@@ -40,6 +40,11 @@ export default function NftItem({ nft }: Props) {
   const mintUrl = `${UI_API_URL}/nfts/mint/${nftId.toString()}`
   const linkShare = `${NFT_SHARE.replace('MESSAGE', `${t('nfts.mint')}: ${mintUrl}`)}`
 
+  let imageUrl = metadata.image_url[NFT_IMAGE_REPOSITORY as ImageURLRepository]
+    ? metadata.image_url[NFT_IMAGE_REPOSITORY as ImageURLRepository]
+    : metadata.image_url.gcp
+  imageUrl = imageUrl || '/assets/images/nfts/default_nft.png'
+
   const handleView = () => {
     popover.onClose()
     window.open(linkMarketplace, '_blank')
@@ -96,7 +101,7 @@ export default function NftItem({ nft }: Props) {
             >
               <Avatar
                 alt='nft'
-                src={metadata.image_url[NFT_IMAGE_REPOSITORY as ImageURLRepository]}
+                src={imageUrl}
                 variant='rounded'
                 sx={{
                   position: 'absolute',
