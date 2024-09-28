@@ -4,6 +4,8 @@ import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import { useTheme } from '@mui/material/styles'
 
+import { paths } from 'src/routes/paths'
+
 import { useOffSetTop } from 'src/hooks/use-off-set-top'
 import { useResponsive } from 'src/hooks/use-responsive'
 
@@ -35,7 +37,7 @@ export default function Header() {
     {
       title: t('login.my-wallet'),
       icon: <Iconify icon='solar:wallet-bold-duotone' />,
-      path: '/dashboard'
+      path: paths.auth.jwt.register
     }
   ]
 
