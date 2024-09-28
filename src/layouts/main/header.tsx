@@ -11,6 +11,7 @@ import { useResponsive } from 'src/hooks/use-responsive'
 
 import { bgBlur } from 'src/theme/css'
 import { useTranslate } from 'src/locales'
+import { PATH_AFTER_LOGIN } from 'src/config-global'
 
 import Logo from 'src/components/logo'
 import Iconify from 'src/components/iconify'
@@ -35,9 +36,14 @@ export default function Header() {
 
   const navConfigMobile = [
     {
-      title: t('login.my-wallet'),
-      icon: <Iconify icon='solar:wallet-bold-duotone' />,
+      title: t('home.header.sign-up'),
+      icon: <Iconify icon='icon-park-outline:open-an-account' />,
       path: paths.auth.jwt.register
+    },
+    {
+      title: t('home.header.sign-in'),
+      icon: <Iconify icon='solar:wallet-bold-duotone' />,
+      path: PATH_AFTER_LOGIN
     }
   ]
 

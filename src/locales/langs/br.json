@@ -89,6 +89,10 @@
     "date": "Setembro 2024"
   },
   "home": {
+    "header": {
+      "sign-up": "Crie sua conta",
+      "sign-in": "Entrar"
+    },
     "help": {
       "need-help": "Precisa de ajuda?"
     },
@@ -243,7 +247,6 @@
     }
   },
   "login": {
-    "my-wallet": "Registrar-me",
     "hi": "Oi, bem-vindo de volta",
     "title": "Entrar no ChatterPay",
     "new-user": "Novo usuário?",

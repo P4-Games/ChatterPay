@@ -26,6 +26,10 @@
     "logout": "Logout"
   },
   "home": {
+    "header": {
+    "sign-up": "Create your account",
+    "sign-in": "Sign in"
+    },
     "help": {
       "need-help": "Need help?"
     },
@@ -243,7 +247,6 @@
     "date": "September 2024"
   },
   "login": {
-    "my-wallet": "Sign Up",
     "hi": "Hi, Welcome back",
     "title": "Sign in to ChatterPay",
     "new-user": "New User?",
