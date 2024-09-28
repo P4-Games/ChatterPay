@@ -211,20 +211,22 @@ export default function HomeHero() {
         </Typography>
       </m.div>
 
-      <m.div variants={varFade().in}>
-        <Box
-          component={m.img}
-          src='/assets/images/home/logo.webp'
-          alt='chatterpay'
-          sx={{
-            mt: 0,
-            width: '80%',
-            borderRadius: '50%',
-            display: 'block', // Asegura que el margin auto funcione
-            mx: 'auto' // Centra la imagen horizontalmente
-          }}
-        />{' '}
-      </m.div>
+      {!mdUp && (
+        <m.div variants={varFade().in}>
+          <Box
+            component={m.img}
+            src='/assets/images/home/logo.webp'
+            alt='chatterpay'
+            sx={{
+              mt: 0,
+              width: '80%',
+              borderRadius: '50%',
+              display: 'block', // Asegura que el margin auto funcione
+              mx: 'auto' // Centra la imagen horizontalmente
+            }}
+          />{' '}
+        </m.div>
+      )}
     </Stack>
   )
 

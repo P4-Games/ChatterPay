@@ -46,10 +46,10 @@ export default function HomeStackTech() {
       description: t('home.tech.cards.openai.description')
     },
     {
-      icon_light: '/assets/icons/home/ic_api3_light.svg',
-      icon_dark: '/assets/icons/home/ic_api3_dark.svg',
-      title: 'API3',
-      description: t('home.tech.cards.api3.description')
+      icon_light: '/assets/icons/home/ic_icp_light.svg',
+      icon_dark: '/assets/icons/home/ic_icp_dark.svg',
+      title: 'ICP',
+      description: t('home.tech.cards.icp.description')
     },
     {
       icon_light: '/assets/icons/home/ic_account_abstraction.svg',

@@ -1,7 +1,7 @@
 const { MongoClient } = require('mongodb')
 
 const MONGO_URI = process.argv[2]
-const DB_NAME = process.env.DB_NAME || 'chatterpay-dev'
+const DB_NAME = process.env.DB_NAME || 'chatterpay'
 
 if (!MONGO_URI) {
   console.error('Please provide the MongoDB URI as an argument:')
