@@ -46,8 +46,11 @@ export const BOT_WAPP_URL =
 export const EXPLORER_L1 = 'https://sepolia.etherscan.io'
 export const EXPLORER_L2 = 'https://l1sload-blockscout.scroll.io' // Scroll devnet Explorer
 export const NFT_TRX_EXPLORER = 'https://sepolia.arbiscan.io'
+// export const NFT_MARKETPLACE =
+//  'https://testnets.opensea.io/assets/arbitrum-sepolia/0xedeb3db84518d539c8d7a4755d4be48dc1f876c1/ID'
+
 export const NFT_MARKETPLACE =
-  'https://testnets.opensea.io/assets/arbitrum-sepolia/0xedeb3db84518d539c8d7a4755d4be48dc1f876c1/ID'
+  'https://testnets.opensea.io/assets/arbitrum-sepolia/0xAc3F97E45F67052b1AdBbC4d4eB1153Ba14E955d/ID'
 
 export const NFT_SHARE = 'https://api.whatsapp.com/send/?text=MESSAGE'
 
