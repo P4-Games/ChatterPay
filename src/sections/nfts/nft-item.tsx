@@ -42,12 +42,16 @@ export default function NftItem({ nft }: Props) {
   const mintUrl = `${UI_API_URL}/nfts/mint/${nftId.toString()}`
   const linkShare = `${NFT_SHARE.replace('MESSAGE', `${t('nfts.mint')}: ${mintUrl}`)}`
 
+  const [openMetadata, setOpenMetadata] = useState(false)
+
   let imageUrl = metadata.image_url[NFT_IMAGE_REPOSITORY as ImageURLRepository]
     ? metadata.image_url[NFT_IMAGE_REPOSITORY as ImageURLRepository]
     : metadata.image_url.gcp
   imageUrl = imageUrl || '/assets/images/nfts/default_nft.png'
 
-  const [openMetadata, setOpenMetadata] = useState(false)
+  const { geolocation } = metadata || {}
+  const latitude = geolocation?.latitud || ''
+  const longitude = geolocation?.longitud || ''
 
   const handleView = () => {
     popover.onClose()
@@ -76,9 +80,9 @@ export default function NftItem({ nft }: Props) {
     </a>
   )
 
-  const renderMapLink = (longitude: string, latitude: string) => {
-    if (longitude && latitude) {
-      const mapsUrl = `https://www.google.com/maps/@${latitude},${longitude},15z`
+  const renderMapLink = (lng: string, lat: string) => {
+    if (lng && lat) {
+      const mapsUrl = `https://www.google.com/maps/@${lat},${lng},15z`
       return (
         <Typography variant='body2'>
           <a href={mapsUrl} target='_blank' rel='noopener noreferrer'>
@@ -88,8 +92,6 @@ export default function NftItem({ nft }: Props) {
       )
     }
     return <Typography variant='body2'>{t('nfts.item.geo-no-data')}</Typography>
-
-    return null
   }
 
   // ----------------------------------------------------------------------
@@ -213,7 +215,7 @@ export default function NftItem({ nft }: Props) {
             <Typography variant='h6' sx={{ marginTop: 2 }}>
               {t('nfts.item.meta-geo')}
             </Typography>
-            {renderMapLink(metadata?.geolocation?.longitud, metadata.geolocation.latitud)}
+            {renderMapLink(longitude, latitude)}
           </Box>
         </DialogContent>
         <DialogActions>
