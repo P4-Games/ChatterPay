@@ -1,5 +1,5 @@
 const ROOTS = {
-  AUTH: 'https://chatterpay.net/auth',
+  AUTH: '/auth',
   DASHBOARD: '/dashboard'
 }
 

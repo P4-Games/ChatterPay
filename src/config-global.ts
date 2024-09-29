@@ -1,5 +1,3 @@
-import { paths } from 'src/routes/paths'
-
 import { Network } from './types/networks'
 
 // ----------------------------------------------------------------------
@@ -31,7 +29,7 @@ export const handleVercelFreePlanTimeOut =
 export const UI_API_URL = process.env.NEXT_PUBLIC_UI_URL
 export const USE_MOCK = (process.env.NEXT_PUBLIC_USE_MOCK || 'true') === 'true'
 export const ALLOWED_ORIGINS = process.env.NEXT_PUBLIC_ALLOWED_ORIGINS || '*'
-export const fromICP = (process.env.NEXT_PUBLIC_FROM_ICP || 'false') === 'true'
+export const fromICP = (process.env.NEXT_PUBLIC_FROM_ICP || 'true') === 'true'
 export const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''
 export const NFT_IMAGE_REPOSITORY = (
   process.env.NEXT_PUBLIC_NFT_IMAGE_REPOSITORY || 'gcp'
@@ -39,8 +37,7 @@ export const NFT_IMAGE_REPOSITORY = (
 // ----------------------------------------------------------------------
 
 // internal
-export const DOMAIN_TO_USE_WITH_ICP = fromICP ? 'https://chatterpay.net' : ''
-export const PATH_AFTER_LOGIN = `${DOMAIN_TO_USE_WITH_ICP}$/dashboard`   
+export const PATH_AFTER_LOGIN = `/dashboard`
 export const BOT_WAPP_URL =
   'https://api.whatsapp.com/send/?phone=5491164629653&text=MESSAGE&type=phone_number&app_absent=0'
 
