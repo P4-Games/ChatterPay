@@ -39,7 +39,8 @@ export const NFT_IMAGE_REPOSITORY = (
 // ----------------------------------------------------------------------
 
 // internal
-export const PATH_AFTER_LOGIN = fromICP ? 'https://chatterpay.net/dashboard' : paths.dashboard.root
+export const DOMAIN_TO_USE_WITH_ICP = fromICP ? 'https://chatterpay.net' : ''
+export const PATH_AFTER_LOGIN = `${DOMAIN_TO_USE_WITH_ICP}$/dashboard`   
 export const BOT_WAPP_URL =
   'https://api.whatsapp.com/send/?phone=5491164629653&text=MESSAGE&type=phone_number&app_absent=0'
 
