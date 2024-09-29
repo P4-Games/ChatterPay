@@ -11,7 +11,6 @@ import { useResponsive } from 'src/hooks/use-responsive'
 
 import { bgBlur } from 'src/theme/css'
 import { useTranslate } from 'src/locales'
-import { PATH_AFTER_LOGIN } from 'src/config-global'
 
 import Logo from 'src/components/logo'
 import Iconify from 'src/components/iconify'
