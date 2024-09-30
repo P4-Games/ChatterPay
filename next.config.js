@@ -15,7 +15,11 @@ module.exports = {
   },
   output: 'standalone',
   images: {
-    domains: ['storage.googleapis.com'],
+    domains: [
+      'storage.googleapis.com', 
+      'cilxj-yiaaa-aaaag-alkxq-cai.icp0.io', 
+      'gateway.pinata.cloud', 
+      'img.freepik.com'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -23,6 +27,24 @@ module.exports = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'cilxj-yiaaa-aaaag-alkxq-cai.icp0.io',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'gateway.pinata.cloud',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'img.freepik.com',
+        port: '',
+        pathname: '/**',
+      }
     ],
   },
   webpack(config, options) {

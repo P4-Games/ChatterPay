@@ -4,6 +4,8 @@ import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import { useTheme } from '@mui/material/styles'
 
+import { paths } from 'src/routes/paths'
+
 import { useOffSetTop } from 'src/hooks/use-off-set-top'
 import { useResponsive } from 'src/hooks/use-responsive'
 
@@ -33,9 +35,14 @@ export default function Header() {
 
   const navConfigMobile = [
     {
-      title: t('login.my-wallet'),
+      title: t('home.header.sign-up'),
+      icon: <Iconify icon='icon-park-outline:open-an-account' />,
+      path: paths.auth.jwt.register
+    },
+    {
+      title: t('home.header.sign-in'),
       icon: <Iconify icon='solar:wallet-bold-duotone' />,
-      path: '/dashboard'
+      path: paths.auth.jwt.login
     }
   ]
 

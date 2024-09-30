@@ -13,8 +13,10 @@
     "must-be-max": "Must be a maximum of {MAX_DIGITS} digits",
     "must-be-valid-email": "Email must be a valid email address",
     "nodata": "No Data",
+    "close": "Close",
     "view": "View",
-    "share": "Share"
+    "share": "Share",
+    "metadata": "View Metadata"
   },
   "menu": {
     "overview": "overview",
@@ -26,6 +28,10 @@
     "logout": "Logout"
   },
   "home": {
+    "header": {
+    "sign-up": "Create your account",
+    "sign-in": "Sign in"
+    },
     "help": {
       "need-help": "Need help?"
     },
@@ -115,9 +121,9 @@
           "title": "OpenAI",
           "description": "AI platform that understands and generates human-like text. Powers advanced language processing and learning capabilities."
         },
-        "api3": {
-          "title": "api3",
-          "description": "A decentralized data oracle network that facilitates direct integration of APIs with blockchain applications."
+        "icp": {
+          "title": "icp",
+          "description": "ICP offers decentralized infrastructure that is simple, immune to cyber attacks, unstoppable, and controlled by DAOs."
         },
         "account-abstraction": {
           "title": "Account Abstraction",
@@ -243,7 +249,6 @@
     "date": "September 2024"
   },
   "login": {
-    "my-wallet": "My Wallet",
     "hi": "Hi, Welcome back",
     "title": "Sign in to ChatterPay",
     "new-user": "New User?",
@@ -295,6 +300,14 @@
   "nfts": {
     "view-trx": "View Transacton Details",
     "mint": "Hey, check out my NFT:",
+    "item": {
+      "metadata": "Metadata",
+      "maps": "View on Google Maps",
+      "geo-no-data": "No data provided",
+      "meta-image": "Image repositories",
+      "meta-description": "Description",
+      "meta-geo": "Geolocation"
+    },
     "claim": {
       "cta": "Claim",
       "cta-msg": "Claim your certificate on the blockchain for free!",

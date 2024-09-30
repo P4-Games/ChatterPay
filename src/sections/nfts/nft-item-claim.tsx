@@ -29,6 +29,11 @@ export default function NftItemClaim({ nftId, nftData }: NftItemClaimProps) {
     window.open(url, '_blank')
   }
 
+  let imageUrl = nftData.metadata.image_url[NFT_IMAGE_REPOSITORY as ImageURLRepository]
+    ? nftData.metadata.image_url[NFT_IMAGE_REPOSITORY as ImageURLRepository]
+    : nftData.metadata.image_url.gcp
+  imageUrl = imageUrl || '/assets/images/nfts/default_nft.png'
+
   const handleMint = async () => {
     const text = 'Me gustaría mintear el NFT'
     const message = `${text} ${nftId}`
@@ -86,7 +91,7 @@ export default function NftItemClaim({ nftId, nftData }: NftItemClaimProps) {
               layout='responsive'
               width={200}
               height={200}
-              src={nftData.metadata.image_url[NFT_IMAGE_REPOSITORY as ImageURLRepository]}
+              src={imageUrl}
               alt={nftData.metadata.description}
             />
           </Box>
