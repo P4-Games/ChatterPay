@@ -13,8 +13,10 @@
     "must-be-max": "Deve ter no máximo {MAX_DIGITS} dígitos",
     "must-be-valid-email": "O email deve ser um endereço de email válido",
     "nodata": "Sem Dados",
+    "close": "Fechar",
     "view": "Ver",
-    "share": "Compartilhar"
+    "share": "Compartilhar",
+    "metadata": "Ver Metadata"
   },
   "menu": {
     "overview": "Visão geral",
@@ -89,6 +91,10 @@
     "date": "Setembro 2024"
   },
   "home": {
+    "header": {
+      "sign-up": "Crie sua conta",
+      "sign-in": "Entrar"
+    },
     "help": {
       "need-help": "Precisa de ajuda?"
     },
@@ -176,15 +182,15 @@
         },
         "openai": {
           "title": "OpenAI",
-          "description": "Conecte APIs da web diretamente a aplicativos descentralizados."
+          "description": "Plataforma de IA que compreende e gera texto semelhante ao humano. Impulsiona capacidades avançadas de processamento de linguagem."
         },
-        "api3": {
-          "title": "api3",
-          "description": "Uma rede de oráculos de dados descentralizada que facilita a integração direta de APIs com aplicativos de blockchain."
+        "icp": {
+          "title": "ICP",
+          "description": "O ICP oferece infraestrutura descentralizada, simples, imune a ataques cibernéticos, imparável e controlada por DAOs."
         },
         "account-abstraction": {
           "title": "Abstração de Conta",
-          "description": "Conceito que permite interagir com blockchains sem a necessidade de criptomoedas específicas. Melhora a flexibilidade e usabilidade para os usuários."
+          "description": "Permite interagir com blockchains sem a necessidade de criptomoedas específicas. Melhora a flexibilidade e usabilidade para os usuários."
         }
       }
     },
@@ -243,7 +249,6 @@
     }
   },
   "login": {
-    "my-wallet": "Minha Carteira",
     "hi": "Oi, bem-vindo de volta",
     "title": "Entrar no ChatterPay",
     "new-user": "Novo usuário?",
@@ -295,6 +300,14 @@
   "nfts": {
     "view-trx": "Ver detalhes da transação",
     "mint": "Ei, dá uma olhada no meu NFT:",
+    "item": {
+      "metadata": "Metadados",
+      "maps": "Ver no Google Maps",
+      "geo-no-data": "Dados não fornecidos",
+      "meta-image": "Repositórios de imagem",
+      "meta-description": "Descrição",
+      "meta-geo": "Geolocalização"
+    },
     "claim": {
       "cta": "Reivindicar",
       "cta-msg": "Reivindique seu certificado na blockchain gratuitamente!",

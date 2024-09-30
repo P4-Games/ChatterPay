@@ -24,6 +24,10 @@ export type INFTMetadata = {
     ipfs: string
     icp: string
   }
+  geolocation?: {
+    latitud?: string
+    longitud?: string
+  }
   description: string
 }
 

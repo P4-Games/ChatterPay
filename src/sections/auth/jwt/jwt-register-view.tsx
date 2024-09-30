@@ -99,8 +99,8 @@ export default function JwtRegisterView() {
       {t('register.by-signing')} {` `}
       <Link underline='always' color='text.primary' href={paths.terms}>
         {t('register.terms-of-service')}
-        {` `}
       </Link>
+      {` `}
       {t('register.and')}
       {` `}
       <Link underline='always' color='text.primary' href={paths.policy}>
