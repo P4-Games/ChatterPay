@@ -64,39 +64,7 @@ __2. Clone repository__:
 
 __3. Complete .env file__: 
 
-Create a .env file in the root folder and populate it with the following keys and values:
-
-```sh
-SKIP_PREFLIGHT_CHECK=true
-GENERATE_SOURCEMAP=false
-npm_config_user_agent=yarn
-PORT=3000
-
-# server-side
-NODE_ENV='development'
-APP_ENV='development'
-BOT_API_TOKEN={api token}
-BOT_API_URL=http://localhost:3000
-BACKEND_API_URL=https://dev.back.chatterpay.net
-BOT_API_WAPP_ENABLED=true
-MONGODB='mongodb://localhost:27017'
-MONGODB_BOT='BOT mongo db url'
-DB_CHATTERPAY_NAME='chatterpay_dev'
-NODE_PROVIDER_SEPOLIA_URL='https://sepolia.infura.io/v3/YOUR_API_KEY'
-NODE_PROVIDER_MUMBAI_URL='https://stylish-dawn-bush.bsc-testnet.quiknode.pro/YOUR_API_KEY/'
-NODE_PROVIDER_SCROLL_URL='https://lb.drpc.org/ogrpc?network=scroll-sepolia&dkey=YOUR_API_KEY'
-HANDLE_VERCEL_FREE_PLAN_TIMEOUT=true
-API3_ENABLED=false
-JWT_SECRET='some secret text'
-RECAPTCHA_API_KEY={recaptcha api key}
-
-# client-side
-NEXT_PUBLIC_USE_MOCK=true
-NEXT_PUBLIC_UI_URL=http://localhost:3000
-NEXT_PUBLIC_ALLOWED_ORIGINS=http://localhost:3000
-NEXT_PUBLIC_RECAPTCHA_SITE_KEY={recaptcha side key}
-NEXT_PUBLIC_NFT_IMAGE_REPOSITORY={gcp|ipfs|icp}
-```
+Create a .env file in the root folder and populate it with keys and values described in [example_env file](./example_env).
 
 __4. Install Dependencies__:
 
