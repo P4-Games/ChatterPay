@@ -35,10 +35,16 @@ export type ImageURLRepository = keyof INFTMetadata['image_url']
 
 export type INFT = {
   bddId: string
-  nftId: number
+  nftId: string
   channel_user_id: string
   wallet: string
   trxId: string
+  original?: boolean
+  copy_of?: string
+  copy_order?: number
+  tota_of_this?: number
+  timestamp?: Date
+  total_of_original?: number
   metadata: INFTMetadata
 }
 
