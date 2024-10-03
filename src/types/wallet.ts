@@ -39,11 +39,13 @@ export type INFT = {
   channel_user_id: string
   wallet: string
   trxId: string
-  original?: boolean
+  timestamp: Date
+  original: boolean
+  tota_of_this: number
   copy_of?: string
-  copy_order?: number
-  tota_of_this?: number
-  timestamp?: Date
+  copy_order: number
+  copy_of_original?: string
+  copy_order_original: number
   total_of_original?: number
   metadata: INFTMetadata
 }
