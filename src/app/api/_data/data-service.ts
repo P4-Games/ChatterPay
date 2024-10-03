@@ -116,35 +116,31 @@ export async function getWalletNfts(wallet: string): Promise<INFT[] | undefined>
           metadata: 1,
           timestamp: 1,
           original: 1,
+          total_of_this: 1,
           copy_of: 1,
           copy_order: 1,
-          total_of_this: 1
+          copy_of_original: 1,
+          copy_order_original: 1
         }
       },
       {
         $addFields: {
-          original: {
-            $cond: {
-              if: { $eq: ['$original', null] },
-              then: true,
-              else: '$original'
-            }
-          },
-          // Considerar que copy_order puede ser nulo, si es nulo lo reemplazamos por 1
-          copy_order: {
-            $ifNull: ['$copy_order', 1]
-          },
           // Obtener el campo copy_of, si es nulo lo dejamos como nulo
           copy_of: {
             $ifNull: ['$copy_of', null]
+          },
+          // Obtener el campo copy_of_original, si es nulo lo dejamos como nulo
+          copy_of_original: {
+            $ifNull: ['$copy_of_original', null]
           }
         }
       },
       {
-        // Realizar un lookup para obtener el total_of_this del registro original relacionado
+        // Realizar un lookup para obtener el total_of_this
+        // del registro original relacionado
         $lookup: {
           from: SCHEMA_NFTS,
-          localField: 'copy_of',
+          localField: 'copy_of_original',
           foreignField: 'id',
           as: 'original_nft'
         }
@@ -153,7 +149,7 @@ export async function getWalletNfts(wallet: string): Promise<INFT[] | undefined>
         $addFields: {
           total_of_original: {
             $cond: {
-              if: { $ne: ['$copy_of', null] },
+              if: { $ne: ['$copy_of_original', null] },
               then: {
                 $arrayElemAt: ['$original_nft.total_of_this', 0]
               },
@@ -255,6 +251,13 @@ export async function getWalletNft(wallet: string, nftId: string): Promise<INFT 
     channel_user_id: nft.channel_user_id,
     wallet: nft.wallet,
     trxId: nft.trxId,
+    timestamp: nft.timestamp,
+    original: nft.original,
+    tota_of_this: nft.tota_of_this,
+    copy_of: nft.copy_of,
+    copy_order: nft.copy_order,
+    copy_of_original: nft.copy_of_original,
+    copy_order_original: nft.copy_order_original,
     metadata: nft.metadata
   }
 

@@ -116,7 +116,7 @@ export default function NftItem({ nft }: Props) {
       return t('nfts.item.original')
     }
     const copyText = t('nfts.item.copy-of')
-      .replace('{X}', String(nft.copy_order) || '1')
+      .replace('{X}', String(nft.copy_order_original) || '1')
       .replace('{Z}', String(nft.total_of_original) || '1')
     return copyText
   }
