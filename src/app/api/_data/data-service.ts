@@ -114,6 +114,8 @@ export async function getWalletNfts(wallet: string): Promise<INFT[] | undefined>
           wallet: 1,
           trxId: 1,
           metadata: 1
+        $sort: {
+          timestamp: -1 // Orden descendente por timestamp
         }
       }
     ])
