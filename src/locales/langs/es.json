@@ -306,7 +306,10 @@
       "geo-no-data": "Datos no proporcionados",
       "meta-image": "Repositorios de imágenes",
       "meta-description": "Descripción",
-      "meta-geo": "Geolocalización"
+      "meta-geo": "Geolocalización",
+      "original": "Original",
+      "copy-of": "Copia #{X} de #{Z}"
+
     },
     "claim": {
       "cta": "Reclamar",
