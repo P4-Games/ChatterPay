@@ -7,7 +7,7 @@ import { Card, Button, Typography } from '@mui/material'
 import { useResponsive } from 'src/hooks/use-responsive'
 
 import { useTranslate } from 'src/locales'
-import { BOT_WAPP_URL, NFT_MARKETPLACE, NFT_IMAGE_REPOSITORY } from 'src/config-global'
+import { BOT_WAPP_URL, NFT_MARKETPLACE_URL, NFT_IMAGE_REPOSITORY } from 'src/config-global'
 
 import { varFade } from 'src/components/animate'
 
@@ -25,7 +25,7 @@ export default function NftItemClaim({ nftId, nftData }: NftItemClaimProps) {
   const { t } = useTranslate()
 
   const handleOpenOpenSea = () => {
-    const url = `${NFT_MARKETPLACE.replace('ID', nftId)}`
+    const url = `${NFT_MARKETPLACE_URL}/${nftId}`
     window.open(url, '_blank')
   }
 

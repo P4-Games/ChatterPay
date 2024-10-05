@@ -3,8 +3,8 @@ import { ObjectId, Collection } from 'mongodb'
 import { DB_CHATTERPAY_NAME } from 'src/config-global'
 
 import { IAccount } from 'src/types/account'
-import { INFT, ITransaction } from 'src/types/wallet'
 import { LastUserConversation } from 'src/types/chat'
+import { INFT, ITransaction } from 'src/types/wallet'
 
 import { getClientPromise } from './mongo-connection'
 import { getClientPromiseBot } from './mongo-connection-bot'
@@ -29,7 +29,7 @@ interface ITransactionDB extends Omit<ITransaction, 'id'> {
 }
 interface INFTDB extends Omit<INFT, 'bddId' | 'nftId'> {
   _id: any // bdd id
-  id: number // nft id
+  id: string // nft id
 }
 
 interface UserConversation {
@@ -113,7 +113,54 @@ export async function getWalletNfts(wallet: string): Promise<INFT[] | undefined>
           channel_user_id: 1,
           wallet: 1,
           trxId: 1,
-          metadata: 1
+          metadata: 1,
+          timestamp: 1,
+          original: 1,
+          total_of_this: 1,
+          copy_of: 1,
+          copy_order: 1,
+          copy_of_original: 1,
+          copy_order_original: 1
+        }
+      },
+      {
+        $addFields: {
+          // Obtener el campo copy_of, si es nulo lo dejamos como nulo
+          copy_of: {
+            $ifNull: ['$copy_of', null]
+          },
+          // Obtener el campo copy_of_original, si es nulo lo dejamos como nulo
+          copy_of_original: {
+            $ifNull: ['$copy_of_original', null]
+          }
+        }
+      },
+      {
+        // Realizar un lookup para obtener el total_of_this
+        // del registro original relacionado
+        $lookup: {
+          from: SCHEMA_NFTS,
+          localField: 'copy_of_original',
+          foreignField: 'id',
+          as: 'original_nft'
+        }
+      },
+      {
+        $addFields: {
+          total_of_original: {
+            $cond: {
+              if: { $ne: ['$copy_of_original', null] },
+              then: {
+                $arrayElemAt: ['$original_nft.total_of_this', 0]
+              },
+              else: '$total_of_this'
+            }
+          }
+        }
+      },
+      {
+        $sort: {
+          timestamp: -1 // Orden descendente por timestamp
         }
       }
     ])
@@ -204,6 +251,13 @@ export async function getWalletNft(wallet: string, nftId: string): Promise<INFT 
     channel_user_id: nft.channel_user_id,
     wallet: nft.wallet,
     trxId: nft.trxId,
+    timestamp: nft.timestamp,
+    original: nft.original,
+    tota_of_this: nft.tota_of_this,
+    copy_of: nft.copy_of,
+    copy_order: nft.copy_order,
+    copy_of_original: nft.copy_of_original,
+    copy_order_original: nft.copy_order_original,
     metadata: nft.metadata
   }
 

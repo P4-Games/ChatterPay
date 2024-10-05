@@ -306,7 +306,9 @@
       "geo-no-data": "No data provided",
       "meta-image": "Image repositories",
       "meta-description": "Description",
-      "meta-geo": "Geolocation"
+      "meta-geo": "Geolocation",
+      "original": "Original",
+      "copy-of": "Copy #{X} of #{Z}"
     },
     "claim": {
       "cta": "Claim",
