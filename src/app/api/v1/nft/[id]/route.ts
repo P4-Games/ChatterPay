@@ -32,9 +32,11 @@ export async function GET(request: Request, { params }: { params: IParams }) {
   }
 
   try {
-    const response: INFT[] | undefined = await getNftById(parseInt(params.id, 10))
-    if (response && response.length > 0 && response[0].metadata.image_url) {
-      return NextResponse.json(response[0])
+    const nft: INFT | undefined = await getNftById(params.id)
+    console.log('3', params, nft)
+
+    if (nft) {
+      return NextResponse.json(nft)
     }
 
     return new NextResponse(JSON.stringify(errorMessage), {

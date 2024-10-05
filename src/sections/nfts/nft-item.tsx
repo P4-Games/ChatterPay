@@ -22,8 +22,8 @@ import { useTranslate } from 'src/locales'
 import {
   NFT_SHARE,
   UI_API_URL,
-  NFT_MARKETPLACE_URL,
   NFT_TRX_EXPLORER,
+  NFT_MARKETPLACE_URL,
   NFT_IMAGE_REPOSITORY
 } from 'src/config-global'
 
