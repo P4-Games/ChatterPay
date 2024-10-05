@@ -98,12 +98,6 @@ export async function getConversationRates(): Promise<any> {
   return result
 }
 
-/*
-export async function getNftById(nftId: string): Promise<any> {
-  return fetchNftById(nftId)
-}
-*/
-
 // ---------------------------------------------------------------------------------------------
 
 async function getBalances(walletAddress: string): Promise<any[]> {
