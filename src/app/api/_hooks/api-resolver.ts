@@ -54,7 +54,8 @@ export const endpoints = {
   dashboard: {
     root: getFullUIEndpoint('app'),
     user: {
-      id: (id: string) => getFullUIEndpoint(`user/${id}`)
+      id: (id: string) => getFullUIEndpoint(`user/${id}`),
+      update: (id: string) => getFullUIEndpoint(`user/${id}`)
     },
     wallet: {
       balance: (id: string) => getFullUIEndpoint(`wallet/${id}/balance`),

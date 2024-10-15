@@ -1,6 +1,6 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
-import { getUserByPhone } from 'src/app/api/_data/data-service'
+import { updateUser, getUserById, getUserByPhone } from 'src/app/api/_data/data-service'
 
 import { IAccount } from 'src/types/account'
 
@@ -51,6 +51,61 @@ export async function GET(request: Request, { params }: { params: IParams }) {
   } catch (ex) {
     console.error(ex)
     return new NextResponse(JSON.stringify({ error: 'Error getting dummy' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' }
+    })
+  }
+}
+
+export async function POST(req: NextRequest, { params }: { params: IParams }) {
+  try {
+    const { id } = params
+    const { name }: { name: string } = await req.json()
+
+    if (!name || !id) {
+      return new NextResponse(
+        JSON.stringify({
+          code: 'INVALID_REQUEST_PARAMS',
+          error: 'Missing id or name in request body'
+        }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
+    const user: IAccount | undefined = await getUserById(id)
+    if (!user) {
+      return new NextResponse(
+        JSON.stringify({ code: 'USER_NOT_FOUND', error: 'user not found with that id' }),
+        {
+          status: 404,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
+    user.name = name
+    const reult: boolean = await updateUser(user)
+
+    if (!reult) {
+      return new NextResponse(
+        JSON.stringify({
+          code: 'USER_UPDATE_ERROR',
+          error: 'user update error'
+        }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
+    return NextResponse.json({ reult })
+  } catch (ex) {
+    console.error(ex)
+    return new NextResponse(JSON.stringify({ error: 'Error in update user' }), {
       status: 400,
       headers: { 'Content-Type': 'application/json' }
     })
