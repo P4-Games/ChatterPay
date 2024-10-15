@@ -42,7 +42,7 @@ export async function updateOneCommon(
       `updated ${colName}: ${matchedDocuments} document(s) found and ${modifiedDocuments} document(s) updated.`
     )
 
-    return result.modifiedCount > 0
+    return result.modifiedCount > 0 || matchedDocuments > 0
   } finally {
     // NONE
   }
