@@ -1,4 +1,4 @@
-import { AccountView } from 'src/sections/account/view'
+import { AccountEditView } from 'src/sections/account/view'
 
 // ----------------------------------------------------------------------
 
@@ -7,5 +7,5 @@ export const metadata = {
 }
 
 export default function AccountPage() {
-  return <AccountView />
+  return <AccountEditView />
 }

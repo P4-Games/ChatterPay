@@ -12,11 +12,16 @@
     "must-be-numeric": "Must be numeric",
     "must-be-max": "Must be a maximum of {MAX_DIGITS} digits",
     "must-be-valid-email": "Email must be a valid email address",
+    "must-be-min": "Must have a minimum of {MIN_CHARS} chars",
     "nodata": "No Data",
     "close": "Close",
     "view": "View",
     "share": "Share",
-    "metadata": "View Metadata"
+    "metadata": "View Metadata",
+    "msg": {
+      "update-success": "Update Success!",
+      "update-error": "Update error"
+    }
   },
   "menu": {
     "overview": "overview",
@@ -318,6 +323,7 @@
     }
   },
   "account": {
-    "title": "Account"
+    "title": "Account",
+    "save": "Save Changes"
   }
 }

@@ -12,11 +12,16 @@
     "must-be-numeric": "Debe ser numérico",
     "must-be-max": "Debe tener un máximo de {MAX_DIGITS} dígitos",
     "must-be-valid-email": "El correo electrónico debe ser una dirección de correo válida",
+    "must-be-min": "Debe tener un mínimo de {MIN_CHARS} caracteres",
     "nodata": "Sin Datos",
     "close": "Cerrar",
     "view": "Ver",
     "share": "Compartir",
-    "metadata": "Ver Metadata"
+    "metadata": "Ver Metadata",
+    "msg": {
+      "update-success": "¡Actualización exitosa!",
+      "update-error": "Error de actualización"
+    }
   },
   "menu": {
     "overview": "Visión general",
@@ -319,6 +324,7 @@
     }
   },
   "account": {
-    "title": "Cuenta"
+    "title": "Cuenta",
+    "save": "Guardar Cambios"
   }
 }
