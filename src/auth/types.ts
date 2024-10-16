@@ -51,4 +51,5 @@ export type JWTContextType = CanRemove & {
   generateCode: (email: string, codeMsg: string, recaptchaToken: string) => Promise<void>
   register: (email: string, password: string, firstName: string, lastName: string) => Promise<void>
   logout: () => Promise<void>
+  updateUser: (user: AuthUserType) => void
 }

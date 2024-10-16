@@ -19,6 +19,7 @@ module.exports = {
       'storage.googleapis.com', 
       'cilxj-yiaaa-aaaag-alkxq-cai.icp0.io', 
       'gateway.pinata.cloud', 
+      'w.wallhaven.cc',
       'img.freepik.com'],
     remotePatterns: [
       {
@@ -42,6 +43,12 @@ module.exports = {
       {
         protocol: 'https',
         hostname: 'img.freepik.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'w.wallhaven.cc',
         port: '',
         pathname: '/**',
       }

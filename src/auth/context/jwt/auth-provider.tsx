@@ -16,7 +16,8 @@ enum Types {
   LOGIN = 'LOGIN',
   GENERATE_CODE = 'GENERATE_CODE',
   REGISTER = 'REGISTER',
-  LOGOUT = 'LOGOUT'
+  LOGOUT = 'LOGOUT',
+  UPDATE_USER = 'UPDATE_USER'
 }
 
 type Payload = {
@@ -33,6 +34,9 @@ type Payload = {
     user: AuthUserType
   }
   [Types.LOGOUT]: undefined
+  [Types.UPDATE_USER]: {
+    user: AuthUserType
+  }
 }
 
 type ActionsType = ActionMapType<Payload>[keyof ActionMapType<Payload>]
@@ -45,40 +49,40 @@ const initialState: AuthStateType = {
 }
 
 const reducer = (state: AuthStateType, action: ActionsType) => {
-  if (action.type === Types.INITIAL) {
-    return {
-      loading: false,
-      user: action.payload.user
-    }
+  switch (action.type) {
+    case Types.INITIAL:
+      return {
+        loading: false,
+        user: action.payload.user
+      }
+    case Types.LOGIN:
+      return {
+        ...state,
+        user: action.payload.user
+      }
+    case Types.GENERATE_CODE:
+      return {
+        ...state,
+        user: null
+      }
+    case Types.REGISTER:
+      return {
+        ...state,
+        user: action.payload.user
+      }
+    case Types.LOGOUT:
+      return {
+        ...state,
+        user: null
+      }
+    case Types.UPDATE_USER: // <-- Manejar la acción UPDATE_USER
+      return {
+        ...state,
+        user: action.payload.user
+      }
+    default:
+      return state
   }
-  if (action.type === Types.LOGIN) {
-    return {
-      ...state,
-      user: action.payload.user
-    }
-  }
-
-  if (action.type === Types.GENERATE_CODE) {
-    return {
-      ...state,
-      user: null
-    }
-  }
-
-  if (action.type === Types.REGISTER) {
-    return {
-      ...state,
-      user: action.payload.user
-    }
-  }
-
-  if (action.type === Types.LOGOUT) {
-    return {
-      ...state,
-      user: null
-    }
-  }
-  return state
 }
 
 // ----------------------------------------------------------------------
@@ -241,6 +245,16 @@ export function AuthProvider({ children }: Props) {
     })
   }, [])
 
+  // update_user
+  const updateUser = useCallback((user: AuthUserType) => {
+    dispatch({
+      type: Types.UPDATE_USER,
+      payload: {
+        user
+      }
+    })
+  }, [])
+
   // ----------------------------------------------------------------------
 
   const checkAuthenticated = state.user ? 'authenticated' : 'unauthenticated'
@@ -259,9 +273,10 @@ export function AuthProvider({ children }: Props) {
       loginWithCode,
       generateCode,
       register,
-      logout
+      logout,
+      updateUser
     }),
-    [generateCode, login, loginWithCode, logout, register, state.user, status]
+    [generateCode, login, loginWithCode, logout, register, state.user, status, updateUser]
   )
 
   return <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>

@@ -1,1 +1,1 @@
-export { default as AccountView } from './user-account-view'
+export { default as AccountEditView } from './account-edit-view'

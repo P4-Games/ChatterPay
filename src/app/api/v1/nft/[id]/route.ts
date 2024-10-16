@@ -33,7 +33,6 @@ export async function GET(request: Request, { params }: { params: IParams }) {
 
   try {
     const nft: INFT | undefined = await getNftById(params.id)
-    console.log('3', params, nft)
 
     if (nft) {
       return NextResponse.json(nft)

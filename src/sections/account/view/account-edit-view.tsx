@@ -28,7 +28,7 @@ const TABS = [
 
 // ----------------------------------------------------------------------
 
-export default function AccountView() {
+export default function AccountEditView() {
   const settings = useSettingsContext()
   const { t } = useTranslate()
   const [currentTab, setCurrentTab] = useState('general')
