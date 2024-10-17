@@ -32,7 +32,7 @@ export default function MainLayout({ children }: Props) {
         {children}
       </Box>
 
-      <Footer />
+      <Footer simple={false} />
     </Box>
   )
 }
