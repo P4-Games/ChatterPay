@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server'
 
-import { USE_MOCK } from 'src/config-global'
-import { _transactions } from 'src/app/api/_data/_mock'
 import { geUserTransactions } from 'src/app/api/_data/data-service'
 
 import { IErrorResponse } from 'src/types/api'
@@ -14,8 +12,6 @@ type IParams = {
 }
 
 export async function GET(request: Request, { params }: { params: IParams }) {
-  // TODO: Check if id exists in backend
-
   if (!params.id) {
     const errorMessage: IErrorResponse = {
       error: {
@@ -38,13 +34,7 @@ export async function GET(request: Request, { params }: { params: IParams }) {
   }
 
   try {
-    let data: ITransaction[] = []
-    if (USE_MOCK) {
-      data = _transactions
-    } else {
-      data = _transactions
-      data = (await geUserTransactions(params.id)) ?? []
-    }
+    const data: ITransaction[] = (await geUserTransactions(params.id)) ?? []
     return NextResponse.json(data)
   } catch (ex) {
     console.error(ex)

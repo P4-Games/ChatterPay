@@ -2,7 +2,6 @@ import axios from 'axios'
 import { ethers, JsonRpcProvider } from 'ethers'
 
 import {
-  USE_MOCK,
   API3_ENABLED,
   defaultBalance,
   BACKEND_API_URL,
@@ -12,7 +11,6 @@ import {
 
 import { IBalance, IBalances, CurrencyKey } from 'src/types/wallet'
 
-import { _balances } from './_mock'
 import { cache } from './cache-connection'
 import TokenPriceFeedsAbi from './_abis/TokenPriceFeedsAbi.json'
 
@@ -61,18 +59,14 @@ export async function getBalancesWithTotals(walletAddress: string): Promise<IBal
   let balances: IBalance[] = [defaultBalance]
   const cacheKey = `getBalancesWithTotals.${walletAddress}`
 
-  if (USE_MOCK) {
-    balances = _balances
-  } else {
-    const fromCache = cache.get(cacheKey) as IBalances
+  const fromCache = cache.get(cacheKey) as IBalances
 
-    if (fromCache) {
-      console.info('from cache:', cacheKey)
-      return fromCache
-    }
-
-    balances = await getBalances(walletAddress)
+  if (fromCache) {
+    console.info('from cache:', cacheKey)
+    return fromCache
   }
+
+  balances = await getBalances(walletAddress)
 
   const totals: Record<CurrencyKey, number> = calculateTotals(balances)
   const result = {
@@ -129,7 +123,7 @@ async function getBalances(walletAddress: string): Promise<any[]> {
         const ethRateApi3 = getRateByKey(api3Rates, 'eth')
         const ethRateApi3Usd = parseFloat(ethers.formatUnits(ethRateApi3.usd, 18)) // API3: no rate in ARS or BRL
 
-        // netowrk Main Token
+        // network Main Token
         balances.push({
           network: network.config.chainName,
           token: network.config.chainCurrency,
