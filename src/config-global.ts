@@ -191,28 +191,48 @@ export const _socials = [
     value: 'facebook',
     name: 'FaceBook',
     icon: 'eva:facebook-fill',
-    color: '#1877F2',
-    path: 'https://www.facebook.com/caitlyn.kerluke'
+    colorDark: '#1877F2',
+    colorLight: '#1877F2',
+    path: 'https://www.facebook.com/chatterpay'
   },
   {
     value: 'instagram',
     name: 'Instagram',
     icon: 'ant-design:instagram-filled',
-    color: '#E02D69',
-    path: 'https://www.instagram.com/caitlyn.kerluke'
+    colorDark: '#E02D69',
+    colorLight: '#E02D69',
+    path: 'https://www.instagram.com/chatterpayofficial'
   },
   {
     value: 'linkedin',
     name: 'Linkedin',
     icon: 'eva:linkedin-fill',
-    color: '#007EBB',
-    path: 'https://www.linkedin.com/caitlyn.kerluke'
+    colorDark: '#007EBB',
+    colorLight: '#007EBB',
+    path: 'https://www.linkedin.com/company/chatterpay'
   },
   {
-    value: 'twitter',
-    name: 'Twitter',
+    value: 'X',
+    name: 'X',
     icon: 'eva:twitter-fill',
-    color: '#00AAEC',
-    path: 'https://www.twitter.com/caitlyn.kerluke'
+    colorDark: '#00AAEC',
+    colorLight: '#00AAEC',
+    path: 'https://www.twitter.com/chatterpay'
+  },
+  {
+    value: 'youtube',
+    name: 'YouTube',
+    icon: 'logos:youtube-icon',
+    colorDark: '#FF0000',
+    colorLight: '#FF0000',
+    path: 'https://www.youtube.com/@chatterpay'
+  },
+  {
+    value: 'github',
+    name: 'Github',
+    icon: 'eva:github-fill',
+    colorDark: '#FFFFFF',
+    colorLight: '#181717',
+    path: 'https://github.com/chatterpay'
   }
 ]

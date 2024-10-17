@@ -2,14 +2,13 @@ import Box from '@mui/material/Box'
 import Link from '@mui/material/Link'
 import Stack from '@mui/material/Stack'
 import Divider from '@mui/material/Divider'
-import { alpha } from '@mui/material/styles'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Unstable_Grid2'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
+import { alpha, useTheme } from '@mui/material/styles'
 
 import { paths } from 'src/routes/paths'
-import { usePathname } from 'src/routes/hooks'
 import { RouterLink } from 'src/routes/components'
 
 import { useTranslate } from 'src/locales'
@@ -20,11 +19,14 @@ import Iconify from 'src/components/iconify'
 
 // ----------------------------------------------------------------------
 
-export default function Footer() {
-  const pathname = usePathname()
-  const { t } = useTranslate()
+interface FooterProps {
+  simple: boolean
+}
 
-  const homePage = pathname === '/'
+export default function Footer({ simple }: FooterProps) {
+  const { t } = useTranslate()
+  const theme = useTheme()
+  const lightMode = theme.palette.mode === 'light'
   const contactUsUrl = BOT_WAPP_URL.replaceAll('MESSAGE', t('home.common.contact-us-wapp-msg'))
 
   const LINKS = [
@@ -117,16 +119,26 @@ export default function Footer() {
               }}
             >
               {_socials.map((social) => (
-                <IconButton
+                <a
                   key={social.name}
-                  sx={{
-                    '&:hover': {
-                      bgcolor: alpha(social.color, 0.08)
-                    }
-                  }}
+                  href={social.path}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  style={{ textDecoration: 'none' }}
                 >
-                  <Iconify color={social.color} icon={social.icon} />
-                </IconButton>
+                  <IconButton
+                    sx={{
+                      '&:hover': {
+                        bgcolor: alpha(lightMode ? social.colorLight : social.colorDark, 0.08)
+                      }
+                    }}
+                  >
+                    <Iconify
+                      color={lightMode ? social.colorLight : social.colorDark}
+                      icon={social.icon}
+                    />
+                  </IconButton>
+                </a>
               ))}
             </Stack>
           </Grid>
@@ -168,5 +180,5 @@ export default function Footer() {
     </Box>
   )
 
-  return homePage ? simpleFooter : mainFooter
+  return simple ? simpleFooter : mainFooter
 }
