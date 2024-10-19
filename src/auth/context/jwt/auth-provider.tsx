@@ -14,7 +14,9 @@ import { AuthUserType, ActionMapType, AuthStateType, AuthUserCodeType } from '..
 enum Types {
   INITIAL = 'INITIAL',
   LOGIN = 'LOGIN',
-  GENERATE_CODE = 'GENERATE_CODE',
+  UPDATE_EMAIL = 'UPDATE_EMAIL',
+  GENERATE_CODE_LOGIN = 'GENERATE_CODE_LOGIN',
+  GENERATE_CODE_EMAIL = 'GENERATE_CODE_EMAIL',
   REGISTER = 'REGISTER',
   LOGOUT = 'LOGOUT',
   UPDATE_USER = 'UPDATE_USER'
@@ -27,7 +29,13 @@ type Payload = {
   [Types.LOGIN]: {
     user: AuthUserType
   }
-  [Types.GENERATE_CODE]: {
+  [Types.GENERATE_CODE_LOGIN]: {
+    user: AuthUserCodeType
+  }
+  [Types.GENERATE_CODE_EMAIL]: {
+    user: AuthUserCodeType
+  }
+  [Types.UPDATE_EMAIL]: {
     user: AuthUserCodeType
   }
   [Types.REGISTER]: {
@@ -60,10 +68,20 @@ const reducer = (state: AuthStateType, action: ActionsType) => {
         ...state,
         user: action.payload.user
       }
-    case Types.GENERATE_CODE:
+    case Types.GENERATE_CODE_LOGIN:
       return {
         ...state,
         user: null
+      }
+    case Types.GENERATE_CODE_EMAIL:
+      return {
+        ...state,
+        user: action.payload.user
+      }
+    case Types.UPDATE_EMAIL:
+      return {
+        ...state,
+        user: action.payload.user
       }
     case Types.REGISTER:
       return {
@@ -135,7 +153,6 @@ export function AuthProvider({ children }: Props) {
     initialize()
   }, [initialize])
 
-  // LOGIN
   const login = useCallback(async (email: string, password: string) => {
     const data = {
       email,
@@ -144,9 +161,8 @@ export function AuthProvider({ children }: Props) {
 
     const res = await axios.post(endpoints.auth.login(), data)
 
-    const user = res.data
-
-    const accessToken = 'dummyToken'
+    const { user } = res.data
+    const { accessToken } = res.data
 
     setSession(accessToken)
 
@@ -161,8 +177,7 @@ export function AuthProvider({ children }: Props) {
     })
   }, [])
 
-  // Generate whatsapp Code
-  const generateCode = useCallback(
+  const generate2faCodeLogin = useCallback(
     async (phone: string, codeMsg: string, recaptchaToken: string) => {
       const data = {
         phone,
@@ -171,7 +186,7 @@ export function AuthProvider({ children }: Props) {
       }
       await post(endpoints.auth.code(), data)
       dispatch({
-        type: Types.GENERATE_CODE,
+        type: Types.GENERATE_CODE_LOGIN,
         payload: {
           user: null
         }
@@ -180,7 +195,23 @@ export function AuthProvider({ children }: Props) {
     []
   )
 
-  // LOGIN With Code
+  const generate2faCodeEmail = useCallback(
+    async (id: string, phone: string, codeMsg: string) => {
+      const data = {
+        phone,
+        codeMsg
+      }
+      await post(endpoints.dashboard.user.code(id), data)
+      dispatch({
+        type: Types.GENERATE_CODE_EMAIL,
+        payload: {
+          user: state.user
+        }
+      })
+    },
+    [state]
+  )
+
   const loginWithCode = useCallback(async (phone: string, code: string, recaptchaToken: string) => {
     const data = {
       phone,
@@ -203,7 +234,25 @@ export function AuthProvider({ children }: Props) {
     })
   }, [])
 
-  // REGISTER
+  const updateEmail = useCallback(
+    async (phone: string, code: string, email: string, id: string) => {
+      const data = {
+        phone,
+        code,
+        email
+      }
+      await post(endpoints.dashboard.user.updateEmail(id), data)
+
+      const updatedUser = { ...state.user, email }
+      dispatch({
+        type: Types.UPDATE_EMAIL,
+        payload: {
+          user: updatedUser
+        }
+      })
+    },
+    [state]
+  )
 
   const register = useCallback(
     async (email: string, password: string, firstName: string, lastName: string) => {
@@ -250,7 +299,7 @@ export function AuthProvider({ children }: Props) {
     dispatch({
       type: Types.UPDATE_USER,
       payload: {
-        user
+        user: updateUser
       }
     })
   }, [])
@@ -271,12 +320,25 @@ export function AuthProvider({ children }: Props) {
       //
       login,
       loginWithCode,
-      generateCode,
+      generate2faCodeLogin,
+      generate2faCodeEmail,
+      updateEmail,
       register,
       logout,
       updateUser
     }),
-    [generateCode, login, loginWithCode, logout, register, state.user, status, updateUser]
+    [
+      login,
+      loginWithCode,
+      generate2faCodeLogin,
+      generate2faCodeEmail,
+      updateEmail,
+      register,
+      logout,
+      updateUser,
+      state.user,
+      status
+    ]
   )
 
   return <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>
