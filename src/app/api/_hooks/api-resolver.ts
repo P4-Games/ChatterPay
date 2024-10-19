@@ -55,7 +55,9 @@ export const endpoints = {
     root: getFullUIEndpoint('app'),
     user: {
       id: (id: string) => getFullUIEndpoint(`user/${id}`),
-      update: (id: string) => getFullUIEndpoint(`user/${id}`)
+      update: (id: string) => getFullUIEndpoint(`user/${id}`),
+      code: (id: string) => getFullUIEndpoint(`user/${id}/code`),
+      updateEmail: (id: string) => getFullUIEndpoint(`user/${id}/email`)
     },
     wallet: {
       balance: (id: string) => getFullUIEndpoint(`wallet/${id}/balance`),

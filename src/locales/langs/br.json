@@ -14,6 +14,8 @@
     "must-be-valid-email": "O email deve ser um endereço de email válido",    
     "must-be-min": "Deve ter no mínimo {MIN_CHARS} caracteres",
     "nodata": "Sem Dados",
+    "save": "Salvar Alterações",
+    "cancel": "Cancelar",
     "close": "Fechar",
     "view": "Ver",
     "share": "Compartilhar",
@@ -30,7 +32,8 @@
     "management": "Gestão",
     "user": "Usuário",
     "account": "Conta",
-    "logout": "Sair"
+    "logout": "Sair",
+    "email": "Alterar Email"
   },
   "terms": {
     "title": "Termos e Condições",
@@ -324,6 +327,17 @@
   },
   "account": {
     "title": "Conta",
-    "save": "Salvar Alterações"
+    "change-email": "Alterar",
+    "email": {
+      "old": "Endereço de Email Antigo",
+      "new": "Novo Endereço de Email",
+      "new2": "Repita o Novo Endereço de Email",
+      "send-code": "Enviar código para o WhatsApp para validar",
+      "resend-code": "Reenviar código",
+      "code-sent": "Enviamos um código de 6 dígitos para esse número de telefone",
+      "code-info": "Por favor, insira o código de 6 dígitos que enviamos para o seu WhatsApp (pode demorar cerca de 2 minutos para chegar).",
+      "invalid-code": "Código inválido",
+      "code-bot": "Insira este código {2FA_CODE} para validar a alteração do seu e-mail no Chatterpay. É muito importante que você não compartilhe esta informação com ninguém. Se você não solicitou o código, desconsidere esta mensagem e entre em contato conosco para que possamos ajudá-lo!"
+    }
   }
 }
