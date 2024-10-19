@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { updateUser, getUserById, getUserByPhone } from 'src/app/api/_data/data-service'
+import { getUserById, updateUserCode, updateUserEmail } from 'src/app/api/_data/data-service'
 
 import { IAccount } from 'src/types/account'
 
@@ -10,57 +10,16 @@ type IParams = {
   id: string
 }
 
-export async function GET(request: Request, { params }: { params: IParams }) {
-  const { id } = params
-  try {
-    if (!id) {
-      return new NextResponse(
-        JSON.stringify({
-          code: 'INVALID_REQUEST_PARAMS',
-          error: 'Missing parameters in path params'
-        }),
-        {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      )
-    }
-
-    const user: IAccount | undefined = await getUserByPhone(id)
-
-    if (!user) {
-      return new NextResponse(
-        JSON.stringify({ code: 'USER_NOT_FOUND', error: 'user not found with that phone number' }),
-        {
-          status: 404,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      )
-    }
-
-    const data: any = {
-      id: user.id,
-      displayName: user.name,
-      wallet: user.wallet,
-      email: user.email || '',
-      photoURL: user.photo,
-      phoneNumber: user.phone_number
-    }
-
-    return NextResponse.json(data)
-  } catch (ex) {
-    console.error(ex)
-    return new NextResponse(JSON.stringify({ error: 'Error getting dummy' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' }
-    })
-  }
+type IBody = {
+  phone: string
+  code: string
+  recaptchaToken: string
+  email: string
 }
-
 export async function POST(req: NextRequest, { params }: { params: IParams }) {
   try {
     const { id } = params
-    const { name }: { name: string } = await req.json()
+    const { phone, code, email }: IBody = await req.json()
 
     if (!id) {
       return new NextResponse(
@@ -75,11 +34,11 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
       )
     }
 
-    if (!name) {
+    if (!email || !code || !phone) {
       return new NextResponse(
         JSON.stringify({
           code: 'INVALID_REQUEST_PARAMS',
-          error: 'Missing name in request body'
+          error: 'Missing email, code and phone  in request body'
         }),
         {
           status: 400,
@@ -99,8 +58,15 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
       )
     }
 
-    user.name = name
-    const reult: boolean = await updateUser(user)
+    if (!user.code || code.toString() !== user.code.toString()) {
+      return new NextResponse(JSON.stringify({ code: 'INVALID_CODE', error: 'invalid code' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    }
+
+    user.email = email
+    const reult: boolean = await updateUserEmail(user)
 
     if (!reult) {
       return new NextResponse(
@@ -114,6 +80,8 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
         }
       )
     }
+
+    updateUserCode(user.id, undefined)
 
     return NextResponse.json({ reult })
   } catch (ex) {
