@@ -25,9 +25,8 @@ export const paths = {
     },
     user: {
       root: `${ROOTS.DASHBOARD}/user/account`,
-      list: `${ROOTS.DASHBOARD}/user/list`,
-      profile: `${ROOTS.DASHBOARD}/user/profile`,
       account: `${ROOTS.DASHBOARD}/user/account`,
+      email: `${ROOTS.DASHBOARD}/user/account/email`,
       wallet: {
         root: (walletId: string) => `${ROOTS.DASHBOARD}/user/wallet/${walletId}`,
         nfts: {
