@@ -14,9 +14,12 @@ import { AuthUserType, ActionMapType, AuthStateType, AuthUserCodeType } from '..
 enum Types {
   INITIAL = 'INITIAL',
   LOGIN = 'LOGIN',
-  GENERATE_CODE = 'GENERATE_CODE',
+  UPDATE_EMAIL = 'UPDATE_EMAIL',
+  GENERATE_CODE_LOGIN = 'GENERATE_CODE_LOGIN',
+  GENERATE_CODE_EMAIL = 'GENERATE_CODE_EMAIL',
   REGISTER = 'REGISTER',
-  LOGOUT = 'LOGOUT'
+  LOGOUT = 'LOGOUT',
+  UPDATE_USER = 'UPDATE_USER'
 }
 
 type Payload = {
@@ -26,13 +29,22 @@ type Payload = {
   [Types.LOGIN]: {
     user: AuthUserType
   }
-  [Types.GENERATE_CODE]: {
+  [Types.GENERATE_CODE_LOGIN]: {
+    user: AuthUserCodeType
+  }
+  [Types.GENERATE_CODE_EMAIL]: {
+    user: AuthUserCodeType
+  }
+  [Types.UPDATE_EMAIL]: {
     user: AuthUserCodeType
   }
   [Types.REGISTER]: {
     user: AuthUserType
   }
   [Types.LOGOUT]: undefined
+  [Types.UPDATE_USER]: {
+    user: AuthUserType
+  }
 }
 
 type ActionsType = ActionMapType<Payload>[keyof ActionMapType<Payload>]
@@ -45,40 +57,50 @@ const initialState: AuthStateType = {
 }
 
 const reducer = (state: AuthStateType, action: ActionsType) => {
-  if (action.type === Types.INITIAL) {
-    return {
-      loading: false,
-      user: action.payload.user
-    }
+  switch (action.type) {
+    case Types.INITIAL:
+      return {
+        loading: false,
+        user: action.payload.user
+      }
+    case Types.LOGIN:
+      return {
+        ...state,
+        user: action.payload.user
+      }
+    case Types.GENERATE_CODE_LOGIN:
+      return {
+        ...state,
+        user: null
+      }
+    case Types.GENERATE_CODE_EMAIL:
+      return {
+        ...state,
+        user: action.payload.user
+      }
+    case Types.UPDATE_EMAIL:
+      return {
+        ...state,
+        user: action.payload.user
+      }
+    case Types.REGISTER:
+      return {
+        ...state,
+        user: action.payload.user
+      }
+    case Types.LOGOUT:
+      return {
+        ...state,
+        user: null
+      }
+    case Types.UPDATE_USER: // <-- Manejar la acción UPDATE_USER
+      return {
+        ...state,
+        user: action.payload.user
+      }
+    default:
+      return state
   }
-  if (action.type === Types.LOGIN) {
-    return {
-      ...state,
-      user: action.payload.user
-    }
-  }
-
-  if (action.type === Types.GENERATE_CODE) {
-    return {
-      ...state,
-      user: null
-    }
-  }
-
-  if (action.type === Types.REGISTER) {
-    return {
-      ...state,
-      user: action.payload.user
-    }
-  }
-
-  if (action.type === Types.LOGOUT) {
-    return {
-      ...state,
-      user: null
-    }
-  }
-  return state
 }
 
 // ----------------------------------------------------------------------
@@ -131,7 +153,6 @@ export function AuthProvider({ children }: Props) {
     initialize()
   }, [initialize])
 
-  // LOGIN
   const login = useCallback(async (email: string, password: string) => {
     const data = {
       email,
@@ -140,9 +161,8 @@ export function AuthProvider({ children }: Props) {
 
     const res = await axios.post(endpoints.auth.login(), data)
 
-    const user = res.data
-
-    const accessToken = 'dummyToken'
+    const { user } = res.data
+    const { accessToken } = res.data
 
     setSession(accessToken)
 
@@ -157,8 +177,7 @@ export function AuthProvider({ children }: Props) {
     })
   }, [])
 
-  // Generate whatsapp Code
-  const generateCode = useCallback(
+  const generate2faCodeLogin = useCallback(
     async (phone: string, codeMsg: string, recaptchaToken: string) => {
       const data = {
         phone,
@@ -167,7 +186,7 @@ export function AuthProvider({ children }: Props) {
       }
       await post(endpoints.auth.code(), data)
       dispatch({
-        type: Types.GENERATE_CODE,
+        type: Types.GENERATE_CODE_LOGIN,
         payload: {
           user: null
         }
@@ -176,7 +195,23 @@ export function AuthProvider({ children }: Props) {
     []
   )
 
-  // LOGIN With Code
+  const generate2faCodeEmail = useCallback(
+    async (id: string, phone: string, codeMsg: string) => {
+      const data = {
+        phone,
+        codeMsg
+      }
+      await post(endpoints.dashboard.user.code(id), data)
+      dispatch({
+        type: Types.GENERATE_CODE_EMAIL,
+        payload: {
+          user: state.user
+        }
+      })
+    },
+    [state]
+  )
+
   const loginWithCode = useCallback(async (phone: string, code: string, recaptchaToken: string) => {
     const data = {
       phone,
@@ -199,7 +234,25 @@ export function AuthProvider({ children }: Props) {
     })
   }, [])
 
-  // REGISTER
+  const updateEmail = useCallback(
+    async (phone: string, code: string, email: string, id: string) => {
+      const data = {
+        phone,
+        code,
+        email
+      }
+      await post(endpoints.dashboard.user.updateEmail(id), data)
+
+      const updatedUser = { ...state.user, email }
+      dispatch({
+        type: Types.UPDATE_EMAIL,
+        payload: {
+          user: updatedUser
+        }
+      })
+    },
+    [state]
+  )
 
   const register = useCallback(
     async (email: string, password: string, firstName: string, lastName: string) => {
@@ -241,6 +294,16 @@ export function AuthProvider({ children }: Props) {
     })
   }, [])
 
+  // update_user
+  const updateUser = useCallback((user: AuthUserType) => {
+    dispatch({
+      type: Types.UPDATE_USER,
+      payload: {
+        user: updateUser
+      }
+    })
+  }, [])
+
   // ----------------------------------------------------------------------
 
   const checkAuthenticated = state.user ? 'authenticated' : 'unauthenticated'
@@ -257,11 +320,25 @@ export function AuthProvider({ children }: Props) {
       //
       login,
       loginWithCode,
-      generateCode,
+      generate2faCodeLogin,
+      generate2faCodeEmail,
+      updateEmail,
       register,
-      logout
+      logout,
+      updateUser
     }),
-    [generateCode, login, loginWithCode, logout, register, state.user, status]
+    [
+      login,
+      loginWithCode,
+      generate2faCodeLogin,
+      generate2faCodeEmail,
+      updateEmail,
+      register,
+      logout,
+      updateUser,
+      state.user,
+      status
+    ]
   )
 
   return <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>

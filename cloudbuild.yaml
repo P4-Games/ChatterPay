@@ -1,9 +1,8 @@
 steps:
-  # Para para generar un .env para que sea tomado por el step de build.
-  # Las variables serán tomadas de la definición del "trigger",  
-  # "variables de sustitución", en Google Cloud Build.
-  # en gcp, se tiene que poner como nombre de cada variable, el unserscore 
-  # como prefijo. Ejemplo: "_APP_ENV"
+  #
+  # This step is kept as a workaround, generating a .env file that is required by the 
+  # library used with MongoDB. If it is removed, attempting to connect to the database 
+  # throws an error indicating that the URI does not exist in the environment.
   #
   - name: 'gcr.io/cloud-builders/npm'
     id: CreateEnv
@@ -17,6 +16,8 @@ steps:
       - BOT_API_URL=${_BOT_API_URL}
       - BOT_API_WAPP_ENABLED=${_BOT_API_WAPP_ENABLED}
       - BACKEND_API_URL=${_BACKEND_API_URL}
+      - BACKEND_API_TOKEN=${_BACKEND_API_TOKEN}
+      #- BACKEND_API_TOKEN_SECRET=$$BACKEND_API_TOKEN_SECRET
       - NODE_PROVIDER_SEPOLIA_URL=${_NODE_PROVIDER_SEPOLIA_URL}
       - NODE_PROVIDER_MUMBAI_URL=${_NODE_PROVIDER_MUMBAI_URL}
       - NODE_PROVIDER_SCROLL_URL=${_NODE_PROVIDER_SCROLL_URL}
@@ -31,67 +32,97 @@ steps:
       - NEXT_PUBLIC_RECAPTCHA_SITE_KEY=${_NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
       - NEXT_PUBLIC_NFT_IMAGE_REPOSITORY=${_NEXT_PUBLIC_NFT_IMAGE_REPOSITORY}
       - NEXT_PUBLIC_NFT_MARKETPLACE_URL=${_NEXT_PUBLIC_NFT_MARKETPLACE_URL}
-      
-  # build the container images
-  - name: "gcr.io/cloud-builders/docker"
+    secretEnv: [
+      'BACKEND_API_TOKEN_SECRET'
+    ]
+  #
+  # Build docker imagen.
+  # Variables with a prefix '_' are from Cloud Build 'substitution' (declared in the job).
+  # Variables with a prefix '$$' are from Secret Manager.
+  #
+  - name: 'gcr.io/cloud-builders/docker'
     id: Build
     args: [
-      "build", 
-      "--no-cache", 
-      "-t", 
-      "$_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA", 
-      "--build-arg", "APP_ENV=${_APP_ENV}",
-      "--build-arg", "MONGODB=${_MONGODB}",
-      "--build-arg", "MONGODB_BOT=${_MONGODB_BOT}",
-      "--build-arg", "DB_CHATTERPAY_NAME=${_DB_CHATTERPAY_NAME}",
-      "--build-arg", "RECAPTCHA_API_KEY=${_RECAPTCHA_API_KEY}",
-      "--build-arg", "NEXT_PUBLIC_RECAPTCHA_SITE_KEY=${_NEXT_PUBLIC_RECAPTCHA_SITE_KEY}",
-      "--build-arg", "NEXT_PUBLIC_NFT_IMAGE_REPOSITORY=${_NEXT_PUBLIC_NFT_IMAGE_REPOSITORY}",
-      "--build-arg", "NEXT_PUBLIC_NFT_MARKETPLACE_URL=${_NEXT_PUBLIC_NFT_MARKETPLACE_URL}",
-      "--build-arg", "BOT_API_TOKEN=${_BOT_API_TOKEN}",
-      "--build-arg", "BOT_API_URL=${_BOT_API_URL}",
-      "--build-arg", "BOT_API_WAPP_ENABLED=${_BOT_API_WAPP_ENABLED}",
-      "--build-arg", "BACKEND_API_URL=${_BACKEND_API_URL}",      
-      "--build-arg", "NODE_PROVIDER_SEPOLIA_URL=${_NODE_PROVIDER_SEPOLIA_URL}",
-      "--build-arg", "NODE_PROVIDER_MUMBAI_URL=${_NODE_PROVIDER_MUMBAI_URL}",
-      "--build-arg", "NODE_PROVIDER_SCROLL_URL=${_NODE_PROVIDER_SCROLL_URL}",
-      "--build-arg", "HANDLE_VERCEL_FREE_PLAN_TIMEOUT=${_HANDLE_VERCEL_FREE_PLAN_TIMEOUT}",
-      "--build-arg", "NEXT_PUBLIC_USE_MOCK=${_NEXT_PUBLIC_USE_MOCK}",
-      "--build-arg", "API3_ENABLED=${_API3_ENABLED}",
-      "--build-arg", "JWT_SECRET=${_JWT_SECRET}",
-      "--build-arg", "NEXT_PUBLIC_FROM_ICP=${_NEXT_PUBLIC_FROM_ICP}",
-      "--build-arg", "NEXT_PUBLIC_UI_URL=${_NEXT_PUBLIC_UI_URL}",
-      "--build-arg", "NEXT_PUBLIC_ALLOWED_ORIGINS=${_NEXT_PUBLIC_ALLOWED_ORIGINS}",
-      "."
+      'build', 
+      '--no-cache', 
+      '-t', 
+      '$_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA', 
+      '--build-arg', 'APP_ENV=${_APP_ENV}',
+      '--build-arg', 'MONGODB=${_MONGODB}',
+      '--build-arg', 'MONGODB_BOT=${_MONGODB_BOT}',
+      '--build-arg', 'DB_CHATTERPAY_NAME=${_DB_CHATTERPAY_NAME}',
+      '--build-arg', 'RECAPTCHA_API_KEY=${_RECAPTCHA_API_KEY}',
+      '--build-arg', 'NEXT_PUBLIC_RECAPTCHA_SITE_KEY=${_NEXT_PUBLIC_RECAPTCHA_SITE_KEY}',
+      '--build-arg', 'NEXT_PUBLIC_NFT_IMAGE_REPOSITORY=${_NEXT_PUBLIC_NFT_IMAGE_REPOSITORY}',
+      '--build-arg', 'NEXT_PUBLIC_NFT_MARKETPLACE_URL=${_NEXT_PUBLIC_NFT_MARKETPLACE_URL}',
+      '--build-arg', 'BOT_API_TOKEN=${_BOT_API_TOKEN}',
+      '--build-arg', 'BOT_API_URL=${_BOT_API_URL}',
+      '--build-arg', 'BOT_API_WAPP_ENABLED=${_BOT_API_WAPP_ENABLED}',
+      '--build-arg', 'BACKEND_API_URL=${_BACKEND_API_URL}',
+      '--build-arg', 'BACKEND_API_TOKEN=${_BACKEND_API_TOKEN}',
+      '--build-arg', 'BACKEND_API_TOKEN_SECRET=$$BACKEND_API_TOKEN_SECRET',
+      '--build-arg', 'NODE_PROVIDER_SEPOLIA_URL=${_NODE_PROVIDER_SEPOLIA_URL}',
+      '--build-arg', 'NODE_PROVIDER_MUMBAI_URL=${_NODE_PROVIDER_MUMBAI_URL}',
+      '--build-arg', 'NODE_PROVIDER_SCROLL_URL=${_NODE_PROVIDER_SCROLL_URL}',
+      '--build-arg', 'HANDLE_VERCEL_FREE_PLAN_TIMEOUT=${_HANDLE_VERCEL_FREE_PLAN_TIMEOUT}',
+      '--build-arg', 'NEXT_PUBLIC_USE_MOCK=${_NEXT_PUBLIC_USE_MOCK}',
+      '--build-arg', 'API3_ENABLED=${_API3_ENABLED}',
+      '--build-arg', 'JWT_SECRET=${_JWT_SECRET}',
+      '--build-arg', 'NEXT_PUBLIC_FROM_ICP=${_NEXT_PUBLIC_FROM_ICP}',
+      '--build-arg', 'NEXT_PUBLIC_UI_URL=${_NEXT_PUBLIC_UI_URL}',
+      '--build-arg', 'NEXT_PUBLIC_ALLOWED_ORIGINS=${_NEXT_PUBLIC_ALLOWED_ORIGINS}',
+      '.'
+    ]  
+    secretEnv: [
+      'BACKEND_API_TOKEN_SECRET'
     ]
 
+  #
   # push the container images to Container Registry
-  - name: "gcr.io/cloud-builders/docker"
+  #
+  - name: 'gcr.io/cloud-builders/docker'
     id: Push
     args: [
-      "push", 
-      "$_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA"
+      'push', 
+      '$_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
     ]
-
+  #
   # Deploy container images to Cloud Run
-  - name: "gcr.io/cloud-builders/gcloud"
+  #
+  - name: 'gcr.io/cloud-builders/gcloud'
     id: Deploy
     entrypoint: gcloud
     args: [
-      "run",
-      "deploy",
-      "$_SERVICE_NAME",
-      "--platform",
-      "managed",
-      "--region",
-      "$_DEPLOY_REGION",
-      "--image",
-      "$_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA",
-      "--labels",
-      "managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID,gcb-trigger-id=$_TRIGGER_ID",
-      "--quiet",
-      "--allow-unauthenticated",
+      'run',
+      'deploy',
+      '$_SERVICE_NAME',
+      '--platform',
+      'managed',
+      '--region',
+      '$_DEPLOY_REGION',
+      '--image',
+      '$_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA',
+      '--labels',
+      'managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID,gcb-trigger-id=$_TRIGGER_ID',
+      '--quiet',
+      '--allow-unauthenticated',
     ]
+  #
+  # print secret variables
+  #
+  - name: 'bash'
+    script: |
+      #!/usr/bin/env bash
+      echo 'BACKEND_API_TOKEN en cloudbuild.yaml 1: $BACKEND_API_TOKEN_SECRET'
+    secretEnv: [
+      'BACKEND_API_TOKEN_SECRET'
+    ]
+
+availableSecrets:
+  secretManager:
+    - versionName: 'projects/$PROJECT_ID/secrets/${_BACKEND_API_TOKEN_SECRET_NAME}/versions/latest'
+      env: 'BACKEND_API_TOKEN_SECRET'
+
 images:
   - $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
 

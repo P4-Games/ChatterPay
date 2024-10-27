@@ -7,7 +7,7 @@ export const { APP_ENV } = process.env || 'development'
 export const { NODE_ENV } = process.env || 'development'
 export const { MONGODB, MONGODB_BOT } = process.env
 export const { BOT_API_TOKEN, BOT_API_URL } = process.env
-export const { BACKEND_API_URL } = process.env
+export const { BACKEND_API_URL, BACKEND_API_TOKEN } = process.env
 export const botApiWappEnabled = (process.env.BOT_API_WAPP_ENABLED || 'true') === 'true'
 export const nodeProviderUrlSepolia = process.env.NODE_PROVIDER_SEPOLIA_URL
 export const nodeProviderUrlPolygon = process.env.NODE_PROVIDER_MUMBAI_URL
@@ -185,3 +185,54 @@ export const tokensByNetwork: { [networkKey: string]: Network } = {
     }
   }
 }
+
+export const _socials = [
+  {
+    value: 'facebook',
+    name: 'FaceBook',
+    icon: 'eva:facebook-fill',
+    colorDark: '#1877F2',
+    colorLight: '#1877F2',
+    path: 'https://www.facebook.com/chatterpay'
+  },
+  {
+    value: 'instagram',
+    name: 'Instagram',
+    icon: 'ant-design:instagram-filled',
+    colorDark: '#E02D69',
+    colorLight: '#E02D69',
+    path: 'https://www.instagram.com/chatterpayofficial'
+  },
+  {
+    value: 'linkedin',
+    name: 'Linkedin',
+    icon: 'eva:linkedin-fill',
+    colorDark: '#007EBB',
+    colorLight: '#007EBB',
+    path: 'https://www.linkedin.com/company/chatterpay'
+  },
+  {
+    value: 'X',
+    name: 'X',
+    icon: 'eva:twitter-fill',
+    colorDark: '#00AAEC',
+    colorLight: '#00AAEC',
+    path: 'https://www.twitter.com/chatterpay'
+  },
+  {
+    value: 'youtube',
+    name: 'YouTube',
+    icon: 'logos:youtube-icon',
+    colorDark: '#FF0000',
+    colorLight: '#FF0000',
+    path: 'https://www.youtube.com/@chatterpay'
+  },
+  {
+    value: 'github',
+    name: 'Github',
+    icon: 'eva:github-fill',
+    colorDark: '#FFFFFF',
+    colorLight: '#181717',
+    path: 'https://github.com/chatterpay'
+  }
+]

@@ -12,11 +12,18 @@
     "must-be-numeric": "Debe ser numérico",
     "must-be-max": "Debe tener un máximo de {MAX_DIGITS} dígitos",
     "must-be-valid-email": "El correo electrónico debe ser una dirección de correo válida",
+    "must-be-min": "Debe tener un mínimo de {MIN_CHARS} caracteres",
     "nodata": "Sin Datos",
     "close": "Cerrar",
+    "save": "Guardar Cambios",
+    "cancel": "Cancelar",
     "view": "Ver",
     "share": "Compartir",
-    "metadata": "Ver Metadata"
+    "metadata": "Ver Metadata",
+    "msg": {
+      "update-success": "¡Actualización exitosa!",
+      "update-error": "Error de actualización"
+    }
   },
   "menu": {
     "overview": "Visión general",
@@ -25,7 +32,8 @@
     "management": "Gestión",
     "user": "Usuario",
     "account": "Cuenta",
-    "logout": "Cerrar Sesión"
+    "logout": "Cerrar Sesión",
+    "email": "Cambiar Correo"
   },
   "terms": {
     "title": "Términos y Condiciones",
@@ -319,6 +327,18 @@
     }
   },
   "account": {
-    "title": "Cuenta"
+    "title": "Cuenta",
+    "change-email": "Cambiar",
+    "email": {
+      "old": "Dirección de Correo Electrónico Antiguo",
+      "new": "Nueva Dirección de Correo Electrónico",
+      "new2": "Repetir Nueva Dirección de Correo Electrónico",
+      "send-code": "Enviar código a whatsapp para validar",
+      "resend-code": "Reenviar código",
+      "code-sent": "Enviamos un código de 6 dígitos al teléfono",
+      "code-info": "Por favor, ingresa el código de 6 dígitos que enviamos a tu WhatsApp (puede demorarse alrededor de 2 minutos en llegar).",
+      "invalid-code": "Código inválido",
+      "code-bot": "Ingresá este código *{2FA_CODE}* para validar tu cambio de correo electrónico en Chatterpay. Es muy importante que no compartas esta información con nadie. Si no solicitaste el código, desestimá este mensaje y contactate con nosotros para que podamos ayudarte!"
+    }
   }
 }

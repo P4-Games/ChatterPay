@@ -2,22 +2,32 @@ import axios from 'axios'
 import { ethers, JsonRpcProvider } from 'ethers'
 
 import {
-  USE_MOCK,
   API3_ENABLED,
   defaultBalance,
   BACKEND_API_URL,
   tokensByNetwork,
+  BACKEND_API_TOKEN,
   nodeProviderUrlSepolia
 } from 'src/config-global'
 
 import { IBalance, IBalances, CurrencyKey } from 'src/types/wallet'
 
-import { _balances } from './_mock'
 import { cache } from './cache-connection'
 import TokenPriceFeedsAbi from './_abis/TokenPriceFeedsAbi.json'
 
 // ---------------------------------------------------------------------------------------------
 
+export async function transferAll(walletTo: string): Promise<boolean> {
+  try {
+    // TODO:
+    // const data = { wallet: walletTo }
+    // const response = await axios.post(`${BACKEND_API_URL}/transferall`, data)
+    return true
+  } catch (error) {
+    console.error('Error transfering all funds:', error)
+    throw error
+  }
+}
 export async function getBalancesWithTotalsFromBackend(walletAddress: string): Promise<IBalances> {
   let balances: IBalances
   const cacheKey = `getBalancesWithTotalsFromBackend.${walletAddress}`
@@ -29,7 +39,11 @@ export async function getBalancesWithTotalsFromBackend(walletAddress: string): P
   }
 
   try {
-    const response = await axios.get(`${BACKEND_API_URL}/balance/${walletAddress}`)
+    const response = await axios.get(`${BACKEND_API_URL}/balance/${walletAddress}`, {
+      headers: {
+        Authorization: `Bearer ${BACKEND_API_TOKEN}`
+      }
+    })
     const data = response.data as IBalances
 
     // Convert keys to lowercase
@@ -61,18 +75,14 @@ export async function getBalancesWithTotals(walletAddress: string): Promise<IBal
   let balances: IBalance[] = [defaultBalance]
   const cacheKey = `getBalancesWithTotals.${walletAddress}`
 
-  if (USE_MOCK) {
-    balances = _balances
-  } else {
-    const fromCache = cache.get(cacheKey) as IBalances
+  const fromCache = cache.get(cacheKey) as IBalances
 
-    if (fromCache) {
-      console.info('from cache:', cacheKey)
-      return fromCache
-    }
-
-    balances = await getBalances(walletAddress)
+  if (fromCache) {
+    console.info('from cache:', cacheKey)
+    return fromCache
   }
+
+  balances = await getBalances(walletAddress)
 
   const totals: Record<CurrencyKey, number> = calculateTotals(balances)
   const result = {
@@ -129,7 +139,7 @@ async function getBalances(walletAddress: string): Promise<any[]> {
         const ethRateApi3 = getRateByKey(api3Rates, 'eth')
         const ethRateApi3Usd = parseFloat(ethers.formatUnits(ethRateApi3.usd, 18)) // API3: no rate in ARS or BRL
 
-        // netowrk Main Token
+        // network Main Token
         balances.push({
           network: network.config.chainName,
           token: network.config.chainCurrency,
@@ -217,29 +227,6 @@ const fethCustomTokens = async (address: string) => {
   }
 }
 
-/*
-const fetchNftById = async (id: string) => {
-  try {
-    const response = await axios.get(`${BACKEND_API_URL}/nft/${id}`)
-    const { image, image_url, ...rest } = response.data
-
-    const default_image_url = {
-      gcp: '/assets/images/nfts/default_nft.png',
-      ipfs: '/assets/images/nfts/default_nft.png',
-      icp: '/assets/images/nfts/default_nft.png'
-    }
-
-    const result = {
-      ...rest,
-      image_url: image_url || image || default_image_url
-    }
-    return result
-  } catch (error) {
-    console.error('Error fetching nft id:', id, error)
-    throw error
-  }
-}
-*/
 async function getTokenBalance(
   tokenContract: ethers.Contract,
   walletAddress: string

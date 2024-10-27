@@ -1,16 +1,26 @@
 import * as Yup from 'yup'
+import { useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
+import Stack from '@mui/material/Stack'
+import Button from '@mui/material/Button'
 import Grid from '@mui/material/Unstable_Grid2'
+import LoadingButton from '@mui/lab/LoadingButton'
+
+import { paths } from 'src/routes/paths'
+import { useRouter } from 'src/routes/hooks'
 
 import { useTranslate } from 'src/locales'
 import { useAuthContext } from 'src/auth/hooks'
+import { updateContact } from 'src/app/api/_hooks/use-contact'
 
 import { useSnackbar } from 'src/components/snackbar'
 import FormProvider, { RHFTextField } from 'src/components/hook-form'
+
+import { IAccount } from 'src/types/account'
 
 // ----------------------------------------------------------------------
 
@@ -25,39 +35,76 @@ type UserType = {
 export default function AccountGeneral() {
   const { enqueueSnackbar } = useSnackbar()
   const { t } = useTranslate()
-  const { user } = useAuthContext()
+  const { user, updateUser } = useAuthContext()
+  const router = useRouter()
 
   const UpdateUserSchema = Yup.object().shape({
-    displayName: Yup.string().required(t('common.required')),
+    displayName: Yup.string()
+      .trim()
+      .required(t('common.required'))
+      .min(3, t('common.must-be-min').replace('{MIN_CHARS}', '3')),
     email: Yup.string().required(t('common.required')).email(t('common.must-be-valid-email')),
     photoURL: Yup.mixed<any>().nullable().required(t('common.required')),
     phoneNumber: Yup.string().required(t('common.required')),
     wallet: Yup.string().nullable()
   })
 
-  const defaultValues: UserType = {
-    displayName: user?.displayName || '',
-    email: user?.email || '',
-    photoURL: user?.photoURL || null,
-    phoneNumber: user?.phoneNumber || '',
-    wallet: user?.wallet || ''
-  }
+  const defaultValues: UserType = useMemo(
+    () => ({
+      displayName: user?.displayName || '',
+      email: user?.email || '',
+      photoURL: user?.photoURL || null,
+      phoneNumber: user?.phoneNumber || '',
+      wallet: user?.wallet || ''
+    }),
+    [user?.displayName, user?.email, user?.phoneNumber, user?.photoURL, user?.wallet]
+  )
 
   const methods = useForm({
     resolver: yupResolver(UpdateUserSchema),
     defaultValues
   })
 
-  const { handleSubmit } = methods
+  const {
+    getValues,
+    handleSubmit,
+    formState: { isSubmitting }
+  } = methods
+
+  // ----------------------------------------------------------------------
 
   const onSubmit = handleSubmit(async (data) => {
+    const confirmMsg = t('common.msg.update-success')
+    const errorMsg = t('common.msg.update-error')
+
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500))
-      enqueueSnackbar('Update success!')
+      const formData = getValues()
+      const userData: IAccount = {
+        id: user!.id,
+        name: formData.displayName,
+        email: user!.email,
+        phone_number: user!.phoneNumber,
+        photo: user!.photoURL,
+        wallet: user!.wallet
+      }
+      await updateContact(user!.id, userData)
+
+      updateUser({
+        ...user, // Mantiene los campos que no cambian
+        displayName: formData.displayName
+      })
+
+      enqueueSnackbar(confirmMsg)
     } catch (error) {
-      console.error(error)
+      enqueueSnackbar(errorMsg, { variant: 'error' })
     }
   })
+
+  const handleChangeEmail = () => {
+    router.push(paths.dashboard.user.email)
+  }
+
+  // ----------------------------------------------------------------------
 
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
@@ -73,11 +120,23 @@ export default function AccountGeneral() {
                 sm: 'repeat(1, 1fr)'
               }}
             >
-              <RHFTextField disabled name='displayName' label={t('common.name')} />
-              <RHFTextField disabled name='email' label={t('common.email-address')} />
+              <RHFTextField name='displayName' label={t('common.name')} />
               <RHFTextField disabled name='phoneNumber' label={t('common.phone-number')} />
               <RHFTextField disabled name='wallet' label={t('common.wallet')} />
+
+              <Stack direction='row' spacing={2} alignItems='center'>
+                <RHFTextField disabled name='email' label={t('common.email-address')} />
+                <Button variant='outlined' color='inherit' onClick={handleChangeEmail}>
+                  {t('account.change-email')}
+                </Button>
+              </Stack>
             </Box>
+
+            <Stack spacing={3} alignItems='flex-end' sx={{ mt: 3 }}>
+              <LoadingButton type='submit' variant='contained' loading={isSubmitting}>
+                {t('common.save')}
+              </LoadingButton>
+            </Stack>
           </Card>
         </Grid>
       </Grid>

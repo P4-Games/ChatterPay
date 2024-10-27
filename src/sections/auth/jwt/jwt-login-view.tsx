@@ -27,7 +27,7 @@ import { getRecaptchaLng } from 'src/utils/format-number'
 
 import { useAuthContext } from 'src/auth/hooks'
 import { useLocales, useTranslate } from 'src/locales'
-import { allCountries } from 'src/app/api/_data/_mock'
+import { allCountries } from 'src/app/api/_data/_countries'
 import { PATH_AFTER_LOGIN, RECAPTCHA_SITE_KEY } from 'src/config-global'
 
 import FormProvider, { RHFCode, RHFTextField } from 'src/components/hook-form'
@@ -36,7 +36,7 @@ import FormProvider, { RHFCode, RHFTextField } from 'src/components/hook-form'
 
 export default function JwtLoginView() {
   const { t } = useTranslate()
-  const { generateCode, loginWithCode } = useAuthContext()
+  const { generate2faCodeLogin, loginWithCode } = useAuthContext()
   const router = useRouter()
   const [errorMsg, setErrorMsg] = useState('')
   const [codeSent, setCodeSent] = useState(false)
@@ -93,7 +93,7 @@ export default function JwtLoginView() {
         startCountdown()
         setErrorMsg('')
         setValue('code', '')
-        await generateCode?.(
+        await generate2faCodeLogin?.(
           `${selectedCountry}${data.phone}`,
           t('login.msg.code-bot'),
           recaptchaToken || ''
@@ -111,7 +111,7 @@ export default function JwtLoginView() {
         }
       }
     },
-    [enqueueSnackbar, generateCode, phone, selectedCountry, setValue, startCountdown, t]
+    [enqueueSnackbar, generate2faCodeLogin, phone, selectedCountry, setValue, startCountdown, t]
   )
 
   const onSubmit = handleSubmit(async (data) => {

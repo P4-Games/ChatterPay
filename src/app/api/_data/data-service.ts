@@ -94,6 +94,22 @@ export async function updateUserCode(userId: string, code: number | undefined): 
   return result
 }
 
+export async function updateUser(contact: IAccount): Promise<boolean> {
+  const filter = { _id: getObjectId(contact.id) }
+  const updateData = { name: contact.name }
+  const setValue = { $set: updateData }
+  const result: boolean = await updateOneCommon(DB_CHATTERPAY_NAME, SCHEMA_USERS, filter, setValue)
+  return result
+}
+
+export async function updateUserEmail(contact: IAccount): Promise<boolean> {
+  const filter = { _id: getObjectId(contact.id) }
+  const updateData = { email: contact.email }
+  const setValue = { $set: updateData }
+  const result: boolean = await updateOneCommon(DB_CHATTERPAY_NAME, SCHEMA_USERS, filter, setValue)
+  return result
+}
+
 export async function getWalletNfts(wallet: string): Promise<INFT[] | undefined> {
   const client = await getClientPromise()
   const db = client.db(DB_CHATTERPAY_NAME)
@@ -179,12 +195,12 @@ export async function getWalletNfts(wallet: string): Promise<INFT[] | undefined>
   return nfts
 }
 
-export async function getNftById(id: string): Promise<INFT | undefined> {
+export async function getNftById(nftId: string): Promise<INFT | undefined> {
   const client = await getClientPromise()
   const db = client.db(DB_CHATTERPAY_NAME)
 
   const nft: INFT | null = await db.collection(SCHEMA_NFTS).findOne({
-    id
+    id: nftId
   })
 
   if (!nft) {
