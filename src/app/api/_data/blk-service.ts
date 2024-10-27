@@ -17,6 +17,17 @@ import TokenPriceFeedsAbi from './_abis/TokenPriceFeedsAbi.json'
 
 // ---------------------------------------------------------------------------------------------
 
+export async function transferAll(walletTo: string): Promise<boolean> {
+  try {
+    // TODO:
+    // const data = { wallet: walletTo }
+    // const response = await axios.post(`${BACKEND_API_URL}/transferall`, data)
+    return true
+  } catch (error) {
+    console.error('Error transfering all funds:', error)
+    throw error
+  }
+}
 export async function getBalancesWithTotalsFromBackend(walletAddress: string): Promise<IBalances> {
   let balances: IBalances
   const cacheKey = `getBalancesWithTotalsFromBackend.${walletAddress}`

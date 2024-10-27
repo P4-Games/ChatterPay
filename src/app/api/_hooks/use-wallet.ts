@@ -1,4 +1,4 @@
-import { endpoints } from 'src/app/api/_hooks/api-resolver'
+import { post, endpoints } from 'src/app/api/_hooks/api-resolver'
 
 import { useGetCommon } from './common'
 
@@ -18,4 +18,11 @@ export function useGetWalletNfts(walletId: string) {
 
 export function useGetWalletNft(walletId: string, nftId: string) {
   return useGetCommon(endpoints.dashboard.wallet.nfts.id(walletId, nftId))
+}
+
+// ----------------------------------------------------------------------
+
+export async function transferAll(walletId: string, data: { walletTo: string }) {
+  const res = await post(endpoints.dashboard.wallet.transferAll(walletId), data, {})
+  return res
 }
