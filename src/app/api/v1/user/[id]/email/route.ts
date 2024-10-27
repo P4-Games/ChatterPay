@@ -66,9 +66,9 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
     }
 
     user.email = email
-    const reult: boolean = await updateUserEmail(user)
+    const result: boolean = await updateUserEmail(user)
 
-    if (!reult) {
+    if (!result) {
       return new NextResponse(
         JSON.stringify({
           code: 'USER_UPDATE_ERROR',
@@ -83,7 +83,7 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
 
     updateUserCode(user.id, undefined)
 
-    return NextResponse.json({ reult })
+    return NextResponse.json({ result })
   } catch (ex) {
     console.error(ex)
     return new NextResponse(JSON.stringify({ error: 'Error in update user' }), {
