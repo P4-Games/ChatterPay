@@ -40,8 +40,9 @@ export default function BankingBalances({
   tableData,
   ...other
 }: Props) {
-  const walletLinkL1 = `${EXPLORER_L1}/address/${tableData.wallet}`
-  const walletLinkL2 = `${EXPLORER_L2}/address/${tableData.wallet}`
+
+  const walletLinkL1 = `${EXPLORER_L1}/address/${tableData?.wallet || ''}`
+  const walletLinkL2 = `${EXPLORER_L2}/address/${tableData?.wallet || ''}`
 
   const { t } = useTranslate()
 
