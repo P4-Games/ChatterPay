@@ -69,7 +69,7 @@ export const endpoints = {
       }
     }
   },
-  backend: {
+  backend_bot: {
     sendMessage: () => getFullBotEndpoint('chatbot/conversations/send-message'),
     control: () => getFullBotEndpoint('chatbot/conversations/control')
   }

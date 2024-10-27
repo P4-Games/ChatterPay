@@ -5,7 +5,7 @@ import { post, endpoints } from '../../_hooks/api-resolver'
 // ----------------------------------------------------------------------
 
 export async function send2FACode(phone: string, code: number, codeMsg: string) {
-  const botSendMsgEndpoint = endpoints.backend.sendMessage()
+  const botSendMsgEndpoint = endpoints.backend_bot.sendMessage()
   const botSendMsgData = {
     data_token: BOT_API_TOKEN,
     channel_user_id: phone,
