@@ -6,6 +6,7 @@ import {
   defaultBalance,
   BACKEND_API_URL,
   tokensByNetwork,
+  BACKEND_API_TOKEN,
   nodeProviderUrlSepolia
 } from 'src/config-global'
 
@@ -27,7 +28,11 @@ export async function getBalancesWithTotalsFromBackend(walletAddress: string): P
   }
 
   try {
-    const response = await axios.get(`${BACKEND_API_URL}/balance/${walletAddress}`)
+    const response = await axios.get(`${BACKEND_API_URL}/balance/${walletAddress}`, {
+      headers: {
+        Authorization: `Bearer ${BACKEND_API_TOKEN}`
+      }
+    })
     const data = response.data as IBalances
 
     // Convert keys to lowercase
