@@ -62,6 +62,7 @@ export const endpoints = {
     wallet: {
       balance: (id: string) => getFullUIEndpoint(`wallet/${id}/balance`),
       transactions: (id: string) => getFullUIEndpoint(`wallet/${id}/transactions`),
+      transferAll: (id: string) => getFullUIEndpoint(`wallet/${id}/transferAll`),
       nfts: {
         root: (id: string) => getFullUIEndpoint(`wallet/${id}/nfts`),
         id: (walletId: string, nftId: string) =>
@@ -69,7 +70,7 @@ export const endpoints = {
       }
     }
   },
-  backend: {
+  backend_bot: {
     sendMessage: () => getFullBotEndpoint('chatbot/conversations/send-message'),
     control: () => getFullBotEndpoint('chatbot/conversations/control')
   }

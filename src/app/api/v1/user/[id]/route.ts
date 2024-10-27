@@ -100,9 +100,9 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
     }
 
     user.name = name
-    const reult: boolean = await updateUser(user)
+    const result: boolean = await updateUser(user)
 
-    if (!reult) {
+    if (!result) {
       return new NextResponse(
         JSON.stringify({
           code: 'USER_UPDATE_ERROR',
@@ -115,7 +115,7 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
       )
     }
 
-    return NextResponse.json({ reult })
+    return NextResponse.json({ result })
   } catch (ex) {
     console.error(ex)
     return new NextResponse(JSON.stringify({ error: 'Error in update user' }), {

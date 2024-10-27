@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { getUserById, updateUserCode, updateUserEmail } from 'src/app/api/_data/data-service'
-
-import { IAccount } from 'src/types/account'
+import { transferAll } from 'src/app/api/_data/blk-service'
 
 // ----------------------------------------------------------------------
 
@@ -11,15 +9,12 @@ type IParams = {
 }
 
 type IBody = {
-  phone: string
-  code: string
-  recaptchaToken: string
-  email: string
+  walletTo: string
 }
 export async function POST(req: NextRequest, { params }: { params: IParams }) {
   try {
     const { id } = params
-    const { phone, code, email }: IBody = await req.json()
+    const { walletTo }: IBody = await req.json()
 
     if (!id) {
       return new NextResponse(
@@ -34,11 +29,11 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
       )
     }
 
-    if (!email || !code || !phone) {
+    if (!walletTo) {
       return new NextResponse(
         JSON.stringify({
           code: 'INVALID_REQUEST_PARAMS',
-          error: 'Missing email, code and phone  in request body'
+          error: 'Missing walletTo in request body'
         }),
         {
           status: 400,
@@ -47,32 +42,12 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
       )
     }
 
-    const user: IAccount | undefined = await getUserById(id)
-    if (!user) {
-      return new NextResponse(
-        JSON.stringify({ code: 'USER_NOT_FOUND', error: 'user not found with that id' }),
-        {
-          status: 404,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      )
-    }
-
-    if (!user.code || code.toString() !== user.code.toString()) {
-      return new NextResponse(JSON.stringify({ code: 'INVALID_CODE', error: 'invalid code' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      })
-    }
-
-    user.email = email
-    const result: boolean = await updateUserEmail(user)
-
+    const result: boolean = await transferAll(walletTo)
     if (!result) {
       return new NextResponse(
         JSON.stringify({
-          code: 'USER_UPDATE_ERROR',
-          error: 'user update error'
+          code: 'TRANSFER_ALL_ERROR',
+          error: 'transfer all error'
         }),
         {
           status: 400,
@@ -80,8 +55,6 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
         }
       )
     }
-
-    updateUserCode(user.id, undefined)
 
     return NextResponse.json({ result })
   } catch (ex) {

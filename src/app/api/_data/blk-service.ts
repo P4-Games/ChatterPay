@@ -6,6 +6,7 @@ import {
   defaultBalance,
   BACKEND_API_URL,
   tokensByNetwork,
+  BACKEND_API_TOKEN,
   nodeProviderUrlSepolia
 } from 'src/config-global'
 
@@ -16,6 +17,17 @@ import TokenPriceFeedsAbi from './_abis/TokenPriceFeedsAbi.json'
 
 // ---------------------------------------------------------------------------------------------
 
+export async function transferAll(walletTo: string): Promise<boolean> {
+  try {
+    // TODO:
+    // const data = { wallet: walletTo }
+    // const response = await axios.post(`${BACKEND_API_URL}/transferall`, data)
+    return true
+  } catch (error) {
+    console.error('Error transfering all funds:', error)
+    throw error
+  }
+}
 export async function getBalancesWithTotalsFromBackend(walletAddress: string): Promise<IBalances> {
   let balances: IBalances
   const cacheKey = `getBalancesWithTotalsFromBackend.${walletAddress}`
@@ -27,7 +39,11 @@ export async function getBalancesWithTotalsFromBackend(walletAddress: string): P
   }
 
   try {
-    const response = await axios.get(`${BACKEND_API_URL}/balance/${walletAddress}`)
+    const response = await axios.get(`${BACKEND_API_URL}/balance/${walletAddress}`, {
+      headers: {
+        Authorization: `Bearer ${BACKEND_API_TOKEN}`
+      }
+    })
     const data = response.data as IBalances
 
     // Convert keys to lowercase
@@ -211,29 +227,6 @@ const fethCustomTokens = async (address: string) => {
   }
 }
 
-/*
-const fetchNftById = async (id: string) => {
-  try {
-    const response = await axios.get(`${BACKEND_API_URL}/nft/${id}`)
-    const { image, image_url, ...rest } = response.data
-
-    const default_image_url = {
-      gcp: '/assets/images/nfts/default_nft.png',
-      ipfs: '/assets/images/nfts/default_nft.png',
-      icp: '/assets/images/nfts/default_nft.png'
-    }
-
-    const result = {
-      ...rest,
-      image_url: image_url || image || default_image_url
-    }
-    return result
-  } catch (error) {
-    console.error('Error fetching nft id:', id, error)
-    throw error
-  }
-}
-*/
 async function getTokenBalance(
   tokenContract: ethers.Contract,
   walletAddress: string

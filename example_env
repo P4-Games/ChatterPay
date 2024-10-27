@@ -8,6 +8,7 @@ APP_ENV='development'
 BOT_API_TOKEN={api token}
 BOT_API_URL=http://localhost:3000
 BACKEND_API_URL=https://dev.back.chatterpay.net
+BACKEND_API_TOKEN='backend token'
 BOT_API_WAPP_ENABLED=true
 MONGODB='mongodb://localhost:27017'
 MONGODB_BOT='BOT mongo db url'
