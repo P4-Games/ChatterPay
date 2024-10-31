@@ -17,11 +17,11 @@ import TokenPriceFeedsAbi from './_abis/TokenPriceFeedsAbi.json'
 
 // ---------------------------------------------------------------------------------------------
 
-export async function transferAll(walletTo: string): Promise<boolean> {
+export async function transferAll(channelUserId: string, walletTo: string): Promise<boolean> {
   try {
     // TODO:
-    // const data = { wallet: walletTo }
-    // const response = await axios.post(`${BACKEND_API_URL}/transferall`, data)
+    // const data = { channel_user_id: channelUserId,  dst_address: walletTo }
+    // const response = await axios.post(`${BACKEND_API_URL}/withdraw_funds`, data)
     return true
   } catch (error) {
     console.error('Error transfering all funds:', error)

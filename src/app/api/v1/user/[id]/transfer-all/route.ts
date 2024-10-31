@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 import { transferAll } from 'src/app/api/_data/blk-service'
+import { getUserById } from 'src/app/api/_data/data-service'
+
+import { IAccount } from 'src/types/account'
 
 // ----------------------------------------------------------------------
 
@@ -42,7 +45,18 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
       )
     }
 
-    const result: boolean = await transferAll(walletTo)
+    const user: IAccount | undefined = await getUserById(id)
+    if (!user) {
+      return new NextResponse(
+        JSON.stringify({ code: 'USER_NOT_FOUND', error: 'user not found with that id' }),
+        {
+          status: 404,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
+    const result: boolean = await transferAll(user.id, walletTo)
     if (!result) {
       return new NextResponse(
         JSON.stringify({

@@ -33,7 +33,8 @@
     "user": "Usuário",
     "account": "Conta",
     "logout": "Sair",
-    "email": "Alterar Email"
+    "email": "Alterar Email",
+    "transfer-all": "Transfer Tudo"
   },
   "terms": {
     "title": "Termos e Condições",
@@ -290,6 +291,7 @@
     "title": "Saldo Estimado",
     "deposit": "Depositar",
     "send": "Enviar",
+    "transfer-all": "Transferir Tudo",
     "wapp-msg": "Olá!"
   },
   "transactions": {
@@ -304,6 +306,16 @@
     "table-share": "Compartilhar",
     "receive-from": "Recebido dinheiro de",
     "sent-to": "Enviado dinheiro para"
+  },
+  "transfer-all": {
+    "info": "Indica um endereço de carteira para onde serão enviados todos os fundos que você possui no Chatterpay.",
+    "msgs": {
+        "ok": "Os fundos foram transferidos. Você os verá na carteira indicada em breve.",
+        "error": "Houve um erro ao tentar transferir os fundos."
+    },
+    "actions": {
+      "transfer": "Transferir Tudo"
+    }
   },
   "nfts": {
     "view-trx": "Ver detalhes da transação",

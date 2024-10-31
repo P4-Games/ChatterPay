@@ -33,7 +33,8 @@
     "user": "User",
     "account": "Account",
     "logout": "Logout",
-    "email": "Email Change"
+    "email": "Email Change",
+    "transfer-all": "Transfer All"
   },
   "home": {
     "header": {
@@ -290,6 +291,7 @@
     "title": "Estimated Balance",
     "deposit": "Deposit",
     "send": "Send",
+    "transfer-all": "Transfer All",
     "wapp-msg": "Hi!"
   }, 
   "transactions": {
@@ -304,6 +306,16 @@
     "table-share": "Share",
     "receive-from": "Received money from",
     "sent-to": "Sent money to"
+  },
+  "transfer-all": {
+    "info": "Indicates a wallet address where all funds in Chatterpay will be sent.",
+    "msgs": {
+        "ok": "The funds were transferred. You will see them in the indicated wallet shortly.",
+        "error": "There was an error attempting to transfer the funds."
+    },
+    "actions": {
+      "transfer": "Transfer All"
+    }
   },
   "nfts": {
     "view-trx": "View Transacton Details",

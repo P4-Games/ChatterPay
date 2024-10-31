@@ -28,7 +28,7 @@ export default function AccountPopover() {
   const OPTIONS = [
     {
       label: t('menu.account'),
-      linkTo: paths.dashboard.user.account
+      linkTo: paths.dashboard.user.root
     }
   ]
 

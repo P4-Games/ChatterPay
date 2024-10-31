@@ -121,14 +121,14 @@ export default function ChangeEmail() {
   }, [startCountdown, contextUser, generate2faCodeEmail, t, setValue, enqueueSnackbar])
 
   const handleCancel = () => {
-    router.push(paths.dashboard.user.account)
+    router.push(paths.dashboard.user.root)
   }
 
   const onSubmit = async (data: any) => {
     try {
       // @ts-ignore
       await updateEmail?.(contextUser!.phoneNumber, data.code || '', confirmEmail, contextUser!.id)
-      router.push(paths.dashboard.user.account)
+      router.push(paths.dashboard.user.root)
       setErrorMsg('')
       enqueueSnackbar(t('common.msg.update-success'))
     } catch (ex) {
