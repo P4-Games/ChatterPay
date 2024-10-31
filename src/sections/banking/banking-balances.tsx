@@ -14,6 +14,8 @@ import {
   SelectChangeEvent
 } from '@mui/material'
 
+import { paths } from 'src/routes/paths'
+
 import { useBoolean } from 'src/hooks/use-boolean'
 import { useResponsive } from 'src/hooks/use-responsive'
 
@@ -40,7 +42,6 @@ export default function BankingBalances({
   tableData,
   ...other
 }: Props) {
-
   const walletLinkL1 = `${EXPLORER_L1}/address/${tableData?.wallet || ''}`
   const walletLinkL2 = `${EXPLORER_L2}/address/${tableData?.wallet || ''}`
 
@@ -129,7 +130,6 @@ export default function BankingBalances({
       >
         {t('balances.deposit')}
       </Button>
-
       <Button
         fullWidth={!mdUp}
         sx={{ maxWidth: mdUp ? 'auto' : '200px', mx: mdUp ? 0 : 4 }}
@@ -139,6 +139,16 @@ export default function BankingBalances({
         onClick={() => window.open(sendReciveUrl, '_blank')}
       >
         {t('balances.send')}
+      </Button>
+      <Button
+        fullWidth={!mdUp}
+        sx={{ maxWidth: mdUp ? 'auto' : '200px', mx: mdUp ? 0 : 4 }}
+        variant='outlined'
+        color='warning'
+        startIcon={<Iconify icon='mdi:arrow-collapse-all' />}
+        href={paths.dashboard.transfer.all}
+      >
+        {t('balances.transfer-all')}
       </Button>
     </Stack>
   )
