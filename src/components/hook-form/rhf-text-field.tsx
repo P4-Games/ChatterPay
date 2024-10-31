@@ -19,11 +19,15 @@ export default function RHFTextField({ name, helperText, type, ...other }: Props
         <TextField
           {...field}
           fullWidth
-          type={type}
+          type={type === 'wallet' ? 'text' : type}
           value={type === 'number' && field.value === 0 ? '' : field.value}
           onChange={(event) => {
+            let inputValue = event.target.value
             if (type === 'number') {
-              field.onChange(Number(event.target.value))
+              field.onChange(Number(inputValue))
+            } else if (type === 'wallet') {
+              inputValue = inputValue.replace(/[^a-zA-Z0-9]/g, '')
+              field.onChange(inputValue.startsWith('0x') ? inputValue : `0x${inputValue}`)
             } else {
               field.onChange(event.target.value)
             }
