@@ -57,12 +57,12 @@ export const endpoints = {
       id: (id: string) => getFullUIEndpoint(`user/${id}`),
       update: (id: string) => getFullUIEndpoint(`user/${id}`),
       code: (id: string) => getFullUIEndpoint(`user/${id}/code`),
-      updateEmail: (id: string) => getFullUIEndpoint(`user/${id}/email`)
+      updateEmail: (id: string) => getFullUIEndpoint(`user/${id}/email`),
+      transferAll: (id: string) => getFullUIEndpoint(`user/${id}/transfer-all`)
     },
     wallet: {
       balance: (id: string) => getFullUIEndpoint(`wallet/${id}/balance`),
       transactions: (id: string) => getFullUIEndpoint(`wallet/${id}/transactions`),
-      transferAll: (id: string) => getFullUIEndpoint(`wallet/${id}/transferAll`),
       nfts: {
         root: (id: string) => getFullUIEndpoint(`wallet/${id}/nfts`),
         id: (walletId: string, nftId: string) =>

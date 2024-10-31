@@ -22,7 +22,9 @@ export function useGetWalletNft(walletId: string, nftId: string) {
 
 // ----------------------------------------------------------------------
 
-export async function transferAll(walletId: string, data: { walletTo: string }) {
-  const res = await post(endpoints.dashboard.wallet.transferAll(walletId), data, {})
+export async function transferAll(userId: string, data: { walletTo: string }) {
+  console.log('trasnfer all', userId, data)
+  const res = await post(endpoints.dashboard.user.transferAll(userId), data, {})
+  console.log('x', res)
   return res
 }
