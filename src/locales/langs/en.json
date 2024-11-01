@@ -38,8 +38,8 @@
   },
   "home": {
     "header": {
-    "sign-up": "Create your account",
-    "sign-in": "Sign in"
+      "sign-up": "Create your account",
+      "sign-in": "Sign in"
     },
     "help": {
       "need-help": "Need help?"
@@ -293,12 +293,12 @@
     "send": "Send",
     "transfer-all": "Transfer All",
     "wapp-msg": "Hi!"
-  }, 
+  },
   "transactions": {
     "title": "Recent Transactions",
     "table-transaction": "Transaction",
     "table-amount": "Amount",
-    "table-date": "Date", 
+    "table-date": "Date",
     "table-status": "Status",
     "table-view-all": "View All",
     "table-download": "Download",
@@ -310,8 +310,8 @@
   "transfer-all": {
     "info": "Indicates a wallet address where all funds in Chatterpay will be sent.",
     "msgs": {
-        "ok": "The funds were transferred. You will see them in the indicated wallet shortly.",
-        "error": "There was an error attempting to transfer the funds."
+      "ok": "The funds were transferred. You will see them in the indicated wallet shortly.",
+      "error": "There was an error attempting to transfer the funds."
     },
     "actions": {
       "transfer": "Transfer All"
@@ -338,7 +338,7 @@
     },
     "share": {
       "cta": "Share",
-      "close": "Close"
+      "clipboard": "Link copied!"
     }
   },
   "account": {
