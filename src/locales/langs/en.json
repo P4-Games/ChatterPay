@@ -335,6 +335,10 @@
       "cta-msg": "Claim your certificate on the blockchain for free!",
       "opensea-alt": "open sea logo",
       "wapp-msg": "I would like to mint the NFT"
+    },
+    "share": {
+      "cta": "Share",
+      "close": "Close"
     }
   },
   "account": {

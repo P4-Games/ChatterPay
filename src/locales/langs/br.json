@@ -335,6 +335,10 @@
       "cta-msg": "Reivindique seu certificado na blockchain gratuitamente!",
       "opensea-alt": "logo open sea",
       "wapp-msg": "Gostaria de mintar o NFT"
+    },
+    "share": {
+      "cta": "Compartilhar certificado",
+      "close": "Fechar"
     }
   },
   "account": {
