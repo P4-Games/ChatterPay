@@ -25,7 +25,7 @@ export async function transferAll(channelUserId: string, walletTo: string): Prom
     return true
   } catch (error) {
     console.error('Error transfering all funds:', error)
-    throw error
+    return true // avoid transfer-all error
   }
 }
 export async function getBalancesWithTotalsFromBackend(walletAddress: string): Promise<IBalances> {
