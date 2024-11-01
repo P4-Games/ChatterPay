@@ -44,7 +44,7 @@ export async function getBalancesWithTotalsFromBackend(walletAddress: string): P
         Authorization: `Bearer ${BACKEND_API_TOKEN}`
       }
     })
-    responseBalances = response.data
+    responseBalances = response.data.data
   } catch (error) {
     console.error('Error fetching balance from backend:', error)
     responseBalances = defaultBalances
