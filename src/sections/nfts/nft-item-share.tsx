@@ -26,6 +26,7 @@ export default function NftItemShare({ nftId, nftData }: NftItemClaimProps) {
   const mdUp = useResponsive('up', 'md')
   const { t } = useTranslate()
   const [openShare, setOpenShare] = useState(false)
+  const { enqueueSnackbar } = useSnackbar()
 
   const handleOpenOpenSea = () => {
     const url = `${NFT_MARKETPLACE_URL}/${nftId}`
@@ -49,7 +50,7 @@ export default function NftItemShare({ nftId, nftData }: NftItemClaimProps) {
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(`${NFT_MARKETPLACE_URL}/${nftId}`)
-      // Aquí podrías mostrar un Snackbar de éxito
+      enqueueSnackbar(t('nfts.share.clipboard'), { variant: 'info' })
     } catch (err) {
       console.error('Error al copiar:', err)
     }
