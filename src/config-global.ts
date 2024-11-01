@@ -1,4 +1,5 @@
 import { Network } from './types/networks'
+import { IBalance, IBalances } from './types/wallet'
 
 // ----------------------------------------------------------------------
 
@@ -56,7 +57,7 @@ export const STORAGE_KEY_SETTINGS = 'settings'
 export const CONTACT_EMAIL = 'contacto@chatterpay.com.ar'
 export const GET_BALANCES_FROM_BACKEND = true
 
-export const defaultBalance = {
+export const defaultBalance: IBalance = {
   network: '',
   token: '',
   balance: 0,
@@ -66,6 +67,19 @@ export const defaultBalance = {
     brl: 0,
     uyu: 0
   }
+}
+
+export const defaultBalances: IBalances = {
+  balances: [defaultBalance],
+  totals: {
+    usd: 0,
+    ars: 0,
+    brl: 0,
+    uyu: 0
+  },
+  certificates: [],
+  wallet: '',
+  message: ''
 }
 
 export const tokensByNetwork: { [networkKey: string]: Network } = {

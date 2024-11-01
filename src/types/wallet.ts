@@ -16,6 +16,8 @@ export type IBalances = {
   wallet: string
   balances: IBalance[]
   totals: Record<CurrencyKey, number>
+  message?: string
+  certificates?: []
 }
 
 export type INFTMetadata = {
