@@ -200,7 +200,9 @@ export default function NftItemShare({ nftId, nftData }: NftItemClaimProps) {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleTriggerShare}>{t('nfts.share.close')}</Button>
+          <Button variant='outlined' color='inherit' onClick={handleTriggerShare}>
+            {t('common.close')}
+          </Button>
         </DialogActions>
       </Dialog>
     </Stack>
