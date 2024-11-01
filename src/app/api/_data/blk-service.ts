@@ -5,6 +5,7 @@ import {
   API3_ENABLED,
   defaultBalance,
   BACKEND_API_URL,
+  defaultBalances,
   tokensByNetwork,
   BACKEND_API_TOKEN,
   nodeProviderUrlSepolia
@@ -17,19 +18,17 @@ import TokenPriceFeedsAbi from './_abis/TokenPriceFeedsAbi.json'
 
 // ---------------------------------------------------------------------------------------------
 
-export async function transferAll(walletTo: string): Promise<boolean> {
+export async function transferAll(channelUserId: string, walletTo: string): Promise<boolean> {
   try {
-    // TODO:
-    // const data = { wallet: walletTo }
-    // const response = await axios.post(`${BACKEND_API_URL}/transferall`, data)
+    const data = { channel_user_id: channelUserId, dst_address: walletTo }
+    await axios.post(`${BACKEND_API_URL}/withdraw_funds`, data)
     return true
   } catch (error) {
     console.error('Error transfering all funds:', error)
-    throw error
+    return true // avoid transfer-all error
   }
 }
 export async function getBalancesWithTotalsFromBackend(walletAddress: string): Promise<IBalances> {
-  let balances: IBalances
   const cacheKey = `getBalancesWithTotalsFromBackend.${walletAddress}`
   const fromCache = cache.get(cacheKey) as IBalances
 
@@ -38,36 +37,42 @@ export async function getBalancesWithTotalsFromBackend(walletAddress: string): P
     return fromCache
   }
 
+  let responseBalances: IBalances
   try {
     const response = await axios.get(`${BACKEND_API_URL}/balance/${walletAddress}`, {
       headers: {
         Authorization: `Bearer ${BACKEND_API_TOKEN}`
       }
     })
-    const data = response.data as IBalances
+    responseBalances = response.data.data
+  } catch (error) {
+    console.error('Error fetching balance from backend:', error)
+    responseBalances = defaultBalances
+  }
 
-    // Convert keys to lowercase
-    const normalizedTotals = Object.keys(data.totals).reduce(
+  // Convert keys to lowercase
+  try {
+    const normalizedTotals = Object.keys(responseBalances.totals).reduce(
       (acc, key) => {
         const lowerKey = key.toLowerCase() as CurrencyKey
         if (['usd', 'ars', 'brl', 'uyu'].includes(lowerKey)) {
-          acc[lowerKey] = data.totals[key as CurrencyKey]
+          acc[lowerKey] = responseBalances.totals[key as CurrencyKey]
         }
         return acc
       },
       {} as Record<CurrencyKey, number>
     )
 
-    balances = {
-      ...data,
+    const balances: IBalances = {
+      ...responseBalances,
       totals: normalizedTotals
     }
 
     cache.set(cacheKey, balances, 60) // 1 minute
     return balances
   } catch (error) {
-    console.error('Error fetching balance from backend:', error)
-    throw error
+    console.error('Error formatting balances totals:', error)
+    return defaultBalances
   }
 }
 

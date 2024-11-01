@@ -53,7 +53,7 @@ export function useNavData() {
             title: t('menu.user'),
             path: paths.dashboard.user.root,
             icon: ICONS.user,
-            children: [{ title: t('menu.account'), path: paths.dashboard.user.account }]
+            children: [{ title: t('menu.account'), path: paths.dashboard.user.root }]
           }
         ]
       }

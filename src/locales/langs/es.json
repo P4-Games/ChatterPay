@@ -33,7 +33,8 @@
     "user": "Usuario",
     "account": "Cuenta",
     "logout": "Cerrar Sesión",
-    "email": "Cambiar Correo"
+    "email": "Cambiar Correo",
+    "transfer-all": "Transferir Todo"
   },
   "terms": {
     "title": "Términos y Condiciones",
@@ -101,7 +102,7 @@
   "home": {
     "header": {
       "sign-up": "Creá tu cuenta",
-      "sign-in": "Ingresá"  
+      "sign-in": "Ingresá"
     },
     "help": {
       "need-help": "¿Necesita ayuda?"
@@ -249,7 +250,7 @@
           "answer": "Ingresa tu número de teléfono registrado. Se enviará un código de 6 dígitos a tu teléfono por seguridad; una vez que lo ingreses, podrás acceder al sitio."
         }
       }
-    },    
+    },
     "get-started": {
       "title": "Comienza con",
       "description": "Todo el poder de Web3 sin complicaciones.",
@@ -290,6 +291,7 @@
     "title": "Balance Estimado",
     "deposit": "Depositar",
     "send": "Enviar",
+    "transfer-all": "Transferir Todo",
     "wapp-msg": "Hola!"
   },
   "transactions": {
@@ -305,6 +307,16 @@
     "receive-from": "Recibido dinero de",
     "sent-to": "Enviado dinero a"
   },
+  "transfer-all": {
+    "info": "Indica una dirección de billetera en donde se enviarán todos los fondos que tengas en Chatterpay",
+    "msgs": {
+      "ok": "Los fondos fueron transferidos. Los verás en la billetera indicada en breve.",
+      "error": "Hubo un error al intentar transferir los fondos."
+    },
+    "actions": {
+      "transfer": "Transferir Todo"
+    }
+  },
   "nfts": {
     "view-trx": "Ver detalles de la transacción",
     "mint": "Hey, mira mi NFT:",
@@ -317,13 +329,16 @@
       "meta-geo": "Geolocalización",
       "original": "Original",
       "copy-of": "Copia #{X} de #{Z}"
-
     },
     "claim": {
       "cta": "Reclamar",
       "cta-msg": "¡Reclamá tu certificado en blockchain gratis!",
       "opensea-alt": "logo open sea",
       "wapp-msg": "Me gustaría mintear el NFT"
+    },
+    "share": {
+      "cta": "Compartir",
+      "clipboard": "Link copiado!"
     }
   },
   "account": {

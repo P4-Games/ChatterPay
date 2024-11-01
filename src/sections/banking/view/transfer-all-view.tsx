@@ -23,9 +23,7 @@ export default function TransferAllView() {
         heading={t('menu.email')}
         links={[
           { name: t('menu._dashboard'), href: paths.dashboard.root },
-          { name: t('menu.user'), href: paths.dashboard.user.root },
-          { name: t('menu.account'), href: paths.dashboard.user.root },
-          { name: t('menu.email') }
+          { name: t('menu.transfer-all') }
         ]}
         sx={{
           mb: { xs: 3, md: 5 }

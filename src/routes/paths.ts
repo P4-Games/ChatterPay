@@ -23,18 +23,12 @@ export const paths = {
       root: `${ROOTS.DASHBOARD}/nfts`,
       content: (id: string) => `${ROOTS.DASHBOARD}/nfts`
     },
+    transfer: {
+      all: `${ROOTS.DASHBOARD}/transfer/all`
+    },
     user: {
       root: `${ROOTS.DASHBOARD}/user/account`,
-      account: `${ROOTS.DASHBOARD}/user/account`,
-      email: `${ROOTS.DASHBOARD}/user/account/email`,
-      wallet: {
-        root: (walletId: string) => `${ROOTS.DASHBOARD}/user/wallet/${walletId}`,
-        nfts: {
-          root: (walletId: string) => `${ROOTS.DASHBOARD}/user/wallet/${walletId}/nfts`,
-          item: (walletId: string, nftId: string) =>
-            `${ROOTS.DASHBOARD}/user/wallet/${walletId}/nfts/${nftId}`
-        }
-      }
+      email: `${ROOTS.DASHBOARD}/user/account/email`
     }
   }
 }

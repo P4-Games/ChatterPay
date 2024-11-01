@@ -11,7 +11,7 @@
     "required": "obrigatório",
     "must-be-numeric": "Deve ser numérico",
     "must-be-max": "Deve ter no máximo {MAX_DIGITS} dígitos",
-    "must-be-valid-email": "O email deve ser um endereço de email válido",    
+    "must-be-valid-email": "O email deve ser um endereço de email válido",
     "must-be-min": "Deve ter no mínimo {MIN_CHARS} caracteres",
     "nodata": "Sem Dados",
     "save": "Salvar Alterações",
@@ -33,7 +33,8 @@
     "user": "Usuário",
     "account": "Conta",
     "logout": "Sair",
-    "email": "Alterar Email"
+    "email": "Alterar Email",
+    "transfer-all": "Transfer Tudo"
   },
   "terms": {
     "title": "Termos e Condições",
@@ -249,7 +250,7 @@
           "answer": "Digite seu número de telefone registrado. Um código de 6 dígitos será enviado para o seu telefone por segurança; depois de inseri-lo, você poderá acessar o site."
         }
       }
-    },    
+    },
     "get-started": {
       "title": "Comece com",
       "description": "Todo o poder do Web3 sem complicações.",
@@ -290,6 +291,7 @@
     "title": "Saldo Estimado",
     "deposit": "Depositar",
     "send": "Enviar",
+    "transfer-all": "Transferir Tudo",
     "wapp-msg": "Olá!"
   },
   "transactions": {
@@ -304,6 +306,16 @@
     "table-share": "Compartilhar",
     "receive-from": "Recebido dinheiro de",
     "sent-to": "Enviado dinheiro para"
+  },
+  "transfer-all": {
+    "info": "Indica um endereço de carteira para onde serão enviados todos os fundos que você possui no Chatterpay.",
+    "msgs": {
+      "ok": "Os fundos foram transferidos. Você os verá na carteira indicada em breve.",
+      "error": "Houve um erro ao tentar transferir os fundos."
+    },
+    "actions": {
+      "transfer": "Transferir Tudo"
+    }
   },
   "nfts": {
     "view-trx": "Ver detalhes da transação",
@@ -323,6 +335,10 @@
       "cta-msg": "Reivindique seu certificado na blockchain gratuitamente!",
       "opensea-alt": "logo open sea",
       "wapp-msg": "Gostaria de mintar o NFT"
+    },
+    "share": {
+      "cta": "Compartilhar certificado",
+      "clipboard": "Link copiado!"
     }
   },
   "account": {
