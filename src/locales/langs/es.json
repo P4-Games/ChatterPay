@@ -251,7 +251,7 @@
           "answer": "Ingresa tu número de teléfono registrado. Se enviará un código de 6 dígitos a tu teléfono por seguridad; una vez que lo ingreses, podrás acceder al sitio."
         }
       }
-    },
+    },    
     "get-started": {
       "title": "Comienza con",
       "description": "Todo el poder de Web3 sin complicaciones.",
@@ -330,16 +330,13 @@
       "meta-geo": "Geolocalización",
       "original": "Original",
       "copy-of": "Copia #{X} de #{Z}"
+
     },
     "claim": {
       "cta": "Reclamar",
       "cta-msg": "¡Reclamá tu certificado en blockchain gratis!",
       "opensea-alt": "logo open sea",
       "wapp-msg": "Me gustaría mintear el NFT"
-    },
-    "share": {
-      "cta": "Compartir",
-      "clipboard": "Link copiado!"
     }
   },
   "account": {
@@ -355,6 +352,13 @@
       "code-info": "Por favor, ingresa el código de 6 dígitos que enviamos a tu WhatsApp (puede demorarse alrededor de 2 minutos en llegar).",
       "invalid-code": "Código inválido",
       "code-bot": "Ingresá este código *{2FA_CODE}* para validar tu cambio de correo electrónico en Chatterpay. Es muy importante que no compartas esta información con nadie. Si no solicitaste el código, desestimá este mensaje y contactate con nosotros para que podamos ayudarte!"
+    },
+    "notifications": {
+      "refresh": "Actualizar",
+      "msgs": {
+        "no-notifications": "No tienes nuevas notificaciones",
+        "error": "Hubo un error al intentar obtener las notificaciones. Intenta más tarde."
+      }
     }
   }
 }

@@ -294,12 +294,12 @@
     "send": "Send",
     "transfer-all": "Transfer All",
     "wapp-msg": "Hi!"
-  },
+  }, 
   "transactions": {
     "title": "Recent Transactions",
     "table-transaction": "Transaction",
     "table-amount": "Amount",
-    "table-date": "Date",
+    "table-date": "Date", 
     "table-status": "Status",
     "table-view-all": "View All",
     "table-download": "Download",
@@ -311,8 +311,8 @@
   "transfer-all": {
     "info": "Indicates a wallet address where all funds in Chatterpay will be sent.",
     "msgs": {
-      "ok": "The funds were transferred. You will see them in the indicated wallet shortly.",
-      "error": "There was an error attempting to transfer the funds."
+        "ok": "The funds were transferred. You will see them in the indicated wallet shortly.",
+        "error": "There was an error attempting to transfer the funds."
     },
     "actions": {
       "transfer": "Transfer All"
@@ -336,10 +336,6 @@
       "cta-msg": "Claim your certificate on the blockchain for free!",
       "opensea-alt": "open sea logo",
       "wapp-msg": "I would like to mint the NFT"
-    },
-    "share": {
-      "cta": "Share",
-      "clipboard": "Link copied!"
     }
   },
   "account": {
@@ -355,6 +351,13 @@
       "code-info": "Please enter the 6-digit code we sent to your WhatsApp (it may take around 2 minutes to arrive).",
       "invalid-code": "Invalid code",
       "code-bot": "Enter this code {2FA_CODE} to validate your email change in Chatterpay. It is very important that you do not share this information with anyone. If you did not request the code, disregard this message and contact us so we can help you!"
+    },
+    "notifications": {
+      "refresh": "Refresh",
+      "msgs": {
+        "no-notifications": "You have no new notifications.",
+        "error": "There was an error while trying to fetch the notifications. Please try again later."
+      }
     }
   }
 }
