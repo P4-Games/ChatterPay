@@ -59,9 +59,7 @@ export function useGetWalletNotifications(walletId: string) {
 // ----------------------------------------------------------------------
 
 export async function transferAll(userId: string, data: { walletTo: string }) {
-  console.log('trasnfer all', userId, data)
   const res = await post(endpoints.dashboard.user.transferAll(userId), data, {})
-  console.log('x', res)
   return res
 }
 

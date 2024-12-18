@@ -7,6 +7,7 @@ import { useTranslate } from 'src/locales'
 import { AuthUserType } from 'src/auth/types'
 import { useAuthContext } from 'src/auth/hooks'
 import { useGetWalletNotifications } from 'src/app/api/_hooks'
+import { notificationsRefreshInterval } from 'src/config-global'
 
 import Iconify from 'src/components/iconify'
 
@@ -17,13 +18,7 @@ import { pushNotification } from 'src/types/notifications'
 const PushNotifications: React.FC = () => {
   const { t } = useTranslate()
   const { user }: { user: AuthUserType } = useAuthContext()
-  // const { enqueueSnackbar } = useSnackbar()
-  // const [notifications, setNotifications] = useState<any[]>([])
-  // const [isLoading, setIsLoading] = useState(false)
   const [walletAddress, setWalletAddress] = useState<string | null>(null)
-
-  // const network = '421614'
-  // const pushEnv: ENV = ENV.DEV
 
   useEffect(() => {
     if (user && user.wallet) {
@@ -34,38 +29,9 @@ const PushNotifications: React.FC = () => {
   const { data, isLoading }: { data: any; isLoading: boolean } = useGetWalletNotifications(
     walletAddress || user?.wallet,
     5,
-    0
+    notificationsRefreshInterval
   )
   const notifications = data ? data.flatMap((page: pushNotification) => page) : []
-
-  /*
-  const fetchNotifications = async () => {
-    setIsLoading(true)
-    try {
-      const data = await PushAPI.user.getFeeds({
-        user: `eip155:${network}:${user?.wallet || ''}`,
-        // user: 'eip155:421614:0x117b706DEF40310eF5926aB57868dAcf46605b8d',
-        env: pushEnv,
-        page: 1,
-        limit: 10
-      })
-
-      if (JSON.stringify(data) !== JSON.stringify(notifications)) {
-        setNotifications(data)
-      }
-    } catch (ex) {
-      console.error(ex)
-      enqueueSnackbar(`${t('account.notifications.msg.error')}`, { variant: 'error' })
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    fetchNotifications()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-  */
 
   const renderTitle = (
     <Stack
