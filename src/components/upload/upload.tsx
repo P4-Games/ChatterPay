@@ -163,6 +163,7 @@ export default function Upload({
 
       {helperText && helperText}
 
+      {/* @ts-ignore */}
       <RejectionFiles fileRejections={fileRejections} />
 
       {renderMultiPreview}
