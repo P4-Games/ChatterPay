@@ -11,7 +11,7 @@
     "required": "obrigatório",
     "must-be-numeric": "Deve ser numérico",
     "must-be-max": "Deve ter no máximo {MAX_DIGITS} dígitos",
-    "must-be-valid-email": "O email deve ser um endereço de email válido",
+    "must-be-valid-email": "O email deve ser um endereço de email válido",    
     "must-be-min": "Deve ter no mínimo {MIN_CHARS} caracteres",
     "nodata": "Sem Dados",
     "save": "Salvar Alterações",
@@ -34,6 +34,7 @@
     "account": "Conta",
     "logout": "Sair",
     "email": "Alterar Email",
+    "notifications": "Notificações",
     "transfer-all": "Transfer Tudo"
   },
   "terms": {

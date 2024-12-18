@@ -19,6 +19,8 @@ const icon = (name: string) => (
 const ICONS = {
   user: icon('ic_user'),
   nft: icon('ic_label'),
+  account: icon('ic_account'),
+  notification: icon('ic_mail'),
   banking: icon('ic_banking')
 }
 
@@ -53,7 +55,18 @@ export function useNavData() {
             title: t('menu.user'),
             path: paths.dashboard.user.root,
             icon: ICONS.user,
-            children: [{ title: t('menu.account'), path: paths.dashboard.user.root }]
+            children: [
+              {
+                title: t('menu.account'),
+                icon: ICONS.account,
+                path: paths.dashboard.user.root
+              },
+              {
+                title: t('menu.notifications'),
+                icon: ICONS.notification,
+                path: paths.dashboard.user.notifications
+              }
+            ]
           }
         ]
       }

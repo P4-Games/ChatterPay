@@ -34,6 +34,7 @@
     "account": "Cuenta",
     "logout": "Cerrar Sesión",
     "email": "Cambiar Correo",
+    "notifications": "Notificaciones",
     "transfer-all": "Transferir Todo"
   },
   "terms": {
@@ -102,7 +103,7 @@
   "home": {
     "header": {
       "sign-up": "Creá tu cuenta",
-      "sign-in": "Ingresá"
+      "sign-in": "Ingresá"  
     },
     "help": {
       "need-help": "¿Necesita ayuda?"

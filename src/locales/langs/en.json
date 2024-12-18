@@ -33,13 +33,14 @@
     "user": "User",
     "account": "Account",
     "logout": "Logout",
-    "email": "Email Change",
+    "email": "Email Change",    
+    "notifications": "Notifications",
     "transfer-all": "Transfer All"
   },
   "home": {
     "header": {
-      "sign-up": "Create your account",
-      "sign-in": "Sign in"
+    "sign-up": "Create your account",
+    "sign-in": "Sign in"
     },
     "help": {
       "need-help": "Need help?"
