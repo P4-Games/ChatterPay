@@ -1,7 +1,10 @@
 FROM node:18-alpine AS deps
 WORKDIR /app
 COPY package.json yarn.lock ./ 
-RUN apk add --no-cache libc6-compat && npm i -g yarn && yarn install --frozen-lockfile
+RUN apk add --no-cache libc6-compat bash curl && \
+    curl -o- -L https://yarnpkg.com/install.sh | bash && \
+    export PATH="$PATH:$(yarn global bin)" && \
+    yarn install --frozen-lockfile
 #
 FROM node:18-alpine AS builder
 WORKDIR /app
