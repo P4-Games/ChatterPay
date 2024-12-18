@@ -63,6 +63,10 @@ export const endpoints = {
     wallet: {
       balance: (id: string) => getFullUIEndpoint(`wallet/${id}/balance`),
       transactions: (id: string) => getFullUIEndpoint(`wallet/${id}/transactions`),
+      notifications: (id: string, pageIndex: number, pageSize: number) =>
+        getFullUIEndpoint(
+          `wallet/${id}/notifications?lazy=true&pageIndex=${pageIndex}&pageSize=${pageSize}`
+        ),
       nfts: {
         root: (id: string) => getFullUIEndpoint(`wallet/${id}/nfts`),
         id: (walletId: string, nftId: string) =>
