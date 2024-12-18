@@ -259,6 +259,7 @@ export default function JwtLoginView() {
   )
 
   const renderRecaptcha = (
+    /* @ts-ignore */
     <Captcha
       key={recaptchaKey} // Usar la clave para forzar el re-montaje
       ref={captchaRef}

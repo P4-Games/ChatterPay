@@ -144,6 +144,7 @@ export default function UploadAvatar({
 
       {helperText && helperText}
 
+      {/* @ts-ignore */}
       <RejectionFiles fileRejections={fileRejections} />
     </>
   )
