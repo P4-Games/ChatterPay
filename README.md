@@ -6,7 +6,7 @@
 
 # ChatterPay
 
-Chatterpay is a Wallet for WhatsApp that integrates AI and Account Abstraction, enabling any user to use blockchain easily and securely without technical knowledge.
+[Chatterpay](chatterpay.net) is a Wallet for WhatsApp that integrates AI and Account Abstraction, enabling any user to use blockchain easily and securely without technical knowledge.
 
 > Built for: [Level Up Hackathon - Ethereum Argentina 2024](https://ethereumargentina.org/) 
 
@@ -102,8 +102,12 @@ To deploy the landing (static code) to the [Internet Computer (ICP)](https://int
 
 URL of the deployed app on ICP: https://cilxj-yiaaa-aaaag-alkxq-cai.icp0.io/
 
-
 # Additional Info
+
+## Technical Documentation
+
+If you would like to explore more details about the source code, you can review this [link](.doc/content.md).
+
 
 ## Contribution
 
@@ -113,13 +117,9 @@ If you'd like to contribute to ChatterPay, please fork, fix, commit and send a p
 
 Please make sure your contributions adhere to our [coding guidelines](./.doc/development/coding-guidelines.md).
 
-## Contributors
+_Contributors_: 
 
-[P4Troy](https://github.com/mpefaur) - [dappsar](https://github.com/dappsar) - [tomasDmArg](https://github.com/TomasDmArg)
+* [P4Troy](https://github.com/mpefaur) - [dappsar](https://github.com/dappsar) - [tomasDmArg](https://github.com/TomasDmArg)
 
-see more in: <https://github.com/P4-Games/chatterPay/graphs/contributors>
+* See more in: <https://github.com/P4-Games/chatterPay/graphs/contributors>
 
-
-## Maintenance
-
-- [Maintenance Scripts](./.doc/maintenance/maintenance-scripts.md)
