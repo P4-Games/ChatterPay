@@ -28,5 +28,5 @@ NEXT_PUBLIC_UI_URL=http://localhost:3000
 NEXT_PUBLIC_ALLOWED_ORIGINS=http://localhost:3000
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY={recaptcha side key}
 NEXT_PUBLIC_NFT_IMAGE_REPOSITORY={gcp|ipfs|icp}
-NEXT_PUBLIC_NFT_MARKETPLACE_URL=https://testnets.opensea.io/assets/arbitrum-sepolia/0xAc3F97E45F67052b1AdBbC4d4eB1153Ba14E955d
+NEXT_PUBLIC_NFT_MARKETPLACE_URL=https://testnets.opensea.io/assets/arbitrum_sepolia/0xAc3F97E45F67052b1AdBbC4d4eB1153Ba14E955d
 

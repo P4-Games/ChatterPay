@@ -48,7 +48,7 @@ export const NFT_TRX_EXPLORER = 'https://sepolia.arbiscan.io'
 
 export const NFT_MARKETPLACE_URL =
   process.env.NEXT_PUBLIC_NFT_MARKETPLACE_URL ||
-  'https://testnets.opensea.io/assets/arbitrum-sepolia'
+  'https://testnets.opensea.io/assets/arbitrum_sepolia'
 
 export const NFT_SHARE = 'https://api.whatsapp.com/send/?text=MESSAGE'
 
