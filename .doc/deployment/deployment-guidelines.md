@@ -1,4 +1,4 @@
-# Deploy Guidelines
+# Deployment Guidelines
 
 ## Upload Frontend to ICP
 
