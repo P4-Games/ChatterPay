@@ -22,7 +22,7 @@ import { useTranslate } from 'src/locales'
 import {
   NFT_SHARE,
   UI_API_URL,
-  NFT_TRX_EXPLORER,
+  EXPLORER_NFT_URL,
   NFT_MARKETPLACE_URL,
   NFT_IMAGE_REPOSITORY
 } from 'src/config-global'
@@ -45,7 +45,7 @@ export default function NftItem({ nft }: Props) {
 
   const { trxId, nftId, metadata } = nft
 
-  const linkTrx = `${NFT_TRX_EXPLORER}/tx/${trxId}`
+  const linkTrx = `${EXPLORER_NFT_URL}/tx/${trxId}`
   const linkMarketplace = `${NFT_MARKETPLACE_URL}/${nftId}`
 
   const mintUrl = `${UI_API_URL}/nfts/mint/${nftId.toString()}`
