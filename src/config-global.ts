@@ -1,4 +1,4 @@
-import { ENV } from '@pushprotocol/uiweb'
+import { ENV } from '@pushprotocol/restapi/src/lib/constants'
 
 import { Network } from './types/networks'
 import { IBalance, IBalances } from './types/wallet'
