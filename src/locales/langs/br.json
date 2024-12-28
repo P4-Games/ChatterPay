@@ -11,7 +11,7 @@
     "required": "obrigatório",
     "must-be-numeric": "Deve ser numérico",
     "must-be-max": "Deve ter no máximo {MAX_DIGITS} dígitos",
-    "must-be-valid-email": "O email deve ser um endereço de email válido",
+    "must-be-valid-email": "O email deve ser um endereço de email válido",    
     "must-be-min": "Deve ter no mínimo {MIN_CHARS} caracteres",
     "nodata": "Sem Dados",
     "save": "Salvar Alterações",
@@ -34,6 +34,7 @@
     "account": "Conta",
     "logout": "Sair",
     "email": "Alterar Email",
+    "notifications": "Notificações",
     "transfer-all": "Transfer Tudo"
   },
   "terms": {
@@ -250,7 +251,7 @@
           "answer": "Digite seu número de telefone registrado. Um código de 6 dígitos será enviado para o seu telefone por segurança; depois de inseri-lo, você poderá acessar o site."
         }
       }
-    },
+    },    
     "get-started": {
       "title": "Comece com",
       "description": "Todo o poder do Web3 sem complicações.",
@@ -310,8 +311,8 @@
   "transfer-all": {
     "info": "Indica um endereço de carteira para onde serão enviados todos os fundos que você possui no Chatterpay.",
     "msgs": {
-      "ok": "Os fundos foram transferidos. Você os verá na carteira indicada em breve.",
-      "error": "Houve um erro ao tentar transferir os fundos."
+        "ok": "Os fundos foram transferidos. Você os verá na carteira indicada em breve.",
+        "error": "Houve um erro ao tentar transferir os fundos."
     },
     "actions": {
       "transfer": "Transferir Tudo"
@@ -335,10 +336,6 @@
       "cta-msg": "Reivindique seu certificado na blockchain gratuitamente!",
       "opensea-alt": "logo open sea",
       "wapp-msg": "Gostaria de mintar o NFT"
-    },
-    "share": {
-      "cta": "Compartilhar certificado",
-      "clipboard": "Link copiado!"
     }
   },
   "account": {
@@ -354,6 +351,13 @@
       "code-info": "Por favor, insira o código de 6 dígitos que enviamos para o seu WhatsApp (pode demorar cerca de 2 minutos para chegar).",
       "invalid-code": "Código inválido",
       "code-bot": "Insira este código {2FA_CODE} para validar a alteração do seu e-mail no Chatterpay. É muito importante que você não compartilhe esta informação com ninguém. Se você não solicitou o código, desconsidere esta mensagem e entre em contato conosco para que possamos ajudá-lo!"
+    },
+    "notifications": {
+      "refresh": "Atualizar",
+      "msgs": {
+        "no-notifications": "Você não tem novas notificações",
+        "error": "Ocorreu um erro ao tentar obter as notificações. Tente novamente mais tarde."
+      }
     }
   }
 }

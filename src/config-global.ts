@@ -48,7 +48,7 @@ export const NFT_TRX_EXPLORER = 'https://sepolia.arbiscan.io'
 
 export const NFT_MARKETPLACE_URL =
   process.env.NEXT_PUBLIC_NFT_MARKETPLACE_URL ||
-  'https://testnets.opensea.io/assets/arbitrum-sepolia'
+  'https://testnets.opensea.io/assets/arbitrum_sepolia'
 
 export const NFT_SHARE = 'https://api.whatsapp.com/send/?text=MESSAGE'
 
@@ -56,6 +56,18 @@ export const STORAGE_KEY_TOKEN = 'accessToken'
 export const STORAGE_KEY_SETTINGS = 'settings'
 export const CONTACT_EMAIL = 'contacto@chatterpay.com.ar'
 export const GET_BALANCES_FROM_BACKEND = true
+export const NOTIFICATIONS_PAGE_SIZE: number = Number.isNaN(
+  parseInt(process.env.NEXT_PUBLIC_NOTIFICATIONS_PAGE_SIZE ?? '', 10)
+)
+  ? 20
+  : parseInt(process.env.NEXT_PUBLIC_NOTIFICATIONS_PAGE_SIZE ?? '10', 10)
+export const NOTIFICATIONS_INTERVAL_TO_FETCH_PAGE: number = Number.isNaN(
+  parseInt(process.env.NEXT_PUBLIC_CHATS_INTERVAL_TO_FETCH_PAGE ?? '', 10)
+)
+  ? 3000
+  : parseInt(process.env.NEXT_PUBLIC_CHATS_INTERVAL_TO_FETCH_PAGE ?? '3000', 10)
+
+export const notificationsRefreshInterval = 5000
 
 export const defaultBalance: IBalance = {
   network: '',

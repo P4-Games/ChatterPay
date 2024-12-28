@@ -6,5 +6,6 @@ export {
   useGetWalletNft,
   useGetWalletNfts,
   useGetWalletBalance,
-  useGetWalletTransactions
+  useGetWalletTransactions,
+  useGetWalletNotifications
 } from './use-wallet'

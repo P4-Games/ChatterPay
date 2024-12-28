@@ -28,7 +28,8 @@ export const paths = {
     },
     user: {
       root: `${ROOTS.DASHBOARD}/user/account`,
-      email: `${ROOTS.DASHBOARD}/user/account/email`
+      email: `${ROOTS.DASHBOARD}/user/account/email`,
+      notifications: `${ROOTS.DASHBOARD}/user/notifications`
     }
   }
 }
