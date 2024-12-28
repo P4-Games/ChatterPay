@@ -22,7 +22,7 @@ import { useResponsive } from 'src/hooks/use-responsive'
 import { fNumber } from 'src/utils/format-number'
 
 import { useTranslate } from 'src/locales'
-import { EXPLORER_L1, EXPLORER_L2, BOT_WAPP_URL } from 'src/config-global'
+import { EXPLORER_L1_URL, EXPLORER_L2_URL, BOT_WAPP_URL } from 'src/config-global'
 
 import Iconify from 'src/components/iconify'
 
@@ -42,8 +42,8 @@ export default function BankingBalances({
   tableData,
   ...other
 }: Props) {
-  const walletLinkL1 = `${EXPLORER_L1}/address/${tableData?.wallet || ''}`
-  const walletLinkL2 = `${EXPLORER_L2}/address/${tableData?.wallet || ''}`
+  const walletLinkL1 = `${EXPLORER_L1_URL}/address/${tableData?.wallet || ''}`
+  const walletLinkL2 = `${EXPLORER_L2_URL}/address/${tableData?.wallet || ''}`
 
   const { t } = useTranslate()
 

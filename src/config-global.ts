@@ -1,3 +1,5 @@
+import { ENV } from '@pushprotocol/restapi/src/lib/constants'
+
 import { Network } from './types/networks'
 import { IBalance, IBalances } from './types/wallet'
 
@@ -17,6 +19,8 @@ export const JWT_SECRET = process.env.JWT_SECRET || 'some_secr3t'
 export const API3_ENABLED = (process.env.API3_ENABLED || 'false') === 'true'
 export const DB_CHATTERPAY_NAME = process.env.DB_CHATTERPAY_NAME || 'chatterpay_dev'
 export const RECAPTCHA_API_KEY = process.env.RECAPTCHA_API_KEY || ''
+export const PUSH_NETWORK: string = process.env.PUSH_NETWORK || '11155111'
+export const PUSH_ENVIRONMENT: ENV = (process.env.PUSH_ENVIRONMENT as ENV) || ENV.DEV
 
 // Vercel has a timeout of 10 seconds (only for free plan) in the APIs.
 // The login has certain logic between ChatterPay and the backend of the Chatizalo,
@@ -32,6 +36,12 @@ export const USE_MOCK = (process.env.NEXT_PUBLIC_USE_MOCK || 'true') === 'true'
 export const ALLOWED_ORIGINS = process.env.NEXT_PUBLIC_ALLOWED_ORIGINS || '*'
 export const fromICP = (process.env.NEXT_PUBLIC_FROM_ICP || 'true') === 'true'
 export const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''
+export const EXPLORER_L1_URL: string =
+  process.env.NEXT_PUBLIC_EXPLORER_L1_URL || 'https://sepolia.etherscan.io'
+export const EXPLORER_L2_URL: string =
+  process.env.NEXT_PUBLIC_EXPLORER_L2_URL || 'https://sepolia.arbiscan.io/'
+export const EXPLORER_NFT_URL: string =
+  process.env.NEXT_PUBLIC_EXPLORER_NFT_URL || 'https://sepolia.arbiscan.io'
 export const NFT_IMAGE_REPOSITORY = (
   process.env.NEXT_PUBLIC_NFT_IMAGE_REPOSITORY || 'gcp'
 ).toLowerCase()
@@ -42,16 +52,11 @@ export const PATH_AFTER_LOGIN = `/dashboard`
 export const BOT_WAPP_URL =
   'https://api.whatsapp.com/send/?phone=5491164629653&text=MESSAGE&type=phone_number&app_absent=0'
 
-export const EXPLORER_L1 = 'https://sepolia.etherscan.io'
-export const EXPLORER_L2 = 'https://l1sload-blockscout.scroll.io' // Scroll devnet Explorer
-export const NFT_TRX_EXPLORER = 'https://sepolia.arbiscan.io'
-
 export const NFT_MARKETPLACE_URL =
   process.env.NEXT_PUBLIC_NFT_MARKETPLACE_URL ||
   'https://testnets.opensea.io/assets/arbitrum_sepolia'
 
 export const NFT_SHARE = 'https://api.whatsapp.com/send/?text=MESSAGE'
-
 export const STORAGE_KEY_TOKEN = 'accessToken'
 export const STORAGE_KEY_SETTINGS = 'settings'
 export const CONTACT_EMAIL = 'contacto@chatterpay.com.ar'

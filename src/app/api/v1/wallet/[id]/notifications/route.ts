@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server'
 import * as PushAPI from '@pushprotocol/restapi'
-import { ENV } from '@pushprotocol/restapi/src/lib/constants'
 
-import { APP_ENV } from 'src/config-global'
+import { PUSH_NETWORK, PUSH_ENVIRONMENT } from 'src/config-global'
 
 import { IErrorResponse } from 'src/types/api'
 
@@ -34,12 +33,9 @@ export async function GET(request: Request, { params }: { params: IParams }) {
   }
 
   try {
-    const pushEnv: ENV = APP_ENV === 'development' ? ENV.DEV : ENV.PROD
-    const network = APP_ENV === 'development' ? '421614' : '42161'
-
     const notifications = await PushAPI.user.getFeeds({
-      user: `eip155:${network}:${params.id}`,
-      env: pushEnv
+      user: `eip155:${PUSH_NETWORK}:${params.id}`,
+      env: PUSH_ENVIRONMENT
     })
 
     return NextResponse.json(notifications)
