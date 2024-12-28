@@ -21,6 +21,8 @@ API3_ENABLED=false
 JWT_SECRET={some secret text}
 NEXT_PUBLIC_FROM_ICP=true
 RECAPTCHA_API_KEY={recaptcha api key}
+PUSH_NETWORK= 11155111 | 421614 | 42161
+PUSH_ENVIRONMENT= dev | staging | prod
 
 # client-side
 NEXT_PUBLIC_USE_MOCK=true

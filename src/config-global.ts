@@ -1,3 +1,5 @@
+import { ENV } from '@pushprotocol/uiweb'
+
 import { Network } from './types/networks'
 import { IBalance, IBalances } from './types/wallet'
 
@@ -17,6 +19,8 @@ export const JWT_SECRET = process.env.JWT_SECRET || 'some_secr3t'
 export const API3_ENABLED = (process.env.API3_ENABLED || 'false') === 'true'
 export const DB_CHATTERPAY_NAME = process.env.DB_CHATTERPAY_NAME || 'chatterpay_dev'
 export const RECAPTCHA_API_KEY = process.env.RECAPTCHA_API_KEY || ''
+export const PUSH_NETWORK: string = process.env.PUSH_NETWORK || '11155111'
+export const PUSH_ENVIRONMENT: ENV = (process.env.PUSH_ENVIRONMENT as ENV) || ENV.DEV
 
 // Vercel has a timeout of 10 seconds (only for free plan) in the APIs.
 // The login has certain logic between ChatterPay and the backend of the Chatizalo,
