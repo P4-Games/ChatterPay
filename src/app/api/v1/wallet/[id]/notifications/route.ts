@@ -14,8 +14,6 @@ type IParams = {
 // ----------------------------------------------------------------------
 
 export async function GET(request: Request, { params }: { params: IParams }) {
-  console.log('get notificacions called')
-
   if (!params.id) {
     const errorMessage: IErrorResponse = {
       error: {
