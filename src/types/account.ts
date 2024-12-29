@@ -5,5 +5,6 @@ export type IAccount = {
   phone_number: string
   photo: string
   wallet: string
+  walletEOA: string
   code?: string
 }
