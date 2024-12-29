@@ -37,25 +37,6 @@ export function useGetWalletNotifications(
   })
 }
 
-/*
-export function useGetWalletNotifications(walletId: string) {
-  const { data, error, isLoading, isValidating, mutate } = useSWR(
-    endpoints.dashboard.wallet.notifications(walletId),
-    fetcher
-  )
-
-  return {
-    data,
-    isLoading,
-    error,
-    isValidating,
-    mutate // Include mutate for manual refresh
-  }
-
-  // return useGetCommon(endpoints.dashboard.wallet.notifications(walletId))
-}
-*/
-
 // ----------------------------------------------------------------------
 
 export async function transferAll(userId: string, data: { walletTo: string }) {
