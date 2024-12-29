@@ -21,13 +21,14 @@ const PushNotifications: React.FC = () => {
   const [walletAddress, setWalletAddress] = useState<string | null>(null)
 
   useEffect(() => {
-    if (user && user.wallet) {
-      setWalletAddress(user.wallet)
+    // User is subscribed to the Push channel using his EOA wallet!"
+    if (user && user.walletEOA) {
+      setWalletAddress(user.walletEOA)
     }
   }, [user])
 
   const { data, isLoading }: { data: any; isLoading: boolean } = useGetWalletNotifications(
-    walletAddress || user?.wallet,
+    walletAddress || user?.walletEAO,
     5,
     notificationsRefreshInterval
   )
