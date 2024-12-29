@@ -39,7 +39,7 @@ export const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || 
 export const EXPLORER_L1_URL: string =
   process.env.NEXT_PUBLIC_EXPLORER_L1_URL || 'https://sepolia.etherscan.io'
 export const EXPLORER_L2_URL: string =
-  process.env.NEXT_PUBLIC_EXPLORER_L2_URL || 'https://sepolia.arbiscan.io/'
+  process.env.NEXT_PUBLIC_EXPLORER_L2_URL || 'https://sepolia.arbiscan.io'
 export const EXPLORER_NFT_URL: string =
   process.env.NEXT_PUBLIC_EXPLORER_NFT_URL || 'https://sepolia.arbiscan.io'
 export const NFT_IMAGE_REPOSITORY = (

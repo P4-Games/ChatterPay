@@ -85,7 +85,8 @@ export default function AccountGeneral() {
         email: user!.email,
         phone_number: user!.phoneNumber,
         photo: user!.photoURL,
-        wallet: user!.wallet
+        wallet: user!.wallet,
+        walletEOA: user!.walletEOA
       }
       await updateContact(user!.id, userData)
 
