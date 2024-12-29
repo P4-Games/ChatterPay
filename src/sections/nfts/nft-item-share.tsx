@@ -175,15 +175,14 @@ export default function NftItemShare({ nftId, nftData }: NftItemClaimProps) {
 
         <m.div variants={varFade().inUp}>
           <Button size='large' color='inherit' variant='contained' onClick={handleTriggerShare}>
-            <Icon icon='ri:share-fill' width={20} style={{ marginRight: 8 }} />{' '}
-            {t('nfts.share.cta')}
+            <Icon icon='ri:share-fill' width={20} style={{ marginRight: 8 }} /> {t('common.share')}
           </Button>
         </m.div>
       </Box>
 
       {/* Diálogo de compartir */}
       <Dialog open={openShare} onClose={handleTriggerShare} maxWidth='xs' fullWidth>
-        <DialogTitle>{t('nfts.share.cta')}</DialogTitle>
+        <DialogTitle>{t('common.share')}</DialogTitle>
         <DialogContent>
           <Box
             sx={{
