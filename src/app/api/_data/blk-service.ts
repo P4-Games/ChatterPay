@@ -21,7 +21,7 @@ import TokenPriceFeedsAbi from './_abis/TokenPriceFeedsAbi.json'
 export async function transferAll(channelUserId: string, walletTo: string): Promise<boolean> {
   try {
     const data = { channel_user_id: channelUserId, dst_address: walletTo }
-    await axios.post(`${BACKEND_API_URL}/withdraw_funds`, data)
+    await axios.post(`${BACKEND_API_URL}/withdraw_all`, data)
     return true
   } catch (error) {
     console.error('Error transfering all funds:', error)
