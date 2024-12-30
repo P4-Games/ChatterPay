@@ -56,7 +56,7 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
       )
     }
 
-    const result: boolean = await transferAll(user.id, walletTo)
+    const result: boolean = await transferAll(user.phone_number, walletTo)
     if (!result) {
       return new NextResponse(
         JSON.stringify({
