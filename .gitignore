@@ -19,6 +19,7 @@ build
 
 # environment variables
 .env*
+__env*
 
 # vercel
 .vercel
