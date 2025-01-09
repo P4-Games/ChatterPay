@@ -21,9 +21,33 @@ const SCHEMA_USER_CONVERSATIONS: string = 'user_conversations'
 
 // ----------------------------------------------------------------------
 
-interface IAccountDB extends Omit<IAccount, 'id'> {
-  _id: any
+export interface IAccountDB {
+  _id: string
+  name: string
+  email?: string
+  phone_number: string
+  photo: string
+  code?: string
+  settings: {
+    notifications: {
+      language: string
+    }
+  }
+  wallets: {
+    wallet_proxy: string
+    wallet_eoa: string
+    chain_id: number
+    status: string
+  }[]
+  operations_in_progress: {
+    mint_nft: number
+    mint_nft_copy: number
+    swap: number
+    transfer: number
+    withdraw_all: number
+  }
 }
+
 interface ITransactionDB extends Omit<ITransaction, 'id'> {
   _id: any
 }
@@ -61,8 +85,19 @@ export async function getUserByPhone(phone: string): Promise<IAccount | undefine
     return undefined
   }
 
-  const { _id, ...rest } = data
-  const user: IAccount = { id: getFormattedId(_id), ...rest }
+  const { _id, wallets, ...rest } = data
+
+  // Assuming that wallets is an array and we're only taking the first wallet
+  const wallet = wallets && wallets.length > 0 ? wallets[0].wallet_proxy : ''
+  const walletEOA = wallets && wallets.length > 0 ? wallets[0].wallet_eoa : ''
+
+  // Transform the user object to match the old model
+  const user: IAccount = {
+    id: getFormattedId(_id),
+    wallet,
+    walletEOA,
+    ...rest
+  }
   return user
 }
 
@@ -78,8 +113,21 @@ export async function getUserById(id: string): Promise<IAccount | undefined> {
     return undefined
   }
 
-  const { _id, ...rest } = data
-  const user: IAccount = { id: getFormattedId(_id), ...rest }
+  // Destructure _id and other properties from the user data
+  const { _id, wallets, ...rest } = data
+
+  // If wallets exist, extract the first wallet's wallet_proxy and wallet_eoa
+  const wallet = wallets && wallets.length > 0 ? wallets[0].wallet_proxy : ''
+  const walletEOA = wallets && wallets.length > 0 ? wallets[0].wallet_eoa : ''
+
+  // Transform the user data to match the IAccount model
+  const user: IAccount = {
+    id: getFormattedId(_id), // Add the formatted user ID
+    wallet, // Add wallet
+    walletEOA, // Add walletEOA
+    ...rest
+  }
+
   return user
 }
 
