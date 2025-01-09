@@ -66,6 +66,7 @@ export default function OverviewBankingView() {
               tableLabels={[
                 { id: 'description', label: t('transactions.table-transaction') },
                 { id: 'amount', label: t('transactions.table-amount') },
+                { id: 'amount', label: t('transactions.table-type') },
                 { id: 'date', label: t('transactions.table-date') },
                 { id: 'status', label: t('transactions.table-status') },
                 { id: '' }

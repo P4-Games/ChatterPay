@@ -246,6 +246,8 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
         {fNumber(row.amount)} {row.token}
       </TableCell>
 
+      <TableCell>{row.type}</TableCell>
+
       <TableCell>
         <ListItemText
           primary={fDate(new Date(row.date))}
