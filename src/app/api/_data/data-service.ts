@@ -290,7 +290,7 @@ export async function getWalletNft(wallet: string, nftId: string): Promise<INFT 
   return result
 }
 
-export async function geUserTransactions(wallet: string): Promise<ITransaction[] | undefined> {
+export async function getUserTransactions(wallet: string): Promise<ITransaction[] | undefined> {
   const client = await getClientPromise()
   const db = client.db(DB_CHATTERPAY_NAME)
 
@@ -305,16 +305,22 @@ export async function geUserTransactions(wallet: string): Promise<ITransaction[]
       {
         $lookup: {
           from: SCHEMA_USERS,
-          localField: 'wallet_from',
-          foreignField: 'wallet',
+          let: { wallet_from: '$wallet_from' },
+          pipeline: [
+            { $unwind: '$wallets' },
+            { $match: { $expr: { $eq: ['$wallets.wallet_proxy', '$$wallet_from'] } } }
+          ],
           as: 'contact_from_user'
         }
       },
       {
         $lookup: {
           from: SCHEMA_USERS,
-          localField: 'wallet_to',
-          foreignField: 'wallet',
+          let: { wallet_to: '$wallet_to' },
+          pipeline: [
+            { $unwind: '$wallets' },
+            { $match: { $expr: { $eq: ['$wallets.wallet_proxy', '$$wallet_to'] } } }
+          ],
           as: 'contact_to_user'
         }
       },
