@@ -290,7 +290,7 @@ export async function getWalletNft(wallet: string, nftId: string): Promise<INFT 
   return result
 }
 
-export async function geUserTransactions(wallet: string): Promise<ITransaction[] | undefined> {
+export async function getUserTransactions(wallet: string): Promise<ITransaction[] | undefined> {
   const client = await getClientPromise()
   const db = client.db(DB_CHATTERPAY_NAME)
 
@@ -305,16 +305,22 @@ export async function geUserTransactions(wallet: string): Promise<ITransaction[]
       {
         $lookup: {
           from: SCHEMA_USERS,
-          localField: 'wallet_from',
-          foreignField: 'wallet',
+          let: { wallet_from: '$wallet_from' },
+          pipeline: [
+            { $unwind: '$wallets' },
+            { $match: { $expr: { $eq: ['$wallets.wallet_proxy', '$$wallet_from'] } } }
+          ],
           as: 'contact_from_user'
         }
       },
       {
         $lookup: {
           from: SCHEMA_USERS,
-          localField: 'wallet_to',
-          foreignField: 'wallet',
+          let: { wallet_to: '$wallet_to' },
+          pipeline: [
+            { $unwind: '$wallets' },
+            { $match: { $expr: { $eq: ['$wallets.wallet_proxy', '$$wallet_to'] } } }
+          ],
           as: 'contact_to_user'
         }
       },
@@ -335,13 +341,17 @@ export async function geUserTransactions(wallet: string): Promise<ITransaction[]
           _id: 1,
           date: 1,
           wallet_from: 1,
-          contact_from_phone: { $ifNull: ['$contact_from_user.phone_number', null] },
-          contact_from_name: { $ifNull: ['$contact_from_user.name', null] },
-          contact_from_avatar_url: { $ifNull: ['$contact_from_user.photo', null] },
+          contact_from_phone: { $ifNull: ['$contact_from_user.phone_number', 'Chatterpay'] },
+          contact_from_name: { $ifNull: ['$contact_from_user.name', 'Chatterpay'] },
+          contact_from_avatar_url: {
+            $ifNull: ['$contact_from_user.photo', '/assets/images/home/logo.png']
+          },
           wallet_to: 1,
-          contact_to_phone: { $ifNull: ['$contact_to_user.phone_number', null] },
-          contact_to_name: { $ifNull: ['$contact_to_user.name', null] },
-          contact_to_avatar_url: { $ifNull: ['$contact_to_user.photo', null] },
+          contact_to_phone: { $ifNull: ['$contact_to_user.phone_number', 'Chatterpay'] },
+          contact_to_name: { $ifNull: ['$contact_to_user.name', 'Chatterpay'] },
+          contact_to_avatar_url: {
+            $ifNull: ['$contact_to_user.photo', '/assets/images/home/logo.png']
+          },
           token: 1,
           amount: 1,
           type: 1,
