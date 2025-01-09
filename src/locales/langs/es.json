@@ -300,6 +300,7 @@
     "table-transaction": "Transacción",
     "table-amount": "Monto",
     "table-date": "Fecha",
+    "table-type": "Tipo", 
     "table-status": "Estado",
     "table-view-all": "Ver Todo",
     "table-download": "Descargar",

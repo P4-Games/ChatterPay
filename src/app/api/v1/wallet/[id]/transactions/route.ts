@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-import { geUserTransactions } from 'src/app/api/_data/data-service'
+import { getUserTransactions } from 'src/app/api/_data/data-service'
 
 import { IErrorResponse } from 'src/types/api'
 import { ITransaction } from 'src/types/wallet'
@@ -34,7 +34,7 @@ export async function GET(request: Request, { params }: { params: IParams }) {
   }
 
   try {
-    const data: ITransaction[] = (await geUserTransactions(params.id)) ?? []
+    const data: ITransaction[] = (await getUserTransactions(params.id)) ?? []
     return NextResponse.json(data)
   } catch (ex) {
     console.error(ex)
