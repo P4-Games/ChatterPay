@@ -2,6 +2,9 @@ const path = require('path')
 
 module.exports = {
   trailingSlash: true,
+  experimental: {
+    turbo: true, // enable TurboPack
+  },
   modularizeImports: {
     '@mui/icons-material': {
       transform: '@mui/icons-material/{{member}}',
