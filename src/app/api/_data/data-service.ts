@@ -1,6 +1,6 @@
 import { ObjectId, Collection } from 'mongodb'
 
-import { DB_CHATTERPAY_NAME } from 'src/config-global'
+import { DB_BOT_NAME, DB_CHATTERPAY_NAME } from 'src/config-global'
 
 import { IAccount } from 'src/types/account'
 import { LastUserConversation } from 'src/types/chat'
@@ -15,8 +15,6 @@ import { getObjectId, getFormattedId, updateOneCommon } from './mongo-utils'
 const SCHEMA_USERS: string = 'users'
 const SCHEMA_TRANSACTIONS: string = 'transactions'
 const SCHEMA_NFTS: string = 'nfts'
-
-const DB_BOT_NAME: string = 'chatterpay'
 const SCHEMA_USER_CONVERSATIONS: string = 'user_conversations'
 
 // ----------------------------------------------------------------------
