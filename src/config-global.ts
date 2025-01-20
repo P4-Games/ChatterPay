@@ -15,22 +15,22 @@ const {
   BOT_API_URL,
   BACKEND_API_URL,
   BACKEND_API_TOKEN,
-  BOT_API_WAPP_ENABLED: _botApiWappEnabled = 'true',
+  BOT_API_WAPP_ENABLED = 'true',
   NODE_PROVIDER_SEPOLIA_URL,
   NODE_PROVIDER_MUMBAI_URL,
   NODE_PROVIDER_SCROLL_URL,
   JWT_SECRET = '',
-  API3_ENABLED: _api3Enabled = 'false',
+  API3_ENABLED = 'false',
   DB_CHATTERPAY_NAME = 'chatterpay-dev',
   DB_BOT_NAME = 'chatterpay-develop',
   RECAPTCHA_API_KEY = '',
   PUSH_NETWORK = '11155111',
   PUSH_ENVIRONMENT = 'DEV',
-  HANDLE_VERCEL_FREE_PLAN_TIMEOUT: _handleVercelFreePlanTimeOut = 'true',
+  HANDLE_VERCEL_FREE_PLAN_TIMEOUT = 'true',
   NEXT_PUBLIC_UI_URL,
-  NEXT_PUBLIC_USE_MOCK: _useMock = 'true',
+  NEXT_PUBLIC_USE_MOCK =  'true',
   NEXT_PUBLIC_ALLOWED_ORIGINS = '*',
-  NEXT_PUBLIC_FROM_ICP: _fromICP = 'true',
+  NEXT_PUBLIC_FROM_ICP = 'true',
   NEXT_PUBLIC_RECAPTCHA_SITE_KEY = '',
   NEXT_PUBLIC_EXPLORER_L1_URL = 'https://sepolia.etherscan.io',
   NEXT_PUBLIC_EXPLORER_L2_URL = 'https://sepolia.arbiscan.io',
@@ -49,6 +49,7 @@ export {
   MONGODB_BOT,
   BOT_API_URL,
   DB_BOT_NAME,
+  API3_ENABLED,
   PUSH_NETWORK,
   BOT_API_TOKEN,
   BACKEND_API_URL,
@@ -57,8 +58,7 @@ export {
   DB_CHATTERPAY_NAME
 }
 
-export const API3_ENABLED: boolean = _api3Enabled.toLowerCase() === 'true'
-export const botApiWappEnabled: boolean = _botApiWappEnabled.toLowerCase() === 'true'
+export const botApiWappEnabled: boolean = BOT_API_WAPP_ENABLED?.toString().toLowerCase() === 'true'
 export const nodeProviderUrlSepolia = NODE_PROVIDER_SEPOLIA_URL
 export const nodeProviderUrlPolygon = NODE_PROVIDER_MUMBAI_URL
 export const nodeProviderUrlScroll = NODE_PROVIDER_SCROLL_URL
@@ -68,16 +68,16 @@ export const PUSH_ENVIRONMENT_PARSED: ENV = PUSH_ENVIRONMENT as ENV
 // The login has certain logic between ChatterPay and the backend of the Chatizalo,
 // which may cause it to take about 10 seconds, so this variable is used to improve that logic.
 export const handleVercelFreePlanTimeOut: boolean =
-  _handleVercelFreePlanTimeOut.toLowerCase() === 'true'
+HANDLE_VERCEL_FREE_PLAN_TIMEOUT.toString().toLowerCase() === 'true'
 // ----------------------------------------------------------------------
 
 // ----------------------------------------------------------------------
 // environment: set client-side
 // ----------------------------------------------------------------------
 export const UI_API_URL = NEXT_PUBLIC_UI_URL
-export const USE_MOCK: boolean = _useMock.toLowerCase() === 'true'
+export const USE_MOCK: boolean = NEXT_PUBLIC_USE_MOCK?.toString().toLowerCase() === 'true'
 export const ALLOWED_ORIGINS = NEXT_PUBLIC_ALLOWED_ORIGINS
-export const fromICP: boolean = _fromICP.toLowerCase() === 'true'
+export const fromICP: boolean = NEXT_PUBLIC_FROM_ICP?.toString().toLowerCase() === 'true'
 export const RECAPTCHA_SITE_KEY = NEXT_PUBLIC_RECAPTCHA_SITE_KEY
 export const EXPLORER_L1_URL = NEXT_PUBLIC_EXPLORER_L1_URL
 export const EXPLORER_L2_URL = NEXT_PUBLIC_EXPLORER_L2_URL
