@@ -28,7 +28,7 @@ const {
   PUSH_ENVIRONMENT = 'DEV',
   HANDLE_VERCEL_FREE_PLAN_TIMEOUT = 'true',
   NEXT_PUBLIC_UI_URL,
-  NEXT_PUBLIC_USE_MOCK =  'true',
+  NEXT_PUBLIC_USE_MOCK = 'true',
   NEXT_PUBLIC_ALLOWED_ORIGINS = '*',
   NEXT_PUBLIC_FROM_ICP = 'true',
   NEXT_PUBLIC_RECAPTCHA_SITE_KEY = '',
@@ -68,14 +68,15 @@ export const PUSH_ENVIRONMENT_PARSED: ENV = PUSH_ENVIRONMENT as ENV
 // The login has certain logic between ChatterPay and the backend of the Chatizalo,
 // which may cause it to take about 10 seconds, so this variable is used to improve that logic.
 export const handleVercelFreePlanTimeOut: boolean =
-HANDLE_VERCEL_FREE_PLAN_TIMEOUT.toString().toLowerCase() === 'true'
+  HANDLE_VERCEL_FREE_PLAN_TIMEOUT.toString().toLowerCase() === 'true'
 // ----------------------------------------------------------------------
 
 // ----------------------------------------------------------------------
 // environment: set client-side
 // ----------------------------------------------------------------------
 export const UI_API_URL = NEXT_PUBLIC_UI_URL
-export const USE_MOCK: boolean = NEXT_PUBLIC_USE_MOCK?.toString().toLowerCase() === 'true'
+export const USE_MOCK: boolean =
+  (NEXT_PUBLIC_USE_MOCK || 'true').toString().toLowerCase() === 'true'
 export const ALLOWED_ORIGINS = NEXT_PUBLIC_ALLOWED_ORIGINS
 export const fromICP: boolean = NEXT_PUBLIC_FROM_ICP?.toString().toLowerCase() === 'true'
 export const RECAPTCHA_SITE_KEY = NEXT_PUBLIC_RECAPTCHA_SITE_KEY
