@@ -90,7 +90,7 @@ export async function POST(req: NextRequest) {
 
 function generateAccessToken(user: IAccount): string {
   delete user.code
-  const accessToken = jwt.sign({ user }, JWT_SECRET, {
+  const accessToken = jwt.sign({ user }, JWT_SECRET || 'some_text', {
     expiresIn: '3h'
   })
   return accessToken
