@@ -19,7 +19,7 @@ const {
   NODE_PROVIDER_SEPOLIA_URL,
   NODE_PROVIDER_MUMBAI_URL,
   NODE_PROVIDER_SCROLL_URL,
-  JWT_SECRET = 'some_secr3t',
+  JWT_SECRET = '',
   API3_ENABLED = 'false',
   DB_CHATTERPAY_NAME = 'chatterpay-dev',
   DB_BOT_NAME = 'chatterpay-develop',
