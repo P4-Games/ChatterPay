@@ -12,6 +12,7 @@ steps:
       - MONGODB=${_MONGODB}
       - MONGODB_BOT=${_MONGODB_BOT}
       - DB_CHATTERPAY_NAME=${_DB_CHATTERPAY_NAME}
+      - DB_BOT_NAME=${_DB_BOT_NAME}
       - BOT_API_TOKEN=${_BOT_API_TOKEN}
       - BOT_API_URL=${_BOT_API_URL}
       - BOT_API_WAPP_ENABLED=${_BOT_API_WAPP_ENABLED}
@@ -56,6 +57,7 @@ steps:
       '--build-arg', 'MONGODB=${_MONGODB}',
       '--build-arg', 'MONGODB_BOT=${_MONGODB_BOT}',
       '--build-arg', 'DB_CHATTERPAY_NAME=${_DB_CHATTERPAY_NAME}',
+      '--build-arg', 'DB_BOT_NAME=${_DB_BOT_NAME}',
       '--build-arg', 'RECAPTCHA_API_KEY=${_RECAPTCHA_API_KEY}',
       '--build-arg', 'PUSH_NETWORK=${_PUSH_NETWORK}',
       '--build-arg', 'PUSH_ENVIRONMENT=${_PUSH_ENVIRONMENT}',

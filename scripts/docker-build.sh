@@ -15,6 +15,7 @@ docker build \
   --build-arg MONGODB="$MONGODB" \
   --build-arg MONGODB_BOT="$MONGODB_BOT" \
   --build-arg DB_CHATTERPAY_NAME="$DB_CHATTERPAY_NAME" \
+  --build-arg DB_BOT_NAME="$DB_BOT_NAME" \
   --build-arg RECAPTCHA_API_KEY="$RECAPTCHA_API_KEY" \
   --build-arg PUSH_NETWORK="$PUSH_NETWORK" \
   --build-arg PUSH_ENVIRONMENT="$PUSH_ENVIRONMENT" \
