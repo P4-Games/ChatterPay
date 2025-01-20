@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import * as PushAPI from '@pushprotocol/restapi'
 
-import { PUSH_NETWORK, PUSH_ENVIRONMENT_PARSED } from 'src/config-global'
+import { PUSH_NETWORK, PUSH_ENVIRONMENT } from 'src/config-global'
 
 import { IErrorResponse } from 'src/types/api'
 
@@ -33,7 +33,7 @@ export async function GET(request: Request, { params }: { params: IParams }) {
   try {
     const notifications = await PushAPI.user.getFeeds({
       user: `eip155:${PUSH_NETWORK}:${params.id}`,
-      env: PUSH_ENVIRONMENT_PARSED
+      env: PUSH_ENVIRONMENT
     })
 
     return NextResponse.json(notifications)

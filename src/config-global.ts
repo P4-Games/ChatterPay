@@ -4,91 +4,55 @@ import { Network } from './types/networks'
 import { IBalance, IBalances } from './types/wallet'
 
 // ----------------------------------------------------------------------
-// environment: Read all
-// ----------------------------------------------------------------------
-const {
-  APP_ENV = 'development',
-  NODE_ENV = 'development',
-  MONGODB,
-  MONGODB_BOT,
-  BOT_API_TOKEN,
-  BOT_API_URL,
-  BACKEND_API_URL,
-  BACKEND_API_TOKEN,
-  BOT_API_WAPP_ENABLED = 'true',
-  NODE_PROVIDER_SEPOLIA_URL,
-  NODE_PROVIDER_MUMBAI_URL,
-  NODE_PROVIDER_SCROLL_URL,
-  JWT_SECRET = '',
-  API3_ENABLED = 'false',
-  DB_CHATTERPAY_NAME = 'chatterpay-dev',
-  DB_BOT_NAME = 'chatterpay-develop',
-  RECAPTCHA_API_KEY = '',
-  PUSH_NETWORK = '11155111',
-  PUSH_ENVIRONMENT = 'DEV',
-  HANDLE_VERCEL_FREE_PLAN_TIMEOUT = 'true',
-  NEXT_PUBLIC_UI_URL,
-  NEXT_PUBLIC_USE_MOCK = 'true',
-  NEXT_PUBLIC_ALLOWED_ORIGINS = '*',
-  NEXT_PUBLIC_FROM_ICP = 'true',
-  NEXT_PUBLIC_RECAPTCHA_SITE_KEY = '',
-  NEXT_PUBLIC_EXPLORER_L1_URL = 'https://sepolia.etherscan.io',
-  NEXT_PUBLIC_EXPLORER_L2_URL = 'https://sepolia.arbiscan.io',
-  NEXT_PUBLIC_EXPLORER_NFT_URL = 'https://sepolia.arbiscan.io',
-  NEXT_PUBLIC_NFT_IMAGE_REPOSITORY = 'gcp'
-} = process.env
 
-// ----------------------------------------------------------------------
-// environment: set server-side
-// ----------------------------------------------------------------------
-export {
-  APP_ENV,
-  MONGODB,
-  NODE_ENV,
-  JWT_SECRET,
-  MONGODB_BOT,
-  BOT_API_URL,
-  DB_BOT_NAME,
-  API3_ENABLED,
-  PUSH_NETWORK,
-  BOT_API_TOKEN,
-  BACKEND_API_URL,
-  BACKEND_API_TOKEN,
-  RECAPTCHA_API_KEY,
-  DB_CHATTERPAY_NAME
-}
-
-export const botApiWappEnabled: boolean = BOT_API_WAPP_ENABLED?.toString().toLowerCase() === 'true'
-export const nodeProviderUrlSepolia = NODE_PROVIDER_SEPOLIA_URL
-export const nodeProviderUrlPolygon = NODE_PROVIDER_MUMBAI_URL
-export const nodeProviderUrlScroll = NODE_PROVIDER_SCROLL_URL
-export const PUSH_ENVIRONMENT_PARSED: ENV = PUSH_ENVIRONMENT as ENV
+// environment: server-side
+export const APP_ENV = process.env?.toString().toLowerCase() || 'development'
+export const NODE_ENV = process.env?.toString().toLowerCase() || 'development'
+export const { MONGODB, MONGODB_BOT } = process.env
+export const { BOT_API_TOKEN, BOT_API_URL } = process.env
+export const { BACKEND_API_URL, BACKEND_API_TOKEN } = process.env
+export const botApiWappEnabled =
+  (process.env.BOT_API_WAPP_ENABLED?.toString().toLowerCase() || 'true') === 'true'
+export const nodeProviderUrlSepolia = process.env.NODE_PROVIDER_SEPOLIA_URL
+export const nodeProviderUrlPolygon = process.env.NODE_PROVIDER_MUMBAI_URL
+export const nodeProviderUrlScroll = process.env.NODE_PROVIDER_SCROLL_URL
+export const { JWT_SECRET } = process.env
+export const API3_ENABLED =
+  (process.env.API3_ENABLED?.toString().toLowerCase() || 'false') === 'true'
+export const DB_CHATTERPAY_NAME = process.env.DB_CHATTERPAY_NAME || 'chatterpay_dev'
+export const DB_BOT_NAME = process.env.DB_BOT_NAME || 'chatterpay-develop'
+export const RECAPTCHA_API_KEY = process.env.RECAPTCHA_API_KEY || ''
+export const PUSH_NETWORK: string = process.env.PUSH_NETWORK || '11155111'
+export const PUSH_ENVIRONMENT: ENV = (process.env.PUSH_ENVIRONMENT as ENV) || ENV.DEV
 
 // Vercel has a timeout of 10 seconds (only for free plan) in the APIs.
 // The login has certain logic between ChatterPay and the backend of the Chatizalo,
 // which may cause it to take about 10 seconds, so this variable is used to improve that logic.
-export const handleVercelFreePlanTimeOut: boolean =
-  HANDLE_VERCEL_FREE_PLAN_TIMEOUT.toString().toLowerCase() === 'true'
-// ----------------------------------------------------------------------
+export const handleVercelFreePlanTimeOut =
+  (process.env.HANDLE_VERCEL_FREE_PLAN_TIMEOUT?.toString().toLowerCase() || 'true') === 'true'
 
 // ----------------------------------------------------------------------
-// environment: set client-side
-// ----------------------------------------------------------------------
-export const UI_API_URL = NEXT_PUBLIC_UI_URL
-export const USE_MOCK: boolean =
-  (NEXT_PUBLIC_USE_MOCK || 'true').toString().toLowerCase() === 'true'
-export const ALLOWED_ORIGINS = NEXT_PUBLIC_ALLOWED_ORIGINS
-export const fromICP: boolean = NEXT_PUBLIC_FROM_ICP?.toString().toLowerCase() === 'true'
-export const RECAPTCHA_SITE_KEY = NEXT_PUBLIC_RECAPTCHA_SITE_KEY
-export const EXPLORER_L1_URL = NEXT_PUBLIC_EXPLORER_L1_URL
-export const EXPLORER_L2_URL = NEXT_PUBLIC_EXPLORER_L2_URL
-export const EXPLORER_NFT_URL = NEXT_PUBLIC_EXPLORER_NFT_URL
-export const NFT_IMAGE_REPOSITORY = NEXT_PUBLIC_NFT_IMAGE_REPOSITORY.toLowerCase()
+
+// environment: client-side
+export const UI_API_URL = process.env.NEXT_PUBLIC_UI_URL
+export const USE_MOCK =
+  (process.env.NEXT_PUBLIC_USE_MOCK?.toString().toLowerCase() || 'true') === 'true'
+export const ALLOWED_ORIGINS = process.env.NEXT_PUBLIC_ALLOWED_ORIGINS || '*'
+export const fromICP =
+  (process.env.NEXT_PUBLIC_FROM_ICP?.toString().toLowerCase() || 'true') === 'true'
+export const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''
+export const EXPLORER_L1_URL: string =
+  process.env.NEXT_PUBLIC_EXPLORER_L1_URL || 'https://sepolia.etherscan.io'
+export const EXPLORER_L2_URL: string =
+  process.env.NEXT_PUBLIC_EXPLORER_L2_URL || 'https://sepolia.arbiscan.io'
+export const EXPLORER_NFT_URL: string =
+  process.env.NEXT_PUBLIC_EXPLORER_NFT_URL || 'https://sepolia.arbiscan.io'
+export const NFT_IMAGE_REPOSITORY = (
+  process.env.NEXT_PUBLIC_NFT_IMAGE_REPOSITORY || 'gcp'
+).toLowerCase()
 // ----------------------------------------------------------------------
 
-// ----------------------------------------------------------------------
-// environment: set internal
-// ----------------------------------------------------------------------
+// internal
 export const PATH_AFTER_LOGIN = `/dashboard`
 export const IS_DEVELOPMENT = APP_ENV!.toLowerCase() === 'development'
 export const CHATIZALO_PHONE_NUMBER = IS_DEVELOPMENT ? 5491168690963 : 5491164629653
@@ -309,4 +273,3 @@ export const _socials = [
     path: 'https://github.com/chatterpay'
   }
 ]
-// ----------------------------------------------------------------------
