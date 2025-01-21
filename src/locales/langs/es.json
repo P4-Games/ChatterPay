@@ -35,7 +35,7 @@
     "logout": "Cerrar Sesión",
     "email": "Cambiar Correo",
     "notifications": "Notificaciones",
-    "transfer-all": "Transferir Todo"
+    "transfer-all": "Retirar Tudo"
   },
   "terms": {
     "title": "Términos y Condiciones",
@@ -292,7 +292,7 @@
     "title": "Balance Estimado",
     "deposit": "Depositar",
     "send": "Enviar",
-    "transfer-all": "Transferir Todo",
+    "transfer-all": "Retirar",
     "wapp-msg": "Hola!"
   },
   "transactions": {
