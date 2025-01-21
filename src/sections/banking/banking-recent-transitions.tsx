@@ -167,13 +167,38 @@ type BankingRecentTransitionsRowProps = {
   mdUp: boolean
 }
 
+function getContactData(
+  userWallet: string,
+  data: ITransaction,
+  mdUp: boolean
+): { contact: string; phone: string } {
+  let contact: string = ''
+  let phone: string = ''
+
+  const trxReceive: boolean = userWallet === data.wallet_to
+
+  if (data.type.toLowerCase() === 'swap') {
+    contact = (trxReceive ? data.contact_to_name : data.contact_from_name) || ''
+    phone = (trxReceive ? data.contact_to_phone : data.contact_from_phone) || ''
+  } else {
+    contact = (trxReceive ? data.contact_from_name : data.contact_to_name) || ''
+    phone = (trxReceive ? data.contact_from_phone : data.contact_to_phone) || ''
+  }
+
+  // hide contact name in mobile
+  if (!mdUp) {
+    contact = ''
+  }
+
+  return { contact, phone }
+}
+
 function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTransitionsRowProps) {
   const theme = useTheme()
   const { t } = useTranslate()
   const lightMode = theme.palette.mode === 'light'
   const trxReceive: boolean = userWallet === row.wallet_to
-  const contact: string = (trxReceive ? row.contact_from_name : row.contact_to_name) || ''
-  const phone: string = trxReceive ? row.contact_from_phone : row.contact_to_phone || ''
+  const { contact, phone } = getContactData(userWallet, row, mdUp)
   const message: string = `${
     trxReceive ? t('transactions.receive-from') : t('transactions.sent-to')
   } ${contact}`

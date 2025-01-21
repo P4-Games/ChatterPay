@@ -35,7 +35,7 @@
     "logout": "Logout",
     "email": "Email Change",    
     "notifications": "Notifications",
-    "transfer-all": "Transfer All"
+    "transfer-all": "Withdraw All"
   },
   "home": {
     "header": {
@@ -292,7 +292,7 @@
     "title": "Estimated Balance",
     "deposit": "Deposit",
     "send": "Send",
-    "transfer-all": "Transfer All",
+    "transfer-all": "Withdraw",
     "wapp-msg": "Hi!"
   }, 
   "transactions": {
