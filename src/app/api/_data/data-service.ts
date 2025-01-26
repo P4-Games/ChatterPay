@@ -1,6 +1,6 @@
 import { ObjectId, Collection } from 'mongodb'
 
-import { DB_CHATTERPAY_NAME } from 'src/config-global'
+import { DB_BOT_NAME, DB_CHATTERPAY_NAME } from 'src/config-global'
 
 import { IAccount } from 'src/types/account'
 import { LastUserConversation } from 'src/types/chat'
@@ -15,8 +15,6 @@ import { getObjectId, getFormattedId, updateOneCommon } from './mongo-utils'
 const SCHEMA_USERS: string = 'users'
 const SCHEMA_TRANSACTIONS: string = 'transactions'
 const SCHEMA_NFTS: string = 'nfts'
-
-const DB_BOT_NAME: string = 'chatterpay'
 const SCHEMA_USER_CONVERSATIONS: string = 'user_conversations'
 
 // ----------------------------------------------------------------------
@@ -341,14 +339,14 @@ export async function getUserTransactions(wallet: string): Promise<ITransaction[
           _id: 1,
           date: 1,
           wallet_from: 1,
-          contact_from_phone: { $ifNull: ['$contact_from_user.phone_number', 'Chatterpay'] },
-          contact_from_name: { $ifNull: ['$contact_from_user.name', 'Chatterpay'] },
+          contact_from_phone: { $ifNull: ['$contact_from_user.phone_number', ''] },
+          contact_from_name: { $ifNull: ['$contact_from_user.name', ''] },
           contact_from_avatar_url: {
             $ifNull: ['$contact_from_user.photo', '/assets/images/home/logo.png']
           },
           wallet_to: 1,
-          contact_to_phone: { $ifNull: ['$contact_to_user.phone_number', 'Chatterpay'] },
-          contact_to_name: { $ifNull: ['$contact_to_user.name', 'Chatterpay'] },
+          contact_to_phone: { $ifNull: ['$contact_to_user.phone_number', ''] },
+          contact_to_name: { $ifNull: ['$contact_to_user.name', ''] },
           contact_to_avatar_url: {
             $ifNull: ['$contact_to_user.photo', '/assets/images/home/logo.png']
           },

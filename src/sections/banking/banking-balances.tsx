@@ -117,12 +117,15 @@ export default function BankingBalances({
       direction='row'
       alignItems='center'
       justifyContent={mdUp ? 'flex-end' : 'center'}
-      spacing={2}
+      spacing={mdUp ? 2 : 1}
       sx={{ mb: mdUp ? 0 : 2 }}
     >
       <Button
         fullWidth={!mdUp}
-        sx={{ maxWidth: mdUp ? 'auto' : '200px', mx: mdUp ? 0 : 4 }}
+        sx={{
+          px: mdUp ? undefined : 2,
+          mx: mdUp ? 0 : 1
+        }}
         variant='contained'
         color='primary'
         startIcon={<Iconify icon='eva:diagonal-arrow-left-down-fill' />}
@@ -132,7 +135,10 @@ export default function BankingBalances({
       </Button>
       <Button
         fullWidth={!mdUp}
-        sx={{ maxWidth: mdUp ? 'auto' : '200px', mx: mdUp ? 0 : 4 }}
+        sx={{
+          px: mdUp ? undefined : 2,
+          mx: mdUp ? 0 : 1
+        }}
         variant='outlined'
         color='inherit'
         startIcon={<Iconify icon='eva:diagonal-arrow-right-up-fill' />}
@@ -142,7 +148,10 @@ export default function BankingBalances({
       </Button>
       <Button
         fullWidth={!mdUp}
-        sx={{ maxWidth: mdUp ? 'auto' : '200px', mx: mdUp ? 0 : 4 }}
+        sx={{
+          px: mdUp ? undefined : 2,
+          mx: mdUp ? 0 : 1
+        }}
         variant='outlined'
         color='warning'
         startIcon={<Iconify icon='mdi:arrow-collapse-all' />}

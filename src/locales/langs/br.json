@@ -35,7 +35,7 @@
     "logout": "Sair",
     "email": "Alterar Email",
     "notifications": "Notificações",
-    "transfer-all": "Transfer Tudo"
+    "transfer-all": "Retirar Tudo"
   },
   "terms": {
     "title": "Termos e Condições",
@@ -292,7 +292,7 @@
     "title": "Saldo Estimado",
     "deposit": "Depositar",
     "send": "Enviar",
-    "transfer-all": "Transferir Tudo",
+    "transfer-all": "Retirar",
     "wapp-msg": "Olá!"
   },
   "transactions": {
