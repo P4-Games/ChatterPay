@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from 'axios'
+import axios, { AxiosHeaders, AxiosRequestConfig } from 'axios'
 
 import { UI_BASE_URL, BOT_API_URL } from 'src/config-global'
 
@@ -6,6 +6,17 @@ import { UI_BASE_URL, BOT_API_URL } from 'src/config-global'
 
 const axiosInstance = axios.create({
   baseURL: BOT_API_URL
+})
+
+// Add request interceptor to include Origin header
+axiosInstance.interceptors.request.use((config) => {
+  if (!config.headers) {
+    config.headers = new AxiosHeaders()
+  }
+  if (typeof window === 'undefined') {
+    config.headers.set('Origin', UI_BASE_URL)
+  }
+  return config
 })
 
 axiosInstance.interceptors.response.use(

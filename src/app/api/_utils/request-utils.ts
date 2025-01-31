@@ -26,6 +26,7 @@ export async function validateRecaptcha(
   const recaptchaResponse = await fetch(verifyEndpoint, {
     method: 'POST',
     headers: {
+      Origin: UI_BASE_URL,
       'Content-Type': 'application/x-www-form-urlencoded'
     },
     body: new URLSearchParams({
