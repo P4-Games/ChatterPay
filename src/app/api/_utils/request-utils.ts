@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server'
 
-import { RECAPTCHA_API_KEY } from 'src/config-global'
+import { UI_BASE_URL, RECAPTCHA_API_KEY } from 'src/config-global'
 
 import { RecaptchaResponse } from 'src/types/recaptcha'
 
@@ -26,6 +26,7 @@ export async function validateRecaptcha(
   const recaptchaResponse = await fetch(verifyEndpoint, {
     method: 'POST',
     headers: {
+      Origin: UI_BASE_URL,
       'Content-Type': 'application/x-www-form-urlencoded'
     },
     body: new URLSearchParams({

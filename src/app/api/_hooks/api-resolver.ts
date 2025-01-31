@@ -1,11 +1,22 @@
-import axios, { AxiosRequestConfig } from 'axios'
+import axios, { AxiosHeaders, AxiosRequestConfig } from 'axios'
 
-import { UI_API_URL, BOT_API_URL } from 'src/config-global'
+import { UI_BASE_URL, BOT_API_URL } from 'src/config-global'
 
 // ----------------------------------------------------------------------
 
 const axiosInstance = axios.create({
   baseURL: BOT_API_URL
+})
+
+// Add request interceptor to include Origin header
+axiosInstance.interceptors.request.use((config) => {
+  if (!config.headers) {
+    config.headers = new AxiosHeaders()
+  }
+  if (typeof window === 'undefined') {
+    config.headers.set('Origin', UI_BASE_URL)
+  }
+  return config
 })
 
 axiosInstance.interceptors.response.use(
@@ -36,7 +47,7 @@ export const put = async (url: string, data: {}, config?: AxiosRequestConfig) =>
 // ----------------------------------------------------------------------
 
 function getFullUIEndpoint(endpoint: string): string {
-  return `${UI_API_URL}/api/v1/${endpoint}`
+  return `${UI_BASE_URL}/api/v1/${endpoint}`
 }
 
 function getFullBotEndpoint(endpoint: string): string {

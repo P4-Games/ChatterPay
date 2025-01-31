@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
         wallet: user.wallet || '',
         walletEOA: user.walletEOA || '',
         email: user.email || '',
-        photoURL: user.photo || '/assets/images/avatars/generic-user.jpg',
+        photoURL: user.photo || '/assets/images/avatars/generic-user.png',
         phoneNumber: user.phone_number || ''
       },
       accessToken: generateAccessToken(user)

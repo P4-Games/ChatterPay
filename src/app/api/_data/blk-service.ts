@@ -2,6 +2,7 @@ import axios from 'axios'
 import { ethers, JsonRpcProvider } from 'ethers'
 
 import {
+  UI_BASE_URL,
   API3_ENABLED,
   defaultBalance,
   BACKEND_API_URL,
@@ -23,6 +24,7 @@ export async function transferAll(channelUserId: string, walletTo: string): Prom
     const data = { channel_user_id: channelUserId, dst_address: walletTo }
     await axios.post(`${BACKEND_API_URL}/withdraw_all`, data, {
       headers: {
+        Origin: UI_BASE_URL,
         Authorization: `Bearer ${BACKEND_API_TOKEN}`
       }
     })
@@ -35,7 +37,6 @@ export async function transferAll(channelUserId: string, walletTo: string): Prom
 export async function getBalancesWithTotalsFromBackend(walletAddress: string): Promise<IBalances> {
   const cacheKey = `getBalancesWithTotalsFromBackend.${walletAddress}`
   const fromCache = cache.get(cacheKey) as IBalances
-
   if (fromCache) {
     console.info('from cache:', cacheKey, fromCache)
     return fromCache
@@ -45,12 +46,13 @@ export async function getBalancesWithTotalsFromBackend(walletAddress: string): P
   try {
     const response = await axios.get(`${BACKEND_API_URL}/balance/${walletAddress}`, {
       headers: {
+        Origin: UI_BASE_URL,
         Authorization: `Bearer ${BACKEND_API_TOKEN}`
       }
     })
     responseBalances = response.data.data
   } catch (error) {
-    console.error('Error fetching balance from backend:', error)
+    console.error('Error fetching balance from backend:', error.message)
     responseBalances = defaultBalances
   }
 
