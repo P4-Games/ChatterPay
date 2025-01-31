@@ -34,7 +34,7 @@ export const handleVercelFreePlanTimeOut =
 // ----------------------------------------------------------------------
 
 // environment: client-side
-export const UI_API_URL = process.env.NEXT_PUBLIC_UI_URL
+export const UI_BASE_URL = process.env.NEXT_PUBLIC_UI_URL || 'https://chatterpay.net'
 export const USE_MOCK =
   (process.env.NEXT_PUBLIC_USE_MOCK?.toString().toLowerCase() || 'true') === 'true'
 export const ALLOWED_ORIGINS = process.env.NEXT_PUBLIC_ALLOWED_ORIGINS || '*'

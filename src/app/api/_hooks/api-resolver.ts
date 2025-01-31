@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig } from 'axios'
 
-import { UI_API_URL, BOT_API_URL } from 'src/config-global'
+import { UI_BASE_URL, BOT_API_URL } from 'src/config-global'
 
 // ----------------------------------------------------------------------
 
@@ -36,7 +36,7 @@ export const put = async (url: string, data: {}, config?: AxiosRequestConfig) =>
 // ----------------------------------------------------------------------
 
 function getFullUIEndpoint(endpoint: string): string {
-  return `${UI_API_URL}/api/v1/${endpoint}`
+  return `${UI_BASE_URL}/api/v1/${endpoint}`
 }
 
 function getFullBotEndpoint(endpoint: string): string {

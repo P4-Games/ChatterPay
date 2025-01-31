@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server'
 
-import { RECAPTCHA_API_KEY } from 'src/config-global'
+import { UI_BASE_URL, RECAPTCHA_API_KEY } from 'src/config-global'
 
 import { RecaptchaResponse } from 'src/types/recaptcha'
 
