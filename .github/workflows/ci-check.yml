@@ -21,7 +21,7 @@ jobs:
           cache: 'yarn'
 
       - name: Install dependencies
-        run: yarn add -D typescript && yarn install --frozen-lockfile
+        run: yarn add -D typescript prettier && yarn install --frozen-lockfile
 
 
   prettier:
@@ -31,6 +31,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Install Prettier
+        run: yarn add -D prettier
 
       - name: Run Prettier
         run: yarn prettier --check .
