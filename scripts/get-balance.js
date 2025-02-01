@@ -1,4 +1,3 @@
-
 require('dotenv').config()
 const { ethers, JsonRpcProvider } = require('ethers')
 
@@ -8,19 +7,18 @@ const nodeProviderUrlSepolia = process.env.NODE_PROVIDER_SEPOLIA_URL
 const nodeProviderUrlPolygon = process.env.NODE_PROVIDER_MUMBAI_URL
 const nodeProviderUrlScroll = process.env.NODE_PROVIDER_SCROLL_URL
 
-
-const tokensByNetwork = {  
+const tokensByNetwork = {
   scroll_testnet: {
     config: {
-        enabled: 'true',
-        chainName: 'Scroll-Sepolia',
-        chainId: '8292f', // '534351'
-        chainCurrency: 'ETH',
-        ChainRpcUrl: 'https://scroll-sepolia.drpc.org',
-        chainExplorerUrl: 'https://sepolia.scrollscan.com/',
-        chainOpenSeaBaseUrl: '',
-        chainNftUrl: '',
-        chainNodeProviderUrl: nodeProviderUrlScroll 
+      enabled: 'true',
+      chainName: 'Scroll-Sepolia',
+      chainId: '8292f', // '534351'
+      chainCurrency: 'ETH',
+      ChainRpcUrl: 'https://scroll-sepolia.drpc.org',
+      chainExplorerUrl: 'https://sepolia.scrollscan.com/',
+      chainOpenSeaBaseUrl: '',
+      chainNftUrl: '',
+      chainNodeProviderUrl: nodeProviderUrlScroll
     },
     tokens: {
       usdc: {
@@ -45,15 +43,15 @@ const tokensByNetwork = {
   },
   mumbai: {
     config: {
-        enabled: 'true',
-        chainName: 'mumbai',
-        chainId: '0x13881',
-        chainCurrency: 'MATIC',
-        ChainRpcUrl: 'https://rpc-mumbai.maticvigil.com',
-        chainExplorerUrl: 'https://mumbai.polygonscan.com',
-        chainOpenSeaBaseUrl: 'https://testnets.opensea.io/assets/mumbai',
-        chainNftUrl: 'https://mumbai.polygonscan.com/',
-        chainNodeProviderUrl: nodeProviderUrlPolygon 
+      enabled: 'true',
+      chainName: 'mumbai',
+      chainId: '0x13881',
+      chainCurrency: 'MATIC',
+      ChainRpcUrl: 'https://rpc-mumbai.maticvigil.com',
+      chainExplorerUrl: 'https://mumbai.polygonscan.com',
+      chainOpenSeaBaseUrl: 'https://testnets.opensea.io/assets/mumbai',
+      chainNftUrl: 'https://mumbai.polygonscan.com/',
+      chainNodeProviderUrl: nodeProviderUrlPolygon
     },
     tokens: {
       usdc: {
@@ -123,7 +121,6 @@ async function getTokenBalance(tokenContract, walletAddress) {
   }
 }
 
-
 function removeQuotes(text) {
   if (text === '' || !text) return text
   return text.replace(/['"]/g, '')
@@ -132,7 +129,7 @@ function removeQuotes(text) {
 async function getBalances() {
   const balances = []
   const tokenAbi = ['function balanceOf(address) view returns (uint256)']
-  
+
   for (const networkKey in tokensByNetwork) {
     const network = tokensByNetwork[networkKey]
     const { config, tokens } = network
@@ -140,17 +137,31 @@ async function getBalances() {
     if (config.enabled === 'true') {
       const provider = new JsonRpcProvider(config.chainNodeProviderUrl)
       const ethBalance = await provider.getBalance(walletAddress)
-      balances.push({ network: config.chainName, token: config.chainCurrency, balance: ethers.formatUnits(ethBalance, 18) })
+      balances.push({
+        network: config.chainName,
+        token: config.chainCurrency,
+        balance: ethers.formatUnits(ethBalance, 18)
+      })
 
       for (const tokenKey in tokens) {
         const token = tokens[tokenKey]
         if (token.enabled === 'true') {
           try {
-            const tokenContract = new ethers.Contract(removeQuotes(token.contract), tokenAbi, provider)
+            const tokenContract = new ethers.Contract(
+              removeQuotes(token.contract),
+              tokenAbi,
+              provider
+            )
             const tokenBalance = await getTokenBalance(tokenContract, walletAddress)
-            balances.push({ network: config.chainName, token: token.token, balance: ethers.formatUnits(tokenBalance, token.decimals) })
+            balances.push({
+              network: config.chainName,
+              token: token.token,
+              balance: ethers.formatUnits(tokenBalance, token.decimals)
+            })
           } catch (error) {
-            console.error(`Error getting ${token.token} balance of ${walletAddress} on ${config.chainName}`)
+            console.error(
+              `Error getting ${token.token} balance of ${walletAddress} on ${config.chainName}`
+            )
           }
         }
       }
@@ -160,4 +171,4 @@ async function getBalances() {
 }
 
 // { network: 'sepolia', token: 'usdc', balance: 20}, {network: ....}, {}
-getBalances().then(balances => console.info(JSON.stringify(balances, null, 2)))
+getBalances().then((balances) => console.info(JSON.stringify(balances, null, 2)))

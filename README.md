@@ -8,26 +8,25 @@
 
 [Chatterpay](chatterpay.net) is a Wallet for WhatsApp that integrates AI and Account Abstraction, enabling any user to use blockchain easily and securely without technical knowledge.
 
-> Built for: [Level Up Hackathon - Ethereum Argentina 2024](https://ethereumargentina.org/) 
+> Built for: [Level Up Hackathon - Ethereum Argentina 2024](https://ethereumargentina.org/)
 
-> Build By: [mpefaur](https://github.com/mpefaur), [tomasfrancizco](https://github.com/tomasfrancizco), [TomasDmArg](https://github.com/TomasDmArg), [gonzageraci](https://github.com/gonzageraci),  [dappsar](https://github.com/dappsar)
+> Build By: [mpefaur](https://github.com/mpefaur), [tomasfrancizco](https://github.com/tomasfrancizco), [TomasDmArg](https://github.com/TomasDmArg), [gonzageraci](https://github.com/gonzageraci), [dappsar](https://github.com/dappsar)
 
-__Components__:
+**Components**:
 
-- Landing Page ([product](https://chatterpay.net), [source code](https://github.com/P4-Games/ChatterPay))  (this Repo)
-- User Dashboard Website ([product](https://chatterpay.net/dashboard), [source code](https://github.com/P4-Games/ChatterPay))  (this Repo)
-- Backend API ([source code](https://github.com/P4-Games/ChatterPay-Backend)) 
+- Landing Page ([product](https://chatterpay.net), [source code](https://github.com/P4-Games/ChatterPay)) (this Repo)
+- User Dashboard Website ([product](https://chatterpay.net/dashboard), [source code](https://github.com/P4-Games/ChatterPay)) (this Repo)
+- Backend API ([source code](https://github.com/P4-Games/ChatterPay-Backend))
 - Smart Contracts ([source code](https://github.com/P4-Games/ChatterPay-SmartContracts))
 - Data Indexing (Subgraph) ([source code](https://github.com/P4-Games/ChatterPay-Subgraph))
 - Bot AI (Chatizalo) ([product](https://chatizalo.com/))
 - Bot AI Admin Dashboard Website ([product](https://app.chatizalo.com/))
 
-
 # About this repo
 
 This repository contains the source code for the landing page and user dashboard.
 
-__Build With__:
+**Build With**:
 
 - Framework: [Next.js 14](https://nextjs.org/14)
 - Language: [TypeScript](https://www.typescriptlang.org)
@@ -41,33 +40,32 @@ __Build With__:
 - Linting: [ESLint](https://eslint.org)
 - Formatting: [Prettier](https://prettier.io)
 
-__deploy with__:
+**deploy with**:
 
 - Landing Page (static): [ICP](https://internetcomputer.org/)
 - User Dashboard: [Google Cloud](https://cloud.google.com/)
 
 # Getting Started
 
-__1. Install these Requirements__:
+**1. Install these Requirements**:
 
 - [git](https://git-scm.com/)
 - [nvm](https://github.com/nvm-sh/nvm) (allows you to quickly install and use different versions of node via the command line.)
 - node js & npm (insalled with nvm)
 - [mongoDb](https://www.mongodb.com/docs/manual/installation/)
 
-__2. Clone repository__:
+**2. Clone repository**:
 
 ```bash
    git clone https://github.com/P4-Games/ChatterPay
    cd ChatterPay
 ```
 
-__3. Complete .env file__: 
+**3. Complete .env file**:
 
 Create a .env file in the root folder and populate it with keys and values described in [example_env file](./example_env).
 
-__4. Install Dependencies__:
-
+**4. Install Dependencies**:
 
 ```sh
 - yarn install # with yarn
@@ -87,7 +85,7 @@ yarn config delete proxy
 yarn --network-timeout 100000
 ```
 
-__5. Start App__:
+**5. Start App**:
 
 ```sh
 npm run dev / yarn dev
@@ -95,8 +93,7 @@ npm run dev / yarn dev
 
 Then, open brower in: `http://localhost:3000`.
 
-
-__6. Deploy to ICP__: 
+**6. Deploy to ICP**:
 
 To deploy the landing (static code) to the [Internet Computer (ICP)](https://internetcomputer.org/), you can follow the steps described in the [Deployment Guidelines](./.doc/deployment/deploy-guidelines).
 
@@ -108,7 +105,6 @@ URL of the deployed app on ICP: https://cilxj-yiaaa-aaaag-alkxq-cai.icp0.io/
 
 If you would like to explore more details about the source code, you can review this [link](.doc/content.md).
 
-
 ## Contribution
 
 Thank you for considering helping out with the source code! We welcome contributions from anyone on the internet, and are grateful for even the smallest of fixes!
@@ -117,9 +113,8 @@ If you'd like to contribute to ChatterPay, please fork, fix, commit and send a p
 
 Please make sure your contributions adhere to our [coding guidelines](./.doc/development/coding-guidelines.md).
 
-_Contributors_: 
+_Contributors_:
 
-* [P4Troy](https://github.com/mpefaur) - [dappsar](https://github.com/dappsar) - [tomasDmArg](https://github.com/TomasDmArg)
+- [P4Troy](https://github.com/mpefaur) - [dappsar](https://github.com/dappsar) - [tomasDmArg](https://github.com/TomasDmArg)
 
-* See more in: <https://github.com/P4-Games/chatterPay/graphs/contributors>
-
+- See more in: <https://github.com/P4-Games/chatterPay/graphs/contributors>
