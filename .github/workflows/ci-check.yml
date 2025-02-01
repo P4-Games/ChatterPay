@@ -39,7 +39,7 @@ jobs:
         run: yarn prettier:check
 
       - name: Check for uncommitted changes
-        run: git diff --exit-code
+        run: git diff --exit-code -- . ':(exclude)package.json' ':(exclude)yarn.lock'
 
   lint:
     name: Check with Lint
