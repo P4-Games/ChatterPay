@@ -1,0 +1,75 @@
+name: 'ci-check'
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - main
+
+jobs:
+  setup:
+    name: Setup Environment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+  prettier:
+    name: Check Code Formatting
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Prettier
+        run: yarn prettier --check .
+
+      - name: Check for uncommitted changes
+        run: git diff --exit-code
+
+  lint:
+    name: Check with Lint
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run TypeScript type check
+        run: yarn tsc --noEmit
+
+      - name: Run ESLint
+        run: yarn eslint . --max-warnings=0
+
+  docker-build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          echo "Building Docker image..."
+          docker build -t nextjs-app .
+
+      - name: Report Status
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          curl -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{"state": "success", "description": "Check Status Report", "context": "Check Status Report"}' \
+            https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}
