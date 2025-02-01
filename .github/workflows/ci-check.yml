@@ -36,7 +36,7 @@ jobs:
         run: yarn add -D prettier
 
       - name: Run Prettier
-        run: yarn prettier --check .
+        run: yarn prettier:check
 
       - name: Check for uncommitted changes
         run: git diff --exit-code

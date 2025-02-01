@@ -13,6 +13,7 @@
     "serve": "yarn build && npm i -g http-server && http-server ./.next",
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
     "lint:fix": "eslint --fix \"src/**/*.{js,jsx,ts,tsx}\"",
+    "prettier:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",
     "prettier": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "format": "yarn prettier",
     "rm:all": "rm -rf node_modules .next out dist build",
