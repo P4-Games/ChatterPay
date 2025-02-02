@@ -3,9 +3,7 @@
 import isEqual from 'lodash/isEqual'
 import { useMemo, useState, useEffect, useCallback } from 'react'
 
-import { useLocalStorage } from 'src/hooks/use-local-storage'
-
-import { localStorageGetItem } from 'src/utils/storage-available'
+import { getStorageItem, useLocalStorage } from 'src/hooks/use-local-storage'
 
 import { STORAGE_KEY_SETTINGS } from 'src/config-global'
 
@@ -24,7 +22,7 @@ export function SettingsProvider({ children, defaultSettings }: SettingsProvider
 
   const [openDrawer, setOpenDrawer] = useState(false)
 
-  const isArabic = localStorageGetItem('i18nextLng') === 'ar'
+  const isArabic = getStorageItem('i18nextLng') === 'ar'
 
   useEffect(() => {
     if (isArabic) {
@@ -78,5 +76,6 @@ export function SettingsProvider({ children, defaultSettings }: SettingsProvider
     ]
   )
 
+  // @ts-expect-error 'expected-error'
   return <SettingsContext.Provider value={memoizedValue}>{children}</SettingsContext.Provider>
 }
