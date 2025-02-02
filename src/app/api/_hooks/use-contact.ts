@@ -6,7 +6,9 @@ import { useGetCommon } from './common'
 // ----------------------------------------------------------------------
 
 export function useGetContact(contactId: string) {
-  return useGetCommon(endpoints.dashboard.user.id(contactId))
+  return useGetCommon(endpoints.dashboard.user.id(contactId), {
+    headers: getAuthorizationHeader()
+  })
 }
 
 export async function updateContact(userId: string, data: { name: string }) {

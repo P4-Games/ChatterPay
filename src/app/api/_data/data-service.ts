@@ -2,11 +2,11 @@ import { ObjectId, Collection } from 'mongodb'
 
 import { DB_BOT_NAME, DB_CHATTERPAY_NAME } from 'src/config-global'
 
+import { JwtPayload } from 'src/types/jwt'
 import { LastUserConversation } from 'src/types/chat'
 import { INFT, ITransaction } from 'src/types/wallet'
 import { IAccount, UserSession } from 'src/types/account'
 
-import { JwtPayload } from '../_utils/jwt-utils'
 import { getClientPromise } from './mongo-connection'
 import { getClientPromiseBot } from './mongo-connection-bot'
 import {

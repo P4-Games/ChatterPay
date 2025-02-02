@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { jwtPayloadUser, generateJwtToken } from 'src/app/api/_utils/jwt-utils'
+import { generateJwtToken } from 'src/app/api/_utils/jwt-utils'
 import { getIpFromRequest, validateRecaptcha } from 'src/app/api/_utils/request-utils'
 import {
   getUserByPhone,
@@ -9,6 +9,7 @@ import {
   validateUserHave1SessionCreated
 } from 'src/app/api/_data/data-service'
 
+import { jwtPayloadUser } from 'src/types/jwt'
 import { IAccount, UserSession } from 'src/types/account'
 
 // ----------------------------------------------------------------------

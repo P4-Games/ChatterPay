@@ -6,8 +6,8 @@ import { IBalance, IBalances } from './types/wallet'
 // ----------------------------------------------------------------------
 
 // environment: server-side
-export const APP_ENV = process.env?.toString().toLowerCase() || 'development'
-export const NODE_ENV = process.env?.toString().toLowerCase() || 'development'
+export const APP_ENV = process.env.APP_ENV?.toString().toLowerCase() || 'development'
+export const NODE_ENV = process.env.NODE_ENV?.toString().toLowerCase() || 'development'
 export const { MONGODB, MONGODB_BOT } = process.env
 export const { BOT_API_TOKEN, BOT_API_URL } = process.env
 export const { BACKEND_API_URL, BACKEND_API_TOKEN } = process.env
@@ -65,8 +65,8 @@ export const NFT_MARKETPLACE_URL =
   'https://testnets.opensea.io/assets/arbitrum_sepolia'
 
 export const NFT_SHARE = 'https://api.whatsapp.com/send/?text=MESSAGE'
-export const STORAGE_KEY_TOKEN = 'jwtToken'
-export const STORAGE_KEY_SETTINGS = 'settings'
+export const STORAGE_KEY_TOKEN = `chatterpay_${APP_ENV}_jwtToken`
+export const STORAGE_KEY_SETTINGS = `chatterpay_${APP_ENV}_settings`
 export const CONTACT_EMAIL = 'contacto@chatterpay.com.ar'
 export const GET_BALANCES_FROM_BACKEND = true
 export const NOTIFICATIONS_PAGE_SIZE: number = Number.isNaN(

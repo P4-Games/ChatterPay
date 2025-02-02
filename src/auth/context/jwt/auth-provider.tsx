@@ -2,8 +2,12 @@
 
 import { useMemo, useEffect, useReducer, useCallback } from 'react'
 
+import { getStorageItem } from 'src/hooks/use-local-storage'
+
 import { STORAGE_KEY_TOKEN } from 'src/config-global'
 import { post, fetcher, endpoints } from 'src/app/api/_hooks/api-resolver'
+
+import { JwtPayload, jwtPayloadUser } from 'src/types/jwt'
 
 import { AuthContext } from './auth-context'
 import { jwtDecode, setSession, isValidToken, getAuthorizationHeader } from './utils'
@@ -113,12 +117,15 @@ export function AuthProvider({ children }: Props) {
 
   const initialize = useCallback(async () => {
     try {
-      const jwtToken = sessionStorage.getItem(STORAGE_KEY_TOKEN)
+      const jwtToken: string = getStorageItem(STORAGE_KEY_TOKEN)
 
       if (jwtToken && isValidToken(jwtToken)) {
-        const decodedToken = jwtDecode(jwtToken)
+        setSession(jwtToken)
+        const decodedToken: JwtPayload = jwtDecode(jwtToken)
+        const tokenUser: jwtPayloadUser = decodedToken.user
+
         const res = await fetcher([
-          endpoints.dashboard.user.id(decodedToken.user.phone_number),
+          endpoints.dashboard.user.id(tokenUser.id),
           { headers: getAuthorizationHeader() }
         ])
         const user = res
@@ -141,7 +148,7 @@ export function AuthProvider({ children }: Props) {
         })
       }
     } catch (error) {
-      console.error(error.message)
+      console.error(error && error.message ? error.message : error)
       dispatch({
         type: Types.INITIAL,
         payload: {
@@ -254,7 +261,7 @@ export function AuthProvider({ children }: Props) {
       const jwtToken = 'dummyToken'
 
       setSession(jwtToken)
-      // sessionStorage.setItem(STORAGE_KEY_TOKEN, jwtToken)
+      // setStorageItem(STORAGE_KEY_TOKEN, jwtToken)
 
       dispatch({
         type: Types.REGISTER,
@@ -270,7 +277,12 @@ export function AuthProvider({ children }: Props) {
   )
 
   const logout = useCallback(async (id: string) => {
-    await post(endpoints.dashboard.user.logout(id), {}, { headers: getAuthorizationHeader() })
+    try {
+      await post(endpoints.dashboard.user.logout(id), {}, { headers: getAuthorizationHeader() })
+    } catch (error) {
+      // avoid throw error in logout
+      console.error('logout', error.message)
+    }
     setSession(null)
     dispatch({
       type: Types.LOGOUT

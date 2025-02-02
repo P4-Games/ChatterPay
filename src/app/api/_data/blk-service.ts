@@ -52,7 +52,7 @@ export async function getBalancesWithTotalsFromBackend(walletAddress: string): P
     })
     responseBalances = response.data.data
   } catch (error) {
-    console.error('Error fetching balance from backend:', error.message)
+    console.error('Error fetching balance from backend:', error)
     responseBalances = defaultBalances
   }
 
@@ -230,7 +230,12 @@ async function getBalances(walletAddress: string): Promise<any[]> {
 
 const fethCustomTokens = async (address: string) => {
   try {
-    const response = await axios.get(`${BACKEND_API_URL}/balance/${address}`)
+    const response = await axios.get(`${BACKEND_API_URL}/balance/${address}`, {
+      headers: {
+        Origin: UI_BASE_URL,
+        Authorization: `Bearer ${BACKEND_API_TOKEN}`
+      }
+    })
     return response.data
   } catch (error) {
     console.error('Error fetching balance:', error)

@@ -41,25 +41,30 @@ function getStorageObject(): StorageType {
 }
 
 // ----------------------------------------------------------------------
-export function useLocalStorage<T>(key: string, initialState: T) {
+export function useLocalStorage<T>(
+  key: string,
+  initialState: T,
+  defaultValue: T = {} as T,
+  asJson: boolean = false
+) {
   const [state, setState] = useState<T>(initialState)
 
   useEffect(() => {
-    const restored = getStorageItem<T>(key)
+    const restored = getStorageItem<T>(key, defaultValue, asJson)
     if (restored) {
       setState((prev) => ({ ...prev, ...restored }))
     }
-  }, [key])
+  }, [asJson, defaultValue, key])
 
   const updateState = useCallback(
     (updateValue: Partial<T>) => {
       setState((prev) => {
         const newState = { ...prev, ...updateValue }
-        setStorageItem(key, newState)
+        setStorageItem(key, newState, asJson)
         return newState
       })
     },
-    [key]
+    [key, asJson]
   )
 
   const update = useCallback(
@@ -84,24 +89,33 @@ export const getStorageItem = <T>(
 ): T => {
   try {
     const storage = getStorageObject()
-    const result = storage instanceof Storage ? storage.getItem(key) : storage.get(key)
+    let result
+
+    try {
+      result = storage instanceof Storage ? storage.getItem(key) : storage.get(key)
+    } catch {
+      // no throw error
+    }
+
     return asJson && result ? JSON.parse(result as string) : ((result || defaultValue) as T)
   } catch (error) {
-    console.error(error.message)
+    console.warn('getStorageItem', key, error.message)
     return defaultValue
   }
 }
 
-export const setStorageItem = <T>(key: string, value: T): void => {
+export const setStorageItem = <T>(key: string, value: T, asJson: boolean = false): void => {
   try {
     const storage = getStorageObject()
+    const data = asJson ? JSON.stringify(value) : (value as unknown as string)
+
     if (storage instanceof Storage) {
-      storage.setItem(key, JSON.stringify(value))
+      storage.setItem(key, data)
     } else {
-      storage.set(key, JSON.stringify(value))
+      storage.set(key, data)
     }
   } catch (error) {
-    console.error(error.message)
+    console.warn('setStorageItem', key, error.message)
   }
 }
 
@@ -114,6 +128,6 @@ export const removeStorageItem = (key: string): void => {
       storage.del(key)
     }
   } catch (error) {
-    console.error(error.message)
+    console.warn('removeStorageItem', key, error.message)
   }
 }
