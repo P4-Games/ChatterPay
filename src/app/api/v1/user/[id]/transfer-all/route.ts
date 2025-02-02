@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 import { transferAll } from 'src/app/api/_data/blk-service'
-import { getUserById } from 'src/app/api/_data/data-service'
+import { getIpFromRequest } from 'src/app/api/_utils/request-utils'
+import { JwtPayload, extractjwtTokenFromHeader } from 'src/app/api/_utils/jwt-utils'
+import { getUserById, checkUserHaveActiveSession } from 'src/app/api/_data/data-service'
 
 import { IAccount } from 'src/types/account'
 
@@ -40,6 +42,32 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
         }),
         {
           status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
+    const ip = getIpFromRequest(req)
+
+    const jwtTokenDecoded: JwtPayload | null = extractjwtTokenFromHeader(
+      req.headers.get('Authorization')
+    )
+    if (!jwtTokenDecoded) {
+      return new NextResponse(
+        JSON.stringify({ code: 'NOT_AUTHORIZED', error: 'Invalid Access Token' }),
+        {
+          status: 401,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
+    const validAccessToken = await checkUserHaveActiveSession(id, jwtTokenDecoded, ip)
+    if (!validAccessToken) {
+      return new NextResponse(
+        JSON.stringify({ code: 'NOT_AUTHORIZED', error: 'Invalid Access Token' }),
+        {
+          status: 401,
           headers: { 'Content-Type': 'application/json' }
         }
       )
