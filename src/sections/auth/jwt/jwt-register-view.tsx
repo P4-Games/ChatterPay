@@ -66,7 +66,7 @@ export default function JwtRegisterView() {
       const registerUrl = BOT_WAPP_URL.replaceAll('MESSAGE', t('register.wapp-msg'))
       router.push(registerUrl)
     } catch (error) {
-      console.error(error)
+      console.error(error.message)
       reset()
       setErrorMsg(typeof error === 'string' ? error : error.message)
     }
