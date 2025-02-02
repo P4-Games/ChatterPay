@@ -1,5 +1,7 @@
 import { paths } from 'src/routes/paths'
 
+import { getStorageItem, setStorageItem, removeStorageItem } from 'src/hooks/use-local-storage'
+
 import { STORAGE_KEY_TOKEN } from 'src/config-global'
 import axiosInstance from 'src/app/api/_hooks/api-resolver'
 
@@ -45,7 +47,7 @@ export const isValidToken = (jwtToken: string) => {
 
 const handleTokenExpiration = () => {
   alert('Token expired')
-  sessionStorage.removeItem(STORAGE_KEY_TOKEN)
+  removeStorageItem(STORAGE_KEY_TOKEN)
   delete axiosInstance.defaults.headers.common.Authorization
   window.location.href = paths.auth.jwt.login
 }
@@ -63,14 +65,14 @@ export const tokenExpired = (exp: number) => {
 
 export const setSession = (jwtToken: string | null) => {
   if (jwtToken) {
-    sessionStorage.setItem(STORAGE_KEY_TOKEN, jwtToken)
+    setStorageItem(STORAGE_KEY_TOKEN, jwtToken, false)
     axiosInstance.defaults.headers.common.Authorization = `Bearer ${jwtToken}`
 
     // This function below will handle when token is expired
     const { exp } = jwtDecode(jwtToken)
     tokenExpired(exp)
   } else {
-    sessionStorage.removeItem(STORAGE_KEY_TOKEN)
+    removeStorageItem(STORAGE_KEY_TOKEN)
     delete axiosInstance.defaults.headers.common.Authorization
   }
 }
@@ -78,5 +80,5 @@ export const setSession = (jwtToken: string | null) => {
 // ----------------------------------------------------------------------
 
 export const getAuthorizationHeader = () => ({
-  Authorization: `Bearer ${sessionStorage.getItem(STORAGE_KEY_TOKEN)}`
+  Authorization: `Bearer ${getStorageItem(STORAGE_KEY_TOKEN)}`
 })
