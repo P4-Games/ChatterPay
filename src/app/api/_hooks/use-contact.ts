@@ -1,4 +1,5 @@
 import { post, endpoints } from 'src/app/api/_hooks/api-resolver'
+import { getAuthorizationHeader } from 'src/auth/context/jwt/utils'
 
 import { useGetCommon } from './common'
 
@@ -9,6 +10,8 @@ export function useGetContact(contactId: string) {
 }
 
 export async function updateContact(userId: string, data: { name: string }) {
-  const res = await post(endpoints.dashboard.user.update(userId), data, {})
+  const res = await post(endpoints.dashboard.user.update(userId), data, {
+    headers: getAuthorizationHeader()
+  })
   return res
 }
