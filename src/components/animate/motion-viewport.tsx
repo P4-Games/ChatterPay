@@ -4,8 +4,7 @@ import { m, MotionProps } from 'framer-motion'
 import Box, { BoxProps } from '@mui/material/Box'
 
 import { useResponsive } from 'src/hooks/use-responsive'
-
-import { localStorageGetItem } from 'src/utils/storage-available'
+import { getStorageItem } from 'src/hooks/use-local-storage'
 
 import { varContainer } from './variants'
 
@@ -25,7 +24,7 @@ export default function MotionViewport({
 }: Props) {
   const smDown = useResponsive('down', 'sm')
   const [key, setKey] = useState('key-en')
-  const langStorage = localStorageGetItem('i18nextLng')
+  const langStorage = getStorageItem('i18nextLng')
 
   useEffect(() => {
     // Just a dummy key, to force re-render when the language changes.
