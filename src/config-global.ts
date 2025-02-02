@@ -6,8 +6,8 @@ import { IBalance, IBalances } from './types/wallet'
 // ----------------------------------------------------------------------
 
 // environment: server-side
-export const APP_ENV = process.env?.toString().toLowerCase() || 'development'
-export const NODE_ENV = process.env?.toString().toLowerCase() || 'development'
+export const APP_ENV = process.env.APP_ENV?.toString().toLowerCase() || 'development'
+export const NODE_ENV = process.env.NODE_ENV?.toString().toLowerCase() || 'development'
 export const { MONGODB, MONGODB_BOT } = process.env
 export const { BOT_API_TOKEN, BOT_API_URL } = process.env
 export const { BACKEND_API_URL, BACKEND_API_TOKEN } = process.env
