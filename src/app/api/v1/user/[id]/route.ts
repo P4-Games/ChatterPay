@@ -2,11 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import { getIpFromRequest } from 'src/app/api/_utils/request-utils'
 import { extractjwtTokenFromHeader } from 'src/app/api/_utils/jwt-utils'
-import {
-  updateUser,
-  getUserById,
-  checkUserHaveActiveSession
-} from 'src/app/api/_data/data-service'
+import { updateUser, getUserById, checkUserHaveActiveSession } from 'src/app/api/_data/data-service'
 
 import { JwtPayload } from 'src/types/jwt'
 import { IAccount } from 'src/types/account'
@@ -59,7 +55,6 @@ export async function GET(req: NextRequest, { params }: { params: IParams }) {
     }
 
     const user: IAccount | undefined = await getUserById(id)
-   
 
     if (!user) {
       return new NextResponse(
