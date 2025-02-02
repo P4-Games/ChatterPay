@@ -1,89 +1,119 @@
+import NodeCache from 'node-cache'
 import { useState, useEffect, useCallback } from 'react'
+
+import { STORAGE_OPTION } from 'src/config-global'
 
 // ----------------------------------------------------------------------
 
-export function useLocalStorage(key: string, initialState: any) {
-  const [state, setState] = useState(initialState)
+const memoryCache = new NodeCache()
+type StorageType = Storage | NodeCache
+type StorageOptionType = 'local' | 'session'
+function localStorageAvailable(): boolean {
+  try {
+    const key = '__some_random_key_you_are_not_going_to_use__'
+    window.localStorage.setItem(key, key)
+    window.localStorage.removeItem(key)
+    return true
+  } catch (error) {
+    return false
+  }
+}
+
+function sessionStorageAvailable(): boolean {
+  try {
+    const key = '__some_random_key_you_are_not_going_to_use__'
+    window.sessionStorage.setItem(key, key)
+    window.sessionStorage.removeItem(key)
+    return true
+  } catch (error) {
+    return false
+  }
+}
+
+function getStorageObject(): StorageType {
+  if ((STORAGE_OPTION as StorageOptionType) === 'local' && localStorageAvailable()) {
+    return window.localStorage
+  }
+  if ((STORAGE_OPTION as StorageOptionType) === 'session' && sessionStorageAvailable()) {
+    return window.sessionStorage
+  }
+  return memoryCache
+}
+
+// ----------------------------------------------------------------------
+export function useLocalStorage<T>(key: string, initialState: T) {
+  const [state, setState] = useState<T>(initialState)
 
   useEffect(() => {
-    const restored = getStorage(key)
-
+    const restored = getStorageItem<T>(key)
     if (restored) {
-      setState((prevValue: any) => ({
-        ...prevValue,
-        ...restored
-      }))
+      setState((prev) => ({ ...prev, ...restored }))
     }
   }, [key])
 
   const updateState = useCallback(
-    (updateValue: any) => {
-      setState((prevValue: any) => {
-        setStorage(key, {
-          ...prevValue,
-          ...updateValue
-        })
-
-        return {
-          ...prevValue,
-          ...updateValue
-        }
+    (updateValue: Partial<T>) => {
+      setState((prev) => {
+        const newState = { ...prev, ...updateValue }
+        setStorageItem(key, newState)
+        return newState
       })
     },
     [key]
   )
 
   const update = useCallback(
-    (name: string, updateValue: any) => {
-      updateState({
-        [name]: updateValue
-      })
+    (name: keyof T, updateValue: any) => {
+      updateState({ [name]: updateValue } as Partial<T>)
     },
     [updateState]
   )
 
   const reset = useCallback(() => {
-    removeStorage(key)
+    removeStorageItem(key)
     setState(initialState)
   }, [initialState, key])
 
-  return {
-    state,
-    update,
-    reset
+  return { state, update, reset }
+}
+
+export const getStorageItem = <T>(
+  key: string,
+  defaultValue: T = {} as T,
+  asJson: boolean = false
+): T => {
+  try {
+    const storage = getStorageObject()
+    const result = storage instanceof Storage ? storage.getItem(key) : storage.get(key)
+    return asJson && result ? JSON.parse(result as string) : ((result || defaultValue) as T)
+  } catch (error) {
+    console.error(error.message)
+    return defaultValue
   }
 }
 
-// ----------------------------------------------------------------------
-
-export const getStorage = (key: string) => {
-  let value = null
-
+export const setStorageItem = <T>(key: string, value: T): void => {
   try {
-    const result = window.localStorage.getItem(key)
-
-    if (result) {
-      value = JSON.parse(result)
+    const storage = getStorageObject()
+    if (storage instanceof Storage) {
+      storage.setItem(key, JSON.stringify(value))
+    } else {
+      storage.set(key, JSON.stringify(value))
     }
   } catch (error) {
-    console.error(error)
-  }
-
-  return value
-}
-
-export const setStorage = (key: string, value: any) => {
-  try {
-    window.localStorage.setItem(key, JSON.stringify(value))
-  } catch (error) {
-    console.error(error)
+    console.error(error.message)
   }
 }
 
-export const removeStorage = (key: string) => {
+export const removeStorageItem = (key: string): void => {
   try {
-    window.localStorage.removeItem(key)
+    const storage = getStorageObject()
+    if (storage instanceof Storage) {
+      storage.removeItem(key)
+    } else {
+      storage.del(key)
+    }
   } catch (error) {
-    console.error(error)
+    console.error(error.message)
   }
 }
