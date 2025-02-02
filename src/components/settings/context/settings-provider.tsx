@@ -18,7 +18,12 @@ type SettingsProviderProps = {
 }
 
 export function SettingsProvider({ children, defaultSettings }: SettingsProviderProps) {
-  const { state, update, reset } = useLocalStorage(STORAGE_KEY_SETTINGS, defaultSettings)
+  const { state, update, reset } = useLocalStorage(
+    STORAGE_KEY_SETTINGS,
+    defaultSettings,
+    defaultSettings,
+    true
+  )
 
   const [openDrawer, setOpenDrawer] = useState(false)
 
