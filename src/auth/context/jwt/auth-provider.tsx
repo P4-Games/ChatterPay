@@ -117,13 +117,15 @@ export function AuthProvider({ children }: Props) {
 
   const initialize = useCallback(async () => {
     try {
-      const jwtToken = sessionStorage.getItem(STORAGE_KEY_TOKEN)
+      const jwtToken: string = getStorageItem(STORAGE_KEY_TOKEN)
 
       if (jwtToken && isValidToken(jwtToken)) {
         setSession(jwtToken)
-        const decodedToken = jwtDecode(jwtToken)
+        const decodedToken: JwtPayload = jwtDecode(jwtToken)
+        const tokenUser: jwtPayloadUser = decodedToken.user
+
         const res = await fetcher([
-          endpoints.dashboard.user.id(decodedToken.user.phone_number),
+          endpoints.dashboard.user.id(tokenUser.id),
           { headers: getAuthorizationHeader() }
         ])
         const user = res
@@ -259,7 +261,7 @@ export function AuthProvider({ children }: Props) {
       const jwtToken = 'dummyToken'
 
       setSession(jwtToken)
-      // sessionStorage.setItem(STORAGE_KEY_TOKEN, jwtToken)
+      // setStorageItem(STORAGE_KEY_TOKEN, jwtToken)
 
       dispatch({
         type: Types.REGISTER,
