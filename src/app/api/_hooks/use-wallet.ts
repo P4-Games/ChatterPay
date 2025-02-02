@@ -1,23 +1,32 @@
 import { post, endpoints } from 'src/app/api/_hooks/api-resolver'
+import { getAuthorizationHeader } from 'src/auth/context/jwt/utils'
 
 import { useGetCommon, useGetCommonPaged } from './common'
 
 // ----------------------------------------------------------------------
 
 export function useGetWalletBalance(walletId: string) {
-  return useGetCommon(endpoints.dashboard.wallet.balance(walletId))
+  return useGetCommon(endpoints.dashboard.wallet.balance(walletId), {
+    headers: getAuthorizationHeader()
+  })
 }
 
 export function useGetWalletTransactions(walletId: string) {
-  return useGetCommon(endpoints.dashboard.wallet.transactions(walletId))
+  return useGetCommon(endpoints.dashboard.wallet.transactions(walletId), {
+    headers: getAuthorizationHeader()
+  })
 }
 
 export function useGetWalletNfts(walletId: string) {
-  return useGetCommon(endpoints.dashboard.wallet.nfts.root(walletId))
+  return useGetCommon(endpoints.dashboard.wallet.nfts.root(walletId), {
+    headers: getAuthorizationHeader()
+  })
 }
 
 export function useGetWalletNft(walletId: string, nftId: string) {
-  return useGetCommon(endpoints.dashboard.wallet.nfts.id(walletId, nftId))
+  return useGetCommon(endpoints.dashboard.wallet.nfts.id(walletId, nftId), {
+    headers: getAuthorizationHeader()
+  })
 }
 
 export function useGetWalletNotifications(
@@ -40,7 +49,9 @@ export function useGetWalletNotifications(
 // ----------------------------------------------------------------------
 
 export async function transferAll(userId: string, data: { walletTo: string }) {
-  const res = await post(endpoints.dashboard.user.transferAll(userId), data, {})
+  const res = await post(endpoints.dashboard.user.transferAll(userId), data, {
+    headers: getAuthorizationHeader()
+  })
   return res
 }
 
