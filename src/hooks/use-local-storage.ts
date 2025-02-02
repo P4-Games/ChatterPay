@@ -89,10 +89,17 @@ export const getStorageItem = <T>(
 ): T => {
   try {
     const storage = getStorageObject()
-    const result = storage instanceof Storage ? storage.getItem(key) : storage.get(key)
+    let result
+
+    try {
+      result = storage instanceof Storage ? storage.getItem(key) : storage.get(key)
+    } catch {
+      // no throw error
+    }
+
     return asJson && result ? JSON.parse(result as string) : ((result || defaultValue) as T)
   } catch (error) {
-    console.error(error.message)
+    console.warn('getStorageItem', key, error.message)
     return defaultValue
   }
 }
@@ -121,6 +128,6 @@ export const removeStorageItem = (key: string): void => {
       storage.del(key)
     }
   } catch (error) {
-    console.error(error.message)
+    console.warn('removeStorageItem', key, error.message)
   }
 }
