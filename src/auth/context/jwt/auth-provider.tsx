@@ -116,6 +116,7 @@ export function AuthProvider({ children }: Props) {
       const jwtToken = sessionStorage.getItem(STORAGE_KEY_TOKEN)
 
       if (jwtToken && isValidToken(jwtToken)) {
+        setSession(jwtToken)
         const decodedToken = jwtDecode(jwtToken)
         const res = await fetcher([
           endpoints.dashboard.user.id(decodedToken.user.phone_number),
