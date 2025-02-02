@@ -2,13 +2,21 @@ import { ObjectId, Collection } from 'mongodb'
 
 import { DB_BOT_NAME, DB_CHATTERPAY_NAME } from 'src/config-global'
 
-import { IAccount } from 'src/types/account'
 import { LastUserConversation } from 'src/types/chat'
 import { INFT, ITransaction } from 'src/types/wallet'
+import { IAccount, UserSession } from 'src/types/account'
 
+import { JwtPayload } from '../_utils/jwt-utils'
 import { getClientPromise } from './mongo-connection'
 import { getClientPromiseBot } from './mongo-connection-bot'
-import { getObjectId, getFormattedId, updateOneCommon } from './mongo-utils'
+import {
+  getObjectId,
+  findOneCommon,
+  getFormattedId,
+  updateOneCommon,
+  upsertOneCommon,
+  generateObjectId
+} from './mongo-utils'
 
 // ----------------------------------------------------------------------
 
@@ -129,6 +137,25 @@ export async function getUserById(id: string): Promise<IAccount | undefined> {
   return user
 }
 
+export async function getUserIdByWallet(userWallet: string): Promise<string | undefined> {
+  const client = await getClientPromise()
+  const db = client.db(DB_CHATTERPAY_NAME)
+
+  const data: IAccountDB | null = await db.collection(SCHEMA_USERS).findOne({
+    wallets: {
+      $elemMatch: {
+        $or: [{ wallet_eoa: userWallet }, { wallet_proxy: userWallet }]
+      }
+    }
+  })
+
+  if (!data) {
+    return undefined
+  }
+
+  return getFormattedId(data._id)
+}
+
 export async function updateUserCode(userId: string, code: number | undefined): Promise<boolean> {
   const setValue = { $set: { code } }
   const result = await updateOneCommon(
@@ -138,6 +165,76 @@ export async function updateUserCode(userId: string, code: number | undefined): 
     setValue
   )
   return result
+}
+
+export async function createUserSession(
+  userId: string,
+  token: string,
+  ip: string,
+  validTimeMinutes: number
+): Promise<boolean> {
+  const now = new Date()
+  const expirationDate = new Date(now.getTime() + validTimeMinutes * 60 * 1000)
+
+  const sessionData = {
+    id: generateObjectId(),
+    creationDate: now,
+    expirationDate,
+    token,
+    status: 'created',
+    ip
+  }
+
+  await upsertOneCommon(
+    DB_CHATTERPAY_NAME,
+    SCHEMA_USERS,
+    { _id: getObjectId(userId) },
+    { $setOnInsert: { front: { sessions: [] } } }
+  )
+
+  const result = await updateOneCommon(
+    DB_CHATTERPAY_NAME,
+    SCHEMA_USERS,
+    { _id: getObjectId(userId) },
+    { $push: { 'front.sessions': sessionData } }
+  )
+
+  return result
+}
+
+export async function checkUserHaveActiveSession(
+  userId: string,
+  jwtToken: JwtPayload,
+  ip: string
+): Promise<boolean> {
+  try {
+    // Retrieve only the "front.sessions" field for the given user
+    const user = await findOneCommon(
+      DB_CHATTERPAY_NAME,
+      SCHEMA_USERS,
+      { _id: getObjectId(userId) },
+      { 'front.sessions': 1 }
+    )
+
+    // Validate if user or sessions exist
+    if (!user || !user.front?.sessions || user.front.sessions.length === 0) {
+      return false
+    }
+
+    // Check if there is a matching session with the given sessionId and token
+    const matchingSession = user.front.sessions.find(
+      (session: any) =>
+        getFormattedId(session.id) === jwtToken.sessionId &&
+        session.token === jwtToken.accessToken &&
+        session.ip === ip &&
+        session.status === 'active'
+    )
+
+    return !!matchingSession
+  } catch (error) {
+    console.error('checkUserHaveActiveSession', userId, error.message)
+  }
+  return false
 }
 
 export async function updateUser(contact: IAccount): Promise<boolean> {
@@ -153,6 +250,85 @@ export async function updateUserEmail(contact: IAccount): Promise<boolean> {
   const updateData = { email: contact.email }
   const setValue = { $set: updateData }
   const result: boolean = await updateOneCommon(DB_CHATTERPAY_NAME, SCHEMA_USERS, filter, setValue)
+  return result
+}
+export async function validateUserHave1SessionCreated(
+  userId: string,
+  ip: string
+): Promise<{ valid: boolean; error: string; session: UserSession | {} }> {
+  try {
+    // Retrieve the user's sessions from the database using findOneCommon
+    const user = await findOneCommon(
+      DB_CHATTERPAY_NAME,
+      SCHEMA_USERS,
+      { _id: getObjectId(userId) },
+      { 'front.sessions': 1 }
+    )
+
+    // Check if the user has any sessions stored
+    if (!user || !user.front?.sessions || user.front.sessions.length === 0) {
+      return { valid: false, error: 'NO_SESSIONS', session: {} }
+    }
+
+    const now = new Date()
+
+    // Convert MongoDB date format and find an active session
+    const activeSession = user.front.sessions.find((session: any) => {
+      const sessionExpirationDate = new Date(
+        session.expirationDate?.$date || session.expirationDate
+      )
+      return session.status === 'created' && session.ip === ip && sessionExpirationDate > now
+    })
+
+    if (!activeSession) {
+      // Check if there's at least one session that matches but has expired
+      const expiredSession = user.front.sessions.find((session: any) => {
+        const sessionExpirationDate = new Date(
+          session.expirationDate?.$date || session.expirationDate
+        )
+        return session.status === 'created' && session.ip === ip && sessionExpirationDate <= now
+      })
+
+      return {
+        valid: false,
+        error: expiredSession ? 'SESSION_EXPIRED' : 'NO_SESSIONS',
+        session: {}
+      }
+    }
+
+    return { valid: true, error: '', session: activeSession }
+  } catch (error) {
+    console.error('validateUserHave1SessionCreated', userId, error.message)
+
+    return { valid: false, error: error.message, session: {} }
+  }
+}
+
+export async function updateUserSessionStatus(
+  userId: string,
+  sessionId: string,
+  status: string
+): Promise<boolean> {
+  // Ensure status is valid (optional validation)
+  const validStatuses = ['created', 'active', 'expired', 'terminated']
+  if (!validStatuses.includes(status)) {
+    console.error(`Invalid session status: ${status}`)
+    return false
+  }
+
+  // Update the session status for the given user and session ID
+  const result = await updateOneCommon(
+    DB_CHATTERPAY_NAME,
+    SCHEMA_USERS,
+    {
+      _id: getObjectId(userId),
+      'front.sessions.id': getObjectId(sessionId)
+    },
+    {
+      $set: { 'front.sessions.$.status': status }
+    }
+  )
+
   return result
 }
 

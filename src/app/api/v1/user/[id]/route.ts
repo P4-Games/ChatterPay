@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { updateUser, getUserById, getUserByPhone } from 'src/app/api/_data/data-service'
+import { getIpFromRequest } from 'src/app/api/_utils/request-utils'
+import { JwtPayload, extractjwtTokenFromHeader } from 'src/app/api/_utils/jwt-utils'
+import {
+  updateUser,
+  getUserById,
+  getUserByPhone,
+  checkUserHaveActiveSession
+} from 'src/app/api/_data/data-service'
 
 import { IAccount } from 'src/types/account'
 
@@ -10,7 +17,7 @@ type IParams = {
   id: string
 }
 
-export async function GET(request: Request, { params }: { params: IParams }) {
+export async function GET(req: NextRequest, { params }: { params: IParams }) {
   const { id } = params
   try {
     if (!id) {
@@ -21,6 +28,31 @@ export async function GET(request: Request, { params }: { params: IParams }) {
         }),
         {
           status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
+    const ip = getIpFromRequest(req)
+
+    const jwtTokenDecoded: JwtPayload | null = extractjwtTokenFromHeader(
+      req.headers.get('Authorization')
+    )
+    if (!jwtTokenDecoded) {
+      return new NextResponse(
+        JSON.stringify({ code: 'NOT_AUTHORIZED', error: 'Invalid Access Token' }),
+        {
+          status: 401,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+    }
+    const validAccessToken = await checkUserHaveActiveSession(id, jwtTokenDecoded, ip)
+    if (!validAccessToken) {
+      return new NextResponse(
+        JSON.stringify({ code: 'NOT_AUTHORIZED', error: 'Invalid Access Token' }),
+        {
+          status: 401,
           headers: { 'Content-Type': 'application/json' }
         }
       )
@@ -84,6 +116,32 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
         }),
         {
           status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
+    const ip = getIpFromRequest(req)
+
+    const jwtTokenDecoded: JwtPayload | null = extractjwtTokenFromHeader(
+      req.headers.get('Authorization')
+    )
+    if (!jwtTokenDecoded) {
+      return new NextResponse(
+        JSON.stringify({ code: 'NOT_AUTHORIZED', error: 'Invalid Access Token' }),
+        {
+          status: 401,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
+    const validAccessToken = await checkUserHaveActiveSession(id, jwtTokenDecoded, ip)
+    if (!validAccessToken) {
+      return new NextResponse(
+        JSON.stringify({ code: 'NOT_AUTHORIZED', error: 'Invalid Access Token' }),
+        {
+          status: 401,
           headers: { 'Content-Type': 'application/json' }
         }
       )

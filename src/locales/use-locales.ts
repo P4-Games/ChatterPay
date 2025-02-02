@@ -3,7 +3,7 @@
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { localStorageGetItem } from 'src/utils/storage-available'
+import { getStorageItem } from 'src/hooks/use-local-storage'
 
 import { useSettingsContext } from 'src/components/settings'
 
@@ -12,7 +12,7 @@ import { allLangs, defaultLang } from './config-lang'
 // ----------------------------------------------------------------------
 
 export function useLocales() {
-  const langStorage = localStorageGetItem('i18nextLng')
+  const langStorage = getStorageItem('i18nextLng')
 
   const currentLang = allLangs.find((lang) => lang.value === langStorage) || defaultLang
 

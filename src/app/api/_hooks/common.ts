@@ -7,7 +7,7 @@ import { fetcher } from 'src/app/api/_hooks/api-resolver'
 // ----------------------------------------------------------------------
 
 export function useGetCommon(endpoint: any, options: {} = {}, shouldRefresh: boolean = false) {
-  const { data, error, isLoading, isValidating } = useSWR(endpoint, fetcher)
+  const { data, error, isLoading, isValidating } = useSWR([endpoint, options], fetcher)
 
   const memoizedValue = useMemo(
     () => ({

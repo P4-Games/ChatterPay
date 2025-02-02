@@ -1,11 +1,15 @@
-import jwt from 'jsonwebtoken'
 import { NextRequest, NextResponse } from 'next/server'
 
-import { JWT_SECRET } from 'src/config-global'
-import { getUserByPhone, updateUserCode } from 'src/app/api/_data/data-service'
+import { jwtPayloadUser, generateJwtToken } from 'src/app/api/_utils/jwt-utils'
 import { getIpFromRequest, validateRecaptcha } from 'src/app/api/_utils/request-utils'
+import {
+  getUserByPhone,
+  updateUserCode,
+  updateUserSessionStatus,
+  validateUserHave1SessionCreated
+} from 'src/app/api/_data/data-service'
 
-import { IAccount } from 'src/types/account'
+import { IAccount, UserSession } from 'src/types/account'
 
 // ----------------------------------------------------------------------
 
@@ -34,7 +38,7 @@ export async function POST(req: NextRequest) {
       return new NextResponse(
         JSON.stringify({ code: 'RECAPTACHA_INVALID', error: 'Invalid reCAPTCHA token' }),
         {
-          status: 400,
+          status: 401,
           headers: { 'Content-Type': 'application/json' }
         }
       )
@@ -56,24 +60,41 @@ export async function POST(req: NextRequest) {
       return new NextResponse(
         JSON.stringify({ code: 'AUTH_INVALID_CODE', error: 'invalid code' }),
         {
-          status: 400,
+          status: 401,
           headers: { 'Content-Type': 'application/json' }
         }
       )
     }
 
-    const data: any = {
-      user: {
-        id: user.id,
-        displayName: user.name || user.phone_number,
-        wallet: user.wallet || '',
-        walletEOA: user.walletEOA || '',
-        email: user.email || '',
-        photoURL: user.photo || '/assets/images/avatars/generic-user.png',
-        phoneNumber: user.phone_number || ''
-      },
-      accessToken: generateAccessToken(user)
+    // Validate if the user has an active session with the same IP
+    const result = await validateUserHave1SessionCreated(user.id, ip)
+    if (!result.valid) {
+      return new NextResponse(
+        JSON.stringify({ code: 'AUTH_INVALID_SESSION', error: result.error }),
+        {
+          status: 401,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
     }
+
+    const userSession = result.session as UserSession
+    const dataUser: jwtPayloadUser = {
+      id: user.id,
+      displayName: user.name || user.phone_number,
+      wallet: user.wallet || '',
+      walletEOA: user.walletEOA || '',
+      email: user.email || '',
+      photoURL: user.photo || '/assets/images/avatars/generic-user.png',
+      phoneNumber: user.phone_number || ''
+    }
+    const data: Record<string, any> = {
+      user: dataUser,
+      sessionId: userSession.id,
+      jwtToken: generateJwtToken(dataUser, userSession)
+    }
+
+    await updateUserSessionStatus(user.id, userSession.id, 'active')
 
     // clean 2fa code used in bdd
     updateUserCode(user.id, undefined)
@@ -86,12 +107,4 @@ export async function POST(req: NextRequest) {
       headers: { 'Content-Type': 'application/json' }
     })
   }
-}
-
-function generateAccessToken(user: IAccount): string {
-  delete user.code
-  const accessToken = jwt.sign({ user }, JWT_SECRET || 'some_text', {
-    expiresIn: '3h'
-  })
-  return accessToken
 }

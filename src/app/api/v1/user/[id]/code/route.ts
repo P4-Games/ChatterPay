@@ -1,18 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { getUserByPhone, updateUserCode } from 'src/app/api/_data/data-service'
+import { getIpFromRequest } from 'src/app/api/_utils/request-utils'
 import { BOT_API_URL, BOT_API_TOKEN, botApiWappEnabled } from 'src/config-global'
+import { JwtPayload, extractjwtTokenFromHeader } from 'src/app/api/_utils/jwt-utils'
+import {
+  getUserByPhone,
+  updateUserCode,
+  checkUserHaveActiveSession
+} from 'src/app/api/_data/data-service'
 
 import { IAccount } from 'src/types/account'
 
 import { send2FACode } from '../../../_common/common'
 
 // ----------------------------------------------------------------------
+type IParams = {
+  id: string
+}
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest, { params }: { params: IParams }) {
   try {
     const { phone, codeMsg }: { phone: string; codeMsg: string; recaptchaToken: string } =
       await req.json()
+    const { id } = params
 
     if (!phone || !codeMsg) {
       return new NextResponse(
@@ -22,6 +32,32 @@ export async function POST(req: NextRequest) {
         }),
         {
           status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
+    const ip = getIpFromRequest(req)
+
+    const jwtTokenDecoded: JwtPayload | null = extractjwtTokenFromHeader(
+      req.headers.get('Authorization')
+    )
+    if (!jwtTokenDecoded) {
+      return new NextResponse(
+        JSON.stringify({ code: 'NOT_AUTHORIZED', error: 'Invalid Access Token' }),
+        {
+          status: 401,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
+    const validAccessToken = await checkUserHaveActiveSession(id, jwtTokenDecoded, ip)
+    if (!validAccessToken) {
+      return new NextResponse(
+        JSON.stringify({ code: 'NOT_AUTHORIZED', error: 'Invalid Access Token' }),
+        {
+          status: 401,
           headers: { 'Content-Type': 'application/json' }
         }
       )
@@ -52,7 +88,7 @@ export async function POST(req: NextRequest) {
     // Send 2FA code to user'whatsapp
     let botSentCodeResult: boolean = true
     if (botApiWappEnabled) {
-      console.info('calling send2FACode SYNC', phone, code)
+      console.info('/user/[id]/code, calling send2FACode SYNC', phone, code)
       botSentCodeResult = await send2FACode(phone, code, codeMsg)
 
       if (!botSentCodeResult) {
