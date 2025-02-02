@@ -275,7 +275,12 @@ export function AuthProvider({ children }: Props) {
   )
 
   const logout = useCallback(async (id: string) => {
-    await post(endpoints.dashboard.user.logout(id), {}, { headers: getAuthorizationHeader() })
+    try {
+      await post(endpoints.dashboard.user.logout(id), {}, { headers: getAuthorizationHeader() })
+    } catch (error) {
+      // avoid throw error in logout
+      console.error('logout', error.message)
+    }
     setSession(null)
     dispatch({
       type: Types.LOGOUT
