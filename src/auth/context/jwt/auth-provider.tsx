@@ -146,7 +146,7 @@ export function AuthProvider({ children }: Props) {
         })
       }
     } catch (error) {
-      console.error(error.message)
+      console.error(error && error.message ? error.message : error)
       dispatch({
         type: Types.INITIAL,
         payload: {

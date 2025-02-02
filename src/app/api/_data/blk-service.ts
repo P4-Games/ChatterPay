@@ -52,7 +52,7 @@ export async function getBalancesWithTotalsFromBackend(walletAddress: string): P
     })
     responseBalances = response.data.data
   } catch (error) {
-    console.error('Error fetching balance from backend:', error.message)
+    console.error('Error fetching balance from backend:', error)
     responseBalances = defaultBalances
   }
 
