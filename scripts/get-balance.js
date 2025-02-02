@@ -117,7 +117,7 @@ async function getTokenBalance(tokenContract, walletAddress) {
     const tokenBalance = await tokenContract.balanceOf(walletAddress)
     return tokenBalance
   } catch (error) {
-    console.error(error)
+    console.error(error.message)
   }
 }
 
