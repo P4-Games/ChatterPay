@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { getUserById, updateUserCode, updateUserEmail } from 'src/app/api/_data/data-service'
+import { getIpFromRequest } from 'src/app/api/_utils/request-utils'
+import { JwtPayload, extractjwtTokenFromHeader } from 'src/app/api/_utils/jwt-utils'
+import {
+  getUserById,
+  updateUserCode,
+  updateUserEmail,
+  checkUserHaveActiveSession
+} from 'src/app/api/_data/data-service'
 
 import { IAccount } from 'src/types/account'
 
@@ -47,6 +54,32 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
       )
     }
 
+    const ip = getIpFromRequest(req)
+
+    const jwtTokenDecoded: JwtPayload | null = extractjwtTokenFromHeader(
+      req.headers.get('Authorization')
+    )
+    if (!jwtTokenDecoded) {
+      return new NextResponse(
+        JSON.stringify({ code: 'NOT_AUTHORIZED', error: 'Invalid Access Token' }),
+        {
+          status: 401,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
+    const validAccessToken = await checkUserHaveActiveSession(id, jwtTokenDecoded, ip)
+    if (!validAccessToken) {
+      return new NextResponse(
+        JSON.stringify({ code: 'NOT_AUTHORIZED', error: 'Invalid Access Token' }),
+        {
+          status: 401,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
     const user: IAccount | undefined = await getUserById(id)
     if (!user) {
       return new NextResponse(
@@ -60,7 +93,7 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
 
     if (!user.code || code.toString() !== user.code.toString()) {
       return new NextResponse(JSON.stringify({ code: 'INVALID_CODE', error: 'invalid code' }), {
-        status: 400,
+        status: 401,
         headers: { 'Content-Type': 'application/json' }
       })
     }
