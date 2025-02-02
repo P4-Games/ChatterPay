@@ -65,8 +65,8 @@ export const NFT_MARKETPLACE_URL =
   'https://testnets.opensea.io/assets/arbitrum_sepolia'
 
 export const NFT_SHARE = 'https://api.whatsapp.com/send/?text=MESSAGE'
-export const STORAGE_KEY_TOKEN = 'jwtToken'
-export const STORAGE_KEY_SETTINGS = 'settings'
+export const STORAGE_KEY_TOKEN = `chatterpay_${APP_ENV}_jwtToken`
+export const STORAGE_KEY_SETTINGS = `chatterpay_${APP_ENV}_settings`
 export const CONTACT_EMAIL = 'contacto@chatterpay.com.ar'
 export const GET_BALANCES_FROM_BACKEND = true
 export const NOTIFICATIONS_PAGE_SIZE: number = Number.isNaN(
