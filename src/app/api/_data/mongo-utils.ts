@@ -20,6 +20,35 @@ export function getObjectId(id: any) {
   }
 }
 
+export function generateObjectId(): ObjectId {
+  return new ObjectId()
+}
+
+export async function findOneCommon(
+  dbName: string,
+  colName: string,
+  filter: {},
+  projection: {} = {}
+): Promise<any | null> {
+  let client: MongoClient | undefined
+
+  try {
+    client = await getClientPromise()
+    const db: Db = client!.db(dbName)
+    const collection: Collection = await db.collection(colName)
+    const result = await collection.findOne(filter, { projection })
+
+    console.info(`findOne in ${dbName}.${colName}: ${JSON.stringify(filter)}`)
+
+    return result
+  } catch (error) {
+    console.error(`Error finding document in ${dbName}.${colName}:`, error)
+    return null
+  } finally {
+    // NONE - Connection pool should be managed by getClientPromise
+  }
+}
+
 export async function updateOneCommon(
   dbName: string,
   colName: string,
