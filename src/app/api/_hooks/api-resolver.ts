@@ -1,21 +1,26 @@
 import axios, { AxiosHeaders, AxiosRequestConfig } from 'axios'
 
-import { UI_BASE_URL, BOT_API_URL } from 'src/config-global'
+import { BOT_API_URL, UI_BASE_URL } from 'src/config-global'
 
 // ----------------------------------------------------------------------
 
 const axiosInstance = axios.create({
-  baseURL: BOT_API_URL
+  baseURL: UI_BASE_URL
 })
-
-// Add request interceptor to include Origin header
 axiosInstance.interceptors.request.use((config) => {
-  if (!config.headers) {
-    config.headers = new AxiosHeaders()
+  // Add request interceptor to include Origin
+  try {
+    if (!config.headers) {
+      config.headers = new AxiosHeaders()
+    }
+
+    if (typeof window === 'undefined') {
+      config.headers.set('Origin', UI_BASE_URL)
+    }
+  } catch (error) {
+    console.error('error in axiosInstance.interceptors.request.use', error.message)
   }
-  if (typeof window === 'undefined') {
-    config.headers.set('Origin', UI_BASE_URL)
-  }
+
   return config
 })
 
@@ -30,17 +35,35 @@ export default axiosInstance
 
 export const fetcher = async (args: string | [string, AxiosRequestConfig]) => {
   const [url, config] = Array.isArray(args) ? args : [args]
-  const res = await axiosInstance.get(url, { ...config })
+  const res = await axiosInstance.get(url, {
+    ...config,
+    headers: {
+      ...(axiosInstance.defaults.headers as Record<string, string>),
+      ...(config?.headers as Record<string, string>)
+    }
+  })
   return res.data
 }
 
 export const post = async (url: string, data: {}, config?: AxiosRequestConfig) => {
-  const res = await axiosInstance.post(url, data, { ...config })
+  const res = await axiosInstance.post(url, data, {
+    ...config,
+    headers: {
+      ...(axiosInstance.defaults.headers as Record<string, string>),
+      ...(config?.headers as Record<string, string>)
+    }
+  })
   return res.data
 }
 
 export const put = async (url: string, data: {}, config?: AxiosRequestConfig) => {
-  const res = await axiosInstance.put(url, data, { ...config })
+  const res = await axiosInstance.put(url, data, {
+    ...config,
+    headers: {
+      ...(axiosInstance.defaults.headers as Record<string, string>),
+      ...(config?.headers as Record<string, string>)
+    }
+  })
   return res.data
 }
 
@@ -69,7 +92,8 @@ export const endpoints = {
       update: (id: string) => getFullUIEndpoint(`user/${id}`),
       code: (id: string) => getFullUIEndpoint(`user/${id}/code`),
       updateEmail: (id: string) => getFullUIEndpoint(`user/${id}/email`),
-      transferAll: (id: string) => getFullUIEndpoint(`user/${id}/transfer-all`)
+      transferAll: (id: string) => getFullUIEndpoint(`user/${id}/transfer-all`),
+      logout: (id: string) => getFullUIEndpoint(`user/${id}/logout`)
     },
     wallet: {
       balance: (id: string) => getFullUIEndpoint(`wallet/${id}/balance`),
@@ -86,7 +110,6 @@ export const endpoints = {
     }
   },
   backend_bot: {
-    sendMessage: () => getFullBotEndpoint('chatbot/conversations/send-message'),
-    control: () => getFullBotEndpoint('chatbot/conversations/control')
+    sendMessage: () => getFullBotEndpoint('chatbot/conversations/send-message')
   }
 }
