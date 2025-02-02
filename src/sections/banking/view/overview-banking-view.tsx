@@ -13,6 +13,7 @@ import { useGetWalletBalance, useGetWalletTransactions } from 'src/app/api/_hook
 
 import { useSettingsContext } from 'src/components/settings'
 
+import { IAccount } from 'src/types/account'
 import { IBalances, ITransaction } from 'src/types/wallet'
 
 import BankingBalances from '../banking-balances'
@@ -25,12 +26,19 @@ export default function OverviewBankingView() {
   const settings = useSettingsContext()
   const { user }: { user: AuthUserType } = useAuthContext()
   const [walletAddress, setWalletAddress] = useState<string | null>(null)
+  const [contextUser, setContextUser] = useState<IAccount | null>(null)
 
   useEffect(() => {
-    if (user && user.wallet) {
-      setWalletAddress(user.wallet)
-    }
+    if (!user) return
+    // @ts-ignore
+    setContextUser(user)
   }, [user])
+
+  useEffect(() => {
+    if (contextUser && contextUser.wallet) {
+      setWalletAddress(contextUser.wallet)
+    }
+  }, [contextUser])
 
   const { data: balances, isLoading: isLoadingBalances }: { data: IBalances; isLoading: boolean } =
     // 'none' => // avoid slow context-user load issues
