@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 import { getIpFromRequest } from 'src/app/api/_utils/request-utils'
+import { extractjwtTokenFromHeader } from 'src/app/api/_utils/jwt-utils'
 import { defaultBalance, GET_BALANCES_FROM_BACKEND } from 'src/config-global'
-import { JwtPayload, extractjwtTokenFromHeader } from 'src/app/api/_utils/jwt-utils'
 import { getUserIdByWallet, checkUserHaveActiveSession } from 'src/app/api/_data/data-service'
 import {
   getBalancesWithTotals,
   getBalancesWithTotalsFromBackend
 } from 'src/app/api/_data/blk-service'
 
+import { JwtPayload } from 'src/types/jwt'
 import { IBalances } from 'src/types/wallet'
 import { IErrorResponse } from 'src/types/api'
 

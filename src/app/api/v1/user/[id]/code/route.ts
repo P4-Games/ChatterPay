@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 import { getIpFromRequest } from 'src/app/api/_utils/request-utils'
+import { extractjwtTokenFromHeader } from 'src/app/api/_utils/jwt-utils'
 import { BOT_API_URL, BOT_API_TOKEN, botApiWappEnabled } from 'src/config-global'
-import { JwtPayload, extractjwtTokenFromHeader } from 'src/app/api/_utils/jwt-utils'
 import {
   getUserByPhone,
   updateUserCode,
   checkUserHaveActiveSession
 } from 'src/app/api/_data/data-service'
 
+import { JwtPayload } from 'src/types/jwt'
 import { IAccount } from 'src/types/account'
 
 import { send2FACode } from '../../../_common/common'

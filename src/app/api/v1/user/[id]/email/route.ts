@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 import { getIpFromRequest } from 'src/app/api/_utils/request-utils'
-import { JwtPayload, extractjwtTokenFromHeader } from 'src/app/api/_utils/jwt-utils'
+import { extractjwtTokenFromHeader } from 'src/app/api/_utils/jwt-utils'
 import {
   getUserById,
   updateUserCode,
@@ -9,6 +9,7 @@ import {
   checkUserHaveActiveSession
 } from 'src/app/api/_data/data-service'
 
+import { JwtPayload } from 'src/types/jwt'
 import { IAccount } from 'src/types/account'
 
 // ----------------------------------------------------------------------

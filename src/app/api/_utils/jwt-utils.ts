@@ -3,22 +3,7 @@ import jwt from 'jsonwebtoken'
 import { JWT_SECRET, USER_SESSION_EXPIRATION_MINUTES } from 'src/config-global'
 
 import { UserSession } from 'src/types/account'
-
-export type jwtPayloadUser = {
-  id: string
-  displayName: string
-  wallet: string
-  walletEOA: string
-  email: string
-  photoURL: string
-  phoneNumber: string
-}
-
-export type JwtPayload = {
-  user: jwtPayloadUser
-  accessToken: string
-  sessionId: string
-}
+import { JwtPayload, jwtPayloadUser } from 'src/types/jwt'
 
 export function generateJwtToken(user: jwtPayloadUser, userSession: UserSession): string {
   const jwtPayload: JwtPayload = { user, accessToken: userSession.token, sessionId: userSession.id }

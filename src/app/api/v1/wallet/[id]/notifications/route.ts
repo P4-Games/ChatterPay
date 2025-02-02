@@ -3,9 +3,10 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import { PUSH_NETWORK, PUSH_ENVIRONMENT } from 'src/config-global'
 import { getIpFromRequest } from 'src/app/api/_utils/request-utils'
-import { JwtPayload, extractjwtTokenFromHeader } from 'src/app/api/_utils/jwt-utils'
+import { extractjwtTokenFromHeader } from 'src/app/api/_utils/jwt-utils'
 import { getUserIdByWallet, checkUserHaveActiveSession } from 'src/app/api/_data/data-service'
 
+import { JwtPayload } from 'src/types/jwt'
 import { IErrorResponse } from 'src/types/api'
 
 // ----------------------------------------------------------------------
