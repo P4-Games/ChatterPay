@@ -58,7 +58,8 @@ export async function GET(req: NextRequest, { params }: { params: IParams }) {
       )
     }
 
-    const user: IAccount | undefined = await getUserByPhone(id)
+    const user: IAccount | undefined = await getUserById(id)
+   
 
     if (!user) {
       return new NextResponse(
