@@ -2,9 +2,8 @@ import * as PushAPI from '@pushprotocol/restapi'
 import { NextRequest, NextResponse } from 'next/server'
 
 import { PUSH_NETWORK, PUSH_ENVIRONMENT } from 'src/config-global'
-
-import { validateRequestSecurity } from '../../../_common/baseSecurityRoute'
-import { validateWalletCommonsInputs as validateWalletCommonInputs } from '../../walletCommonInputsValidator'
+import { validateRequestSecurity } from 'src/app/api/middleware/validators/base-security-validator'
+import { validateWalletCommonsInputs as validateWalletCommonInputs } from 'src/app/api/middleware/validators/wallet-common-inputs-validator'
 
 // ----------------------------------------------------------------------
 

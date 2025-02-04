@@ -1,15 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 import { defaultBalance, GET_BALANCES_FROM_BACKEND } from 'src/config-global'
+import { validateRequestSecurity } from 'src/app/api/middleware/validators/base-security-validator'
 import {
   getBalancesWithTotals,
   getBalancesWithTotalsFromBackend
-} from 'src/app/api/_data/blk-service'
+} from 'src/app/api/services/blockchain/blockchain-service'
+import { validateWalletCommonsInputs as validateWalletCommonInputs } from 'src/app/api/middleware/validators/wallet-common-inputs-validator'
 
 import { IBalances } from 'src/types/wallet'
-
-import { validateRequestSecurity } from '../../../_common/baseSecurityRoute'
-import { validateWalletCommonsInputs as validateWalletCommonInputs } from '../../walletCommonInputsValidator'
 
 // ----------------------------------------------------------------------
 

@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { getWalletNfts } from 'src/app/api/_data/data-service'
-
-import { validateRequestSecurity } from '../../../_common/baseSecurityRoute'
-import { validateWalletCommonsInputs as validateWalletCommonInputs } from '../../walletCommonInputsValidator'
+import { getWalletNfts } from 'src/app/api/services/db/chatterpay-db-service'
+import { validateRequestSecurity } from 'src/app/api/middleware/validators/base-security-validator'
+import { validateWalletCommonsInputs as validateWalletCommonInputs } from 'src/app/api/middleware/validators/wallet-common-inputs-validator'
 
 // ----------------------------------------------------------------------
 

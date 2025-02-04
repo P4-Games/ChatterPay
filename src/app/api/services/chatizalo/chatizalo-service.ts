@@ -1,6 +1,5 @@
 import { BOT_API_TOKEN } from 'src/config-global'
-
-import { post, endpoints } from '../../_hooks/api-resolver'
+import { post, endpoints } from 'src/app/api/hooks/api-resolver'
 
 // ----------------------------------------------------------------------
 

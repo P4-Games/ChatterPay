@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import { IErrorResponse } from 'src/types/api'
 
+// ----------------------------------------------------------------------
+
 export async function validateUserCommonsInputs(
   req: NextRequest,
   userId?: string

@@ -1,10 +1,12 @@
 import { Db, MongoClient, ServerApiVersion } from 'mongodb'
 
-import { NODE_ENV, USE_MOCK, MONGODB_BOT } from 'src/config-global'
+import { MONGODB, NODE_ENV, USE_MOCK } from 'src/config-global'
+
+// ----------------------------------------------------------------------
 
 type DatabaseLogic<T> = (db: Db) => Promise<T>
 
-const uri: string | undefined = MONGODB_BOT
+const uri: string | undefined = MONGODB
 const options = {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -12,8 +14,10 @@ const options = {
     deprecationErrors: true
   }
 }
-let clientBot: MongoClient
-let clientPromiseBot: any
+let client: MongoClient
+let clientPromise: any
+
+// ----------------------------------------------------------------------
 
 if (!USE_MOCK) {
   if (!uri) {
@@ -24,26 +28,26 @@ if (!USE_MOCK) {
     // In development mode, use a global variable so that the value
     // is preserved across module reloads caused by HMR (Hot Module Replacement).
     // @ts-ignore
-    if (!global._mongoClientPromiseBot) {
-      clientBot = new MongoClient(uri, options)
+    if (!global._mongoClientPromise) {
+      client = new MongoClient(uri, options)
       // @ts-ignore
-      global._mongoClientPromiseBot = clientBot.connect()
+      global._mongoClientPromise = client.connect()
     }
     // @ts-ignore
-    clientPromiseBot = global._mongoClientPromiseBot
+    clientPromise = global._mongoClientPromise
   } else {
     // In production mode, it's best to not use a global variable.
-    clientBot = new MongoClient(uri, options)
-    clientPromiseBot = clientBot.connect()
+    client = new MongoClient(uri, options)
+    clientPromise = client.connect()
   }
 }
 
-export function getClientPromiseBot() {
-  return clientPromiseBot
+export function getClientPromise() {
+  return clientPromise
 }
 
-export async function closeConnectionBot() {
-  if (clientBot && NODE_ENV !== 'development') {
+export async function closeConnection() {
+  if (client && NODE_ENV !== 'development') {
     try {
       // await client.close()
     } catch (ex) {
@@ -52,13 +56,13 @@ export async function closeConnectionBot() {
   }
 }
 
-export async function withDatabaseBOt<T>(logic: DatabaseLogic<T>, dbName: string): Promise<T> {
+export async function withDatabase<T>(logic: DatabaseLogic<T>, dbName: string): Promise<T> {
   let _client: MongoClient | null = null
   try {
-    _client = await getClientPromiseBot()
+    _client = await getClientPromise()
     const db = _client!.db(dbName)
     return await logic(db)
   } finally {
-    await closeConnectionBot()
+    await closeConnection()
   }
 }

@@ -7,8 +7,8 @@ import { LastUserConversation } from 'src/types/chat'
 import { INFT, ITransaction } from 'src/types/wallet'
 import { IAccount, UserSession } from 'src/types/account'
 
-import { getClientPromise } from './mongo-connection'
-import { getClientPromiseBot } from './mongo-connection-bot'
+import { getClientPromise } from './_connections/mongo-connection'
+import { getClientPromiseBot } from './_connections/mongo-bot-onnection'
 import {
   getObjectId,
   findOneCommon,
@@ -16,7 +16,7 @@ import {
   updateOneCommon,
   upsertOneCommon,
   generateObjectId
-} from './mongo-utils'
+} from './mongo-service'
 
 // ----------------------------------------------------------------------
 

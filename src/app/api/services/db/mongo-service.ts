@@ -1,6 +1,8 @@
 import { Db, ObjectId, Collection, MongoClient } from 'mongodb'
 
-import { getClientPromise } from './mongo-connection'
+import { getClientPromise } from './_connections/mongo-connection'
+
+// ----------------------------------------------------------------------
 
 export function getFormattedId(id: any) {
   if (!id) return ''
