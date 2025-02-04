@@ -1,13 +1,16 @@
 'use client'
 
-import axios from 'axios'
 import { useMemo, useEffect, useReducer, useCallback } from 'react'
 
+import { getStorageItem } from 'src/hooks/use-local-storage'
+
 import { STORAGE_KEY_TOKEN } from 'src/config-global'
-import { post, fetcher, endpoints } from 'src/app/api/_hooks/api-resolver'
+import { post, fetcher, endpoints } from 'src/app/api/hooks/api-resolver'
+
+import { JwtPayload, jwtPayloadUser } from 'src/types/jwt'
 
 import { AuthContext } from './auth-context'
-import { jwtDecode, setSession, isValidToken } from './utils'
+import { jwtDecode, setSession, isValidToken, getAuthorizationHeader } from './utils'
 import { AuthUserType, ActionMapType, AuthStateType, AuthUserCodeType } from '../../types'
 
 // ----------------------------------------------------------------------
@@ -93,7 +96,7 @@ const reducer = (state: AuthStateType, action: ActionsType) => {
         ...state,
         user: null
       }
-    case Types.UPDATE_USER: // <-- Manejar la acción UPDATE_USER
+    case Types.UPDATE_USER:
       return {
         ...state,
         user: action.payload.user
@@ -114,11 +117,17 @@ export function AuthProvider({ children }: Props) {
 
   const initialize = useCallback(async () => {
     try {
-      const accessToken = sessionStorage.getItem(STORAGE_KEY_TOKEN)
+      const jwtToken: string = getStorageItem(STORAGE_KEY_TOKEN)
 
-      if (accessToken && isValidToken(accessToken)) {
-        const decodedToken = jwtDecode(accessToken)
-        const res = await fetcher(endpoints.dashboard.user.id(decodedToken.user.phone_number))
+      if (jwtToken && isValidToken(jwtToken)) {
+        setSession(jwtToken)
+        const decodedToken: JwtPayload = jwtDecode(jwtToken)
+        const tokenUser: jwtPayloadUser = decodedToken.user
+
+        const res = await fetcher([
+          endpoints.dashboard.user.id(tokenUser.id),
+          { headers: getAuthorizationHeader() }
+        ])
         const user = res
 
         dispatch({
@@ -126,7 +135,7 @@ export function AuthProvider({ children }: Props) {
           payload: {
             user: {
               ...user,
-              accessToken
+              jwtToken
             }
           }
         })
@@ -139,7 +148,7 @@ export function AuthProvider({ children }: Props) {
         })
       }
     } catch (error) {
-      console.error(error)
+      console.error(error && error.message ? error.message : error)
       dispatch({
         type: Types.INITIAL,
         payload: {
@@ -153,30 +162,6 @@ export function AuthProvider({ children }: Props) {
     initialize()
   }, [initialize])
 
-  const login = useCallback(async (email: string, password: string) => {
-    const data = {
-      email,
-      password
-    }
-
-    const res = await axios.post(endpoints.auth.login(), data)
-
-    const { user } = res.data
-    const { accessToken } = res.data
-
-    setSession(accessToken)
-
-    dispatch({
-      type: Types.LOGIN,
-      payload: {
-        user: {
-          ...user,
-          accessToken
-        }
-      }
-    })
-  }, [])
-
   const generate2faCodeLogin = useCallback(
     async (phone: string, codeMsg: string, recaptchaToken: string) => {
       const data = {
@@ -184,7 +169,8 @@ export function AuthProvider({ children }: Props) {
         codeMsg,
         recaptchaToken
       }
-      await post(endpoints.auth.code(), data)
+      await post(endpoints.auth.code(), data, { headers: getAuthorizationHeader() })
+
       dispatch({
         type: Types.GENERATE_CODE_LOGIN,
         payload: {
@@ -201,7 +187,8 @@ export function AuthProvider({ children }: Props) {
         phone,
         codeMsg
       }
-      await post(endpoints.dashboard.user.code(id), data)
+
+      await post(endpoints.dashboard.user.code(id), data, { headers: getAuthorizationHeader() })
       dispatch({
         type: Types.GENERATE_CODE_EMAIL,
         payload: {
@@ -220,15 +207,15 @@ export function AuthProvider({ children }: Props) {
     }
     const res = await post(endpoints.auth.login(), data)
 
-    const { user, accessToken } = res
-    setSession(accessToken)
+    const { user, jwtToken } = res
+    setSession(jwtToken)
 
     dispatch({
       type: Types.LOGIN,
       payload: {
         user: {
           ...user,
-          accessToken
+          jwtToken
         }
       }
     })
@@ -241,7 +228,9 @@ export function AuthProvider({ children }: Props) {
         code,
         email
       }
-      await post(endpoints.dashboard.user.updateEmail(id), data)
+      await post(endpoints.dashboard.user.updateEmail(id), data, {
+        headers: getAuthorizationHeader()
+      })
 
       const updatedUser = { ...state.user, email }
       dispatch({
@@ -267,18 +256,19 @@ export function AuthProvider({ children }: Props) {
 
       // const res = await axios.post(endpoints.auth.register, data)
 
-      // const { accessToken, user } = res.data
+      // const { jwtToken, user } = res.data
 
-      const accessToken = 'dummyToken'
+      const jwtToken = 'dummyToken'
 
-      sessionStorage.setItem(STORAGE_KEY_TOKEN, accessToken)
+      setSession(jwtToken)
+      // setStorageItem(STORAGE_KEY_TOKEN, jwtToken)
 
       dispatch({
         type: Types.REGISTER,
         payload: {
           user: {
             undefined, // ...user,
-            accessToken
+            jwtToken
           }
         }
       })
@@ -286,20 +276,24 @@ export function AuthProvider({ children }: Props) {
     []
   )
 
-  // LOGOUT
-  const logout = useCallback(async () => {
+  const logout = useCallback(async (id: string) => {
+    try {
+      await post(endpoints.dashboard.user.logout(id), {}, { headers: getAuthorizationHeader() })
+    } catch (error) {
+      // avoid throw error in logout
+      console.error('logout', error.message)
+    }
     setSession(null)
     dispatch({
       type: Types.LOGOUT
     })
   }, [])
 
-  // update_user
   const updateUser = useCallback((user: AuthUserType) => {
     dispatch({
       type: Types.UPDATE_USER,
       payload: {
-        user: updateUser
+        user
       }
     })
   }, [])
@@ -317,8 +311,6 @@ export function AuthProvider({ children }: Props) {
       loading: status === 'loading',
       authenticated: status === 'authenticated',
       unauthenticated: status === 'unauthenticated',
-      //
-      login,
       loginWithCode,
       generate2faCodeLogin,
       generate2faCodeEmail,
@@ -328,7 +320,6 @@ export function AuthProvider({ children }: Props) {
       updateUser
     }),
     [
-      login,
       loginWithCode,
       generate2faCodeLogin,
       generate2faCodeEmail,

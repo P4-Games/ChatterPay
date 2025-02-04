@@ -2,25 +2,25 @@
 
 ## Upload Frontend to ICP
 
-To deploy the landing (static code) to the [Internet Computer (ICP)](https://internetcomputer.org/), you need to set it up as a frontend canister (also known as an asset canister).  This canister will store and serve your static assets (HTML, CSS, JavaScript, etc.) directly on the decentralized ICP network.
+To deploy the landing (static code) to the [Internet Computer (ICP)](https://internetcomputer.org/), you need to set it up as a frontend canister (also known as an asset canister). This canister will store and serve your static assets (HTML, CSS, JavaScript, etc.) directly on the decentralized ICP network.
 
 The steps to accomplish this are described below.
 
 ### Steps to Deploy (local and cloud)
 
-1. __Install ICP SDK__
+1. **Install ICP SDK**
 
 Install the ICP SDK by following the instructions [here](https://github.com/dfinity/sdk).
 
-2. __Start the Local Replica__
+2. **Start the Local Replica**
 
 Start the local ICP replica in the background with a clean slate by running the following command:
-   
+
 ```bash
 dfx start --clean --background
 ```
 
-3. __Deploy the Canisters Locally__
+3. **Deploy the Canisters Locally**
 
 Once the local replica is running, deploy the canisters:
 
@@ -28,7 +28,7 @@ Once the local replica is running, deploy the canisters:
 dfx deploy
 ```
 
-4. __Deploy to ICP Hosting__
+4. **Deploy to ICP Hosting**
 
 To deploy a canisters onto the ICP mainnet, you must have cycles. Cycles are used to pay for the resources that a canister uses.
 

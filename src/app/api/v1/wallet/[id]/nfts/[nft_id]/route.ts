@@ -1,6 +1,8 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
-import { getWalletNft } from 'src/app/api/_data/data-service'
+import { getWalletNft } from 'src/app/api/services/db/chatterpay-db-service'
+import { validateRequestSecurity } from 'src/app/api/middleware/validators/base-security-validator'
+import { validateWalletCommonsInputs as validateWalletCommonInputs } from 'src/app/api/middleware/validators/wallet-common-inputs-validator'
 
 import { IErrorResponse } from 'src/types/api'
 
@@ -13,22 +15,11 @@ type IParams = {
 
 // ----------------------------------------------------------------------
 
-export async function GET(request: Request, { params }: { params: IParams }) {
-  if (!params.id) {
-    const errorMessage: IErrorResponse = {
-      error: {
-        code: 'WALLET_NOT_FOUND',
-        message: `Wallet id '${params.id}' not found`,
-        details: '',
-        stack: '',
-        url: request.url
-      }
-    }
-    return new NextResponse(JSON.stringify(errorMessage), {
-      status: 404,
-      headers: { 'Content-Type': 'application/json' }
-    })
-  }
+export async function GET(req: NextRequest, { params }: { params: IParams }) {
+  const walletValidationResult = await validateWalletCommonInputs(req, params.id)
+  if (walletValidationResult instanceof NextResponse) return walletValidationResult
+
+  const { walletId, userId } = walletValidationResult
 
   if (!params.nft_id) {
     const errorMessage: IErrorResponse = {
@@ -37,7 +28,7 @@ export async function GET(request: Request, { params }: { params: IParams }) {
         message: `NFT id '${params.nft_id}' not found`,
         details: '',
         stack: '',
-        url: request.url
+        url: req.url
       }
     }
     return new NextResponse(JSON.stringify(errorMessage), {
@@ -46,8 +37,11 @@ export async function GET(request: Request, { params }: { params: IParams }) {
     })
   }
 
+  const securityCheckResult = await validateRequestSecurity(req, userId)
+  if (securityCheckResult instanceof NextResponse) return securityCheckResult
+
   try {
-    const nft = (await getWalletNft(params.id, params.nft_id)) || {}
+    const nft = (await getWalletNft(walletId, params.nft_id)) || {}
     return NextResponse.json(nft)
   } catch (ex) {
     console.error(ex)

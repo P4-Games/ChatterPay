@@ -18,7 +18,7 @@ import { RouterLink } from 'src/routes/components'
 
 import { useTranslate } from 'src/locales'
 import { BOT_WAPP_URL } from 'src/config-global'
-import { allCountries } from 'src/app/api/_data/_countries'
+import { allCountries } from 'src/app/api/services/db/_data/countries-data'
 
 import FormProvider, { RHFTextField } from 'src/components/hook-form'
 
@@ -66,7 +66,7 @@ export default function JwtRegisterView() {
       const registerUrl = BOT_WAPP_URL.replaceAll('MESSAGE', t('register.wapp-msg'))
       router.push(registerUrl)
     } catch (error) {
-      console.error(error)
+      console.error(error.message)
       reset()
       setErrorMsg(typeof error === 'string' ? error : error.message)
     }

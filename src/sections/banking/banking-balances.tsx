@@ -15,6 +15,7 @@ import {
 } from '@mui/material'
 
 import { paths } from 'src/routes/paths'
+import { useRouter } from 'src/routes/hooks'
 
 import { useBoolean } from 'src/hooks/use-boolean'
 import { useResponsive } from 'src/hooks/use-responsive'
@@ -53,6 +54,7 @@ export default function BankingBalances({
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
   const id = open ? 'wallet-links-popover' : undefined
+  const router = useRouter()
 
   const sendReciveUrl = BOT_WAPP_URL.replaceAll('MESSAGE', t('balances.wapp-msg'))
 
@@ -155,7 +157,7 @@ export default function BankingBalances({
         variant='outlined'
         color='warning'
         startIcon={<Iconify icon='mdi:arrow-collapse-all' />}
-        href={paths.dashboard.transfer.all}
+        onClick={() => router.push(paths.dashboard.transfer.all)}
       >
         {t('balances.transfer-all')}
       </Button>
@@ -165,7 +167,9 @@ export default function BankingBalances({
   const renderTotal = (
     <Stack direction='row' alignItems='center' spacing={1} sx={{ mb: 2, px: 2, ml: 1 }}>
       <Typography variant='h3'>
-        {currency.value ? fNumber(tableData.totals[selectedCurrency]) || 0.0 : '********'}
+        {currency.value
+          ? fNumber(tableData && tableData.totals && tableData.totals[selectedCurrency]) || 0.0
+          : '********'}
       </Typography>
       <Select
         value={selectedCurrency ?? ''}

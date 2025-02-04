@@ -140,5 +140,3 @@ Here’s the list formatted with the emoji codes to use in commits messages:
 - 💸 :money_with_wings: Add sponsorships or money related infrastructure.
 - 🧵 :thread: Add or update code related to multithreading or concurrency.
 - 🦺 :safety_vest: Add or update code related to validation.
-
-

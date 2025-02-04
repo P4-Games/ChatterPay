@@ -11,7 +11,7 @@
     "required": "obrigatório",
     "must-be-numeric": "Deve ser numérico",
     "must-be-max": "Deve ter no máximo {MAX_DIGITS} dígitos",
-    "must-be-valid-email": "O email deve ser um endereço de email válido",    
+    "must-be-valid-email": "O email deve ser um endereço de email válido",
     "must-be-min": "Deve ter no mínimo {MIN_CHARS} caracteres",
     "nodata": "Sem Dados",
     "save": "Salvar Alterações",
@@ -251,7 +251,7 @@
           "answer": "Digite seu número de telefone registrado. Um código de 6 dígitos será enviado para o seu telefone por segurança; depois de inseri-lo, você poderá acessar o site."
         }
       }
-    },    
+    },
     "get-started": {
       "title": "Comece com",
       "description": "Todo o poder do Web3 sem complicações.",
@@ -300,7 +300,7 @@
     "table-transaction": "Transação",
     "table-amount": "Montante",
     "table-date": "Data",
-    "table-type": "Type", 
+    "table-type": "Type",
     "table-status": "Status",
     "table-view-all": "Ver Tudo",
     "table-download": "Baixar",
@@ -312,8 +312,8 @@
   "transfer-all": {
     "info": "Indica um endereço de carteira para onde serão enviados todos os fundos que você possui no Chatterpay.",
     "msgs": {
-        "ok": "Os fundos foram transferidos. Você os verá na carteira indicada em breve.",
-        "error": "Houve um erro ao tentar transferir os fundos."
+      "ok": "Os fundos foram transferidos. Você os verá na carteira indicada em breve.",
+      "error": "Houve um erro ao tentar transferir os fundos."
     },
     "actions": {
       "transfer": "Transferir Tudo"

@@ -76,18 +76,23 @@ export default function BankingRecentTransitions({
           {mdUp && <TableHeadCustom headLabel={tableLabels} />}
 
           <TableBody>
-            {tableData.map((row) => (
-              <BankingRecentTransitionsRow
-                key={row.id}
-                userWallet={userWallet}
-                row={row}
-                mdUp={mdUp}
-              />
-            ))}
+            {!notFound &&
+              tableData.map((row) => (
+                <BankingRecentTransitionsRow
+                  key={row.id}
+                  userWallet={userWallet}
+                  row={row}
+                  mdUp={mdUp}
+                />
+              ))}
 
             <TableEmptyRows
               height={denseHeight}
-              emptyRows={emptyRows(table.page, table.rowsPerPage, tableData.length)}
+              emptyRows={emptyRows(
+                table.page,
+                table.rowsPerPage,
+                (tableData && tableData.length) || 0
+              )}
             />
 
             <TableNoData notFound={notFound} />

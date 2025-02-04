@@ -16,7 +16,7 @@ import { useRouter } from 'src/routes/hooks'
 
 import { useTranslate } from 'src/locales'
 import { useAuthContext } from 'src/auth/hooks'
-import { transferAll } from 'src/app/api/_hooks/use-wallet'
+import { transferAll } from 'src/app/api/hooks/use-wallet'
 
 import { useSnackbar } from 'src/components/snackbar'
 import FormProvider, { RHFTextField } from 'src/components/hook-form'

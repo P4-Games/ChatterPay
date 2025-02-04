@@ -4,7 +4,10 @@ public/*
 **/out/*
 **/.next/*
 **/node_modules/*
+cloudbuild.yaml
+package.json
 package-lock.json
+commitlint.config.js
 yarn.lock
 .github
 .vscode

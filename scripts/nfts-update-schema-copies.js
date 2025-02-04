@@ -13,7 +13,10 @@ const updateNfts = async () => {
   let client
 
   try {
-    client = await MongoClient.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+    client = await MongoClient.connect(MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    })
     console.log('Connected to MongoDB')
 
     const db = client.db(DB_NAME)

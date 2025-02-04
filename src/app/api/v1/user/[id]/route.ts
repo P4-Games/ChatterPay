@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { updateUser, getUserById, getUserByPhone } from 'src/app/api/_data/data-service'
+import { updateUser, getUserById } from 'src/app/api/services/db/chatterpay-db-service'
+import { validateRequestSecurity } from 'src/app/api/middleware/validators/base-security-validator'
+import { validateUserCommonsInputs } from 'src/app/api/middleware/validators/user-common-inputs-validator'
 
 import { IAccount } from 'src/types/account'
 
@@ -10,7 +12,7 @@ type IParams = {
   id: string
 }
 
-export async function GET(request: Request, { params }: { params: IParams }) {
+export async function GET(req: NextRequest, { params }: { params: IParams }) {
   const { id } = params
   try {
     if (!id) {
@@ -26,7 +28,10 @@ export async function GET(request: Request, { params }: { params: IParams }) {
       )
     }
 
-    const user: IAccount | undefined = await getUserByPhone(id)
+    const securityCheckResult = await validateRequestSecurity(req, id)
+    if (securityCheckResult instanceof NextResponse) return securityCheckResult
+
+    const user: IAccount | undefined = await getUserById(id)
 
     if (!user) {
       return new NextResponse(
@@ -60,22 +65,10 @@ export async function GET(request: Request, { params }: { params: IParams }) {
 
 export async function POST(req: NextRequest, { params }: { params: IParams }) {
   try {
-    const { id } = params
+    const userValidationResult = await validateUserCommonsInputs(req, params.id)
+    if (userValidationResult instanceof NextResponse) return userValidationResult
+
     const { name }: { name: string } = await req.json()
-
-    if (!id) {
-      return new NextResponse(
-        JSON.stringify({
-          code: 'INVALID_REQUEST_PARAMS',
-          error: 'Missing parameters in path params'
-        }),
-        {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      )
-    }
-
     if (!name) {
       return new NextResponse(
         JSON.stringify({
@@ -89,7 +82,10 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
       )
     }
 
-    const user: IAccount | undefined = await getUserById(id)
+    const securityCheckResult = await validateRequestSecurity(req, params.id)
+    if (securityCheckResult instanceof NextResponse) return securityCheckResult
+
+    const user: IAccount | undefined = await getUserById(params.id)
     if (!user) {
       return new NextResponse(
         JSON.stringify({ code: 'USER_NOT_FOUND', error: 'user not found with that id' }),

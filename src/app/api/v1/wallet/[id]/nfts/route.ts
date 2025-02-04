@@ -1,8 +1,8 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
-import { getWalletNfts } from 'src/app/api/_data/data-service'
-
-import { IErrorResponse } from 'src/types/api'
+import { getWalletNfts } from 'src/app/api/services/db/chatterpay-db-service'
+import { validateRequestSecurity } from 'src/app/api/middleware/validators/base-security-validator'
+import { validateWalletCommonsInputs as validateWalletCommonInputs } from 'src/app/api/middleware/validators/wallet-common-inputs-validator'
 
 // ----------------------------------------------------------------------
 
@@ -12,25 +12,17 @@ type IParams = {
 
 // ----------------------------------------------------------------------
 
-export async function GET(request: Request, { params }: { params: IParams }) {
-  if (!params.id) {
-    const errorMessage: IErrorResponse = {
-      error: {
-        code: 'WALLET_NOT_FOUND',
-        message: `Wallet id '${params.id}' not found`,
-        details: '',
-        stack: '',
-        url: request.url
-      }
-    }
-    return new NextResponse(JSON.stringify(errorMessage), {
-      status: 404,
-      headers: { 'Content-Type': 'application/json' }
-    })
-  }
+export async function GET(req: NextRequest, { params }: { params: IParams }) {
+  const walletValidationResult = await validateWalletCommonInputs(req, params.id)
+  if (walletValidationResult instanceof NextResponse) return walletValidationResult
+
+  const { walletId, userId } = walletValidationResult
+
+  const securityCheckResult = await validateRequestSecurity(req, userId)
+  if (securityCheckResult instanceof NextResponse) return securityCheckResult
 
   try {
-    const nfts = (await getWalletNfts(params.id)) || {}
+    const nfts = (await getWalletNfts(walletId)) || {}
     return NextResponse.json(nfts)
   } catch (ex) {
     console.error(ex)

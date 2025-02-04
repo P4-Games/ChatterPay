@@ -4,81 +4,84 @@ module.exports = {
   trailingSlash: true,
   modularizeImports: {
     '@mui/icons-material': {
-      transform: '@mui/icons-material/{{member}}',
+      transform: '@mui/icons-material/{{member}}'
     },
     '@mui/material': {
-      transform: '@mui/material/{{member}}',
+      transform: '@mui/material/{{member}}'
     },
     '@mui/lab': {
-      transform: '@mui/lab/{{member}}',
-    },
+      transform: '@mui/lab/{{member}}'
+    }
   },
   output: 'standalone',
   images: {
     domains: [
-      'storage.googleapis.com', 
-      'cilxj-yiaaa-aaaag-alkxq-cai.icp0.io', 
-      'gateway.pinata.cloud', 
+      'storage.googleapis.com',
+      'cilxj-yiaaa-aaaag-alkxq-cai.icp0.io',
+      'gateway.pinata.cloud',
       'w.wallhaven.cc',
-      'img.freepik.com'],
+      'img.freepik.com'
+    ],
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'storage.googleapis.com',
         port: '',
-        pathname: '/**',
+        pathname: '/**'
       },
       {
         protocol: 'https',
         hostname: 'cilxj-yiaaa-aaaag-alkxq-cai.icp0.io',
         port: '',
-        pathname: '/**',
+        pathname: '/**'
       },
       {
         protocol: 'https',
         hostname: 'gateway.pinata.cloud',
         port: '',
-        pathname: '/**',
+        pathname: '/**'
       },
       {
         protocol: 'https',
         hostname: 'img.freepik.com',
         port: '',
-        pathname: '/**',
+        pathname: '/**'
       },
       {
         protocol: 'https',
         hostname: 'w.wallhaven.cc',
         port: '',
-        pathname: '/**',
+        pathname: '/**'
       }
-    ],
+    ]
   },
   webpack(config, options) {
     const { isServer } = options
     config.resolve.modules.push(path.resolve('./src'))
-    config.module.rules.push({
-      test: /\.(ogg|mp3|wav|flac|mpe?g)$/i,
-      exclude: config.exclude,
-      use: [
-        {
-          loader: require.resolve('url-loader'),
-          options: {
-            limit: config.inlineImageLimit,
-            fallback: require.resolve('file-loader'),
-            publicPath: `${config.assetPrefix}/_next/static/images/`,
-            outputPath: `${isServer ? '../' : ''}static/images/`,
-            name: '[name]-[hash].[ext]',
-            esModule: config.esModule || false
+    config.module.rules.push(
+      {
+        test: /\.(ogg|mp3|wav|flac|mpe?g)$/i,
+        exclude: config.exclude,
+        use: [
+          {
+            loader: require.resolve('url-loader'),
+            options: {
+              limit: config.inlineImageLimit,
+              fallback: require.resolve('file-loader'),
+              publicPath: `${config.assetPrefix}/_next/static/images/`,
+              outputPath: `${isServer ? '../' : ''}static/images/`,
+              name: '[name]-[hash].[ext]',
+              esModule: config.esModule || false
+            }
           }
-        }
-      ]
-    },
-    {
-      test: /\.svg$/,
-      use: ['@svgr/webpack'],
-    })
-    return config;
+        ]
+      },
+      {
+        test: /\.svg$/,
+        use: ['@svgr/webpack']
+      }
+    )
+    return config
   },
   // https://nextjs.org/docs/api-reference/next.config.js/headers
   async headers() {

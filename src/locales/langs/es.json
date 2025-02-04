@@ -103,7 +103,7 @@
   "home": {
     "header": {
       "sign-up": "Creá tu cuenta",
-      "sign-in": "Ingresá"  
+      "sign-in": "Ingresá"
     },
     "help": {
       "need-help": "¿Necesita ayuda?"
@@ -251,7 +251,7 @@
           "answer": "Ingresa tu número de teléfono registrado. Se enviará un código de 6 dígitos a tu teléfono por seguridad; una vez que lo ingreses, podrás acceder al sitio."
         }
       }
-    },    
+    },
     "get-started": {
       "title": "Comienza con",
       "description": "Todo el poder de Web3 sin complicaciones.",
@@ -300,7 +300,7 @@
     "table-transaction": "Transacción",
     "table-amount": "Monto",
     "table-date": "Fecha",
-    "table-type": "Tipo", 
+    "table-type": "Tipo",
     "table-status": "Estado",
     "table-view-all": "Ver Todo",
     "table-download": "Descargar",
@@ -331,7 +331,6 @@
       "meta-geo": "Geolocalización",
       "original": "Original",
       "copy-of": "Copia #{X} de #{Z}"
-
     },
     "claim": {
       "cta": "Reclamar",

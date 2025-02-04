@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { getUserById, updateUserCode, updateUserEmail } from 'src/app/api/_data/data-service'
+import { validateRequestSecurity } from 'src/app/api/middleware/validators/base-security-validator'
+import { validateUserCommonsInputs } from 'src/app/api/middleware/validators/user-common-inputs-validator'
+import {
+  getUserById,
+  updateUserCode,
+  updateUserEmail
+} from 'src/app/api/services/db/chatterpay-db-service'
 
 import { IAccount } from 'src/types/account'
 
@@ -18,22 +24,10 @@ type IBody = {
 }
 export async function POST(req: NextRequest, { params }: { params: IParams }) {
   try {
-    const { id } = params
+    const userValidationResult = await validateUserCommonsInputs(req, params.id)
+    if (userValidationResult instanceof NextResponse) return userValidationResult
+
     const { phone, code, email }: IBody = await req.json()
-
-    if (!id) {
-      return new NextResponse(
-        JSON.stringify({
-          code: 'INVALID_REQUEST_PARAMS',
-          error: 'Missing parameters in path params'
-        }),
-        {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      )
-    }
-
     if (!email || !code || !phone) {
       return new NextResponse(
         JSON.stringify({
@@ -47,7 +41,10 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
       )
     }
 
-    const user: IAccount | undefined = await getUserById(id)
+    const securityCheckResult = await validateRequestSecurity(req, params.id)
+    if (securityCheckResult instanceof NextResponse) return securityCheckResult
+
+    const user: IAccount | undefined = await getUserById(params.id)
     if (!user) {
       return new NextResponse(
         JSON.stringify({ code: 'USER_NOT_FOUND', error: 'user not found with that id' }),
@@ -60,7 +57,7 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
 
     if (!user.code || code.toString() !== user.code.toString()) {
       return new NextResponse(JSON.stringify({ code: 'INVALID_CODE', error: 'invalid code' }), {
-        status: 400,
+        status: 401,
         headers: { 'Content-Type': 'application/json' }
       })
     }

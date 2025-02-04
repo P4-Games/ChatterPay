@@ -1,16 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { getUserByPhone, updateUserCode } from 'src/app/api/_data/data-service'
+import { send2FACode } from 'src/app/api/services/chatizalo/chatizalo-service'
 import { BOT_API_URL, BOT_API_TOKEN, botApiWappEnabled } from 'src/config-global'
+import { getUserByPhone, updateUserCode } from 'src/app/api/services/db/chatterpay-db-service'
+import { validateRequestSecurity } from 'src/app/api/middleware/validators/base-security-validator'
+import { validateUserCommonsInputs } from 'src/app/api/middleware/validators/user-common-inputs-validator'
 
 import { IAccount } from 'src/types/account'
 
-import { send2FACode } from '../../../_common/common'
-
 // ----------------------------------------------------------------------
+type IParams = {
+  id: string
+}
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest, { params }: { params: IParams }) {
   try {
+    const userValidationResult = await validateUserCommonsInputs(req, params.id)
+    if (userValidationResult instanceof NextResponse) return userValidationResult
+
     const { phone, codeMsg }: { phone: string; codeMsg: string; recaptchaToken: string } =
       await req.json()
 
@@ -26,6 +33,9 @@ export async function POST(req: NextRequest) {
         }
       )
     }
+
+    const securityCheckResult = await validateRequestSecurity(req, params.id)
+    if (securityCheckResult instanceof NextResponse) return securityCheckResult
 
     if (!BOT_API_URL || !BOT_API_TOKEN) {
       return new NextResponse(JSON.stringify({ error: `Backend API or Token not set.` }), {
@@ -52,7 +62,7 @@ export async function POST(req: NextRequest) {
     // Send 2FA code to user'whatsapp
     let botSentCodeResult: boolean = true
     if (botApiWappEnabled) {
-      console.info('calling send2FACode SYNC', phone, code)
+      console.info('/user/[id]/code, calling send2FACode SYNC', phone, code)
       botSentCodeResult = await send2FACode(phone, code, codeMsg)
 
       if (!botSentCodeResult) {

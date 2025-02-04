@@ -1,17 +1,23 @@
+import { createHash } from 'crypto'
 import { NextRequest, NextResponse } from 'next/server'
 
-import { getUserByPhone, updateUserCode } from 'src/app/api/_data/data-service'
-import { getIpFromRequest, validateRecaptcha } from 'src/app/api/_utils/request-utils'
+import { getIpFromRequest } from 'src/app/api/middleware/utils/network-utils'
+import { send2FACode } from 'src/app/api/services/chatizalo/chatizalo-service'
+import { validateRecaptcha } from 'src/app/api/services/google/recaptcha-service'
+import {
+  getUserByPhone,
+  updateUserCode,
+  createUserSession
+} from 'src/app/api/services/db/chatterpay-db-service'
 import {
   BOT_API_URL,
   BOT_API_TOKEN,
   botApiWappEnabled,
-  handleVercelFreePlanTimeOut
+  handleVercelFreePlanTimeOut,
+  USER_SESSION_EXPIRATION_MINUTES
 } from 'src/config-global'
 
 import { IAccount } from 'src/types/account'
-
-import { send2FACode } from '../../_common/common'
 
 // ----------------------------------------------------------------------
 
@@ -50,7 +56,7 @@ export async function POST(req: NextRequest) {
       return new NextResponse(
         JSON.stringify({ code: 'RECAPTACHA_INVALID', error: 'Invalid reCAPTCHA token' }),
         {
-          status: 400,
+          status: 401,
           headers: { 'Content-Type': 'application/json' }
         }
       )
@@ -79,10 +85,10 @@ export async function POST(req: NextRequest) {
         // The login has certain logic between ChatterPay and the backend of the Chatizalo,
         // which may cause it to take about 10 seconds, so this variable is used to improve that logic.
         // send async
-        console.info('calling send2FACode ASYNC', phone, code)
+        console.info('/auth/code, calling send2FACode ASYNC', phone, code)
         send2FACode(phone, code, codeMsg)
       } else {
-        console.info('calling send2FACode SYNC', phone, code)
+        console.info('/auth/code, calling send2FACode SYNC', phone, code)
         botSentCodeResult = await send2FACode(phone, code, codeMsg)
       }
 
@@ -99,6 +105,14 @@ export async function POST(req: NextRequest) {
         )
       }
     }
+
+    // user-session-token
+    const userSessionToken: string = `${phone}_${code.toString()}_${ip}_${recaptchaToken}`
+    const userSessionTokenHashed: string = createHash('sha256')
+      .update(userSessionToken)
+      .digest('hex')
+
+    await createUserSession(user.id, userSessionTokenHashed, ip, USER_SESSION_EXPIRATION_MINUTES)
 
     const finalResult: { phone: string; sent: boolean } = {
       phone,

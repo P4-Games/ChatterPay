@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { transferAll } from 'src/app/api/_data/blk-service'
-import { getUserById } from 'src/app/api/_data/data-service'
+import { getUserById } from 'src/app/api/services/db/chatterpay-db-service'
+import { transferAll } from 'src/app/api/services/blockchain/blockchain-service'
+import { validateRequestSecurity } from 'src/app/api/middleware/validators/base-security-validator'
+import { validateUserCommonsInputs } from 'src/app/api/middleware/validators/user-common-inputs-validator'
 
 import { IAccount } from 'src/types/account'
 
@@ -16,22 +18,10 @@ type IBody = {
 }
 export async function POST(req: NextRequest, { params }: { params: IParams }) {
   try {
-    const { id } = params
+    const userValidationResult = await validateUserCommonsInputs(req, params.id)
+    if (userValidationResult instanceof NextResponse) return userValidationResult
+
     const { walletTo }: IBody = await req.json()
-
-    if (!id) {
-      return new NextResponse(
-        JSON.stringify({
-          code: 'INVALID_REQUEST_PARAMS',
-          error: 'Missing parameters in path params'
-        }),
-        {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      )
-    }
-
     if (!walletTo) {
       return new NextResponse(
         JSON.stringify({
@@ -45,7 +35,10 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
       )
     }
 
-    const user: IAccount | undefined = await getUserById(id)
+    const securityCheckResult = await validateRequestSecurity(req, params.id)
+    if (securityCheckResult instanceof NextResponse) return securityCheckResult
+
+    const user: IAccount | undefined = await getUserById(params.id)
     if (!user) {
       return new NextResponse(
         JSON.stringify({ code: 'USER_NOT_FOUND', error: 'user not found with that id' }),
