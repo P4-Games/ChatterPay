@@ -3,7 +3,7 @@ import { paths } from 'src/routes/paths'
 import { getStorageItem, setStorageItem, removeStorageItem } from 'src/hooks/use-local-storage'
 
 import { STORAGE_KEY_TOKEN } from 'src/config-global'
-import axiosInstance from 'src/app/api/_hooks/api-resolver'
+import axiosInstance from 'src/app/api/hooks/api-resolver'
 
 // ----------------------------------------------------------------------
 

@@ -15,7 +15,7 @@ import { useRouter } from 'src/routes/hooks'
 
 import { useTranslate } from 'src/locales'
 import { useAuthContext } from 'src/auth/hooks'
-import { updateContact } from 'src/app/api/_hooks/use-contact'
+import { updateContact } from 'src/app/api/hooks/use-contact'
 
 import { useSnackbar } from 'src/components/snackbar'
 import FormProvider, { RHFTextField } from 'src/components/hook-form'

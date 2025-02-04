@@ -6,7 +6,7 @@ import { Box, Card, Stack, Tooltip, Typography, IconButton, CircularProgress } f
 import { useTranslate } from 'src/locales'
 import { AuthUserType } from 'src/auth/types'
 import { useAuthContext } from 'src/auth/hooks'
-import { useGetWalletNotifications } from 'src/app/api/_hooks'
+import { useGetWalletNotifications } from 'src/app/api/hooks'
 import { notificationsRefreshInterval } from 'src/config-global'
 
 import Iconify from 'src/components/iconify'

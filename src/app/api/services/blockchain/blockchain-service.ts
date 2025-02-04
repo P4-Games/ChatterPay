@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { ethers, JsonRpcProvider } from 'ethers'
 
+import { cache } from 'src/app/api/services/cache/cache-service'
 import {
   UI_BASE_URL,
   API3_ENABLED,
@@ -14,7 +15,6 @@ import {
 
 import { IBalance, IBalances, CurrencyKey } from 'src/types/wallet'
 
-import { cache } from './cache-connection'
 import TokenPriceFeedsAbi from './_abis/TokenPriceFeedsAbi.json'
 
 // ---------------------------------------------------------------------------------------------

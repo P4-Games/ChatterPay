@@ -3,7 +3,7 @@
 import Container from '@mui/material/Container'
 
 import { useTranslate } from 'src/locales'
-import { useGetNftById } from 'src/app/api/_hooks'
+import { useGetNftById } from 'src/app/api/hooks'
 
 import EmptyContent from 'src/components/empty-content'
 import { useSettingsContext } from 'src/components/settings'

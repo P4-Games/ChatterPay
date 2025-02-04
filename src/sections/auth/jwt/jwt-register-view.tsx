@@ -18,7 +18,7 @@ import { RouterLink } from 'src/routes/components'
 
 import { useTranslate } from 'src/locales'
 import { BOT_WAPP_URL } from 'src/config-global'
-import { allCountries } from 'src/app/api/_data/_countries'
+import { allCountries } from 'src/app/api/services/db/_data/countries-data'
 
 import FormProvider, { RHFTextField } from 'src/components/hook-form'
 

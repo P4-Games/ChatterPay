@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { getUserByPhone, updateUserCode } from 'src/app/api/_data/data-service'
+import { send2FACode } from 'src/app/api/services/chatizalo/chatizalo-service'
 import { BOT_API_URL, BOT_API_TOKEN, botApiWappEnabled } from 'src/config-global'
+import { getUserByPhone, updateUserCode } from 'src/app/api/services/db/chatterpay-db-service'
+import { validateRequestSecurity } from 'src/app/api/middleware/validators/base-security-validator'
+import { validateUserCommonsInputs } from 'src/app/api/middleware/validators/user-common-inputs-validator'
 
 import { IAccount } from 'src/types/account'
-
-import { send2FACode } from '../../../_common/chatizalo'
-import { validateUserCommonsInputs } from '../../userCommonInputsValidator'
-import { validateRequestSecurity } from '../../../_common/baseSecurityRoute'
 
 // ----------------------------------------------------------------------
 type IParams = {

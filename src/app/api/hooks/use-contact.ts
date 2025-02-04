@@ -1,4 +1,4 @@
-import { post, endpoints } from 'src/app/api/_hooks/api-resolver'
+import { post, endpoints } from 'src/app/api/hooks/api-resolver'
 import { getAuthorizationHeader } from 'src/auth/context/jwt/utils'
 
 import { useGetCommon } from './common'

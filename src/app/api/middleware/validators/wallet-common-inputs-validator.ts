@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { getUserIdByWallet } from 'src/app/api/_data/data-service'
+import { getUserIdByWallet } from 'src/app/api/services/db/chatterpay-db-service'
 
 import { IErrorResponse } from 'src/types/api'
+
+// ----------------------------------------------------------------------
 
 export async function validateWalletCommonsInputs(
   req: NextRequest,

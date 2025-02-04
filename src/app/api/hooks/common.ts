@@ -2,7 +2,7 @@ import useSWR from 'swr'
 import { useMemo } from 'react'
 import useSWRInfinite from 'swr/infinite'
 
-import { fetcher } from 'src/app/api/_hooks/api-resolver'
+import { fetcher } from 'src/app/api/hooks/api-resolver'
 
 // ----------------------------------------------------------------------
 

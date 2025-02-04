@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { updateUserSessionStatus } from 'src/app/api/_data/data-service'
-
-import { validateUserCommonsInputs } from '../../userCommonInputsValidator'
-import { validateRequestSecurity } from '../../../_common/baseSecurityRoute'
+import { updateUserSessionStatus } from 'src/app/api/services/db/chatterpay-db-service'
+import { validateRequestSecurity } from 'src/app/api/middleware/validators/base-security-validator'
+import { validateUserCommonsInputs } from 'src/app/api/middleware/validators/user-common-inputs-validator'
 
 // ----------------------------------------------------------------------
 

@@ -5,6 +5,8 @@ import { JWT_SECRET, USER_SESSION_EXPIRATION_MINUTES } from 'src/config-global'
 import { UserSession } from 'src/types/account'
 import { JwtPayload, jwtPayloadUser } from 'src/types/jwt'
 
+// ----------------------------------------------------------------------
+
 export function generateJwtToken(user: jwtPayloadUser, userSession: UserSession): string {
   const jwtPayload: JwtPayload = { user, accessToken: userSession.token, sessionId: userSession.id }
   const jwtToken = jwt.sign(jwtPayload, JWT_SECRET!, {
