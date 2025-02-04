@@ -5,7 +5,7 @@ import { useMemo, useEffect, useReducer, useCallback } from 'react'
 import { getStorageItem } from 'src/hooks/use-local-storage'
 
 import { STORAGE_KEY_TOKEN } from 'src/config-global'
-import { post, fetcher, endpoints } from 'src/app/api/_hooks/api-resolver'
+import { post, fetcher, endpoints } from 'src/app/api/hooks/api-resolver'
 
 import { JwtPayload, jwtPayloadUser } from 'src/types/jwt'
 

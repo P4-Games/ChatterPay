@@ -27,8 +27,8 @@ import { getRecaptchaLng } from 'src/utils/format-number'
 
 import { useAuthContext } from 'src/auth/hooks'
 import { useLocales, useTranslate } from 'src/locales'
-import { allCountries } from 'src/app/api/_data/_countries'
 import { PATH_AFTER_LOGIN, RECAPTCHA_SITE_KEY } from 'src/config-global'
+import { allCountries } from 'src/app/api/services/db/_data/countries-data'
 
 import FormProvider, { RHFCode, RHFTextField } from 'src/components/hook-form'
 
