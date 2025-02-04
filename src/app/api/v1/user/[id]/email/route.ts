@@ -1,16 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { getIpFromRequest } from 'src/app/api/_utils/request-utils'
-import { extractjwtTokenFromHeader } from 'src/app/api/_utils/jwt-utils'
-import {
-  getUserById,
-  updateUserCode,
-  updateUserEmail,
-  checkUserHaveActiveSession
-} from 'src/app/api/_data/data-service'
+import { getUserById, updateUserCode, updateUserEmail } from 'src/app/api/_data/data-service'
 
-import { JwtPayload } from 'src/types/jwt'
 import { IAccount } from 'src/types/account'
+
+import { validateUserCommonsInputs } from '../../userCommonInputsValidator'
+import { validateRequestSecurity } from '../../../_common/baseSecurityRoute'
 
 // ----------------------------------------------------------------------
 
@@ -26,22 +21,10 @@ type IBody = {
 }
 export async function POST(req: NextRequest, { params }: { params: IParams }) {
   try {
-    const { id } = params
+    const userValidationResult = await validateUserCommonsInputs(req, params.id)
+    if (userValidationResult instanceof NextResponse) return userValidationResult
+
     const { phone, code, email }: IBody = await req.json()
-
-    if (!id) {
-      return new NextResponse(
-        JSON.stringify({
-          code: 'INVALID_REQUEST_PARAMS',
-          error: 'Missing parameters in path params'
-        }),
-        {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      )
-    }
-
     if (!email || !code || !phone) {
       return new NextResponse(
         JSON.stringify({
@@ -55,33 +38,10 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
       )
     }
 
-    const ip = getIpFromRequest(req)
+    const securityCheckResult = await validateRequestSecurity(req, params.id)
+    if (securityCheckResult instanceof NextResponse) return securityCheckResult
 
-    const jwtTokenDecoded: JwtPayload | null = extractjwtTokenFromHeader(
-      req.headers.get('Authorization')
-    )
-    if (!jwtTokenDecoded) {
-      return new NextResponse(
-        JSON.stringify({ code: 'NOT_AUTHORIZED', error: 'Invalid Access Token' }),
-        {
-          status: 401,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      )
-    }
-
-    const validAccessToken = await checkUserHaveActiveSession(id, jwtTokenDecoded, ip)
-    if (!validAccessToken) {
-      return new NextResponse(
-        JSON.stringify({ code: 'NOT_AUTHORIZED', error: 'Invalid Access Token' }),
-        {
-          status: 401,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      )
-    }
-
-    const user: IAccount | undefined = await getUserById(id)
+    const user: IAccount | undefined = await getUserById(params.id)
     if (!user) {
       return new NextResponse(
         JSON.stringify({ code: 'USER_NOT_FOUND', error: 'user not found with that id' }),

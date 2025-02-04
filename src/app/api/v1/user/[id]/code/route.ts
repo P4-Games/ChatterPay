@@ -1,18 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { getIpFromRequest } from 'src/app/api/_utils/request-utils'
-import { extractjwtTokenFromHeader } from 'src/app/api/_utils/jwt-utils'
+import { getUserByPhone, updateUserCode } from 'src/app/api/_data/data-service'
 import { BOT_API_URL, BOT_API_TOKEN, botApiWappEnabled } from 'src/config-global'
-import {
-  getUserByPhone,
-  updateUserCode,
-  checkUserHaveActiveSession
-} from 'src/app/api/_data/data-service'
 
-import { JwtPayload } from 'src/types/jwt'
 import { IAccount } from 'src/types/account'
 
-import { send2FACode } from '../../../_common/common'
+import { send2FACode } from '../../../_common/chatizalo'
+import { validateUserCommonsInputs } from '../../userCommonInputsValidator'
+import { validateRequestSecurity } from '../../../_common/baseSecurityRoute'
 
 // ----------------------------------------------------------------------
 type IParams = {
@@ -21,9 +16,11 @@ type IParams = {
 
 export async function POST(req: NextRequest, { params }: { params: IParams }) {
   try {
+    const userValidationResult = await validateUserCommonsInputs(req, params.id)
+    if (userValidationResult instanceof NextResponse) return userValidationResult
+
     const { phone, codeMsg }: { phone: string; codeMsg: string; recaptchaToken: string } =
       await req.json()
-    const { id } = params
 
     if (!phone || !codeMsg) {
       return new NextResponse(
@@ -38,31 +35,8 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
       )
     }
 
-    const ip = getIpFromRequest(req)
-
-    const jwtTokenDecoded: JwtPayload | null = extractjwtTokenFromHeader(
-      req.headers.get('Authorization')
-    )
-    if (!jwtTokenDecoded) {
-      return new NextResponse(
-        JSON.stringify({ code: 'NOT_AUTHORIZED', error: 'Invalid Access Token' }),
-        {
-          status: 401,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      )
-    }
-
-    const validAccessToken = await checkUserHaveActiveSession(id, jwtTokenDecoded, ip)
-    if (!validAccessToken) {
-      return new NextResponse(
-        JSON.stringify({ code: 'NOT_AUTHORIZED', error: 'Invalid Access Token' }),
-        {
-          status: 401,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      )
-    }
+    const securityCheckResult = await validateRequestSecurity(req, params.id)
+    if (securityCheckResult instanceof NextResponse) return securityCheckResult
 
     if (!BOT_API_URL || !BOT_API_TOKEN) {
       return new NextResponse(JSON.stringify({ error: `Backend API or Token not set.` }), {

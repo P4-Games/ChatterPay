@@ -13,7 +13,7 @@ import {
 
 import { IAccount } from 'src/types/account'
 
-import { send2FACode } from '../../_common/common'
+import { send2FACode } from '../../_common/chatizalo'
 // ----------------------------------------------------------------------
 
 export async function POST(req: NextRequest) {

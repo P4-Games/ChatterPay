@@ -2,12 +2,9 @@ import * as PushAPI from '@pushprotocol/restapi'
 import { NextRequest, NextResponse } from 'next/server'
 
 import { PUSH_NETWORK, PUSH_ENVIRONMENT } from 'src/config-global'
-import { getIpFromRequest } from 'src/app/api/_utils/request-utils'
-import { extractjwtTokenFromHeader } from 'src/app/api/_utils/jwt-utils'
-import { getUserIdByWallet, checkUserHaveActiveSession } from 'src/app/api/_data/data-service'
 
-import { JwtPayload } from 'src/types/jwt'
-import { IErrorResponse } from 'src/types/api'
+import { validateRequestSecurity } from '../../../_common/baseSecurityRoute'
+import { validateWalletCommonsInputs as validateWalletCommonInputs } from '../../walletCommonInputsValidator'
 
 // ----------------------------------------------------------------------
 
@@ -18,65 +15,17 @@ type IParams = {
 // ----------------------------------------------------------------------
 
 export async function GET(req: NextRequest, { params }: { params: IParams }) {
-  if (!params.id) {
-    const errorMessage: IErrorResponse = {
-      error: {
-        code: 'WALLET_NOT_FOUND',
-        message: `Wallet id '${params.id}' not found`,
-        details: '',
-        stack: '',
-        url: req.url
-      }
-    }
-    return new NextResponse(JSON.stringify(errorMessage), {
-      status: 404,
-      headers: { 'Content-Type': 'application/json' }
-    })
-  }
+  const walletValidationResult = await validateWalletCommonInputs(req, params.id)
+  if (walletValidationResult instanceof NextResponse) return walletValidationResult
 
-  const userId: string | undefined = await getUserIdByWallet(params.id)
-  if (!userId) {
-    return new NextResponse(
-      JSON.stringify({
-        code: 'USER_NOT_FOUND',
-        error: `user not found with for wallet ${params.id}`
-      }),
-      {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' }
-      }
-    )
-  }
+  const { walletId, userId } = walletValidationResult
 
-  const ip = getIpFromRequest(req)
-
-  const jwtTokenDecoded: JwtPayload | null = extractjwtTokenFromHeader(
-    req.headers.get('Authorization')
-  )
-  if (!jwtTokenDecoded) {
-    return new NextResponse(
-      JSON.stringify({ code: 'NOT_AUTHORIZED', error: 'Invalid Access Token' }),
-      {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' }
-      }
-    )
-  }
-
-  const validAccessToken = await checkUserHaveActiveSession(userId, jwtTokenDecoded, ip)
-  if (!validAccessToken) {
-    return new NextResponse(
-      JSON.stringify({ code: 'NOT_AUTHORIZED', error: 'Invalid Access Token' }),
-      {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' }
-      }
-    )
-  }
+  const securityCheckResult = await validateRequestSecurity(req, userId)
+  if (securityCheckResult instanceof NextResponse) return securityCheckResult
 
   try {
     const notifications = await PushAPI.user.getFeeds({
-      user: `eip155:${PUSH_NETWORK}:${params.id}`,
+      user: `eip155:${PUSH_NETWORK}:${walletId}`,
       env: PUSH_ENVIRONMENT
     })
 
@@ -84,7 +33,7 @@ export async function GET(req: NextRequest, { params }: { params: IParams }) {
   } catch (ex) {
     console.error(ex)
     return new NextResponse(
-      JSON.stringify({ error: `Error getting notifications for wallet ${params.id}` }),
+      JSON.stringify({ error: `Error getting notifications for wallet ${walletId}` }),
       {
         status: 400,
         headers: { 'Content-Type': 'application/json' }
