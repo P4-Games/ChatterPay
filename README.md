@@ -6,7 +6,7 @@
 
 # ChatterPay
 
-[Chatterpay](chatterpay.net) is a Wallet for WhatsApp that integrates AI and Account Abstraction, enabling any user to use blockchain easily and securely without technical knowledge.
+[Chatterpay](https://chatterpay.net) is a Wallet for WhatsApp that integrates AI and Account Abstraction, enabling any user to use blockchain easily and securely without technical knowledge.
 
 > Built for: [Level Up Hackathon - Ethereum Argentina 2024](https://ethereumargentina.org/)
 
