@@ -20,6 +20,7 @@
     "view": "View",
     "share": "Share",
     "metadata": "View Metadata",
+    "copied": "Copied",
     "msg": {
       "update-success": "Update Success!",
       "update-error": "Update error"

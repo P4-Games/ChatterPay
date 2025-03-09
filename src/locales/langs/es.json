@@ -20,6 +20,7 @@
     "view": "Ver",
     "share": "Compartir",
     "metadata": "Ver Metadata",
+    "copied": "Copiado",
     "msg": {
       "update-success": "¡Actualización exitosa!",
       "update-error": "Error de actualización"

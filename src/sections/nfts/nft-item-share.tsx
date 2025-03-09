@@ -60,7 +60,7 @@ export default function NftItemShare({ nftId, nftData }: NftItemClaimProps) {
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(`${NFT_MARKETPLACE_URL}/${nftId}`)
-      enqueueSnackbar(t('nfts.share.clipboard'), { variant: 'info' })
+      enqueueSnackbar(t('common.copied'), { variant: 'info' })
     } catch (err) {
       console.error('Error al copiar:', err)
     }
