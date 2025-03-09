@@ -59,8 +59,8 @@ export default function NftItem({ nft }: Props) {
   imageUrl = imageUrl || '/assets/images/nfts/default_nft.png'
 
   const { geolocation } = metadata || {}
-  const latitude = geolocation?.latitud || ''
-  const longitude = geolocation?.longitud || ''
+  const latitude = geolocation?.latitude || ''
+  const longitude = geolocation?.longitude || ''
 
   const handleView = () => {
     popover.onClose()
