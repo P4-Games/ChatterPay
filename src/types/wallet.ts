@@ -27,8 +27,8 @@ export type INFTMetadata = {
     icp: string
   }
   geolocation?: {
-    latitud?: string
-    longitud?: string
+    latitude?: string
+    longitude?: string
   }
   description: string
 }
