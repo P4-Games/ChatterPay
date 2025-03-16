@@ -49,6 +49,7 @@ export type INFT = {
   copy_of_original?: string
   copy_order_original: number
   total_of_original?: number
+  minted_contract_address: string
   metadata: INFTMetadata
 }
 

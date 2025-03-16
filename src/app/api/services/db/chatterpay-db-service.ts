@@ -358,7 +358,8 @@ export async function getWalletNfts(wallet: string): Promise<INFT[] | undefined>
           copy_of: 1,
           copy_order: 1,
           copy_of_original: 1,
-          copy_order_original: 1
+          copy_order_original: 1,
+          minted_contract_address: 1
         }
       },
       {
@@ -458,6 +459,7 @@ export async function getWalletNft(wallet: string, nftId: string): Promise<INFT 
     copy_order: nft.copy_order,
     copy_of_original: nft.copy_of_original,
     copy_order_original: nft.copy_order_original,
+    minted_contract_address: nft.minted_contract_address,
     metadata: nft.metadata
   }
 

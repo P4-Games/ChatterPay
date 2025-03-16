@@ -25,7 +25,7 @@ export default function NftItemClaim({ nftId, nftData }: NftItemClaimProps) {
   const { t } = useTranslate()
 
   const handleOpenOpenSea = () => {
-    const url = `${NFT_MARKETPLACE_URL}/${nftId}`
+    const url = `${NFT_MARKETPLACE_URL}/${nftData.minted_contract_address}/${nftId}`
     window.open(url, '_blank')
   }
 
