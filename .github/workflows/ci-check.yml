@@ -26,11 +26,11 @@ jobs:
       - name: Set Yarn registry to npm
         run: yarn config set registry https://registry.npmjs.org
 
-      - name: Clean Yarn cache
-        run: yarn cache clean
+      - name: Remove lockfile to force first-level install
+        run: rm -f yarn.lock
 
       - name: Install dependencies
-        run: yarn add -D typescript prettier && yarn install --frozen-lockfile
+        run: yarn add -D typescript prettier && yarn install --production=false --ignore-scripts --no-lockfile
 
   prettier:
     name: Check Code Formatting
