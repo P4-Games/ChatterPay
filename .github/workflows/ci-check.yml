@@ -78,3 +78,4 @@ jobs:
             -H "Authorization: Bearer $GH_TOKEN" \
             -H "Content-Type: application/json" \
             -d '{"state": "success", "description": "Check Status Report", "context": "Check Status Report"}' \
+            https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}
