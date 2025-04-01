@@ -17,7 +17,6 @@ const updateNfts = async () => {
       useNewUrlParser: true,
       useUnifiedTopology: true
     })
-    console.log('Connected to MongoDB')
 
     const db = client.db(DB_NAME)
     const nftsCollection = db.collection('nfts')
