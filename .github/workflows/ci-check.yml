@@ -8,7 +8,7 @@ on:
 
 jobs:
   setup:
-    name: Setup Environment
+    name: Setup Environment (Direct Deps Only)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -24,13 +24,13 @@ jobs:
         run: npm install -g yarn@1.22.22
 
       - name: Set Yarn registry to npm
-        run: yarn config set registry https://registry.npmjs.org
+        run: yarn config set registry https://registry.yarnpkg.com
 
       - name: Remove lockfile to force first-level install
         run: rm -f yarn.lock
 
-      - name: Install dependencies
-        run: yarn add -D typescript prettier && yarn install --production=false --ignore-scripts --no-lockfile
+      - name: Install direct dependencies only
+        run: yarn install --production=false --ignore-scripts --no-lockfile
 
   prettier:
     name: Check Code Formatting
@@ -41,7 +41,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set Yarn registry to npm
-        run: yarn config set registry https://registry.npmjs.org
+        run: yarn config set registry https://registry.yarnpkg.com
 
       - name: Run Prettier
         run: yarn prettier:check
@@ -58,7 +58,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set Yarn registry to npm
-        run: yarn config set registry https://registry.npmjs.org
+        run: yarn config set registry https://registry.yarnpkg.com
 
       - name: Run TypeScript type check
         run: yarn tsc --noEmit
