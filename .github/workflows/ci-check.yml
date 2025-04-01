@@ -8,7 +8,7 @@ on:
 
 jobs:
   setup:
-    name: Setup Environment (Direct Deps Only)
+    name: Setup Environment
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -23,14 +23,11 @@ jobs:
       - name: Install Yarn 1.22.22
         run: npm install -g yarn@1.22.22
 
-      - name: Set Yarn registry to npm
+      - name: Set Yarn registry to match local
         run: yarn config set registry https://registry.yarnpkg.com
 
-      - name: Remove lockfile to force first-level install
-        run: rm -f yarn.lock
-
-      - name: Install direct dependencies only
-        run: yarn install --production=false --ignore-scripts --no-lockfile
+      - name: Install dependencies
+        run: yarn add -D typescript prettier && yarn install --frozen-lockfile
 
   prettier:
     name: Check Code Formatting
@@ -81,7 +78,7 @@ jobs:
 
       - name: Report Status
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           curl -X POST \
             -H "Authorization: Bearer $GH_TOKEN" \
