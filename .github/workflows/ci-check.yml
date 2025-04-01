@@ -37,11 +37,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set Yarn registry
+      - name: Set Yarn registry to npm
         run: yarn config set registry https://registry.npmjs.org
-
-      - name: Clear Yarn cache
-        run: yarn cache clean
 
       - name: Install Prettier
         run: yarn add -D prettier
@@ -60,11 +57,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set Yarn registry
+      - name: Set Yarn registry to npm
         run: yarn config set registry https://registry.npmjs.org
-
-      - name: Clear Yarn cache
-        run: yarn cache clean
 
       - name: Install TypeScript
         run: yarn add -D typescript
@@ -90,7 +84,7 @@ jobs:
 
       - name: Report Status
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           curl -X POST \
             -H "Authorization: Bearer $GH_TOKEN" \
