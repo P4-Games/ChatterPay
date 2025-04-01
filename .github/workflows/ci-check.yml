@@ -17,13 +17,16 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: '20.13.1'
           cache: 'yarn'
 
-      - name: Set Yarn registry
+      - name: Install Yarn 1.22.22
+        run: npm install -g yarn@1.22.22
+
+      - name: Set Yarn registry to npm
         run: yarn config set registry https://registry.npmjs.org
 
-      - name: Clear Yarn cache
+      - name: Clean Yarn cache
         run: yarn cache clean
 
       - name: Install dependencies
@@ -39,9 +42,6 @@ jobs:
 
       - name: Set Yarn registry to npm
         run: yarn config set registry https://registry.npmjs.org
-
-      - name: Install Prettier
-        run: yarn add -D prettier
 
       - name: Run Prettier
         run: yarn prettier:check
@@ -60,9 +60,6 @@ jobs:
       - name: Set Yarn registry to npm
         run: yarn config set registry https://registry.npmjs.org
 
-      - name: Install TypeScript
-        run: yarn add -D typescript
-        
       - name: Run TypeScript type check
         run: yarn tsc --noEmit
 
