@@ -35,4 +35,6 @@ NEXT_PUBLIC_NFT_MARKETPLACE_URL='https://testnets.opensea.io/assets/arbitrum_sep
 NEXT_PUBLIC_EXPLORER_L1_URL='https://sepolia.etherscan.io'
 NEXT_PUBLIC_EXPLORER_L2_URL='https://sepolia.arbiscan.io/' 
 NEXT_PUBLIC_EXPLORER_NFT_URL='https://sepolia.arbiscan.io'
+NEXT_PUBLIC_CHATIZALO_PHONE_NUMBER={chatizalo phone number}
+
 
