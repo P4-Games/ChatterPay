@@ -50,14 +50,15 @@ export const EXPLORER_NFT_URL: string =
 export const NFT_IMAGE_REPOSITORY = (
   process.env.NEXT_PUBLIC_NFT_IMAGE_REPOSITORY || 'gcp'
 ).toLowerCase()
+export const CHATIZALO_PHONE_NUMBER = process.env.NEXT_PUBLIC_CHATIZALO_PHONE_NUMBER || 0
 // ----------------------------------------------------------------------
 
 // internal
 export const STORAGE_OPTION = 'local'
 export const USER_SESSION_EXPIRATION_MINUTES = 60
 export const PATH_AFTER_LOGIN = `/dashboard`
-export const IS_DEVELOPMENT = APP_ENV!.toLowerCase() === 'development'
-export const CHATIZALO_PHONE_NUMBER = IS_DEVELOPMENT ? 5491168690963 : 5491164629653
+export const IS_DEVELOPMENT =
+  APP_ENV.toLowerCase() === 'development' || APP_ENV.toLowerCase() === 'testing'
 export const BOT_WAPP_URL = `https://api.whatsapp.com/send/?phone=${CHATIZALO_PHONE_NUMBER}&text=MESSAGE&type=phone_number&app_absent=0`
 
 export const NFT_MARKETPLACE_URL =
