@@ -32,8 +32,7 @@
 
 <p>&nbsp;</p>
 
-![Componentes Interactions](.doc/technical-overview/chatterpay-architecture-conceptual-view.jpg)
-
+![Componentes Interactions](https://github.com/P4-Games/ChatterPay-Backend/blob/develop/.doc/technical-overview/chatterpay-architecture-conceptual-view.jpg?raw=true)
 
 # About this repo
 
