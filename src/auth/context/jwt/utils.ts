@@ -8,25 +8,29 @@ import axiosInstance from 'src/app/api/hooks/api-resolver'
 // ----------------------------------------------------------------------
 
 export function jwtDecode(token: string) {
-  const base64Url = token.split('.')[1]
-  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
-  const jsonPayload = decodeURIComponent(
-    window
-      .atob(base64)
-      .split('')
-      .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
-      .join('')
-  )
+  try {
+    const base64Url = token.split('.')[1]
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
+    const jsonPayload = decodeURIComponent(
+      window
+        .atob(base64)
+        .split('')
+        .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
+        .join('')
+    )
 
-  return JSON.parse(jsonPayload)
+    return JSON.parse(jsonPayload)
+  } catch (error) {
+    console.error('Error in decode jwt', error)
+    return {}
+  }
 }
 
 // ----------------------------------------------------------------------
 
 export const isValidToken = (jwtToken: string) => {
-  if (!jwtToken) {
-    return false
-  }
+  if (typeof jwtToken !== 'string') return false
+  if (!jwtToken.trim()) return false
 
   try {
     const decoded: { exp?: number } = jwtDecode(jwtToken)

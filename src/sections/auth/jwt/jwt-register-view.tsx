@@ -31,13 +31,16 @@ export default function JwtRegisterView() {
 
   const [selectedCountry, setSelectedCountry] = useState('54')
   const countryCodes = allCountries
+  const createAccountInBot = true
 
-  const RegisterSchema = Yup.object().shape({
-    firstName: Yup.string().required(t('common.required')),
-    lastName: Yup.string().required(t('common.required')),
-    email: Yup.string().required(t('common.required')).email(t('common.must-be-valid-email')),
-    telephone: Yup.string().required(t('common.required'))
-  })
+  const RegisterSchema = !createAccountInBot
+    ? Yup.object().shape({
+        firstName: Yup.string().required(t('common.required')),
+        lastName: Yup.string().required(t('common.required')),
+        email: Yup.string().required(t('common.required')).email(t('common.must-be-valid-email')),
+        telephone: Yup.string().required(t('common.required'))
+      })
+    : Yup.object().shape({})
 
   const defaultValues = {
     firstName: '',
@@ -112,29 +115,33 @@ export default function JwtRegisterView() {
 
   const renderForm = (
     <Stack spacing={2.5}>
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-        <RHFTextField name='firstName' label={t('common.first-name')} />
-        <RHFTextField name='lastName' label={t('common.last-name')} />
-      </Stack>
-
-      <RHFTextField name='email' label={t('common.email-address')} />
-
-      <Select value={selectedCountry} onChange={handleCountryChange} label={t('common.country')}>
-        {countryCodes.map((country) => (
-          <MenuItem key={country.code} value={country.phone}>
-            {country.label} (+{country.phone})
-          </MenuItem>
-        ))}
-      </Select>
-
-      <RHFTextField
-        name='telephone'
-        label={t('common.phone-number')}
-        placeholder='1155557777'
-        type='number'
-        inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
-      />
-
+      {!createAccountInBot && (
+        <>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+            <RHFTextField name='firstName' label={t('common.first-name')} />
+            <RHFTextField name='lastName' label={t('common.last-name')} />
+          </Stack>
+          <RHFTextField name='email' label={t('common.email-address')} />
+          <Select
+            value={selectedCountry}
+            onChange={handleCountryChange}
+            label={t('common.country')}
+          >
+            {countryCodes.map((country) => (
+              <MenuItem key={country.code} value={country.phone}>
+                {country.label} (+{country.phone})
+              </MenuItem>
+            ))}
+          </Select>
+          <RHFTextField
+            name='telephone'
+            label={t('common.phone-number')}
+            placeholder='1155557777'
+            type='number'
+            inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+          />
+        </>
+      )}
       <LoadingButton
         fullWidth
         color='inherit'
@@ -143,7 +150,7 @@ export default function JwtRegisterView() {
         variant='contained'
         loading={isSubmitting}
       >
-        {t('register.create-account')}
+        {createAccountInBot ? t('register.create-account-bot') : t('register.create-account')}
       </LoadingButton>
     </Stack>
   )

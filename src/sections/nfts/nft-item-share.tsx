@@ -38,13 +38,13 @@ export default function NftItemShare({ nftId, nftData }: NftItemClaimProps) {
   const [openShare, setOpenShare] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
 
+  const nftUrl = `${NFT_MARKETPLACE_URL}/${nftData.minted_contract_address}/${nftId}`
+
   const handleOpenOpenSea = () => {
-    const url = `${NFT_MARKETPLACE_URL}/${nftId}`
-    window.open(url, '_blank')
+    window.open(nftUrl, '_blank')
   }
 
   const handleShare = (platform: string) => {
-    const nftUrl = `${NFT_MARKETPLACE_URL}/${nftId}`
     const text = nftData.metadata.description
 
     const shareUrls = {
@@ -59,8 +59,8 @@ export default function NftItemShare({ nftId, nftData }: NftItemClaimProps) {
 
   const handleCopyLink = async () => {
     try {
-      await navigator.clipboard.writeText(`${NFT_MARKETPLACE_URL}/${nftId}`)
-      enqueueSnackbar(t('nfts.share.clipboard'), { variant: 'info' })
+      await navigator.clipboard.writeText(`${nftUrl}`)
+      enqueueSnackbar(t('common.copied'), { variant: 'info' })
     } catch (err) {
       console.error('Error al copiar:', err)
     }
@@ -76,7 +76,7 @@ export default function NftItemShare({ nftId, nftData }: NftItemClaimProps) {
       try {
         await navigator.share({
           title: nftData.metadata.description,
-          url: `${NFT_MARKETPLACE_URL}/${nftId}`
+          url: `${nftUrl}`
         })
       } catch (err) {
         console.error('Error al compartir:', err)

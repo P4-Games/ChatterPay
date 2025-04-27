@@ -20,6 +20,7 @@
     "view": "Ver",
     "share": "Compartir",
     "metadata": "Ver Metadata",
+    "copied": "Copiado",
     "msg": {
       "update-success": "¡Actualización exitosa!",
       "update-error": "Error de actualización"
@@ -282,6 +283,7 @@
     "already-account": "¿Ya tienes una cuenta?",
     "sign-in": "Iniciar sesión",
     "create-account": "Crear cuenta",
+    "create-account-bot": "Crear cuenta desde WhatsApp",
     "terms-of-service": "Términos de Servicio",
     "privacy-policy": "Política de Privacidad",
     "by-signing": "Al registrarme, acepto los",

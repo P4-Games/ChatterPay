@@ -70,7 +70,6 @@ jobs:
         run: |
           echo "Building Docker image..."
           docker build -t nextjs-app .
-
       - name: Report Status
         env:
           GH_TOKEN: ${{ github.token }}

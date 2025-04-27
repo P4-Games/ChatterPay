@@ -20,6 +20,7 @@
     "view": "Ver",
     "share": "Compartilhar",
     "metadata": "Ver Metadata",
+    "copied": "Copiado",
     "msg": {
       "update-success": "Atualização bem-sucedida!",
       "update-error": "Erro de atualização"
@@ -263,6 +264,7 @@
     "title": "Entrar no ChatterPay",
     "new-user": "Novo usuário?",
     "create-account": "Criar uma conta",
+    "create-account-bot": "Criar uma conta",
     "send-code": "Enviar código para o WhatsApp",
     "login": "Entrar",
     "resend-code": "Reenviar código",
@@ -282,6 +284,7 @@
     "already-account": "Já tem uma conta?",
     "sign-in": "Entrar",
     "create-account": "Criar Conta",
+    "create-account-bot": "Criar conta pelo WhatsApp",
     "terms-of-service": "Termos de Serviço",
     "privacy-policy": "Política de Privacidade",
     "by-signing": "Ao me inscrever, concordo com os",

@@ -46,7 +46,7 @@ export default function NftItem({ nft }: Props) {
   const { trxId, nftId, metadata } = nft
 
   const linkTrx = `${EXPLORER_NFT_URL}/tx/${trxId}`
-  const linkMarketplace = `${NFT_MARKETPLACE_URL}/${nftId}`
+  const linkMarketplace = `${NFT_MARKETPLACE_URL}/${nft.minted_contract_address}/${nftId}`
 
   const mintUrl = `${UI_BASE_URL}/nfts/mint/${nftId.toString()}`
   const linkShare = `${NFT_SHARE.replace('MESSAGE', `${t('nfts.mint')}: ${mintUrl}`)}`
@@ -59,8 +59,8 @@ export default function NftItem({ nft }: Props) {
   imageUrl = imageUrl || '/assets/images/nfts/default_nft.png'
 
   const { geolocation } = metadata || {}
-  const latitude = geolocation?.latitud || ''
-  const longitude = geolocation?.longitud || ''
+  const latitude = geolocation?.latitude || ''
+  const longitude = geolocation?.longitude || ''
 
   const handleView = () => {
     popover.onClose()
