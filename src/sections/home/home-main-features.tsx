@@ -36,25 +36,27 @@ const CARD_IMAGE_SIZE = {
   }
 }
 
+const IMG_BASE_URL = '/assets/images/home'
+
 // Fixed card data without translations
 const CARD_CONFIG = [
   {
-    icon: 'https://storage.googleapis.com/chatbot-multimedia/chatterpay/images/send.png',
+    icon: `${IMG_BASE_URL}/send.webp`,
     bgColor: LIGHT_GREEN,
     darkModeBgColor: DARK_MODE_CARD_LIGHT
   },
   {
-    icon: 'https://storage.googleapis.com/chatbot-multimedia/chatterpay/images/coin.png',
+    icon: `${IMG_BASE_URL}/coin.webp`,
     bgColor: DARK_GREEN,
     darkModeBgColor: DARK_GREEN
   },
   {
-    icon: 'https://storage.googleapis.com/chatbot-multimedia/chatterpay/images/certificate.png',
+    icon: `${IMG_BASE_URL}/certificate.webp`,
     bgColor: LIGHT_GREEN,
     darkModeBgColor: DARK_MODE_CARD_LIGHT
   },
   {
-    icon: 'https://storage.googleapis.com/chatbot-multimedia/chatterpay/images/low_fees.png',
+    icon: `${IMG_BASE_URL}/low_fees.webp`,
     bgColor: LIGHT_GREEN,
     darkModeBgColor: DARK_MODE_CARD_LIGHT
   }
