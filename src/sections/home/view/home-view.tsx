@@ -12,7 +12,6 @@ import HomeFaQ from '../home-faq'
 import HomeHero from '../home-hero'
 import HomeGetStarted from '../home-get-started'
 import HomeRequestDemo from '../home-request-demo'
-import HomeAllFeatures from '../home-all-features'
 import HomeMainFeatures from '../home-main-features'
 
 // ----------------------------------------------------------------------
@@ -33,8 +32,6 @@ export default function HomeView() {
         }}
       >
         <HomeMainFeatures />
-
-        <HomeAllFeatures />
 
         <HomeRequestDemo />
 

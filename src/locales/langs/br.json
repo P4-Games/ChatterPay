@@ -149,26 +149,6 @@
         "description": "Solicite pagamentos em criptomoedas via WhatsApp. Emita faturas dinâmicas, receba pagamentos em várias moedas e receba notificações ao serem concluídos."
       }
     },
-    "all-features": {
-      "tag": "Funcionalidades",
-      "title": "Descubra todas as funcionalidades",
-      "features": {
-        "f1": "Transferir fundos para qualquer contato do WhatsApp",
-        "f2": "Receber pagamentos e transferências diretamente no seu WhatsApp",
-        "f3": "Trocar facilmente entre diferentes tokens de maneira amigável ao usuário",
-        "f4": "Manter seus tokens de forma segura mantendo o controle total sobre seus ativos",
-        "f5": "Painel para acompanhamento de saldo e histórico de transações",
-        "f6": "Painel de Administração Interna",
-        "f6-2": "para supervisar e gerenciar contas de usuário",
-        "f7": "Suporte personalizado e eficiente",
-        "f8": "MFA baseado no WhatsApp para autenticação de WebApp",
-        "f9": "MFA baseado em e-mail para recuperação de conta",
-        "f10": "Notificações de transações",
-        "f11": "Gestão e pagamento de taxas",
-        "f12": "Processamento de mensagens multiagente",
-        "f13": "Gestão de chaves privadas com Tecnologia de Abstração de Contas"
-      }
-    },
     "request-demo": {
       "tag": "Experimente",
       "title": "Solicitar uma Demonstração",

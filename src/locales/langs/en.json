@@ -86,26 +86,6 @@
         "description": "Request Crypto payments via WhatsApp. Issue dynamic invoices, get paid in various currencies, and receive notifications on completion."
       }
     },
-    "all-features": {
-      "tag": "Functionalities",
-      "title": "Discover all features",
-      "features": {
-        "f1": "Transfer funds to any WhatsApp contact",
-        "f2": "Receive payments and transfers directly in your WhatsApp",
-        "f3": "Easily swap between different tokens in a user-friendly way",
-        "f4": "Securely hold your tokens while maintaining full control over your assets",
-        "f5": "Dashboard for balance and transaction history tracking",
-        "f6": "Internal Administration Panel",
-        "f6-2": "for supervising and managing user accounts",
-        "f7": "Personalized and efficient support",
-        "f8": "WhatsApp-based MFA for WebApp authentication",
-        "f9": "Email-based MFA for account recovery",
-        "f10": "Transaction notifications",
-        "f11": "Fee management and payment",
-        "f12": "Multi-agent message processing",
-        "f13": "Private key management with Account Abstraction Technology"
-      }
-    },
     "request-demo": {
       "tag": "Try it",
       "title": "Request a Demo",
