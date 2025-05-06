@@ -1,4 +1,5 @@
 import { m } from 'framer-motion'
+import { useRef, useState, useEffect } from 'react'
 
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
@@ -11,6 +12,7 @@ import { useResponsive } from 'src/hooks/use-responsive'
 
 import { useTranslate } from 'src/locales'
 
+import { SingleWordHighlight } from 'src/components/highlight'
 import { varFade, MotionViewport } from 'src/components/animate'
 
 // ----------------------------------------------------------------------
@@ -18,6 +20,22 @@ import { varFade, MotionViewport } from 'src/components/animate'
 export default function HomeMainFeatures() {
   const { t } = useTranslate()
   const mdUp = useResponsive('up', 'md')
+  const [lastWordWidth, setLastWordWidth] = useState(0)
+  const titleRef = useRef<HTMLSpanElement>(null)
+
+  // Extract the last word from the title text
+  const titleText = t('home.main-features.title1')
+  const lastWord = titleText.trim().split(' ').pop() || ''
+
+  useEffect(() => {
+    if (titleRef.current) {
+      // Calculate approximate width based on character count and font size
+      // Adjust the multiplier based on your specific font
+      const charWidth = mdUp ? 24 : 20 // Approximate width of a character in pixels for h2
+      const estimatedWidth = lastWord.length * charWidth
+      setLastWordWidth(estimatedWidth)
+    }
+  }, [lastWord, mdUp])
 
   const CARDS = [
     {
@@ -113,15 +131,31 @@ export default function HomeMainFeatures() {
             mb: { xs: 5, md: 10 }
           }}
         >
-          <m.div variants={varFade().inUp}>
-            <Typography component='div' variant='overline' sx={{ color: 'text.disabled' }}>
-              {t('home.main-features.tag')}
-            </Typography>
-          </m.div>
-
           <m.div variants={varFade().inDown}>
             <Typography variant='h2'>
-              {t('home.main-features.title1')} <br /> {t('home.main-features.title2')}
+              <Box component="span" ref={titleRef}>
+                {t('home.main-features.title1')}
+              </Box>
+              <Box
+                component="span"
+                sx={{
+                  position: 'relative',
+                  display: 'inline-flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                }}
+              >
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    bottom: -40,
+                    left: lastWordWidth > 0 ? `-${lastWordWidth}px` : 0,
+                    zIndex: 1,
+                  }}
+                >
+                  <SingleWordHighlight size="lg" width={lastWordWidth} />
+                </Box>
+              </Box>
             </Typography>
           </m.div>
         </Stack>

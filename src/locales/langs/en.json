@@ -70,9 +70,7 @@
       "legend": "Transfer crypto easily through WhatsApp using our Web3 platform."
     },
     "main-features": {
-      "tag": "Main Features",
-      "title1": "How can ChatterPay",
-      "title2": "help you?",
+      "title1": "With ChatterPay, money is simple.",
       "card-1": {
         "title": "Make the blockchain complexity invisible",
         "description": "Hide passphrases, transaction approval pop-ups, and sponsor gas fees for transactions. We handle all the technical stuff for you."
