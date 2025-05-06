@@ -112,36 +112,6 @@
       "description1": "Contact our team for a product demonstration.",
       "description2": "It's the wallet you need to enter the Web3 world."
     },
-    "tech": {
-      "tag": "Tech",
-      "title": "Technologies We Rely On",
-      "cards": {
-        "ethereum": {
-          "title": "Ethereum",
-          "description": "Layer 1 Blockchain for smart contracts and decentralized applications. Ensures security for transactions."
-        },
-        "scroll": {
-          "title": "Scroll",
-          "description": "Layer 2 blockchain solution for Ethereum, offering faster and cheaper transactions. Designed to improve efficiency and usability."
-        },
-        "whatsapp": {
-          "title": "WhatsApp",
-          "description": "Global messaging platform for communication. Provides secure messaging and easy integration with other services"
-        },
-        "openai": {
-          "title": "OpenAI",
-          "description": "AI platform that understands and generates human-like text. Powers advanced language processing and learning capabilities."
-        },
-        "icp": {
-          "title": "icp",
-          "description": "ICP offers decentralized infrastructure that is simple, immune to cyber attacks, unstoppable, and controlled by DAOs."
-        },
-        "account-abstraction": {
-          "title": "Account Abstraction",
-          "description": "Concept allowing interaction with blockchains without needing specific cryptocurrencies. Enhances flexibility and usability for users."
-        }
-      }
-    },
     "faq": {
       "tag": "FaQ",
       "title": "Frequently asked questions",

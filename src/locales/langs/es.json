@@ -175,36 +175,6 @@
       "description1": "Contacta a nuestro equipo para una demostración del producto.",
       "description2": "Es la billetera que necesitas para entrar al mundo Web3."
     },
-    "tech": {
-      "tag": "Tech",
-      "title": "Tecnologías en las que nos apoyamos",
-      "cards": {
-        "ethereum": {
-          "title": "Ethereum",
-          "description": "Blockchain de capa 1 para contratos inteligentes y aplicaciones descentralizadas. Asegura la seguridad de las transacciones."
-        },
-        "scroll": {
-          "title": "Scroll",
-          "description": "Solución de capa 2 para Ethereum, que ofrece transacciones más rápidas y económicas. Diseñada para mejorar la eficiencia y la usabilidad."
-        },
-        "whatsapp": {
-          "title": "WhatsApp",
-          "description": "Plataforma global de mensajería para comunicación. Proporciona mensajería segura y fácil integración con otros servicios."
-        },
-        "openai": {
-          "title": "OpenAI",
-          "description": "Plataforma de IA que comprende y genera texto similar al humano. Impulsa capacidades avanzadas de procesamiento de lenguaje y aprendizaje."
-        },
-        "icp": {
-          "title": "icp",
-          "description": "ICP Ofrece infraestructura descentralizada, simple, inmune a cyber-ataques, imparable y controlada por DAOs."
-        },
-        "account-abstraction": {
-          "title": "Account Abstraction",
-          "description": "Concepto que permite interactuar con blockchains sin necesidad de criptomonedas específicas. Mejora la flexibilidad y usabilidad para los usuarios."
-        }
-      }
-    },
     "faq": {
       "tag": "FaQ",
       "title": "Preguntas frecuentes",

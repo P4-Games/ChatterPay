@@ -175,36 +175,6 @@
       "description1": "Entre em contato com nossa equipe para uma demonstração do produto.",
       "description2": "É a carteira que você precisa para entrar no mundo Web3."
     },
-    "tech": {
-      "tag": "Tech",
-      "title": "Tecnologias em que Confiamos",
-      "cards": {
-        "ethereum": {
-          "title": "Ethereum",
-          "description": "Blockchain de camada 1 para contratos inteligentes e aplicações descentralizadas. Garante a segurança das transações."
-        },
-        "scroll": {
-          "title": "Scroll",
-          "description": "Solução de camada 2 para Ethereum, oferecendo transações mais rápidas e econômicas. Projetada para melhorar a eficiência e usabilidade."
-        },
-        "whatsapp": {
-          "title": "WhatsApp",
-          "description": "Plataforma global de mensagens para comunicação. Fornece mensagens seguras e integração fácil com outros serviços."
-        },
-        "openai": {
-          "title": "OpenAI",
-          "description": "Plataforma de IA que compreende e gera texto semelhante ao humano. Impulsiona capacidades avançadas de processamento de linguagem."
-        },
-        "icp": {
-          "title": "ICP",
-          "description": "O ICP oferece infraestrutura descentralizada, simples, imune a ataques cibernéticos, imparável e controlada por DAOs."
-        },
-        "account-abstraction": {
-          "title": "Abstração de Conta",
-          "description": "Permite interagir com blockchains sem a necessidade de criptomoedas específicas. Melhora a flexibilidade e usabilidade para os usuários."
-        }
-      }
-    },
     "faq": {
       "tag": "FaQ",
       "title": "Perguntas frequentes",
