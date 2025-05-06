@@ -95,8 +95,6 @@
     "faq": {
       "tag": "FaQ",
       "title": "Frequently asked questions",
-      "still-title": "Still have questions?",
-      "still-description": "Please describe your case to receive the most accurate advice.",
       "faqs": {
         "faq1": {
           "question": "What is ChatterPay?",

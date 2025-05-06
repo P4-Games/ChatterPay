@@ -158,8 +158,6 @@
     "faq": {
       "tag": "FaQ",
       "title": "Preguntas frecuentes",
-      "still-title": "¿Todavía tienes preguntas?",
-      "still-description": "Por favor, describe tu caso para recibir el consejo más preciso.",
       "faqs": {
         "faq1": {
           "question": "¿Qué es ChatterPay?",
