@@ -135,16 +135,20 @@
     "main-features": {
       "title1": "Con ChatterPay, el dinero es simple.",
       "card-1": {
-        "title": "Simplificar el uso de blockchain",
-        "description": "Eliminamos la necesidad de frases secretas y ventanas emergentes de aprobación, gestionamos las tarifas de gas y los aspectos técnicos por ti para que puedas concentrarte en lo importante."
+        "title": "Envía dinero a tus contactos en todo el mundo al instante",
+        "description": "Envía dinero a cualquier parte del mundo, instantáneamente sin bancos y con tarifas bajas. Si tus contactos tienen WhatsApp, tienen ChatterPay."
       },
       "card-2": {
-        "title": "Transferir dinero fácilmente",
-        "description": "Simplemente envía un mensaje de texto vía WhatsApp para transferir, recibir, intercambiar y almacenar valor."
+        "title": "Crypto y DeFi, a un mensaje de distancia",
+        "description": "Compra, vende y mantén criptomonedas como Bitcoin, Ethereum o Stablecoins con solo un mensaje de texto o audio."
       },
       "card-3": {
-        "title": "Solcitar pagos sin esfuerzo",
-        "description": "Solicita pagos en criptomonedas vía WhatsApp. Emite facturas dinámicas, recibe pagos en diversas monedas y obtén notificaciones al completarse."
+        "title": "Emite certificados con solo una foto",
+        "description": "Crea certificados fotográficos donde puedes certificar la fecha de emisión, y no pueden ser eliminados ni modificados."
+      },
+      "card-4": {
+        "title": "La forma más económica de enviar dinero al extranjero",
+        "description": "Crea tu cuenta ahora gratis, para siempre. Sin costos de mantenimiento. Tarifa fija baja por transferencia."
       }
     },
     "request-demo": {
