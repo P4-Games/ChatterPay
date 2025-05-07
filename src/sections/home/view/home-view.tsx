@@ -9,6 +9,7 @@ import MainLayout from 'src/layouts/main'
 import ScrollProgress from 'src/components/scroll-progress'
 
 import HomeFaQ from '../home-faq'
+import HomeCTA from '../home-cta'
 import HomeHero from '../home-hero'
 import HomeAwards from '../home-awards'
 import HomeMainFeatures from '../home-main-features'
@@ -38,6 +39,8 @@ export default function HomeView() {
         <HomeFaQ />
 
         <HomeAwards />
+
+        <HomeCTA />
       </Box>
     </MainLayout>
   )

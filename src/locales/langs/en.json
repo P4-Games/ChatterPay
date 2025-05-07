@@ -146,6 +146,11 @@
     },
     "awards": {
       "title": "Awarded by the best:"
+    },
+    "cta": {
+      "title": "Simplify your money. Forever. In seconds.",
+      "description": "No new apps. No learning curves. Just send a few messages and take control of your finance. Like 150+ chatters already did.",
+      "button": "Start chatting now"
     }
   },
   "terms": {

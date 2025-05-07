@@ -209,6 +209,11 @@
     },
     "awards": {
       "title": "Premiado por los mejores:"
+    },
+    "cta": {
+      "title": "Simplifica tu dinero. Para siempre. En segundos.",
+      "description": "Sin nuevas apps. Sin curvas de aprendizaje. Solo envía unos mensajes y toma el control de tus finanzas. Como ya lo hicieron más de 150 usuarios.",
+      "button": "Comenzar a chatear ahora"
     }
   },
   "login": {
