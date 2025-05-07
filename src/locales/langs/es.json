@@ -136,6 +136,23 @@
         "button": "Crear mi cuenta gratis!"
       }
     },
+    "fiat-transfer": {
+      "title": "Recibe y envía moneda fiat como un profesional.",
+      "description": "Pronto podrás recibir, convertir y enviar moneda fiat a Argentina, Chile, Brasil, Colombia, México, Costa Rica, Guatemala, Filipinas.",
+      "button": "Movamos algo de fiat",
+      "whatsapp_msg": "¡Quisiera comprar crypto con fiat!",
+      "currencies": [
+        "pesos argentinos",
+        "dólares",
+        "pesos chilenos", 
+        "reais", 
+        "pesos colombianos", 
+        "pesos mexicanos", 
+        "colones", 
+        "quetzales", 
+        "pesos filipinos"
+      ]
+    },
     "main-features": {
       "title1": "Con ChatterPay, el dinero es simple.",
       "card-1": {

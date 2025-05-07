@@ -1,4 +1,5 @@
-import { m } from 'framer-motion'
+import { useState, useEffect } from 'react'
+import { m, AnimatePresence } from 'framer-motion'
 
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -6,6 +7,8 @@ import { styled } from '@mui/material/styles'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Unstable_Grid2'
 import Typography from '@mui/material/Typography'
+
+import { useTranslate } from 'src/locales'
 
 import { varFade, MotionViewport } from 'src/components/animate'
 
@@ -28,14 +31,41 @@ const StyledButton = styled(Button)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius * 1.5,
   '&:hover': {
     backgroundColor: theme.palette.grey[100],
+    '& .arrow-icon': {
+      transform: 'translateX(3px)',
+    }
   },
   padding: theme.spacing(1.2, 4),
   [theme.breakpoints.down('md')]: {
     fontSize: '0.9rem',
   },
+  '& .MuiButton-endIcon': {
+    marginLeft: theme.spacing(1),
+  },
+  '& .arrow-icon': {
+    transition: 'transform 0.2s ease-in-out',
+  }
 }))
 
 export default function HomeFiatTransfer() {
+  const { t } = useTranslate();
+  const [currentCurrencyIndex, setCurrentCurrencyIndex] = useState(0);
+  const currencies = t('home.fiat-transfer.currencies', { returnObjects: true }) as string[];
+  
+  const whatsappMessage = encodeURIComponent(t('home.fiat-transfer.whatsapp_msg'));
+  const whatsappLink = `https://wa.me/?text=${whatsappMessage}`;
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentCurrencyIndex((prevIndex) => (prevIndex + 1) % currencies.length);
+    }, 2000);
+    
+    return () => clearInterval(interval);
+  }, [currencies.length]);
+
+  // Get the title with the currency marker
+  const titleWithMarker = t('home.fiat-transfer.title');
+  
   return (
     <StyledRoot>
       <Container 
@@ -66,9 +96,66 @@ export default function HomeFiatTransfer() {
                   mb: 3,
                   color: 'common.white',
                   fontWeight: 700,
+                  position: 'relative',
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  alignItems: 'center',
+                  justifyContent: { xs: 'center', md: 'flex-start' },
+                  textAlign: { xs: 'center', md: 'left' },
+                  gap: 0.5,
                 }}
               >
-                Receive and send fiat like a pro.
+                <Box component="span">{titleWithMarker.split('#currency#')[0]}</Box>
+                <Box
+                  component="span"
+                  sx={{
+                    display: 'inline-flex',
+                    position: 'relative',
+                    height: '1.5em',
+                    padding: 0,
+                    margin: 0,
+                    justifyContent: 'center'
+                  }}
+                >
+                  <AnimatePresence mode="wait" initial={false}>
+                    <m.span
+                      key={currentCurrencyIndex}
+                      initial={{ 
+                        opacity: 0,
+                        y: 10,
+                        filter: 'blur(3px)',
+                      }}
+                      animate={{ 
+                        opacity: 1,
+                        y: 0,
+                        filter: 'blur(0px)',
+                        transition: {
+                          type: 'spring',
+                          stiffness: 300,
+                          damping: 20,
+                        }
+                      }}
+                      exit={{ 
+                        opacity: 0,
+                        y: -10,
+                        filter: 'blur(3px)',
+                        transition: { 
+                          duration: 0.2 
+                        }
+                      }}
+                      style={{ 
+                        display: 'inline',
+                        fontWeight: 700,
+                        whiteSpace: 'nowrap',
+                        color: '#ffffff',
+                        textShadow: '0 0 8px rgba(0,0,0,0.15)'
+                      }}
+                    >
+                      {currencies[currentCurrencyIndex]}
+                    </m.span>
+                  </AnimatePresence>
+                </Box>
+                <Box component="span">{titleWithMarker.split('#currency#')[1]}</Box>
               </Typography>
             </m.div>
 
@@ -80,7 +167,7 @@ export default function HomeFiatTransfer() {
                   opacity: 0.8,
                 }}
               >
-                Soon you will be able to receive, convert and send fiat to Argentina, Chile, Brazil, Colombia, Mexico, Costa Rica, Guatemala, Philippines.
+                {t('home.fiat-transfer.description')}
               </Typography>
             </m.div>
 
@@ -91,9 +178,27 @@ export default function HomeFiatTransfer() {
               }}
             >
               <m.div variants={varFade().inUp}>
-                <StyledButton variant="contained">
-                  Let&apos;s move some fiat
-                </StyledButton>
+                <a 
+                  href={whatsappLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ textDecoration: 'none' }}
+                >
+                  <StyledButton 
+                    variant="contained"
+                    endIcon={
+                      <Box
+                        component="img"
+                        src="/assets/icons/home/landing_resources/button_arrow.svg"
+                        alt="Arrow"
+                        className="arrow-icon"
+                        sx={{ width: 18, height: 18 }}
+                      />
+                    }
+                  >
+                    {t('home.fiat-transfer.button')}
+                  </StyledButton>
+                </a>
               </m.div>
             </Box>
           </Grid>

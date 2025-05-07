@@ -73,6 +73,23 @@
         "button": "Create my account for free!"
       }
     },
+    "fiat-transfer": {
+      "title": "Receive and send #currency# like a pro.",
+      "description": "Soon you will be able to receive, convert and send fiat to Argentina, Chile, Brazil, Colombia, Mexico, Costa Rica, Guatemala, Philippines.",
+      "button": "Let's move some fiat",
+      "whatsapp_msg": "I'd like to buy crypto with fiat!",
+      "currencies": [
+        "Argentine pesos",
+        "dollars",
+        "Chilean pesos", 
+        "Brazilian reais", 
+        "Colombian pesos", 
+        "Mexican pesos", 
+        "Costa Rican colones", 
+        "Guatemalan quetzales", 
+        "Filipino pesos"
+      ]
+    },
     "main-features": {
       "title1": "With ChatterPay, money is simple.",
       "card-1": {
