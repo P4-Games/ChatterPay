@@ -51,6 +51,13 @@ const StyledIcon = styled('img')(({ theme }) => ({
   opacity: 0.5
 }))
 
+// For mobile icons - higher visibility
+const StyledMobileIcon = styled('img')(({ theme }) => ({
+  position: 'absolute',
+  zIndex: 1,
+  opacity: 0.8
+}))
+
 const StyledCreateButton = styled(Button)(({ theme }) => ({
   backgroundColor: GREEN_COLOR,
   color: theme.palette.common.white,
@@ -109,7 +116,12 @@ export default function HomeHero() {
               zIndex: 0
             }}
           >
-            <SingleWordHighlight size="xl" color={GREEN_COLOR} width={titleWords[whatsAppIndex].length * 29} strokeWidth={3} />
+            <SingleWordHighlight 
+              size="xl" 
+              color={GREEN_COLOR} 
+              width={mdUp ? titleWords[whatsAppIndex].length * 29 : titleWords[whatsAppIndex].length * 20} 
+              strokeWidth={3} 
+            />
           </Box>
         </Box>
         {whatsAppIndex < titleWords.length - 1 ? ` ${  titleWords.slice(whatsAppIndex + 1).join(' ')}` : ''}
@@ -133,7 +145,8 @@ export default function HomeHero() {
           sx={{ 
             height: mdUp ? 1 : 'auto',
             maxWidth: "100%",
-            mx: 'auto'
+            mx: 'auto',
+            mt: { xs: 6, md: 0 }
           }}
         >
           <Grid xs={12} md={5} sx={{ textAlign: { xs: 'center', md: 'left' }, mb: { xs: 5, md: 0 } }}>
@@ -160,10 +173,42 @@ export default function HomeHero() {
             </m.div>
           </Grid>
 
-          {/* For mobile view, display phone with reduced size */}
+          {/* For mobile view, display phone with proper icons */}
           {!mdUp && (
-            <Grid xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Grid xs={12} sx={{ display: 'flex', justifyContent: 'center', position: 'relative' }}>
               <Box sx={{ position: 'relative', width: 280, height: 560 }}>
+                {/* Mobile icons - Right side of the mockup */}
+                <StyledMobileIcon
+                  src="/assets/icons/home/landing_resources/hero_arrow_outbound.svg"
+                  alt="arrow outbound"
+                  sx={{ position: 'absolute', top: '10%', right: '-20%' }}
+                />
+                
+                <StyledMobileIcon
+                  src="/assets/icons/home/landing_resources/hero_arrow_inbound.svg"
+                  sx={{ position: 'absolute', top: '35%', right: '-25%' }}
+                  alt="arrow inbound"
+                />
+                <StyledMobileIcon
+                  src="/assets/icons/home/landing_resources/hero_note.svg"
+                  alt="dollar note"
+                  sx={{ position: 'absolute', top: '75%', right: '-22%' }}
+                />
+
+                
+                {/* Mobile icons - Left side of the mockup */}
+                <StyledMobileIcon
+                  src="/assets/icons/home/landing_resources/hero_chart.svg"
+                  alt="chart"
+                  sx={{ position: 'absolute', bottom: '60%', left: '-25%'}}
+                />
+                <StyledMobileIcon
+                  src="/assets/icons/home/landing_resources/hero_swap.svg"
+                  alt="swap"
+                  sx={{ position: 'absolute', bottom: '30%', left: '-20%'}}
+                />
+
+                {/* Mockup */}
                 <StyledImagePlaceholder sx={{ width: 280, height: 560 }}>
                   <Box
                     component="img"
