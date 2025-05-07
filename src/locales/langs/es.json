@@ -103,8 +103,7 @@
   },
   "home": {
     "header": {
-      "sign-up": "Creá tu cuenta",
-      "sign-in": "Entrar al dasboard"
+      "sign-in": "Dasboard"
     },
     "help": {
       "need-help": "¿Necesita ayuda?"

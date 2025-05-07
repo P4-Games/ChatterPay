@@ -103,8 +103,7 @@
   },
   "home": {
     "header": {
-      "sign-up": "Crie sua conta",
-      "sign-in": "Entrar no painel"
+      "sign-in": "Painel"
     },
     "help": {
       "need-help": "Precisa de ajuda?"
