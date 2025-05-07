@@ -67,7 +67,11 @@
     "hero": {
       "title1": "Send Money",
       "title2": "with a message",
-      "legend": "Transfer crypto easily through WhatsApp using our Web3 platform."
+      "legend": "Transfer crypto easily through WhatsApp using our Web3 platform.",
+      "new": {
+        "title": "Send and receive crypto with WhatsApp",
+        "button": "Create my account"
+      }
     },
     "main-features": {
       "title1": "With ChatterPay, money is simple.",

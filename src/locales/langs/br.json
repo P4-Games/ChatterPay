@@ -128,9 +128,13 @@
       }
     },
     "hero": {
-      "title1": "Enviar dinheiro",
+      "title1": "Envie Dinheiro",
       "title2": "com uma mensagem",
-      "legend": "Transfira criptomoedas facilmente pelo WhatsApp usando nossa plataforma Web3."
+      "legend": "Transfira criptomoedas facilmente através do WhatsApp usando nossa plataforma Web3.",
+      "new": {
+        "title": "Envie e receba cripto com WhatsApp",
+        "button": "Criar minha conta"
+      }
     },
     "main-features": {
       "title1": "Com ChatterPay, o dinheiro é simples.",
