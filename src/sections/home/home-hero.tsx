@@ -159,14 +159,6 @@ export default function HomeHero() {
             <m.div variants={varFade().in}>
               <StyledCreateButton
                 variant="contained"
-                endIcon={
-                  <Box
-                    component="img"
-                    src="/assets/icons/home/landing_resources/button_argentina_flag.png"
-                    alt="argentina flag"
-                    sx={{ width: 24, height: 'auto', ml: 1 }}
-                  />
-                }
               >
                 {t('home.hero.new.button')}
               </StyledCreateButton>
