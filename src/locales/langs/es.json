@@ -137,7 +137,7 @@
       }
     },
     "fiat-transfer": {
-      "title": "Recibe y envía moneda fiat como un profesional.",
+      "title": "Recibe y envía #currency# como un pro.",
       "description": "Pronto podrás recibir, convertir y enviar moneda fiat a Argentina, Chile, Brasil, Colombia, México, Costa Rica, Guatemala, Filipinas.",
       "button": "Movamos algo de fiat",
       "whatsapp_msg": "¡Quisiera comprar crypto con fiat!",
@@ -229,7 +229,8 @@
     },
     "cta": {
       "title": "Simplifica tu dinero. Para siempre. En segundos.",
-      "description": "Sin nuevas apps. Sin curvas de aprendizaje. Solo envía unos mensajes y toma el control de tus finanzas. Como ya lo hicieron más de 150 usuarios.",
+      "title_new": "Simplifica tu dinero como Martín. En segundos, para siempre.",
+      "description": "Sin nuevas apps. Sin curvas de aprendizaje. Solo envía unos mensajes y toma el control de tus finanzas. Como ya lo hicieron Martín y más de 150 usuarios.",
       "button": "Comenzar a chatear ahora"
     }
   },

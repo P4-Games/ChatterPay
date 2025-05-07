@@ -38,6 +38,24 @@ const StyledButton = styled(Button)(({ theme }) => ({
   },
 }))
 
+const VideoWrapper = styled(Box)(({ theme }) => ({
+  position: 'relative',
+  width: '100%',
+  height: 0,
+  paddingBottom: '56.25%', // 16:9 aspect ratio
+  overflow: 'hidden',
+  borderRadius: theme.shape.borderRadius * 2,
+  boxShadow: theme.shadows[10],
+  '& iframe': {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    border: 0,
+  },
+}))
+
 export default function HomeCTA() {
   const { t } = useTranslate()
 
@@ -58,17 +76,35 @@ export default function HomeCTA() {
       >
         <Grid 
           container 
-          spacing={{ xs: 3, md: 3 }}
+          spacing={{ xs: 3, md: 5 }}
           alignItems="center"
-          justifyContent="center"
+          justifyContent="space-between"
+          direction={{ xs: 'column', md: 'row' }}
           sx={{ position: 'relative' }}
         >
-          <Grid xs={12} md={8} sx={{ 
-            textAlign: 'center',
-            py: { xs: 6, md: 8 },
+          <Grid xs={12} md={6} sx={{ 
+            py: { xs: 2, md: 8 },
             px: { xs: 2, md: 5 }
           }}>
-            <m.div variants={varFade().inUp}>
+            <m.div variants={varFade().inLeft}>
+              <VideoWrapper>
+                <iframe 
+                  src="https://www.youtube.com/embed/d6qzonFP8gc?si=0-uCWfEZbFG7BoqX" 
+                  title="YouTube video player" 
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                  referrerPolicy="strict-origin-when-cross-origin" 
+                  allowFullScreen
+                />
+              </VideoWrapper>
+            </m.div>
+          </Grid>
+
+          <Grid xs={12} md={6} sx={{ 
+            textAlign: { xs: 'center', md: 'left' },
+            py: { xs: 4, md: 8 },
+            px: { xs: 2, md: 5 }
+          }}>
+            <m.div variants={varFade().inRight}>
               <Typography
                 variant="h3"
                 sx={{
@@ -77,11 +113,11 @@ export default function HomeCTA() {
                   fontWeight: 700,
                 }}
               >
-                {t('home.cta.title')}
+                {t('home.cta.title_new')}
               </Typography>
             </m.div>
 
-            <m.div variants={varFade().inUp}>
+            <m.div variants={varFade().inRight}>
               <Typography
                 sx={{
                   mb: 4,
@@ -96,11 +132,11 @@ export default function HomeCTA() {
             <Box
               sx={{
                 display: 'flex',
-                justifyContent: 'center',
+                justifyContent: { xs: 'center', md: 'flex-start' },
                 mb: 4
               }}
             >
-              <m.div variants={varFade().inUp}>
+              <m.div variants={varFade().inRight}>
                 <StyledButton 
                   variant="contained"
                   endIcon={<Iconify icon="eva:arrow-ios-forward-fill" />}
