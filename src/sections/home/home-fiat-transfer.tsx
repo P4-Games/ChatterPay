@@ -21,6 +21,7 @@ const StyledRoot = styled('div')(({ theme }) => ({
   padding: 0,
   overflow: 'hidden',
   position: 'relative',
+  borderRadius: '0 0 32px 32px'
 }))
 
 const StyledButton = styled(Button)(({ theme }) => ({
@@ -74,7 +75,7 @@ export default function HomeFiatTransfer() {
           position: 'relative',
           px: { xs: 2, md: 0 },
           width: '100%',
-          maxWidth: { lg: '100%'},
+          maxWidth: { lg: '100%'}
         }}
       >
         <Grid 
@@ -86,7 +87,7 @@ export default function HomeFiatTransfer() {
         >
           <Grid xs={12} md={6} sx={{ 
             textAlign: { xs: 'center', md: 'left' },
-            py: { xs: 8, md: 10 },
+            py: { xs: 8, md: 15 },
             px: 10
           }}>
             <m.div variants={varFade().inUp}>

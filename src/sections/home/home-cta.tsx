@@ -60,7 +60,7 @@ export default function HomeCTA() {
   const { t } = useTranslate()
 
   const handleChatStart = () => {
-    window.open('https://wa.me/5491173605583?text=Hi!%20I%20want%20to%20create%20an%20account', '_blank')
+    window.open('https://wa.me/5491164629653?text=Hi!%20I%20want%20to%20create%20an%20account', '_blank')
   }
 
   return (

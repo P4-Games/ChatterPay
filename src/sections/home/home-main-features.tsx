@@ -212,8 +212,8 @@ export default function HomeMainFeatures() {
   return (
     <Box
       sx={{
-        py: { xs: 5, md: 5 },
-        backgroundColor: isDarkMode ? DARK_MODE_BG : 'transparent'
+        backgroundColor: isDarkMode ? DARK_MODE_BG : 'transparent',
+        mb: -12
       }}
     >
       <Container
@@ -305,6 +305,24 @@ export default function HomeMainFeatures() {
           ))}
         </Box>
       </Container>
+      {/* Section end rounded borders/ */}
+      <Box
+        sx={{
+          height: 64,
+          width: '100%',
+          backgroundColor: '#F4F6F8',
+          borderTopLeftRadius: 0,
+          borderTopRightRadius: 0,
+          borderBottomLeftRadius: 32,
+          borderBottomRightRadius: 32,
+          bottom: 60,
+          position: 'relative',
+          zIndex: 10,
+          ...(theme.palette.mode === 'dark' && {
+            backgroundColor: DARK_MODE_BG,
+          }),
+        }}
+      />
     </Box>
   )
 }
