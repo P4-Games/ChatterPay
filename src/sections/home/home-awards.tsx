@@ -4,6 +4,7 @@ import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Stack from '@mui/material/Stack'
 import Container from '@mui/material/Container'
+import { useTheme } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 
 import { useTranslate } from 'src/locales'
@@ -12,8 +13,12 @@ import { varFade, MotionViewport } from 'src/components/animate'
 
 // ----------------------------------------------------------------------
 
+// Dark mode background constant
+const DARK_MODE_BG = '#161C24'
+
 export default function HomeAwards() {
   const { t } = useTranslate()
+  const theme = useTheme()
 
   const AWARDS = [
     { name: 'Scroll', image: '/assets/images/home/awards/scroll.svg', height: 40 },
@@ -31,7 +36,8 @@ export default function HomeAwards() {
     <Box
       sx={{
         pb: { xs: 8, md: 10 },
-        bgcolor: 'background.neutral'
+        bgcolor: 'background.neutral',
+        mb: -12
       }}
     >
       <Container component={MotionViewport}>
@@ -67,6 +73,25 @@ export default function HomeAwards() {
           ))}
         </Grid>
       </Container>
+
+      {/* Section end rounded borders */}
+      <Box
+        sx={{
+          height: 64,
+          width: '100%',
+          backgroundColor: '#F4F6F8',
+          borderTopLeftRadius: 0,
+          borderTopRightRadius: 0,
+          borderBottomLeftRadius: 32,
+          borderBottomRightRadius: 32,
+          bottom: -12,
+          position: 'relative',
+          zIndex: 10,
+          ...(theme.palette.mode === 'dark' && {
+            backgroundColor: DARK_MODE_BG,
+          }),
+        }}
+      />
     </Box>
   )
 }

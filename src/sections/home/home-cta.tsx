@@ -72,6 +72,7 @@ export default function HomeCTA() {
           px: { xs: 2, md: 0 },
           width: '100%',
           maxWidth: { lg: '100%'},
+          py: 12
         }}
       >
         <Grid 
