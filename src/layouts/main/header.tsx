@@ -35,11 +35,6 @@ export default function Header() {
 
   const navConfigMobile = [
     {
-      title: t('home.header.sign-up'),
-      icon: <Iconify icon='icon-park-outline:open-an-account' />,
-      path: paths.auth.jwt.register
-    },
-    {
       title: t('home.header.sign-in'),
       icon: <Iconify icon='solar:wallet-bold-duotone' />,
       path: paths.auth.jwt.login
