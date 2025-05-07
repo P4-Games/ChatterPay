@@ -10,6 +10,7 @@ import ScrollProgress from 'src/components/scroll-progress'
 
 import HomeFaQ from '../home-faq'
 import HomeHero from '../home-hero'
+import HomeAwards from '../home-awards'
 import HomeGetStarted from '../home-get-started'
 import HomeMainFeatures from '../home-main-features'
 import HomeFiatTransfer from '../home-fiat-transfer'
@@ -36,6 +37,8 @@ export default function HomeView() {
         <HomeFiatTransfer />
 
         <HomeFaQ />
+
+        <HomeAwards />
 
         <HomeGetStarted />
       </Box>
