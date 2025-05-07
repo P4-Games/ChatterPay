@@ -206,7 +206,7 @@ export default function HomeHero() {
                 <StyledImagePlaceholder sx={{ width: 280, height: 560 }}>
                   <Box
                     component="img"
-                    src="https://tmdm.com.ar/u/public/ezgif-614236e5f91b84.gif"
+                    src="/assets/images/home/hero/mockup.gif"
                     alt="WhatsApp interface showing money transfers"
                     sx={{ width: '100%', height: '100%', objectFit: 'cover', scale: 1.2 }}
                   />
@@ -253,7 +253,7 @@ export default function HomeHero() {
                     <StyledImagePlaceholder>
                       <Box
                         component="img"
-                        src="https://tmdm.com.ar/u/public/ezgif-614236e5f91b84.gif"
+                        src="/assets/images/home/hero/mockup.gif"
                         alt="WhatsApp interface showing money transfers"
                         sx={{ width: '100%', height: '100%', objectFit: 'cover', scale: 1.2 }}
                       />
