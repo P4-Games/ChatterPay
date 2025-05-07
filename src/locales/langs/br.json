@@ -207,10 +207,8 @@
         }
       }
     },
-    "get-started": {
-      "title": "Comece com",
-      "description": "Todo o poder do Web3 sem complicações.",
-      "cta": "Cadastre-se agora"
+    "awards": {
+      "title": "Premiado pelos melhores:"
     }
   },
   "login": {

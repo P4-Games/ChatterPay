@@ -144,10 +144,8 @@
         }
       }
     },
-    "get-started": {
-      "title": "Get started with",
-      "description": "All the power of Web3 with none of the hassle.",
-      "cta": "Sign Up Now"
+    "awards": {
+      "title": "Awarded by the best:"
     }
   },
   "terms": {
