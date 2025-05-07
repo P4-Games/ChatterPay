@@ -28,7 +28,7 @@ const StyledRoot = styled('div')(({ theme }) => ({
     top: 0,
     left: 0,
     height: '100vh',
-  }
+  },
 }))
 
 const StyledImagePlaceholder = styled(Box)(({ theme }) => ({
@@ -135,7 +135,9 @@ export default function HomeHero() {
         component={MotionContainer} 
         sx={{ 
           height: mdUp ? '100vh' : 'auto', 
-          py: mdUp ? 0 : 6 
+          py: mdUp ? 0 : 6,
+          pl: { md: 0 },
+          pr: { md: 0 },
         }}
       >
         <Grid 
@@ -204,9 +206,9 @@ export default function HomeHero() {
                 <StyledImagePlaceholder sx={{ width: 280, height: 560 }}>
                   <Box
                     component="img"
-                    src="https://tmdm.com.ar/u/public/661shots_so%201.png"
+                    src="https://tmdm.com.ar/u/public/ezgif-614236e5f91b84.gif"
                     alt="WhatsApp interface showing money transfers"
-                    sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    sx={{ width: '100%', height: '100%', objectFit: 'cover', scale: 1.2 }}
                   />
                 </StyledImagePlaceholder>
               </Box>
@@ -251,9 +253,9 @@ export default function HomeHero() {
                     <StyledImagePlaceholder>
                       <Box
                         component="img"
-                        src="https://tmdm.com.ar/u/public/661shots_so%201.png"
+                        src="https://tmdm.com.ar/u/public/ezgif-614236e5f91b84.gif"
                         alt="WhatsApp interface showing money transfers"
-                        sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        sx={{ width: '100%', height: '100%', objectFit: 'cover', scale: 1.2 }}
                       />
                     </StyledImagePlaceholder>
                   </m.div>
