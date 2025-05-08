@@ -12,8 +12,8 @@ import { useResponsive } from 'src/hooks/use-responsive'
 
 import { useTranslate } from 'src/locales'
 
+import { MotionViewport } from 'src/components/animate'
 import { SingleWordHighlight } from 'src/components/highlight'
-import { varFade, MotionViewport } from 'src/components/animate'
 
 // ----------------------------------------------------------------------
 
@@ -62,12 +62,63 @@ const CARD_CONFIG = [
   }
 ]
 
+// Animation variants for container when scrolling down
+const containerVariantsDown = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.2, // Delay between child animations
+    },
+  },
+};
+
+// Animation variants for container when scrolling up
+const containerVariantsUp = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.2, // Delay between child animations
+      staggerDirection: -1, // Reverse the stagger order
+    },
+  },
+};
+
+// Animation variants for each card
+const cardVariants = {
+  hidden: { opacity: 0, y: 40 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: [0.43, 0.13, 0.23, 0.96], // Custom easing for smoother animation
+    },
+  },
+};
+
+// Animation variants for title
+const titleVariants = {
+  hidden: { opacity: 0, y: 60 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.8,
+      ease: [0.16, 1, 0.3, 1], // Custom easing curve for more elegant animation
+    },
+  },
+};
+
 export default function HomeMainFeatures() {
   const { t } = useTranslate()
   const theme = useTheme()
   const mdUp = useResponsive('up', 'md')
   const [lastWordWidth, setLastWordWidth] = useState(0)
   const titleRef = useRef<HTMLSpanElement>(null)
+  const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('down')
+  const [lastScrollY, setLastScrollY] = useState(0)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const animationTriggeredRef = useRef(false)
 
   const isDarkMode = theme.palette.mode === 'dark'
 
@@ -83,6 +134,42 @@ export default function HomeMainFeatures() {
       setLastWordWidth(estimatedWidth)
     }
   }, [lastWord, mdUp])
+
+  // Handle scroll direction detection with threshold
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      const scrollDifference = Math.abs(currentScrollY - lastScrollY)
+      
+      // Only update direction if scroll difference is significant (10px threshold)
+      if (scrollDifference > 10) {
+        // Check if component is in viewport before changing direction
+        if (containerRef.current) {
+          const rect = containerRef.current.getBoundingClientRect()
+          const isInViewport = rect.top < window.innerHeight && rect.bottom > 0
+          
+          // Only change direction when component is actually in viewport
+          if (isInViewport) {
+            if (currentScrollY > lastScrollY) {
+              setScrollDirection('down')
+            } else {
+              setScrollDirection('up')
+            }
+            // Reset animation triggered flag when direction changes
+            animationTriggeredRef.current = false
+          }
+        }
+        
+        setLastScrollY(currentScrollY)
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [lastScrollY])
 
   // Feature cards configuration with content and styling
   const CARDS = CARD_CONFIG.map((config, index) => ({
@@ -230,7 +317,12 @@ export default function HomeMainFeatures() {
             mb: { xs: 5, md: 10 }
           }}
         >
-          <m.div variants={varFade().inDown}>
+          <m.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, margin: '-20% 0px' }}
+            variants={titleVariants}
+          >
             <Typography 
               variant='h2' 
               sx={{ color: isDarkMode ? 'common.white' : 'text.primary' }}
@@ -263,47 +355,55 @@ export default function HomeMainFeatures() {
         </Stack>
 
         {/* Grid layout for cards with custom layout for desktop and mobile */}
-        <Box
-          gap={{ xs: 3, lg: 7 }}
-          display="grid"
-          sx={{
-            gridTemplateColumns: {
-              xs: '1fr',
-              md: 'repeat(2, 1fr)'
-            },
-            gridTemplateRows: 'auto',
-            '& > *:nth-of-type(1)': {
-              gridColumn: {
-                xs: '1',
-                md: '1 / span 2'
-              }
-            },
-            '& > *:nth-of-type(2)': {
-              gridColumn: {
-                xs: '1',
-                md: '1'
-              }
-            },
-            '& > *:nth-of-type(3)': {
-              gridColumn: {
-                xs: '1',
-                md: '2'
-              }
-            },
-            '& > *:nth-of-type(4)': {
-              gridColumn: {
-                xs: '1',
-                md: '1 / span 2'
-              }
-            }
-          }}
+        <m.div
+          ref={containerRef}
+          variants={scrollDirection === 'down' ? containerVariantsDown : containerVariantsUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: false, amount: 0.2 }}
         >
-          {CARDS.map((card, index) => (
-            <m.div key={card.title} variants={varFade().inUp}>
-              {renderCard(card, index)}
-            </m.div>
-          ))}
-        </Box>
+          <Box
+            gap={{ xs: 3, lg: 7 }}
+            display="grid"
+            sx={{
+              gridTemplateColumns: {
+                xs: '1fr',
+                md: 'repeat(2, 1fr)'
+              },
+              gridTemplateRows: 'auto',
+              '& > *:nth-of-type(1)': {
+                gridColumn: {
+                  xs: '1',
+                  md: '1 / span 2'
+                }
+              },
+              '& > *:nth-of-type(2)': {
+                gridColumn: {
+                  xs: '1',
+                  md: '1'
+                }
+              },
+              '& > *:nth-of-type(3)': {
+                gridColumn: {
+                  xs: '1',
+                  md: '2'
+                }
+              },
+              '& > *:nth-of-type(4)': {
+                gridColumn: {
+                  xs: '1',
+                  md: '1 / span 2'
+                }
+              }
+            }}
+          >
+            {CARDS.map((card, index) => (
+              <m.div key={card.title} variants={cardVariants}>
+                {renderCard(card, index)}
+              </m.div>
+            ))}
+          </Box>
+        </m.div>
       </Container>
       {/* Section end rounded borders/ */}
       <Box
