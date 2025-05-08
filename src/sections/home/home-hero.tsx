@@ -266,7 +266,6 @@ export default function HomeHero() {
       return t('home.hero.new.title')
     }
 
-    const fontSize = { xs: 32, md: 40, lg: 46 }
     const charWidth = { xs: 20, md: 25, lg: 29 }
     
     // Calculate width based on screen size
