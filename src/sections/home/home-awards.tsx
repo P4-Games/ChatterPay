@@ -1,4 +1,5 @@
 import { m } from 'framer-motion'
+import { useRef, useState, useEffect } from 'react'
 
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
@@ -9,13 +10,53 @@ import { alpha, useTheme } from '@mui/material/styles'
 
 import { useTranslate } from 'src/locales'
 
-import { varFade, MotionViewport } from 'src/components/animate'
 
 // ----------------------------------------------------------------------
+
+// Animation variants
+const ANIMATIONS = {
+  // Container animation with sequential children reveal
+  container: {
+    hidden: {},
+    visible: {
+      transition: { staggerChildren: 0.1 }
+    }
+  },
+  
+  // Individual award animation
+  award: {
+    hidden: { opacity: 0, y: 30, scale: 0.9 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: 0.6,
+        ease: [0.43, 0.13, 0.23, 0.96]
+      }
+    }
+  },
+  
+  // Title animation
+  title: {
+    hidden: { opacity: 0, y: 40 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.8,
+        ease: [0.16, 1, 0.3, 1]
+      }
+    }
+  }
+}
 
 export default function HomeAwards() {
   const { t } = useTranslate()
   const theme = useTheme()
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('down')
+  const [lastScrollY, setLastScrollY] = useState(0)
 
   // Estandarizar la altura del contenedor, no de los iconos
   const STANDARD_CONTAINER_HEIGHT = 100;
@@ -33,6 +74,42 @@ export default function HomeAwards() {
     { name: 'Ethereum Uruguay', image: '/assets/images/home/awards/ethuy.png' }
   ]
 
+  // Handle scroll direction detection
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      const scrollDifference = Math.abs(currentScrollY - lastScrollY)
+      
+      // Only update if scroll difference is significant
+      if (scrollDifference > 10 && containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect()
+        const isInViewport = rect.top < window.innerHeight && rect.bottom > 0
+        
+        // Change direction only when component is in viewport
+        if (isInViewport) {
+          setScrollDirection(currentScrollY > lastScrollY ? 'down' : 'up')
+        }
+        
+        setLastScrollY(currentScrollY)
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [lastScrollY])
+
+  // Adjust the animation to match scroll direction
+  const containerAnimation = {
+    ...ANIMATIONS.container,
+    visible: {
+      ...ANIMATIONS.container.visible,
+      transition: {
+        ...ANIMATIONS.container.visible.transition,
+        staggerDirection: scrollDirection === 'up' ? -1 : 1
+      }
+    }
+  }
+
   return (
     <Box
       sx={{
@@ -41,99 +118,112 @@ export default function HomeAwards() {
         mb: -12
       }}
     >
-      <Container component={MotionViewport}>
+      <Container>
         <Stack spacing={3} sx={{ textAlign: 'center', mb: 6 }}>
-          <m.div variants={varFade().inUp}>
+          <m.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, margin: '-100px' }}
+            variants={ANIMATIONS.title}
+          >
             <Typography variant="h3">
               {t('home.awards.title', { defaultValue: 'Awarded by the best:' })}
             </Typography>
           </m.div>
         </Stack>
 
-        <Grid 
-          container 
-          spacing={{ xs: 3, md: 4 }} 
-          justifyContent="center" 
-          alignItems="center" 
-          sx={{ 
-            position: 'relative', 
-            right: '-',
-            mx: 'auto',
-          }}
+        <m.div
+          ref={containerRef}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: false, margin: '-100px' }}
+          variants={containerAnimation}
         >
-          {AWARDS.map((award) => (
-            <Grid 
-              key={award.name} 
-              item 
-              xs={6} 
-              sm={4} 
-              md={2.4} 
-              sx={{ 
-                display: 'flex', 
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <m.div 
-                variants={varFade().inUp} 
-                style={{ 
-                  width: '100%',
-                  display: 'flex',
-                  justifyContent: 'center',
+          <Grid 
+            container 
+            spacing={{ xs: 3, md: 4 }} 
+            justifyContent="center" 
+            alignItems="center" 
+            sx={{ 
+              position: 'relative', 
+              right: '-',
+              mx: 'auto',
+            }}
+          >
+            {AWARDS.map((award, index) => (
+              <Grid 
+                key={award.name} 
+                item 
+                xs={6} 
+                sm={4} 
+                md={2.4} 
+                sx={{ 
+                  display: 'flex', 
                   alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                <Box 
-                  sx={{
-                    position: 'relative',
+                <m.div 
+                  variants={ANIMATIONS.award}
+                  style={{ 
+                    width: '100%',
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    width: '100%',
-                    minWidth: { xs: 120, sm: STANDARD_CONTAINER_MIN_WIDTH },
-                    height: STANDARD_CONTAINER_HEIGHT,
-                    mx: 'auto',
-                    p: 3,
-                    ...(theme.palette.mode === 'dark' && {
-                      '&::before': {
-                        content: '""',
-                        position: 'absolute',
-                        top: '-10px',
-                        left: '-10px',
-                        right: '-10px',
-                        bottom: '-10px',
-                        borderRadius: 2,
-                        backgroundColor: alpha('#fff', 0.15),
-                        border: `1px solid ${alpha('#9e9e9e', 0.2)}`,
-                        zIndex: 0,
-                      }
-                    })
                   }}
                 >
-                  <Box
-                    component="img"
-                    src={award.image}
-                    alt={award.name}
+                  <Box 
                     sx={{
-                      width: '100%',
-                      maxWidth: { xs: '85%', md: '90%' },
-                      height: award?.height ?? 82,
-                      objectFit: 'contain',
-                      opacity: theme.palette.mode === 'dark' ? 1 : 0.6,
-                      transition: 'opacity 0.3s',
-                      '&:hover': { opacity: 1 },
-                      display: 'block',
-                      margin: 0,
-                      filter: theme.palette.mode === 'dark' ? 'brightness(1.8)' : 'none',
                       position: 'relative',
-                      zIndex: 1,
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      width: '100%',
+                      minWidth: { xs: 120, sm: STANDARD_CONTAINER_MIN_WIDTH },
+                      height: STANDARD_CONTAINER_HEIGHT,
+                      mx: 'auto',
+                      p: 3,
+                      ...(theme.palette.mode === 'dark' && {
+                        '&::before': {
+                          content: '""',
+                          position: 'absolute',
+                          top: '-10px',
+                          left: '-10px',
+                          right: '-10px',
+                          bottom: '-10px',
+                          borderRadius: 2,
+                          backgroundColor: alpha('#fff', 0.15),
+                          border: `1px solid ${alpha('#9e9e9e', 0.2)}`,
+                          zIndex: 0,
+                        }
+                      })
                     }}
-                  />
-                </Box>
-              </m.div>
-            </Grid>
-          ))}
-        </Grid>
+                  >
+                    <Box
+                      component="img"
+                      src={award.image}
+                      alt={award.name}
+                      sx={{
+                        width: '100%',
+                        maxWidth: { xs: '85%', md: '90%' },
+                        height: award?.height ?? 82,
+                        objectFit: 'contain',
+                        opacity: theme.palette.mode === 'dark' ? 1 : 0.6,
+                        transition: 'opacity 0.3s',
+                        '&:hover': { opacity: 1 },
+                        display: 'block',
+                        margin: 0,
+                        filter: theme.palette.mode === 'dark' ? 'brightness(1.8)' : 'none',
+                        position: 'relative',
+                        zIndex: 1,
+                      }}
+                    />
+                  </Box>
+                </m.div>
+              </Grid>
+            ))}
+          </Grid>
+        </m.div>
       </Container>
 
       {/* Section end rounded borders */}
