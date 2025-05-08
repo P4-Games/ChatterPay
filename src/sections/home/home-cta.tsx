@@ -9,8 +9,6 @@ import Typography from '@mui/material/Typography'
 
 import { useTranslate } from 'src/locales'
 
-import Iconify from 'src/components/iconify'
-import { varFade, MotionViewport } from 'src/components/animate'
 
 // ----------------------------------------------------------------------
 
@@ -45,7 +43,6 @@ const VideoWrapper = styled(Box)(({ theme }) => ({
   paddingBottom: '56.25%', // 16:9 aspect ratio
   overflow: 'hidden',
   borderRadius: theme.shape.borderRadius * 2,
-  boxShadow: theme.shadows[10],
   '& iframe': {
     position: 'absolute',
     top: 0,
@@ -55,6 +52,67 @@ const VideoWrapper = styled(Box)(({ theme }) => ({
     border: 0,
   },
 }))
+
+// Animation configurations
+const ANIMATIONS = {
+  video: {
+    hidden: { opacity: 0, x: -50 },
+    visible: { 
+      opacity: 1, 
+      x: 0,
+      transition: {
+        duration: 0.8,
+        ease: [0.16, 1, 0.3, 1]
+      }
+    }
+  },
+  content: {
+    hidden: { opacity: 0, x: 50 },
+    visible: { 
+      opacity: 1, 
+      x: 0,
+      transition: {
+        duration: 0.8,
+        ease: [0.16, 1, 0.3, 1]
+      }
+    }
+  },
+  title: {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: [0.43, 0.13, 0.23, 0.96]
+      }
+    }
+  },
+  description: {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        duration: 0.6,
+        delay: 0.1,
+        ease: [0.43, 0.13, 0.23, 0.96]
+      }
+    }
+  },
+  button: {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        duration: 0.6,
+        delay: 0.2,
+        ease: [0.43, 0.13, 0.23, 0.96]
+      }
+    }
+  }
+}
 
 export default function HomeCTA() {
   const { t } = useTranslate()
@@ -66,7 +124,6 @@ export default function HomeCTA() {
   return (
     <StyledRoot>
       <Container 
-        component={MotionViewport}
         sx={{ 
           position: 'relative',
           px: { xs: 2, md: 0 },
@@ -87,7 +144,12 @@ export default function HomeCTA() {
             py: { xs: 2, md: 8 },
             px: { xs: 2, md: 5 }
           }}>
-            <m.div variants={varFade().inLeft}>
+            <m.div 
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: false, margin: '-100px' }}
+              variants={ANIMATIONS.video}
+            >
               <VideoWrapper>
                 <iframe 
                   src="https://www.youtube.com/embed/d6qzonFP8gc?si=0-uCWfEZbFG7BoqX" 
@@ -105,48 +167,61 @@ export default function HomeCTA() {
             py: { xs: 4, md: 8 },
             px: { xs: 2, md: 5 }
           }}>
-            <m.div variants={varFade().inRight}>
-              <Typography
-                variant="h3"
-                sx={{
-                  mb: 3,
-                  color: 'common.white',
-                  fontWeight: 700,
-                }}
-              >
-                {t('home.cta.title_new')}
-              </Typography>
-            </m.div>
-
-            <m.div variants={varFade().inRight}>
-              <Typography
-                sx={{
-                  mb: 4,
-                  color: 'common.white',
-                  opacity: 0.8,
-                }}
-              >
-                {t('home.cta.description')}
-              </Typography>
-            </m.div>
-
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: { xs: 'center', md: 'flex-start' },
-                mb: 4
-              }}
+            <m.div 
+              initial="hidden"
+              whileInView="visible" 
+              viewport={{ once: false, margin: '-100px' }}
+              variants={ANIMATIONS.content}
             >
-              <m.div variants={varFade().inRight}>
-                <StyledButton 
-                  variant="contained"
-                  endIcon={<Iconify icon="eva:arrow-ios-forward-fill" />}
-                  onClick={handleChatStart}
+              <m.div variants={ANIMATIONS.title}>
+                <Typography
+                  variant="h3"
+                  sx={{
+                    mb: 3,
+                    color: 'common.white',
+                    fontWeight: 700,
+                  }}
                 >
-                  {t('home.cta.button')}
-                </StyledButton>
+                  {t('home.cta.title_new')}
+                </Typography>
               </m.div>
-            </Box>
+
+              <m.div variants={ANIMATIONS.description}>
+                <Typography
+                  sx={{
+                    mb: 4,
+                    color: 'common.white',
+                    opacity: 0.8,
+                  }}
+                >
+                  {t('home.cta.description')}
+                </Typography>
+              </m.div>
+
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: { xs: 'center', md: 'flex-start' },
+                  mb: 4
+                }}
+              >
+                <m.div variants={ANIMATIONS.button}>
+                  <StyledButton 
+                    variant="contained"
+                    endIcon={<Box
+                      component="img"
+                      src="/assets/icons/home/landing_resources/button_arrow.svg"
+                      alt="Arrow"
+                      className="arrow-icon"
+                      sx={{ width: 18, height: 18 }}
+                    />}
+                    onClick={handleChatStart}
+                  >
+                    {t('home.cta.button')}
+                  </StyledButton>
+                </m.div>
+              </Box>
+            </m.div>
           </Grid>
         </Grid>
       </Container>
