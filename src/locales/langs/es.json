@@ -183,43 +183,31 @@
       "faqs": {
         "faq1": {
           "question": "¿Qué es ChatterPay?",
-          "answer": "ChatterPay es una billetera para WhatsApp que integra IA y Abstracción de Cuentas para permitir a cualquier usuario gestionar fondos en blockchain de manera fácil y segura sin conocimientos técnicos."
+          "answer": "ChatterPay es una billetera para WhatsApp que permite a cualquier usuario gestionar fondos en blockchain de manera fácil y segura sin conocimientos técnicos."
         },
         "faq2": {
           "question": "¿Cómo puedo crear una billetera?",
-          "answer": "Para crear una billetera, puedes hacerlo directamente desde el Bot de ChatterPay en WhatsApp."
+          "answer": "Para crear una billetera, puedes hacerlo directamente desde el Bot de ChatterPay en WhatsApp, escribiendo algo como 'Quisiera crear una cuenta'. Podés agendarlo con el siguiente número: +54 11 64629653. Recuerda que crear tu cuenta es 100% gratis, sin ningún costo de mantenimiento."
         },
         "faq3": {
-          "question": "¿Cuáles son las comisiones asociadas con recibir pagos?",
-          "answer": "ChatterPay cobra una tarifa del 0.01% por cada transferencia recibida."
+          "question": "¿Cuáles son las comisiones?",
+          "answer": "Abrir tu cuenta es 100% gratis, sin ningún costo de mantenimiento. Sólo cobrarmos una comisión por transacción (swap, transferencia) fija en base a la congestión de red de $0.2 USD a $0.5 USD por transacción."
         },
         "faq4": {
           "question": "¿Puedo intercambiar entre diferentes tokens?",
-          "answer": "Sí, puedes intercambiar entre USDT, DAI, MATIC, ETH, BTC, ADA y DOT sin límites de transacción."
+          "answer": "Sí, puedes intercambiar entre USDT, USDC, WBTC, WETH, y más monedas sin límites de transacción."
         },
         "faq5": {
-          "question": "¿Cómo puedo verificar mi saldo y transacciones?",
-          "answer": "Puedes verificar tu saldo y transacciones en cualquier momento a través de nuestro panel en https://chatterpay.vercel.app/."
+          "question": "¿Dónde se guarda la clave privada de mi billetera?",
+          "answer": "Tu clave privada se guarda de forma segura utilizando la tecnología de Abstracción de Cuentas en una blockchain de capa 2 llamada Scroll, garantizando alta seguridad y control del usuario."
         },
         "faq6": {
-          "question": "¿Qué sucede si pierdo mis tokens?",
-          "answer": "El sistema es descentralizado y el usuario es completamente responsable de gestionar sus cuentas. No ofrecemos seguro ni soporte en caso de pérdidas debido a errores del usuario."
-        },
-        "faq7": {
-          "question": "¿Dónde puedo obtener más información sobre cómo usar ChatterPay?",
-          "answer": "Puedes visitar nuestra aplicación web en https://chatterpay.vercel.app/ para más información y guías futuras."
-        },
-        "faq8": {
-          "question": "¿Dónde se guarda la clave privada de mi billetera?",
-          "answer": "Tu clave privada se guarda de forma segura utilizando la tecnología de Abstracción de Cuentas en una blockchain de capa 2 llamada Scroll con la tecnología 'KeyStore', garantizando alta seguridad y control del usuario."
-        },
-        "faq9": {
-          "question": "¿Qué puedo hacer en el sitio web?",
-          "answer": "Puedes ver el saldo de tu billetera, verificar tu historial de transacciones, ver la dirección de tu billetera y ver la información de tu usuario."
-        },
-        "faq10": {
           "question": "¿Cómo inicio sesión en el sitio web?",
           "answer": "Ingresa tu número de teléfono registrado. Se enviará un código de 6 dígitos a tu teléfono por seguridad; una vez que lo ingreses, podrás acceder al sitio."
+        },  
+        "faq7": {
+          "question": "¿Cómo puedo contactar al equipo de ChatterPay?",
+          "answer": "A través del mismo chat de WhatsApp (+54 11 64629653), podes solicitar soporte en cualquier momento y te responderemos lo antes posible."
         }
       }
     },

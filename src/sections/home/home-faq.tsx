@@ -15,7 +15,7 @@ import Iconify from 'src/components/iconify'
 export default function HomeFaQ() {
   const { t } = useTranslate()
 
-  const _faqs = Array.from({ length: 10 }, (_, index) => {
+  const _faqs = Array.from({ length: 7 }, (_, index) => {
     const id = Math.random().toString(36).substr(2, 9)
     return {
       id,

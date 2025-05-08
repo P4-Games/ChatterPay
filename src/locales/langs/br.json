@@ -182,44 +182,32 @@
       "title": "Perguntas frequentes",
       "faqs": {
         "faq1": {
-          "question": "O que é ChatterPay?",
-          "answer": "ChatterPay é uma carteira para WhatsApp que integra IA e Abstração de Contas para permitir que qualquer usuário gerencie fundos em blockchain de forma fácil e segura, sem conhecimento técnico."
+          "question": "O que é o ChatterPay?",
+          "answer": "ChatterPay é uma carteira para WhatsApp que permite a qualquer usuário gerenciar fundos em blockchain de forma fácil e segura sem conhecimentos técnicos."
         },
         "faq2": {
           "question": "Como posso criar uma carteira?",
-          "answer": "Para criar uma carteira, você pode fazê-lo diretamente pelo Bot ChatterPay no WhatsApp."
+          "answer": "Para criar uma carteira, você pode fazê-lo diretamente do Bot ChatterPay no WhatsApp, escrevendo algo como 'Gostaria de criar uma conta'. Você pode salvar o seguinte número: +54 11 64629653. Lembre-se que criar sua conta é 100% gratuito, sem custos de manutenção."
         },
         "faq3": {
-          "question": "Quais são as taxas associadas ao recebimento de pagamentos?",
-          "answer": "ChatterPay cobra uma taxa de 0,01% para cada transferência recebida."
+          "question": "Quais são as taxas?",
+          "answer": "Abrir sua conta é 100% gratuito, sem custos de manutenção. Cobramos apenas uma taxa fixa por transação (swap, transferência) com base no congestionamento da rede, de $0,2 USD a $0,5 USD por transação."
         },
         "faq4": {
           "question": "Posso trocar entre diferentes tokens?",
-          "answer": "Sim, você pode trocar entre USDT, DAI, MATIC, ETH, BTC, ADA e DOT sem limites de transação."
+          "answer": "Sim, você pode trocar entre USDT, USDC, WBTC, WETH e mais moedas sem limites de transação."
         },
         "faq5": {
-          "question": "Como posso verificar meu saldo e transações?",
-          "answer": "Você pode verificar seu saldo e transações a qualquer momento através do nosso painel em https://chatterpay.vercel.app/."
+          "question": "Onde a chave privada da minha carteira é armazenada?",
+          "answer": "Sua chave privada é armazenada com segurança usando a tecnologia de Abstração de Conta em uma blockchain de camada 2 chamada Scroll, garantindo alta segurança e controle do usuário."
         },
         "faq6": {
-          "question": "O que acontece se eu perder meus tokens?",
-          "answer": "O sistema é descentralizado e o usuário é totalmente responsável por gerenciar suas contas. Não oferecemos seguro ou suporte em caso de perdas devido a erros do usuário."
-        },
+          "question": "Como faço login no site?",
+          "answer": "Digite seu número de telefone registrado. Um código de 6 dígitos será enviado para seu telefone por segurança; depois de inserí-lo, você poderá acessar o site."
+        },  
         "faq7": {
-          "question": "Onde posso obter mais informações sobre como usar o ChatterPay?",
-          "answer": "Você pode visitar nosso aplicativo da web em https://chatterpay.vercel.app/ para mais informações e guias futuros."
-        },
-        "faq8": {
-          "question": "Onde está armazenada a chave privada da minha carteira?",
-          "answer": "Sua chave privada é armazenada de forma segura usando a tecnologia de Abstração de Contas em uma blockchain de camada 2 chamada Scroll com a tecnologia 'KeyStore', garantindo alta segurança e controle do usuário."
-        },
-        "faq9": {
-          "question": "O que posso fazer no site?",
-          "answer": "Você pode ver o saldo da sua carteira, verificar seu histórico de transações, ver o endereço da sua carteira e ver as informações do seu usuário."
-        },
-        "faq10": {
-          "question": "Como faço para fazer login no site?",
-          "answer": "Digite seu número de telefone registrado. Um código de 6 dígitos será enviado para o seu telefone por segurança; depois de inseri-lo, você poderá acessar o site."
+          "question": "Como posso entrar em contato com a equipe do ChatterPay?",
+          "answer": "Através do mesmo chat do WhatsApp (+54 11 64629653), você pode solicitar suporte a qualquer momento e responderemos o mais rápido possível."
         }
       }
     },
