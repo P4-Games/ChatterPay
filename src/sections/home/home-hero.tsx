@@ -235,6 +235,14 @@ export default function HomeHero() {
   // Get localized mockup image path
   const mockupImagePath = getLanguageMockupPath(currentLang.value)
 
+  // Handle WhatsApp chat start
+  const handleChatStart = () => {
+    const message = encodeURIComponent(
+      t('home.cta.whatsapp_message') || 'Hi! I want to create an account'
+    )
+    window.open(`https://wa.me/5491164629653?text=${message}`, '_blank')
+  }
+
   // Find the word "WhatsApp" in the title
   const titleWords = t('home.hero.new.title').split(' ')
   const whatsAppIndex = titleWords.findIndex((word) => word.toLowerCase().includes('whatsapp'))
@@ -332,6 +340,7 @@ export default function HomeHero() {
                     sx={{ width: 24, height: 24 }}
                   />
                 }
+                onClick={handleChatStart}
               >
                 {t('home.hero.new.button')}
               </StyledCreateButton>

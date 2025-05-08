@@ -117,10 +117,10 @@ export default function HomeCTA() {
   const { t } = useTranslate()
 
   const handleChatStart = () => {
-    window.open(
-      'https://wa.me/5491164629653?text=Hi!%20I%20want%20to%20create%20an%20account',
-      '_blank'
+    const message = encodeURIComponent(
+      t('home.cta.whatsapp_message') || 'Hi! I want to create an account'
     )
+    window.open(`https://wa.me/5491164629653?text=${message}`, '_blank')
   }
 
   return (
