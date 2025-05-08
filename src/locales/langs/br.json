@@ -103,7 +103,8 @@
   },
   "home": {
     "header": {
-      "sign-in": "Painel"
+      "sign-in": "Painel",
+      "about-us": "Sobre Nós"
     },
     "help": {
       "need-help": "Precisa de ajuda?"

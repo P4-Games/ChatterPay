@@ -1,10 +1,12 @@
 import Box from '@mui/material/Box'
 import { Stack } from '@mui/system'
 import AppBar from '@mui/material/AppBar'
+import Button from '@mui/material/Button'
 import Toolbar from '@mui/material/Toolbar'
 import { useTheme } from '@mui/material/styles'
 
 import { paths } from 'src/routes/paths'
+import { RouterLink } from 'src/routes/components'
 
 import { useOffSetTop } from 'src/hooks/use-off-set-top'
 import { useResponsive } from 'src/hooks/use-responsive'
@@ -34,6 +36,11 @@ export default function Header() {
   const offsetTop = useOffSetTop(HEADER.H_DESKTOP)
 
   const navConfigMobile = [
+    {
+      title: t('home.header.about-us'),
+      icon: <Iconify icon='solar:info-circle-bold-duotone' />,
+      path: paths.aboutUs
+    },
     {
       title: t('home.header.sign-in'),
       icon: <Iconify icon='solar:wallet-bold-duotone' />,
@@ -75,9 +82,19 @@ export default function Header() {
           }}
         >
           {mdUp ? <Logo /> : <NavMobile data={navConfigMobile} />}
-          <Stack direction='row' alignItems='right' spacing={2}>
+          <Stack direction='row' alignItems='center' spacing={2}>
             {mdUp && (
-              <Stack direction='row'>
+              <Stack direction='row' spacing={3}>
+                <Button
+                  component={RouterLink}
+                  href={paths.aboutUs}
+                  sx={{
+                    fontWeight: 600,
+                    color: 'text.primary'
+                  }}
+                >
+                  {t('home.header.about-us')}
+                </Button>
                 <LoginButton />
               </Stack>
             )}

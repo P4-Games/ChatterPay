@@ -103,10 +103,11 @@
   },
   "home": {
     "header": {
-      "sign-in": "Dashboard"
+      "sign-in": "Dashboard",
+      "about-us": "Sobre Nosotros"
     },
     "help": {
-      "need-help": "¿Necesita ayuda?"
+      "need-help": "¿Necesitas ayuda?"
     },
     "common": {
       "contact-us": "Contáctanos",

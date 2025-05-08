@@ -40,7 +40,8 @@
   },
   "home": {
     "header": {
-      "sign-in": "Dashboard"
+      "sign-in": "Dashboard",
+      "about-us": "About Us"
     },
     "help": {
       "need-help": "Need help?"
