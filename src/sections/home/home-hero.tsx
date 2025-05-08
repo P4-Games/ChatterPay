@@ -304,6 +304,13 @@ export default function HomeHero() {
             <m.div variants={varFade().in}>
               <StyledCreateButton
                 variant="contained"
+                endIcon={<Box
+                  component="img"
+                  src="/assets/icons/home/landing_resources/button_arrow_white.svg"
+                  alt="Arrow"
+                  className="arrow-icon"
+                  sx={{ width: 24, height: 24 }}
+                />}
               >
                 {t('home.hero.new.button')}
               </StyledCreateButton>
