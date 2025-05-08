@@ -72,17 +72,6 @@ export default function HomeFaQ() {
   const renderDescription = (
     <Stack spacing={3} sx={{ mb: 10, textAlign: 'center' }}>
       <m.div
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        viewport={{ once: false, margin: '-150px' }}
-      >
-        <Typography component='div' variant='overline' sx={{ mb: 2, color: 'text.disabled' }}>
-          {t('home.faq.tag')}
-        </Typography>
-      </m.div>
-
-      <m.div
         initial={{ opacity: 0, y: -40 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}

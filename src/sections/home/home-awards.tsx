@@ -207,7 +207,6 @@ export default function HomeAwards() {
                         maxWidth: { xs: '85%', md: '90%' },
                         height: award?.height ?? 82,
                         objectFit: 'contain',
-                        opacity: theme.palette.mode === 'dark' ? 1 : 0.6,
                         transition: 'opacity 0.3s',
                         '&:hover': { opacity: 1 },
                         display: 'block',
