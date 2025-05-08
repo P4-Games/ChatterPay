@@ -187,7 +187,7 @@
         },
         "faq2": {
           "question": "¿Cómo puedo crear una billetera?",
-          "answer": "Para crear una billetera, puedes hacerlo directamente desde el Bot de ChatterPay en WhatsApp, escribiendo algo como 'Quisiera crear una cuenta'. Podés agendarlo con el siguiente número: +54 11 64629653. Recuerda que crear tu cuenta es 100% gratis, sin ningún costo de mantenimiento."
+          "answer": "Para crear una billetera, puedes hacerlo directamente desde el Bot de ChatterPay en WhatsApp, escribiendo algo como 'Quisiera crear una cuenta'. Podés agendarlo con el siguiente número: {PHONE}. Recuerda que crear tu cuenta es 100% gratis, sin ningún costo de mantenimiento."
         },
         "faq3": {
           "question": "¿Cuáles son las comisiones?",
@@ -207,7 +207,7 @@
         },  
         "faq7": {
           "question": "¿Cómo puedo contactar al equipo de ChatterPay?",
-          "answer": "A través del mismo chat de WhatsApp (+54 11 64629653), podes solicitar soporte en cualquier momento y te responderemos lo antes posible."
+          "answer": "A través del mismo chat de WhatsApp ({PHONE}), podes solicitar soporte en cualquier momento y te responderemos lo antes posible."
         }
       }
     },

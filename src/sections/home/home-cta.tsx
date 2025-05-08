@@ -8,6 +8,7 @@ import Grid from '@mui/material/Unstable_Grid2'
 import Typography from '@mui/material/Typography'
 
 import { useTranslate } from 'src/locales'
+import { CHATIZALO_PHONE_NUMBER } from 'src/config-global'
 
 // ----------------------------------------------------------------------
 
@@ -120,7 +121,7 @@ export default function HomeCTA() {
     const message = encodeURIComponent(
       t('home.cta.whatsapp_message') || 'Hi! I want to create an account'
     )
-    window.open(`https://wa.me/5491164629653?text=${message}`, '_blank')
+    window.open(`https://wa.me/${CHATIZALO_PHONE_NUMBER}?text=${message}`, '_blank')
   }
 
   return (

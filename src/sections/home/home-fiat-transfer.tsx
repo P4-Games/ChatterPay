@@ -9,6 +9,7 @@ import Grid from '@mui/material/Unstable_Grid2'
 import Typography from '@mui/material/Typography'
 
 import { useTranslate } from 'src/locales'
+import { CHATIZALO_PHONE_NUMBER } from 'src/config-global'
 
 // ----------------------------------------------------------------------
 
@@ -52,7 +53,7 @@ export default function HomeFiatTransfer() {
   const currencies = t('home.fiat-transfer.currencies', { returnObjects: true }) as string[]
 
   const whatsappMessage = encodeURIComponent(t('home.fiat-transfer.whatsapp_msg'))
-  const whatsappLink = `https://wa.me/?text=${whatsappMessage}`
+  const whatsappLink = `https://wa.me/${CHATIZALO_PHONE_NUMBER}?text=${whatsappMessage}`
 
   useEffect(() => {
     const interval = setInterval(() => {

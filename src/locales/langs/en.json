@@ -124,7 +124,7 @@
         },
         "faq2": {
           "question": "How can I create a wallet?",
-          "answer": "To create a wallet, you can do it directly from the ChatterPay Bot on WhatsApp by typing something like 'I would like to create an account'. You can save the following number: +54 11 64629653. Remember that creating your account is 100% free, with no maintenance costs."
+          "answer": "To create a wallet, you can do it directly from the ChatterPay Bot on WhatsApp by typing something like 'I would like to create an account'. You can save the following number: {PHONE}. Remember that creating your account is 100% free, with no maintenance costs."
         },
         "faq3": {
           "question": "What are the fees?",
@@ -144,7 +144,7 @@
         },  
         "faq7": {
           "question": "How can I contact the ChatterPay team?",
-          "answer": "Through the same WhatsApp chat (+54 11 64629653), you can request support at any time and we will respond as soon as possible."
+          "answer": "Through the same WhatsApp chat ({PHONE}), you can request support at any time and we will respond as soon as possible."
         }
       }
     },

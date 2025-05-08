@@ -11,6 +11,7 @@ import { styled, useTheme } from '@mui/material/styles'
 import { useResponsive } from 'src/hooks/use-responsive'
 
 import { useLocales, useTranslate } from 'src/locales'
+import { CHATIZALO_PHONE_NUMBER } from 'src/config-global'
 
 import { SingleWordHighlight } from 'src/components/highlight'
 import { varFade, MotionContainer } from 'src/components/animate'
@@ -253,7 +254,7 @@ export default function HomeHero() {
     const message = encodeURIComponent(
       t('home.cta.whatsapp_message') || 'Hi! I want to create an account'
     )
-    window.open(`https://wa.me/5491164629653?text=${message}`, '_blank')
+    window.open(`https://wa.me/${CHATIZALO_PHONE_NUMBER}?text=${message}`, '_blank')
   }
 
   // Find the word "WhatsApp" in the title

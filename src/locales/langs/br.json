@@ -187,7 +187,7 @@
         },
         "faq2": {
           "question": "Como posso criar uma carteira?",
-          "answer": "Para criar uma carteira, você pode fazê-lo diretamente do Bot ChatterPay no WhatsApp, escrevendo algo como 'Gostaria de criar uma conta'. Você pode salvar o seguinte número: +54 11 64629653. Lembre-se que criar sua conta é 100% gratuito, sem custos de manutenção."
+          "answer": "Para criar uma carteira, você pode fazê-lo diretamente do Bot ChatterPay no WhatsApp, escrevendo algo como 'Gostaria de criar uma conta'. Você pode salvar o seguinte número: {PHONE}. Lembre-se que criar sua conta é 100% gratuito, sem custos de manutenção."
         },
         "faq3": {
           "question": "Quais são as taxas?",
@@ -207,7 +207,7 @@
         },  
         "faq7": {
           "question": "Como posso entrar em contato com a equipe do ChatterPay?",
-          "answer": "Através do mesmo chat do WhatsApp (+54 11 64629653), você pode solicitar suporte a qualquer momento e responderemos o mais rápido possível."
+          "answer": "Através do mesmo chat do WhatsApp {PHONE}, você pode solicitar suporte a qualquer momento e responderemos o mais rápido possível."
         }
       }
     },
