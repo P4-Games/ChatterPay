@@ -17,18 +17,31 @@ import { SingleWordHighlight } from 'src/components/highlight'
 
 // ----------------------------------------------------------------------
 
-// Card colors
-const LIGHT_GREEN = '#f0f7ed'
-const DARK_GREEN = '#1e4434'
-const DARK_MODE_BG = '#161C24'
-const DARK_MODE_CARD_LIGHT = '#212B36'
+// Constants
+const IMG_BASE_URL = '/assets/images/home'
 
-// Font size approximation
-const CHARACTER_WIDTH_DESKTOP = 24
-const CHARACTER_WIDTH_MOBILE = 20
+// Theme colors
+const COLORS = {
+  light: {
+    green: '#f0f7ed',
+    section: 'transparent',
+    border: '#F4F6F8'
+  },
+  dark: {
+    green: '#1e4434',
+    background: '#161C24',
+    card: '#212B36'
+  }
+}
 
-// Card image sizes
-const CARD_IMAGE_SIZE = {
+// Font size approximations
+const CHAR_WIDTH = {
+  desktop: 24,
+  mobile: 20
+}
+
+// Card image sizes for responsive display
+const CARD_SIZES = {
   mobile: 80,
   desktop: {
     halfWidth: 100,
@@ -36,128 +49,127 @@ const CARD_IMAGE_SIZE = {
   }
 }
 
-const IMG_BASE_URL = '/assets/images/home'
-
-// Fixed card data without translations
+// Card configuration
 const CARD_CONFIG = [
   {
     icon: `${IMG_BASE_URL}/send.webp`,
-    bgColor: LIGHT_GREEN,
-    darkModeBgColor: DARK_MODE_CARD_LIGHT
+    bgColor: COLORS.light.green,
+    darkModeBgColor: COLORS.dark.card
   },
   {
     icon: `${IMG_BASE_URL}/coin.webp`,
-    bgColor: DARK_GREEN,
-    darkModeBgColor: DARK_GREEN
+    bgColor: COLORS.dark.green,
+    darkModeBgColor: COLORS.dark.green
   },
   {
     icon: `${IMG_BASE_URL}/certificate.webp`,
-    bgColor: LIGHT_GREEN,
-    darkModeBgColor: DARK_MODE_CARD_LIGHT
+    bgColor: COLORS.light.green,
+    darkModeBgColor: COLORS.dark.card
   },
   {
     icon: `${IMG_BASE_URL}/low_fees.webp`,
-    bgColor: LIGHT_GREEN,
-    darkModeBgColor: DARK_MODE_CARD_LIGHT
+    bgColor: COLORS.light.green,
+    darkModeBgColor: COLORS.dark.card
   }
 ]
 
-// Animation variants for container when scrolling down
-const containerVariantsDown = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.2, // Delay between child animations
-    },
+// Animation variants
+const ANIMATIONS = {
+  // Container animation with sequential children reveal
+  containerDown: {
+    hidden: {},
+    visible: {
+      transition: { staggerChildren: 0.2 }
+    }
   },
-};
-
-// Animation variants for container when scrolling up
-const containerVariantsUp = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.2, // Delay between child animations
-      staggerDirection: -1, // Reverse the stagger order
-    },
+  
+  // Container animation with reversed sequential children reveal
+  containerUp: {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.2,
+        staggerDirection: -1
+      }
+    }
   },
-};
-
-// Animation variants for each card
-const cardVariants = {
-  hidden: { opacity: 0, y: 40 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6,
-      ease: [0.43, 0.13, 0.23, 0.96], // Custom easing for smoother animation
-    },
+  
+  // Individual card animation
+  card: {
+    hidden: { opacity: 0, y: 40 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: [0.43, 0.13, 0.23, 0.96]
+      }
+    }
   },
-};
-
-// Animation variants for title
-const titleVariants = {
-  hidden: { opacity: 0, y: 60 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.8,
-      ease: [0.16, 1, 0.3, 1], // Custom easing curve for more elegant animation
-    },
-  },
-};
+  
+  // Title animation
+  title: {
+    hidden: { opacity: 0, y: 60 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.8,
+        ease: [0.16, 1, 0.3, 1]
+      }
+    }
+  }
+}
 
 export default function HomeMainFeatures() {
   const { t } = useTranslate()
   const theme = useTheme()
   const mdUp = useResponsive('up', 'md')
-  const [lastWordWidth, setLastWordWidth] = useState(0)
+  const isDarkMode = theme.palette.mode === 'dark'
+  
+  // Refs and state
   const titleRef = useRef<HTMLSpanElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [lastWordWidth, setLastWordWidth] = useState(0)
   const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('down')
   const [lastScrollY, setLastScrollY] = useState(0)
-  const containerRef = useRef<HTMLDivElement>(null)
-  const animationTriggeredRef = useRef(false)
 
-  const isDarkMode = theme.palette.mode === 'dark'
-
-  // Extract the last word from the title text
+  // Parse and prepare data
   const titleText = t('home.main-features.title1')
   const lastWord = titleText.trim().split(' ').pop() || ''
+  
+  const cards = CARD_CONFIG.map((config, index) => ({
+    ...config,
+    title: t(`home.main-features.card-${index + 1}.title`),
+    description: t(`home.main-features.card-${index + 1}.description`)
+  }))
 
+  // Define card type based on the actual structure
+  type CardType = typeof cards[0]
+
+  // Calculate last word width for highlight positioning
   useEffect(() => {
     if (titleRef.current) {
-      // Calculate approximate width based on character count and font size
-      const charWidth = mdUp ? CHARACTER_WIDTH_DESKTOP : CHARACTER_WIDTH_MOBILE
+      const charWidth = mdUp ? CHAR_WIDTH.desktop : CHAR_WIDTH.mobile
       const estimatedWidth = lastWord.length * charWidth
       setLastWordWidth(estimatedWidth)
     }
   }, [lastWord, mdUp])
 
-  // Handle scroll direction detection with threshold
+  // Handle scroll direction detection
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY
       const scrollDifference = Math.abs(currentScrollY - lastScrollY)
       
-      // Only update direction if scroll difference is significant (10px threshold)
-      if (scrollDifference > 10) {
-        // Check if component is in viewport before changing direction
-        if (containerRef.current) {
-          const rect = containerRef.current.getBoundingClientRect()
-          const isInViewport = rect.top < window.innerHeight && rect.bottom > 0
-          
-          // Only change direction when component is actually in viewport
-          if (isInViewport) {
-            if (currentScrollY > lastScrollY) {
-              setScrollDirection('down')
-            } else {
-              setScrollDirection('up')
-            }
-            // Reset animation triggered flag when direction changes
-            animationTriggeredRef.current = false
-          }
+      // Only update if scroll difference is significant
+      if (scrollDifference > 10 && containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect()
+        const isInViewport = rect.top < window.innerHeight && rect.bottom > 0
+        
+        // Change direction only when component is in viewport
+        if (isInViewport) {
+          setScrollDirection(currentScrollY > lastScrollY ? 'down' : 'up')
         }
         
         setLastScrollY(currentScrollY)
@@ -165,92 +177,66 @@ export default function HomeMainFeatures() {
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll)
-    }
+    return () => window.removeEventListener('scroll', handleScroll)
   }, [lastScrollY])
 
-  // Feature cards configuration with content and styling
-  const CARDS = CARD_CONFIG.map((config, index) => ({
-    ...config,
-    title: t(`home.main-features.card-${index + 1}.title`),
-    description: t(`home.main-features.card-${index + 1}.description`)
-  }))
-
-  // Render individual feature card
-  const renderCard = (card: typeof CARDS[0], index: number) => {
-    // Determine if card is full width in desktop (first and fourth cards)
-    const isFullWidthDesktop = index === 0 || index === 3;
-    const cardBgColor = isDarkMode ? card.darkModeBgColor : card.bgColor;
-    const isGreenCard = cardBgColor === DARK_GREEN;
-    const imageSize = isFullWidthDesktop 
-      ? CARD_IMAGE_SIZE.desktop.fullWidth 
-      : CARD_IMAGE_SIZE.desktop.halfWidth;
+  // Render a feature card
+  const renderCard = (card: CardType, index: number) => {
+    const isFullWidth = index === 0 || index === 3
+    const cardBgColor = isDarkMode ? card.darkModeBgColor : card.bgColor
+    const isGreenCard = cardBgColor === COLORS.dark.green
+    const imageSize = isFullWidth 
+      ? CARD_SIZES.desktop.fullWidth 
+      : CARD_SIZES.desktop.halfWidth
     
     // Determine text colors based on card type and theme
-    let titleColor = 'text.primary';
-    let cardTextColor = 'text.primary';
-    const descriptionColor = isGreenCard ? 'common.white' : 'text.secondary';
-    
-    // Override colors for green cards and dark mode
-    if (isGreenCard) {
-      titleColor = 'common.white';
-      cardTextColor = 'common.white';
-    } else if (isDarkMode) {
-      titleColor = 'common.white';
-      cardTextColor = 'common.white';
-    }
+    const titleColor = isGreenCard || isDarkMode ? 'common.white' : 'text.primary'
+    const textColor = (isGreenCard || isDarkMode) ? 'common.white' : 'text.primary'
+    const descColor = isGreenCard ? 'common.white' : 'text.secondary'
     
     return (
       <Card
         sx={{
-          textAlign: isFullWidthDesktop ? { xs: 'center', md: 'left' } : 'center',
+          textAlign: isFullWidth ? { xs: 'center', md: 'left' } : 'center',
           bgcolor: cardBgColor,
           p: (th) => th.spacing(5, 6),
-          color: cardTextColor,
+          color: textColor,
           height: '100%',
           display: 'flex',
           flexDirection: { 
             xs: 'column', 
-            md: isFullWidthDesktop ? 'row' : 'column' 
+            md: isFullWidth ? 'row' : 'column' 
           },
           alignItems: { 
             xs: 'center', 
-            md: isFullWidthDesktop ? 'center' : 'center' 
+            md: isFullWidth ? 'center' : 'center' 
           },
           borderRadius: 2,
           position: 'relative'
         }}
       >
-        {/* Content section (left side for full width in desktop) */}
+        {/* Card content */}
         <Box
           sx={{
             display: 'flex',
             flexDirection: 'column',
-            flex: isFullWidthDesktop ? { md: 1 } : 'unset',
-            alignItems: isFullWidthDesktop 
-              ? { xs: 'center', md: 'flex-start' } 
-              : 'center',
-            mr: isFullWidthDesktop ? { md: 16 } : 0,
-            maxWidth: isFullWidthDesktop ? { md: '60%' } : 'unset',
+            flex: isFullWidth ? { md: 1 } : 'unset',
+            alignItems: isFullWidth ? { xs: 'center', md: 'flex-start' } : 'center',
+            mr: isFullWidth ? { md: 16 } : 0,
+            maxWidth: isFullWidth ? { md: '60%' } : 'unset',
             zIndex: 1
           }}
         >
           <Typography
             variant='h5'
-            sx={{
-              mb: 2,
-              color: titleColor,
-              fontWeight: 'bold'
-            }}
+            sx={{ mb: 2, color: titleColor, fontWeight: 'bold' }}
           >
             {card.title}
           </Typography>
 
           <Typography
             sx={{
-              color: descriptionColor,
+              color: descColor,
               fontSize: { xs: '0.875rem', md: '1rem' },
               flexGrow: 1
             }}
@@ -259,21 +245,15 @@ export default function HomeMainFeatures() {
           </Typography>
         </Box>
 
-        {/* Image section (right side for full width in desktop) */}
+        {/* Card image */}
         <Box
           sx={{ 
-            order: { 
-              xs: -1, 
-              md: isFullWidthDesktop ? 1 : -1 
-            },
-            mb: { 
-              xs: 3, 
-              md: isFullWidthDesktop ? 0 : 3 
-            },
+            order: { xs: -1, md: isFullWidth ? 1 : -1 },
+            mb: { xs: 3, md: isFullWidth ? 0 : 3 },
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            ...(isFullWidthDesktop && {
+            ...(isFullWidth && {
               position: { md: 'absolute' },
               right: { md: 30 },
               top: { md: '50%' },
@@ -286,28 +266,26 @@ export default function HomeMainFeatures() {
             src={card.icon}
             alt={card.title}
             sx={{ 
-              width: { xs: CARD_IMAGE_SIZE.mobile, md: imageSize }, 
-              height: { xs: CARD_IMAGE_SIZE.mobile, md: imageSize },
+              width: { xs: CARD_SIZES.mobile, md: imageSize }, 
+              height: { xs: CARD_SIZES.mobile, md: imageSize },
               objectFit: 'contain'
             }}
           />
         </Box>
       </Card>
-    );
-  };
+    )
+  }
 
   return (
     <Box
       sx={{
-        backgroundColor: isDarkMode ? DARK_MODE_BG : 'transparent',
+        backgroundColor: isDarkMode ? COLORS.dark.background : 'transparent',
         mb: -12
       }}
     >
       <Container
         component={MotionViewport}
-        sx={{
-          py: { xs: 10, md: 15 }
-        }}
+        sx={{ py: { xs: 10, md: 15 } }}
       >
         {/* Section title with underline highlight */}
         <Stack
@@ -321,14 +299,14 @@ export default function HomeMainFeatures() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: false, margin: '-20% 0px' }}
-            variants={titleVariants}
+            variants={ANIMATIONS.title}
           >
             <Typography 
               variant='h2' 
               sx={{ color: isDarkMode ? 'common.white' : 'text.primary' }}
             >
               <Box component="span" ref={titleRef}>
-                {t('home.main-features.title1')}
+                {titleText}
               </Box>
               <Box
                 component="span"
@@ -354,10 +332,10 @@ export default function HomeMainFeatures() {
           </m.div>
         </Stack>
 
-        {/* Grid layout for cards with custom layout for desktop and mobile */}
+        {/* Feature cards grid */}
         <m.div
           ref={containerRef}
-          variants={scrollDirection === 'down' ? containerVariantsDown : containerVariantsUp}
+          variants={scrollDirection === 'down' ? ANIMATIONS.containerDown : ANIMATIONS.containerUp}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: false, amount: 0.2 }}
@@ -371,46 +349,27 @@ export default function HomeMainFeatures() {
                 md: 'repeat(2, 1fr)'
               },
               gridTemplateRows: 'auto',
-              '& > *:nth-of-type(1)': {
-                gridColumn: {
-                  xs: '1',
-                  md: '1 / span 2'
-                }
-              },
-              '& > *:nth-of-type(2)': {
-                gridColumn: {
-                  xs: '1',
-                  md: '1'
-                }
-              },
-              '& > *:nth-of-type(3)': {
-                gridColumn: {
-                  xs: '1',
-                  md: '2'
-                }
-              },
-              '& > *:nth-of-type(4)': {
-                gridColumn: {
-                  xs: '1',
-                  md: '1 / span 2'
-                }
-              }
+              '& > *:nth-of-type(1)': { gridColumn: { xs: '1', md: '1 / span 2' } },
+              '& > *:nth-of-type(2)': { gridColumn: { xs: '1', md: '1' } },
+              '& > *:nth-of-type(3)': { gridColumn: { xs: '1', md: '2' } },
+              '& > *:nth-of-type(4)': { gridColumn: { xs: '1', md: '1 / span 2' } }
             }}
           >
-            {CARDS.map((card, index) => (
-              <m.div key={card.title} variants={cardVariants}>
+            {cards.map((card, index) => (
+              <m.div key={card.title} variants={ANIMATIONS.card}>
                 {renderCard(card, index)}
               </m.div>
             ))}
           </Box>
         </m.div>
       </Container>
-      {/* Section end rounded borders/ */}
+
+      {/* Curved bottom border */}
       <Box
         sx={{
           height: 64,
           width: '100%',
-          backgroundColor: '#F4F6F8',
+          backgroundColor: COLORS.light.border,
           borderTopLeftRadius: 0,
           borderTopRightRadius: 0,
           borderBottomLeftRadius: 32,
@@ -418,8 +377,8 @@ export default function HomeMainFeatures() {
           bottom: 60,
           position: 'relative',
           zIndex: 10,
-          ...(theme.palette.mode === 'dark' && {
-            backgroundColor: DARK_MODE_BG,
+          ...(isDarkMode && {
+            backgroundColor: COLORS.dark.background,
           }),
         }}
       />
