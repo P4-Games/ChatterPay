@@ -85,7 +85,7 @@ export default function HomeFiatTransfer() {
         >
           <Grid xs={12} md={6} sx={{ 
             textAlign: { xs: 'center', md: 'left' },
-            py: { xs: 8, md: 15 },
+            py: 15,
             px: 10
           }}>
             <m.div 

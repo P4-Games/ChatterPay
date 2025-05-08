@@ -3,10 +3,10 @@ import { m } from 'framer-motion'
 
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import { styled } from '@mui/material/styles'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Unstable_Grid2'
 import Typography from '@mui/material/Typography'
+import { styled, useTheme } from '@mui/material/styles'
 
 import { useResponsive } from 'src/hooks/use-responsive'
 
@@ -169,49 +169,58 @@ const DesktopIcons = () => (
 )
 
 // ScrollIndicator component for desktop view
-const ScrollIndicator = () => (
-  <Box
-    component={m.div}
-    variants={varFade().in}
-    whileInView={{
-      opacity: [0.3, 0.7, 0.3],
-      transition: {
-        duration: 2,
-        ease: "easeInOut",
-        repeat: Infinity,
-      },
-    }}
-    sx={{
-      position: 'absolute',
-      bottom: 24,
-      left: 0,
-      right: 0,
-      textAlign: 'center',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center'
-    }}
-  >
+const ScrollIndicator = () => {
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === 'dark';
+  
+  return (
     <Box
+      component={m.div}
+      variants={varFade().in}
+      whileInView={{
+        opacity: [0.3, 0.7, 0.3],
+        transition: {
+          duration: 2,
+          ease: "easeInOut",
+          repeat: Infinity,
+        },
+      }}
       sx={{
+        position: 'absolute',
+        bottom: 24,
+        left: 0,
+        right: 0,
+        textAlign: 'center',
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        mb: 1
+        flexDirection: 'column',
+        alignItems: 'center'
       }}
     >
       <Box
-        component="img"
-        src="/assets/icons/home/landing_resources/scroll.svg"
-        alt="scroll"
-        sx={{ height: 24, mr: 1 }}
-      />
-      <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-        Scroll to see more
-      </Typography>
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          mb: 1
+        }}
+      >
+        <Box
+          component="img"
+          src="/assets/icons/home/landing_resources/scroll.svg"
+          alt="scroll"
+          sx={{ 
+            height: 24, 
+            mr: 1,
+            filter: isDarkMode ? 'invert(1)' : 'none',
+          }}
+        />
+        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+          Scroll to see more
+        </Typography>
+      </Box>
     </Box>
-  </Box>
-)
+  );
+};
 
 // ----------------------------------------------------------------------
 
