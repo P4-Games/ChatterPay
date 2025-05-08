@@ -104,13 +104,13 @@ const ANIMATIONS = {
 
   // Title animation
   title: {
-    hidden: { opacity: 0, y: 60 },
+    hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.8,
-        ease: [0.16, 1, 0.3, 1]
+        duration: 0.5,
+        ease: "easeOut"
       }
     }
   }
@@ -153,27 +153,41 @@ export default function HomeMainFeatures() {
 
   // Handle scroll direction detection
   useEffect(() => {
+    let isScrolling = false;
+    
     const handleScroll = () => {
-      const currentScrollY = window.scrollY
-      const scrollDifference = Math.abs(currentScrollY - lastScrollY)
+      // Skip if already processing a scroll event
+      if (isScrolling) return;
+      
+      // Set flag to avoid multiple rapid updates
+      isScrolling = true;
+      
+      // Use requestAnimationFrame for smoother updates
+      window.requestAnimationFrame(() => {
+        const currentScrollY = window.scrollY;
+        const scrollDifference = Math.abs(currentScrollY - lastScrollY);
 
-      // Only update if scroll difference is significant
-      if (scrollDifference > 10 && containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect()
-        const isInViewport = rect.top < window.innerHeight && rect.bottom > 0
+        // Only update if scroll difference is significant and in viewport
+        if (scrollDifference > 20 && containerRef.current) {
+          const rect = containerRef.current.getBoundingClientRect();
+          const isInViewport = rect.top < window.innerHeight && rect.bottom > 0;
 
-        // Change direction only when component is in viewport
-        if (isInViewport) {
-          setScrollDirection(currentScrollY > lastScrollY ? 'down' : 'up')
+          // Change direction only when component is in viewport
+          if (isInViewport) {
+            setScrollDirection(currentScrollY > lastScrollY ? 'down' : 'up');
+          }
+
+          setLastScrollY(currentScrollY);
         }
+        
+        // Reset flag
+        isScrolling = false;
+      });
+    };
 
-        setLastScrollY(currentScrollY)
-      }
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [lastScrollY])
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
 
   // Render a feature card
   const renderCard = (card: CardType, index: number) => {
@@ -285,7 +299,7 @@ export default function HomeMainFeatures() {
           <m.div
             initial='hidden'
             whileInView='visible'
-            viewport={{ once: false, margin: '-20% 0px' }}
+            viewport={{ once: true, margin: '-5% 0px', amount: 0.3 }}
             variants={ANIMATIONS.title}
           >
             <Typography variant='h2' sx={{ color: isDarkMode ? 'common.white' : 'text.primary' }}>
