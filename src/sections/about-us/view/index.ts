@@ -1,1 +1,1 @@
-export { default as AboutUsView } from './about-us-view'; 
+export { default as AboutUsView } from './about-us-view'
