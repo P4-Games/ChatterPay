@@ -65,11 +65,6 @@ const CARD_CONFIG = [
     icon: `${IMG_BASE_URL}/certificate.webp`,
     bgColor: COLORS.light.green,
     darkModeBgColor: COLORS.dark.card
-  },
-  {
-    icon: `${IMG_BASE_URL}/low_fees.webp`,
-    bgColor: COLORS.light.green,
-    darkModeBgColor: COLORS.dark.card
   }
 ]
 
