@@ -29,8 +29,8 @@ export default function HomeFaQ() {
       <m.div 
         initial={{ opacity: 0, y: 40 }} 
         whileInView={{ opacity: 1, y: 0 }} 
-        transition={{ duration: 0.5 }}
-        viewport={{ once: false, margin: '-100px' }}
+        transition={{ duration: 0.3 }}
+        viewport={{ once: false, margin: '-150px' }}
       >
         <Typography component='div' variant='overline' sx={{ mb: 2, color: 'text.disabled' }}>
           {t('home.faq.tag')}
@@ -40,8 +40,8 @@ export default function HomeFaQ() {
       <m.div 
         initial={{ opacity: 0, y: -40 }} 
         whileInView={{ opacity: 1, y: 0 }} 
-        transition={{ duration: 0.5 }}
-        viewport={{ once: false, margin: '-100px' }}
+        transition={{ duration: 0.3 }}
+        viewport={{ once: false, margin: '-150px' }}
       >
         <Typography variant='h2'> {t('home.faq.title')}</Typography>
       </m.div>
@@ -52,8 +52,8 @@ export default function HomeFaQ() {
     <m.div 
       initial={{ opacity: 0 }} 
       whileInView={{ opacity: 1 }} 
-      transition={{ duration: 0.5 }}
-      viewport={{ once: false, margin: '-100px' }}
+      transition={{ duration: 0.3 }}
+      viewport={{ once: false, margin: '-150px' }}
     >
       {_faqs &&
         _faqs.map((accordion: any, index: number) => (
@@ -61,8 +61,8 @@ export default function HomeFaQ() {
             key={accordion.id} 
             initial={{ opacity: 0, y: 20 }} 
             whileInView={{ opacity: 1, y: 0 }} 
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-            viewport={{ once: false, margin: '-100px' }}
+            transition={{ duration: 0.3, delay: index * 0.03 }}
+            viewport={{ once: false, margin: '-150px' }}
           >
             <Accordion>
               <AccordionSummary expandIcon={<Iconify icon='eva:arrow-ios-downward-fill' />}>
