@@ -268,13 +268,13 @@ export default function HomeHero() {
     }
 
     const charWidth = { xs: 20, md: 25, lg: 29 }
-    
+
     // Calculate width based on screen size
-    let highlightWidth = titleWords[whatsAppIndex].length * charWidth.xs;
+    let highlightWidth = titleWords[whatsAppIndex].length * charWidth.xs
     if (lgUp) {
-      highlightWidth = titleWords[whatsAppIndex].length * charWidth.lg;
+      highlightWidth = titleWords[whatsAppIndex].length * charWidth.lg
     } else if (mdUp) {
-      highlightWidth = titleWords[whatsAppIndex].length * charWidth.md;
+      highlightWidth = titleWords[whatsAppIndex].length * charWidth.md
     }
 
     return (
@@ -376,17 +376,27 @@ export default function HomeHero() {
           {/* Mobile view with mockup and icons */}
           {!mdUp && (
             <Grid xs={12} sx={{ display: 'flex', justifyContent: 'center', position: 'relative' }}>
-              <Box sx={{ position: 'relative', width: '100%', maxWidth: 280, height: 'auto', aspectRatio: '280/560' }}>
+              <Box
+                sx={{
+                  position: 'relative',
+                  width: '100%',
+                  maxWidth: 280,
+                  height: 'auto',
+                  aspectRatio: '280/560'
+                }}
+              >
                 <MobileIcons />
 
                 {/* Mockup */}
-                <StyledImagePlaceholder sx={{ 
-                  width: '100%', 
-                  height: 'auto', 
-                  aspectRatio: '280/560',
-                  maxWidth: 280,
-                  maxHeight: 560
-                }}>
+                <StyledImagePlaceholder
+                  sx={{
+                    width: '100%',
+                    height: 'auto',
+                    aspectRatio: '280/560',
+                    maxWidth: 280,
+                    maxHeight: 560
+                  }}
+                >
                   <MockupImage imagePath={mockupImagePath} />
                 </StyledImagePlaceholder>
               </Box>
@@ -411,10 +421,12 @@ export default function HomeHero() {
 
                 <Box sx={{ position: 'relative', zIndex: 2, maxWidth: '90%' }}>
                   <m.div variants={varFade().in}>
-                    <StyledImagePlaceholder sx={{
-                      maxWidth: { md: '90%', lg: '100%' },
-                      maxHeight: '80vh'
-                    }}>
+                    <StyledImagePlaceholder
+                      sx={{
+                        maxWidth: { md: '90%', lg: '100%' },
+                        maxHeight: '80vh'
+                      }}
+                    >
                       <MockupImage imagePath={mockupImagePath} />
                     </StyledImagePlaceholder>
                   </m.div>
