@@ -326,5 +326,31 @@
         "error": "Ocorreu um erro ao tentar obter as notificações. Tente novamente mais tarde."
       }
     }
+  },
+  "aboutUs": {
+    "hero": {
+      "tag": "Sobre Nós",
+      "title": "Nossa Missão",
+      "description": "ChatterPay está revolucionando a forma como as pessoas enviam dinheiro, combinando pagamentos seguros com o aplicativo de mensagens mais usado no mundo. Nossa missão é tornar as criptomoedas simples, a fim de integrar o próximo bilhão de usuários."
+    },
+    "story": {
+      "title": "Nossa História",
+      "text1": "Fundado em 2024, no The Level Up Hackathon da Ethereum Argentina, onde ganhamos o 1º prêmio na trilha Keystore e fomos a equipe mais votada no Quadratic Funding, depois também ganhamos na Ethereum Uruguay e no ICP Chain Fusion Hackathon BA.",
+      "text2": "Durante esses hackathons, iteramos e melhoramos o produto com base em feedback e usuários iniciais.",
+      "text3": "Recentemente, fomos selecionados para o Scroll Open Campus em Kuala Lumpur, Malásia. É lá que vamos lançar a carteira na rede Scroll, continuando nossa missão de tornar as criptomoedas simples e acessíveis para todos."
+    },
+    "team": {
+      "title": "Conheça Nossa Equipe"
+    },
+    "founders": {
+      "martin": "Martin fez a transição de uma formação em direito e negócios para a inovação Web3, fundando várias startups de blockchain e liderando P4 Tech Solutions, Fin Guru, Chronos Pay, Sistem AI, Chatizalo, Hunters Pride e Number One Fan.",
+      "tomas": "Tomás é um desenvolvedor full-stack e especialista em UI/UX, apaixonado por criar soluções blockchain escaláveis e amigáveis ao usuário. Foi Desenvolvedor Líder na FinGurú, desenvolvedor na Argenenergy e consultor na Invicta Ventures.",
+      "diego": "Diego tem mais de 25 anos de experiência em desenvolvimento e arquitetura de software, tendo trabalhado com múltiplas linguagens de programação e implementado soluções em diversas plataformas e ambientes de nuvem. Ele liderou equipes de desenvolvimento de alto desempenho em grandes corporações."
+    },
+    "contact": {
+      "title": "Entre em Contato",
+      "description": "Adoraríamos ouvir de você. Entre em contato com nossa equipe para quaisquer dúvidas, feedback ou necessidades de suporte. Você pode nos contatar por e-mail em",
+      "button": "Converse Conosco no WhatsApp"
+    }
   }
 }

@@ -11,6 +11,7 @@ export const paths = {
   page500: '/error/500',
   terms: '/terms',
   policy: '/policy',
+  aboutUs: '/about-us',
   auth: {
     jwt: {
       login: `${ROOTS.AUTH}/jwt/login`,

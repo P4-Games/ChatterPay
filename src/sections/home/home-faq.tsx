@@ -80,6 +80,7 @@ export default function HomeFaQ() {
 
   return (
     <Box
+      id="faq"
       sx={{
         py: { xs: 10, md: 15 }
       }}

@@ -325,5 +325,31 @@
         "error": "Hubo un error al intentar obtener las notificaciones. Intenta más tarde."
       }
     }
+  },
+  "aboutUs": {
+    "hero": {
+      "tag": "Sobre Nosotros",
+      "title": "Nuestra Misión",
+      "description": "ChatterPay está revolucionando la forma en que las personas envían dinero combinando pagos seguros con la aplicación de mensajería más utilizada del mundo. Nuestra misión es hacer que las criptomonedas sean simples, para incorporar a los próximos mil millones de usuarios."
+    },
+    "story": {
+      "title": "Nuestra Historia",
+      "text1": "Fundado en 2024, en The Level Up Hackathon by Ethereum Argentina, donde ganamos 1er premio en el track de Keystore y fuimos el equipo más votado en Quadratic Funding, luego ganamos también en Ethereum Uruguay y ICP Chain Fusion Hackathon BA.",
+      "text2": "Durante estos hackathons fuimos iterando y mejorando el producto en base a feedback y early users.",
+      "text3": "Recientemente, fuimos seleccionados para Scroll Open Campus en Kuala Lumpur, Malasia. Lugar donde vamos a lanzar la billetera en la red de Scroll, continuando con nuestra misión de hacer que cripto sea simple y accesible para todos."
+    },
+    "team": {
+      "title": "Conoce a Nuestro Equipo"
+    },
+    "founders": {
+      "martin": "Martin pasó de tener experiencia en ámbitos legales y empresariales a la innovación Web3, fundando múltiples startups de blockchain y liderando P4 Tech Solutions, Fin Guru, Chronos Pay, Sistem AI, Chatizalo, Hunters Pride y Number One Fan.",
+      "tomas": "Tomás es un desarrollador full-stack y especialista en UI/UX, apasionado por crear soluciones blockchain escalables y amigables para el usuario. Anteriormente fue Desarrollador Líder en FinGurú, desarrollador en Argenenergy y asesor en Invicta Ventures.",
+      "diego": "Diego tiene más de 25 años de experiencia en desarrollo y arquitectura de software, habiendo trabajado en múltiples lenguajes de programación e implementado soluciones en diversas plataformas y entornos cloud. Ha liderado equipos de desarrollo de alto rendimiento en grandes corporaciones."
+    },
+    "contact": {
+      "title": "Contáctanos",
+      "description": "Nos encantaría saber de ti. Ponte en contacto con nuestro equipo para cualquier consulta, comentario o necesidad de soporte. Puedes contactarnos por correo electrónico en",
+      "button": "Chatea con Nosotros en WhatsApp"
+    }
   }
 }
