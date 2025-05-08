@@ -10,7 +10,6 @@ import Typography from '@mui/material/Typography'
 
 import { useTranslate } from 'src/locales'
 
-import { varFade, MotionViewport } from 'src/components/animate'
 
 // ----------------------------------------------------------------------
 
@@ -70,7 +69,6 @@ export default function HomeFiatTransfer() {
   return (
     <StyledRoot>
       <Container 
-        component={MotionViewport}
         sx={{ 
           position: 'relative',
           px: { xs: 2, md: 0 },
@@ -90,7 +88,12 @@ export default function HomeFiatTransfer() {
             py: { xs: 8, md: 15 },
             px: 10
           }}>
-            <m.div variants={varFade().inUp}>
+            <m.div 
+              initial={{ opacity: 0, x: -50 }} 
+              whileInView={{ opacity: 1, x: 0 }} 
+              transition={{ duration: 0.7, ease: "easeOut" }}
+              viewport={{ once: false, margin: "-100px" }}
+            >
               <Typography
                 variant="h3"
                 sx={{
@@ -160,7 +163,12 @@ export default function HomeFiatTransfer() {
               </Typography>
             </m.div>
 
-            <m.div variants={varFade().inUp}>
+            <m.div 
+              initial={{ opacity: 0, x: -50 }} 
+              whileInView={{ opacity: 1, x: 0 }} 
+              transition={{ duration: 0.7, ease: "easeOut", delay: 0.2 }}
+              viewport={{ once: false, margin: "-100px" }}
+            >
               <Typography
                 sx={{
                   mb: 4,
@@ -178,7 +186,12 @@ export default function HomeFiatTransfer() {
                 justifyContent: { xs: 'center', md: 'flex-start' },
               }}
             >
-              <m.div variants={varFade().inUp}>
+              <m.div 
+                initial={{ opacity: 0, x: -50 }} 
+                whileInView={{ opacity: 1, x: 0 }} 
+                transition={{ duration: 0.7, ease: "easeOut", delay: 0.4 }}
+                viewport={{ once: false, margin: "-100px" }}
+              >
                 <a 
                   href={whatsappLink}
                   target="_blank"
@@ -214,7 +227,13 @@ export default function HomeFiatTransfer() {
               overflow: 'hidden',
             }}
           >
-            <m.div variants={varFade().inRight} style={{ height: '100%' }}>
+            <m.div 
+              initial={{ opacity: 0, x: 50 }} 
+              whileInView={{ opacity: 1, x: 0 }} 
+              transition={{ duration: 0.7, ease: "easeOut" }}
+              viewport={{ once: false, margin: "-100px" }}
+              style={{ height: '100%' }}
+            >
               <Box
                 component="img"
                 src="/assets/images/home/fiat_like_pro.png"
