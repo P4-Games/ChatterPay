@@ -29,7 +29,10 @@ const StyledRoot = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
     top: 0,
     left: 0,
-    height: '100vh'
+    height: 'auto',
+    minHeight: '100vh',
+    maxHeight: '100vh',
+    overflow: 'hidden'
   }
 }))
 
@@ -44,6 +47,13 @@ const StyledImagePlaceholder = styled(Box)(({ theme }) => ({
     width: 270,
     height: 540,
     margin: '0 auto'
+  },
+  [theme.breakpoints.up('md')]: {
+    maxWidth: '100%',
+    maxHeight: '90vh',
+    width: 'auto',
+    height: 'auto',
+    aspectRatio: '318 / 637'
   }
 }))
 
@@ -51,14 +61,16 @@ const StyledIcon = styled('img')(({ theme }) => ({
   position: 'absolute',
   zIndex: 1,
   opacity: 0.5,
-  filter: theme.palette.mode === 'dark' ? 'brightness(10)' : 'none'
+  filter: theme.palette.mode === 'dark' ? 'brightness(10)' : 'none',
+  maxWidth: '10%'
 }))
 
 const StyledMobileIcon = styled('img')(({ theme }) => ({
   position: 'absolute',
   zIndex: 1,
   opacity: 0.8,
-  filter: theme.palette.mode === 'dark' ? 'brightness(10)' : 'none'
+  filter: theme.palette.mode === 'dark' ? 'brightness(10)' : 'none',
+  maxWidth: '20%'
 }))
 
 const StyledCreateButton = styled(Button)(({ theme }) => ({
@@ -102,32 +114,32 @@ const MobileIcons = () => (
     <StyledMobileIcon
       src='/assets/icons/home/landing_resources/hero_arrow_outbound.svg'
       alt='arrow outbound'
-      sx={{ position: 'absolute', top: '10%', right: '-20%' }}
+      sx={{ position: 'absolute', top: '10%', right: '-15%' }}
     />
 
     <StyledMobileIcon
       src='/assets/icons/home/landing_resources/hero_arrow_inbound.svg'
       alt='arrow inbound'
-      sx={{ position: 'absolute', top: '35%', right: '-25%' }}
+      sx={{ position: 'absolute', top: '35%', right: '-15%' }}
     />
 
     <StyledMobileIcon
       src='/assets/icons/home/landing_resources/hero_note.svg'
       alt='dollar note'
-      sx={{ position: 'absolute', top: '75%', right: '-22%' }}
+      sx={{ position: 'absolute', top: '75%', right: '-15%' }}
     />
 
     {/* Mobile icons - Left side of the mockup */}
     <StyledMobileIcon
       src='/assets/icons/home/landing_resources/hero_chart.svg'
       alt='chart'
-      sx={{ position: 'absolute', bottom: '60%', left: '-25%' }}
+      sx={{ position: 'absolute', bottom: '60%', left: '-15%' }}
     />
 
     <StyledMobileIcon
       src='/assets/icons/home/landing_resources/hero_swap.svg'
       alt='swap'
-      sx={{ position: 'absolute', bottom: '30%', left: '-20%' }}
+      sx={{ position: 'absolute', bottom: '30%', left: '-15%' }}
     />
   </>
 )
@@ -139,32 +151,32 @@ const DesktopIcons = () => (
     <StyledIcon
       src='/assets/icons/home/landing_resources/hero_arrow_outbound.svg'
       alt='arrow outbound'
-      sx={{ top: '25%', left: '80%' }}
+      sx={{ top: '25%', left: '70%', maxWidth: '8%' }}
     />
 
     <StyledIcon
       src='/assets/icons/home/landing_resources/hero_arrow_inbound.svg'
       alt='arrow inbound'
-      sx={{ top: '40%', left: '80%' }}
+      sx={{ top: '40%', left: '70%', maxWidth: '8%' }}
     />
 
     <StyledIcon
       src='/assets/icons/home/landing_resources/hero_note.svg'
       alt='dollar note'
-      sx={{ bottom: '20%', left: '75%' }}
+      sx={{ bottom: '20%', left: '65%', maxWidth: '8%' }}
     />
 
     {/* Icons at the left side of the mockup */}
     <StyledIcon
       src='/assets/icons/home/landing_resources/hero_chart.svg'
       alt='chart'
-      sx={{ top: '35%', right: '80%' }}
+      sx={{ top: '35%', right: '70%', maxWidth: '8%' }}
     />
 
     <StyledIcon
       src='/assets/icons/home/landing_resources/hero_swap.svg'
       alt='swap'
-      sx={{ bottom: '25%', right: '80%' }}
+      sx={{ bottom: '25%', right: '70%', maxWidth: '8%' }}
     />
   </>
 )
@@ -230,6 +242,7 @@ export default function HomeHero() {
   const { currentLang } = useLocales()
 
   const mdUp = useResponsive('up', 'md')
+  const lgUp = useResponsive('up', 'lg')
   const heroRef = useRef<HTMLDivElement | null>(null)
 
   // Get localized mockup image path
@@ -251,6 +264,17 @@ export default function HomeHero() {
   const renderTitle = () => {
     if (whatsAppIndex === -1) {
       return t('home.hero.new.title')
+    }
+
+    const fontSize = { xs: 32, md: 40, lg: 46 }
+    const charWidth = { xs: 20, md: 25, lg: 29 }
+    
+    // Calculate width based on screen size
+    let highlightWidth = titleWords[whatsAppIndex].length * charWidth.xs;
+    if (lgUp) {
+      highlightWidth = titleWords[whatsAppIndex].length * charWidth.lg;
+    } else if (mdUp) {
+      highlightWidth = titleWords[whatsAppIndex].length * charWidth.md;
     }
 
     return (
@@ -277,9 +301,7 @@ export default function HomeHero() {
             <SingleWordHighlight
               size='xl'
               color={GREEN_COLOR}
-              width={
-                mdUp ? titleWords[whatsAppIndex].length * 29 : titleWords[whatsAppIndex].length * 20
-              }
+              width={highlightWidth}
               strokeWidth={3}
             />
           </Box>
@@ -296,10 +318,14 @@ export default function HomeHero() {
       <Container
         component={MotionContainer}
         sx={{
-          height: mdUp ? '100vh' : 'auto',
-          py: mdUp ? 0 : 6,
+          height: mdUp ? '100%' : 'auto',
+          py: mdUp ? { md: 2, lg: 0 } : 6,
           pl: { md: 0 },
-          pr: { md: 0 }
+          pr: { md: 0 },
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          minHeight: mdUp ? '100vh' : 'auto'
         }}
       >
         <Grid
@@ -307,7 +333,7 @@ export default function HomeHero() {
           spacing={{ xs: 5, md: 0 }}
           alignItems='center'
           sx={{
-            height: mdUp ? 1 : 'auto',
+            height: 'auto',
             maxWidth: '100%',
             mx: 'auto',
             mt: { xs: 6, md: 0 }
@@ -350,11 +376,17 @@ export default function HomeHero() {
           {/* Mobile view with mockup and icons */}
           {!mdUp && (
             <Grid xs={12} sx={{ display: 'flex', justifyContent: 'center', position: 'relative' }}>
-              <Box sx={{ position: 'relative', width: 280, height: 560 }}>
+              <Box sx={{ position: 'relative', width: '100%', maxWidth: 280, height: 'auto', aspectRatio: '280/560' }}>
                 <MobileIcons />
 
                 {/* Mockup */}
-                <StyledImagePlaceholder sx={{ width: 280, height: 560 }}>
+                <StyledImagePlaceholder sx={{ 
+                  width: '100%', 
+                  height: 'auto', 
+                  aspectRatio: '280/560',
+                  maxWidth: 280,
+                  maxHeight: 560
+                }}>
                   <MockupImage imagePath={mockupImagePath} />
                 </StyledImagePlaceholder>
               </Box>
@@ -363,7 +395,7 @@ export default function HomeHero() {
 
           {/* Desktop view with mockup and icons */}
           {mdUp && (
-            <Grid md={7} sx={{ position: 'relative', right: { md: '-100px' } }}>
+            <Grid md={7} sx={{ position: 'relative', right: { md: 0, lg: '-50px', xl: '-100px' } }}>
               <Box
                 sx={{
                   position: 'relative',
@@ -371,15 +403,18 @@ export default function HomeHero() {
                   justifyContent: 'center',
                   alignItems: 'center',
                   height: '100%',
-                  maxWidth: 600,
+                  maxWidth: '100%',
                   ml: 'auto'
                 }}
               >
                 <DesktopIcons />
 
-                <Box sx={{ position: 'relative', zIndex: 2 }}>
+                <Box sx={{ position: 'relative', zIndex: 2, maxWidth: '90%' }}>
                   <m.div variants={varFade().in}>
-                    <StyledImagePlaceholder>
+                    <StyledImagePlaceholder sx={{
+                      maxWidth: { md: '90%', lg: '100%' },
+                      maxHeight: '80vh'
+                    }}>
                       <MockupImage imagePath={mockupImagePath} />
                     </StyledImagePlaceholder>
                   </m.div>
