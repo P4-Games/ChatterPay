@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography'
 
 import { useResponsive } from 'src/hooks/use-responsive'
 
-import { useTranslate } from 'src/locales'
+import { useLocales, useTranslate } from 'src/locales'
 
 import { SingleWordHighlight } from 'src/components/highlight'
 import { varFade, MotionContainer } from 'src/components/animate'
@@ -37,7 +37,7 @@ const StyledImagePlaceholder = styled(Box)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius * 3,
   overflow: 'hidden',
   position: 'relative',
-    background: 'transparent',
+  background: 'transparent',
   [theme.breakpoints.down('md')]: {
     width: 270,
     height: 540,
@@ -51,7 +51,6 @@ const StyledIcon = styled('img')(({ theme }) => ({
   opacity: 0.5
 }))
 
-// For mobile icons - higher visibility
 const StyledMobileIcon = styled('img')(({ theme }) => ({
   position: 'absolute',
   zIndex: 1,
@@ -75,13 +74,148 @@ const StyledCreateButton = styled(Button)(({ theme }) => ({
   },
 }))
 
+// Helper to get language-specific mockup image path
+const getLanguageMockupPath = (langCode: string) => {
+  // Only support 'es', 'en', and 'br', defaulting to 'es' for other languages
+  const supportedLang = ['es', 'en', 'br'].includes(langCode) ? langCode : 'es'
+  return `/assets/images/home/hero/hero_chat_${supportedLang}.gif`
+}
+
+// Chat animation w mockup
+const MockupImage = ({ imagePath }: { imagePath: string }) => (
+  <Box
+    component="img"
+    src={imagePath}
+    alt="WhatsApp interface showing money transfers"
+    sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
+  />
+)
+
+// Icons for mobile view
+const MobileIcons = () => (
+  <>
+    {/* Mobile icons - Right side of the mockup */}
+    <StyledMobileIcon
+      src="/assets/icons/home/landing_resources/hero_arrow_outbound.svg"
+      alt="arrow outbound"
+      sx={{ position: 'absolute', top: '10%', right: '-20%' }}
+    />
+    
+    <StyledMobileIcon
+      src="/assets/icons/home/landing_resources/hero_arrow_inbound.svg"
+      sx={{ position: 'absolute', top: '35%', right: '-25%' }}
+      alt="arrow inbound"
+    />
+    <StyledMobileIcon
+      src="/assets/icons/home/landing_resources/hero_note.svg"
+      alt="dollar note"
+      sx={{ position: 'absolute', top: '75%', right: '-22%' }}
+    />
+
+    {/* Mobile icons - Left side of the mockup */}
+    <StyledMobileIcon
+      src="/assets/icons/home/landing_resources/hero_chart.svg"
+      alt="chart"
+      sx={{ position: 'absolute', bottom: '60%', left: '-25%'}}
+    />
+    <StyledMobileIcon
+      src="/assets/icons/home/landing_resources/hero_swap.svg"
+      alt="swap"
+      sx={{ position: 'absolute', bottom: '30%', left: '-20%'}}
+    />
+  </>
+)
+
+// Icons for desktop view
+const DesktopIcons = () => (
+  <>
+    {/* Icons at the right side of the mockup */}
+    <StyledIcon
+      src="/assets/icons/home/landing_resources/hero_arrow_outbound.svg"
+      alt="arrow outbound"
+      sx={{ top: '25%', left: '80%' }}
+    />
+    <StyledIcon
+      src="/assets/icons/home/landing_resources/hero_arrow_inbound.svg"
+      alt="arrow inbound"
+      sx={{ top: '40%', left:'80%' }}
+    />
+    <StyledIcon
+      src="/assets/icons/home/landing_resources/hero_note.svg"
+      alt="dollar note"
+      sx={{ bottom: '20%', left: '75%' }}
+    />
+
+    {/* Icons at the left side of the mockup */}
+    <StyledIcon
+      src="/assets/icons/home/landing_resources/hero_chart.svg"
+      alt="chart"
+      sx={{ top: '35%', right: '80%' }}
+    />
+    <StyledIcon
+      src="/assets/icons/home/landing_resources/hero_swap.svg"
+      alt="swap"
+      sx={{ bottom: '25%', right: '80%' }}
+    />
+  </>
+)
+
+// ScrollIndicator component for desktop view
+const ScrollIndicator = () => (
+  <Box
+    component={m.div}
+    variants={varFade().in}
+    whileInView={{
+      opacity: [0.3, 0.7, 0.3],
+      transition: {
+        duration: 2,
+        ease: "easeInOut",
+        repeat: Infinity,
+      },
+    }}
+    sx={{
+      position: 'absolute',
+      bottom: 24,
+      left: 0,
+      right: 0,
+      textAlign: 'center',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center'
+    }}
+  >
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        mb: 1
+      }}
+    >
+      <Box
+        component="img"
+        src="/assets/icons/home/landing_resources/scroll.svg"
+        alt="scroll"
+        sx={{ height: 24, mr: 1 }}
+      />
+      <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+        Scroll to see more
+      </Typography>
+    </Box>
+  </Box>
+)
+
 // ----------------------------------------------------------------------
 
 export default function HomeHero() {
   const { t } = useTranslate()
-
+  const { currentLang } = useLocales()
+  
   const mdUp = useResponsive('up', 'md')
   const heroRef = useRef<HTMLDivElement | null>(null)
+
+  // Get localized mockup image path
+  const mockupImagePath = getLanguageMockupPath(currentLang.value)
 
   // Find the word "WhatsApp" in the title
   const titleWords = t('home.hero.new.title').split(' ')
@@ -151,6 +285,7 @@ export default function HomeHero() {
             mt: { xs: 6, md: 0 }
           }}
         >
+          {/* Title and CTA section */}
           <Grid xs={12} md={5} sx={{ textAlign: { xs: 'center', md: 'left' }, mb: { xs: 5, md: 0 } }}>
             <m.div variants={varFade().in}>
               <Typography variant="h1" sx={{ mb: 3, fontSize: { xs: 32, md: 40, lg: 46 }, fontWeight: 'bold' }}>
@@ -167,96 +302,30 @@ export default function HomeHero() {
             </m.div>
           </Grid>
 
-          {/* For mobile view, display phone with proper icons */}
+          {/* Mobile view with mockup and icons */}
           {!mdUp && (
             <Grid xs={12} sx={{ display: 'flex', justifyContent: 'center', position: 'relative' }}>
               <Box sx={{ position: 'relative', width: 280, height: 560 }}>
-                {/* Mobile icons - Right side of the mockup */}
-                <StyledMobileIcon
-                  src="/assets/icons/home/landing_resources/hero_arrow_outbound.svg"
-                  alt="arrow outbound"
-                  sx={{ position: 'absolute', top: '10%', right: '-20%' }}
-                />
+                <MobileIcons />
                 
-                <StyledMobileIcon
-                  src="/assets/icons/home/landing_resources/hero_arrow_inbound.svg"
-                  sx={{ position: 'absolute', top: '35%', right: '-25%' }}
-                  alt="arrow inbound"
-                />
-                <StyledMobileIcon
-                  src="/assets/icons/home/landing_resources/hero_note.svg"
-                  alt="dollar note"
-                  sx={{ position: 'absolute', top: '75%', right: '-22%' }}
-                />
-
-                
-                {/* Mobile icons - Left side of the mockup */}
-                <StyledMobileIcon
-                  src="/assets/icons/home/landing_resources/hero_chart.svg"
-                  alt="chart"
-                  sx={{ position: 'absolute', bottom: '60%', left: '-25%'}}
-                />
-                <StyledMobileIcon
-                  src="/assets/icons/home/landing_resources/hero_swap.svg"
-                  alt="swap"
-                  sx={{ position: 'absolute', bottom: '30%', left: '-20%'}}
-                />
-
                 {/* Mockup */}
                 <StyledImagePlaceholder sx={{ width: 280, height: 560 }}>
-                  <Box
-                    component="img"
-                    src="/assets/images/home/hero/mockup.gif"
-                    alt="WhatsApp interface showing money transfers"
-                    sx={{ width: '100%', height: '100%', objectFit: 'cover', scale: 1.2 }}
-                  />
+                  <MockupImage imagePath={mockupImagePath} />
                 </StyledImagePlaceholder>
               </Box>
             </Grid>
           )}
 
-          {/* Desktop view with icons */}
+          {/* Desktop view with mockup and icons */}
           {mdUp && (
             <Grid md={7} sx={{ position: 'relative', right: { md: "-100px" } }}>
               <Box sx={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', maxWidth: 600, ml: 'auto' }}>
-                {/* Icons at the right side of the mockup */}
-                <StyledIcon
-                  src="/assets/icons/home/landing_resources/hero_arrow_outbound.svg"
-                  alt="arrow outbound"
-                  sx={{ top: '25%', left: '80%' }}
-                />
-                <StyledIcon
-                  src="/assets/icons/home/landing_resources/hero_arrow_inbound.svg"
-                  alt="arrow inbound"
-                  sx={{ top: '40%', left:'80%' }}
-                />
-                <StyledIcon
-                  src="/assets/icons/home/landing_resources/hero_note.svg"
-                  alt="dollar note"
-                  sx={{ bottom: '20%', left: '75%' }}
-                />
-
-                {/* Icons at the left side of the mockup */}
-                <StyledIcon
-                  src="/assets/icons/home/landing_resources/hero_chart.svg"
-                  alt="chart"
-                  sx={{ top: '35%', right: '80%' }}
-                />
-                <StyledIcon
-                  src="/assets/icons/home/landing_resources/hero_swap.svg"
-                  alt="swap"
-                  sx={{ bottom: '25%', right: '80%' }}
-                />
+                <DesktopIcons />
 
                 <Box sx={{ position: 'relative', zIndex: 2 }}>
                   <m.div variants={varFade().in}>
                     <StyledImagePlaceholder>
-                      <Box
-                        component="img"
-                        src="/assets/images/home/hero/mockup.gif"
-                        alt="WhatsApp interface showing money transfers"
-                        sx={{ width: '100%', height: '100%', objectFit: 'cover', scale: 1.2 }}
-                      />
+                      <MockupImage imagePath={mockupImagePath} />
                     </StyledImagePlaceholder>
                   </m.div>
                 </Box>
@@ -265,49 +334,8 @@ export default function HomeHero() {
           )}
         </Grid>
 
-        {mdUp && (
-          <Box
-            component={m.div}
-            variants={varFade().in}
-            whileInView={{
-              opacity: [0.3, 0.7, 0.3],
-              transition: {
-                duration: 2,
-                ease: "easeInOut",
-                repeat: Infinity,
-              },
-            }}
-            sx={{
-              position: 'absolute',
-              bottom: 24,
-              left: 0,
-              right: 0,
-              textAlign: 'center',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center'
-            }}
-          >
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                mb: 1
-              }}
-            >
-              <Box
-                component="img"
-                src="/assets/icons/home/landing_resources/scroll.svg"
-                alt="scroll"
-                sx={{ height: 24, mr: 1 }}
-              />
-              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                Scroll to see more
-              </Typography>
-            </Box>
-          </Box>
-        )}
+        {/* Scroll indicator (desktop only) */}
+        {mdUp && <ScrollIndicator />}
       </Container>
     </StyledRoot>
   )
