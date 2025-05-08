@@ -82,7 +82,7 @@ const ANIMATIONS = {
       transition: { staggerChildren: 0.2 }
     }
   },
-  
+
   // Container animation with reversed sequential children reveal
   containerUp: {
     hidden: {},
@@ -93,7 +93,7 @@ const ANIMATIONS = {
       }
     }
   },
-  
+
   // Individual card animation
   card: {
     hidden: { opacity: 0, y: 40 },
@@ -106,7 +106,7 @@ const ANIMATIONS = {
       }
     }
   },
-  
+
   // Title animation
   title: {
     hidden: { opacity: 0, y: 60 },
@@ -126,7 +126,7 @@ export default function HomeMainFeatures() {
   const theme = useTheme()
   const mdUp = useResponsive('up', 'md')
   const isDarkMode = theme.palette.mode === 'dark'
-  
+
   // Refs and state
   const titleRef = useRef<HTMLSpanElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -137,7 +137,7 @@ export default function HomeMainFeatures() {
   // Parse and prepare data
   const titleText = t('home.main-features.title1')
   const lastWord = titleText.trim().split(' ').pop() || ''
-  
+
   const cards = CARD_CONFIG.map((config, index) => ({
     ...config,
     title: t(`home.main-features.card-${index + 1}.title`),
@@ -145,7 +145,7 @@ export default function HomeMainFeatures() {
   }))
 
   // Define card type based on the actual structure
-  type CardType = typeof cards[0]
+  type CardType = (typeof cards)[0]
 
   // Calculate last word width for highlight positioning
   useEffect(() => {
@@ -161,17 +161,17 @@ export default function HomeMainFeatures() {
     const handleScroll = () => {
       const currentScrollY = window.scrollY
       const scrollDifference = Math.abs(currentScrollY - lastScrollY)
-      
+
       // Only update if scroll difference is significant
       if (scrollDifference > 10 && containerRef.current) {
         const rect = containerRef.current.getBoundingClientRect()
         const isInViewport = rect.top < window.innerHeight && rect.bottom > 0
-        
+
         // Change direction only when component is in viewport
         if (isInViewport) {
           setScrollDirection(currentScrollY > lastScrollY ? 'down' : 'up')
         }
-        
+
         setLastScrollY(currentScrollY)
       }
     }
@@ -185,15 +185,13 @@ export default function HomeMainFeatures() {
     const isFullWidth = index === 0 || index === 3
     const cardBgColor = isDarkMode ? card.darkModeBgColor : card.bgColor
     const isGreenCard = cardBgColor === COLORS.dark.green
-    const imageSize = isFullWidth 
-      ? CARD_SIZES.desktop.fullWidth 
-      : CARD_SIZES.desktop.halfWidth
-    
+    const imageSize = isFullWidth ? CARD_SIZES.desktop.fullWidth : CARD_SIZES.desktop.halfWidth
+
     // Determine text colors based on card type and theme
     const titleColor = isGreenCard || isDarkMode ? 'common.white' : 'text.primary'
-    const textColor = (isGreenCard || isDarkMode) ? 'common.white' : 'text.primary'
+    const textColor = isGreenCard || isDarkMode ? 'common.white' : 'text.primary'
     const descColor = isGreenCard ? 'common.white' : 'text.secondary'
-    
+
     return (
       <Card
         sx={{
@@ -203,13 +201,13 @@ export default function HomeMainFeatures() {
           color: textColor,
           height: '100%',
           display: 'flex',
-          flexDirection: { 
-            xs: 'column', 
-            md: isFullWidth ? 'row' : 'column' 
+          flexDirection: {
+            xs: 'column',
+            md: isFullWidth ? 'row' : 'column'
           },
-          alignItems: { 
-            xs: 'center', 
-            md: isFullWidth ? 'center' : 'center' 
+          alignItems: {
+            xs: 'center',
+            md: isFullWidth ? 'center' : 'center'
           },
           borderRadius: 2,
           position: 'relative'
@@ -227,10 +225,7 @@ export default function HomeMainFeatures() {
             zIndex: 1
           }}
         >
-          <Typography
-            variant='h5'
-            sx={{ mb: 2, color: titleColor, fontWeight: 'bold' }}
-          >
+          <Typography variant='h5' sx={{ mb: 2, color: titleColor, fontWeight: 'bold' }}>
             {card.title}
           </Typography>
 
@@ -247,7 +242,7 @@ export default function HomeMainFeatures() {
 
         {/* Card image */}
         <Box
-          sx={{ 
+          sx={{
             order: { xs: -1, md: isFullWidth ? 1 : -1 },
             mb: { xs: 3, md: isFullWidth ? 0 : 3 },
             display: 'flex',
@@ -265,8 +260,8 @@ export default function HomeMainFeatures() {
             component='img'
             src={card.icon}
             alt={card.title}
-            sx={{ 
-              width: { xs: CARD_SIZES.mobile, md: imageSize }, 
+            sx={{
+              width: { xs: CARD_SIZES.mobile, md: imageSize },
               height: { xs: CARD_SIZES.mobile, md: imageSize },
               objectFit: 'contain'
             }}
@@ -283,10 +278,7 @@ export default function HomeMainFeatures() {
         mb: -12
       }}
     >
-      <Container
-        component={MotionViewport}
-        sx={{ py: { xs: 10, md: 15 } }}
-      >
+      <Container component={MotionViewport} sx={{ py: { xs: 10, md: 15 } }}>
         {/* Section title with underline highlight */}
         <Stack
           spacing={3}
@@ -295,26 +287,23 @@ export default function HomeMainFeatures() {
             mb: { xs: 5, md: 10 }
           }}
         >
-          <m.div 
-            initial="hidden"
-            whileInView="visible"
+          <m.div
+            initial='hidden'
+            whileInView='visible'
             viewport={{ once: false, margin: '-20% 0px' }}
             variants={ANIMATIONS.title}
           >
-            <Typography 
-              variant='h2' 
-              sx={{ color: isDarkMode ? 'common.white' : 'text.primary' }}
-            >
-              <Box component="span" ref={titleRef}>
+            <Typography variant='h2' sx={{ color: isDarkMode ? 'common.white' : 'text.primary' }}>
+              <Box component='span' ref={titleRef}>
                 {titleText}
               </Box>
               <Box
-                component="span"
+                component='span'
                 sx={{
                   position: 'relative',
                   display: 'inline-flex',
                   flexDirection: 'column',
-                  alignItems: 'center',
+                  alignItems: 'center'
                 }}
               >
                 <Box
@@ -322,10 +311,10 @@ export default function HomeMainFeatures() {
                     position: 'absolute',
                     bottom: -40,
                     left: lastWordWidth > 0 ? `-${lastWordWidth}px` : 0,
-                    zIndex: 1,
+                    zIndex: 1
                   }}
                 >
-                  <SingleWordHighlight size="lg" width={lastWordWidth} />
+                  <SingleWordHighlight size='lg' width={lastWordWidth} />
                 </Box>
               </Box>
             </Typography>
@@ -336,13 +325,13 @@ export default function HomeMainFeatures() {
         <m.div
           ref={containerRef}
           variants={scrollDirection === 'down' ? ANIMATIONS.containerDown : ANIMATIONS.containerUp}
-          initial="hidden"
-          whileInView="visible"
+          initial='hidden'
+          whileInView='visible'
           viewport={{ once: false, amount: 0.2 }}
         >
           <Box
             gap={{ xs: 3, lg: 7 }}
-            display="grid"
+            display='grid'
             sx={{
               gridTemplateColumns: {
                 xs: '1fr',
@@ -378,8 +367,8 @@ export default function HomeMainFeatures() {
           position: 'relative',
           zIndex: 10,
           ...(isDarkMode && {
-            backgroundColor: COLORS.dark.background,
-          }),
+            backgroundColor: COLORS.dark.background
+          })
         }}
       />
     </Box>

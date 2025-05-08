@@ -9,7 +9,6 @@ import Typography from '@mui/material/Typography'
 
 import { useTranslate } from 'src/locales'
 
-
 // ----------------------------------------------------------------------
 
 const GREEN_COLOR = 'hsla(147, 41%, 21%, 1)'
@@ -18,7 +17,7 @@ const StyledRoot = styled('div')(({ theme }) => ({
   backgroundColor: GREEN_COLOR,
   padding: 30,
   overflow: 'hidden',
-  position: 'relative',
+  position: 'relative'
 }))
 
 const StyledButton = styled(Button)(({ theme }) => ({
@@ -28,12 +27,12 @@ const StyledButton = styled(Button)(({ theme }) => ({
   fontSize: '1rem',
   borderRadius: theme.shape.borderRadius * 1.5,
   '&:hover': {
-    backgroundColor: theme.palette.grey[100],
+    backgroundColor: theme.palette.grey[100]
   },
   padding: theme.spacing(1.2, 4),
   [theme.breakpoints.down('md')]: {
-    fontSize: '0.9rem',
-  },
+    fontSize: '0.9rem'
+  }
 }))
 
 const VideoWrapper = styled(Box)(({ theme }) => ({
@@ -49,16 +48,16 @@ const VideoWrapper = styled(Box)(({ theme }) => ({
     left: 0,
     width: '100%',
     height: '100%',
-    border: 0,
-  },
+    border: 0
+  }
 }))
 
 // Animation configurations
 const ANIMATIONS = {
   video: {
     hidden: { opacity: 0, x: -50 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       x: 0,
       transition: {
         duration: 0.8,
@@ -68,8 +67,8 @@ const ANIMATIONS = {
   },
   content: {
     hidden: { opacity: 0, x: 50 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       x: 0,
       transition: {
         duration: 0.8,
@@ -79,8 +78,8 @@ const ANIMATIONS = {
   },
   title: {
     hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
       transition: {
         duration: 0.6,
@@ -90,8 +89,8 @@ const ANIMATIONS = {
   },
   description: {
     hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
       transition: {
         duration: 0.6,
@@ -102,8 +101,8 @@ const ANIMATIONS = {
   },
   button: {
     hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
       transition: {
         duration: 0.6,
@@ -118,68 +117,79 @@ export default function HomeCTA() {
   const { t } = useTranslate()
 
   const handleChatStart = () => {
-    window.open('https://wa.me/5491164629653?text=Hi!%20I%20want%20to%20create%20an%20account', '_blank')
+    window.open(
+      'https://wa.me/5491164629653?text=Hi!%20I%20want%20to%20create%20an%20account',
+      '_blank'
+    )
   }
 
   return (
     <StyledRoot>
-      <Container 
-        sx={{ 
+      <Container
+        sx={{
           position: 'relative',
           px: { xs: 2, md: 0 },
           width: '100%',
-          maxWidth: { lg: '100%'},
+          maxWidth: { lg: '100%' },
           py: 12
         }}
       >
-        <Grid 
-          container 
+        <Grid
+          container
           spacing={{ xs: 3, md: 5 }}
-          alignItems="center"
-          justifyContent="space-between"
+          alignItems='center'
+          justifyContent='space-between'
           direction={{ xs: 'column', md: 'row' }}
           sx={{ position: 'relative' }}
         >
-          <Grid xs={12} md={6} sx={{ 
-            py: { xs: 2, md: 8 },
-            px: { xs: 2, md: 5 }
-          }}>
-            <m.div 
-              initial="hidden"
-              whileInView="visible"
+          <Grid
+            xs={12}
+            md={6}
+            sx={{
+              py: { xs: 2, md: 8 },
+              px: { xs: 2, md: 5 }
+            }}
+          >
+            <m.div
+              initial='hidden'
+              whileInView='visible'
               viewport={{ once: false, margin: '-100px' }}
               variants={ANIMATIONS.video}
             >
               <VideoWrapper>
-                <iframe 
-                  src="https://www.youtube.com/embed/d6qzonFP8gc?si=0-uCWfEZbFG7BoqX" 
-                  title="YouTube video player" 
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                  referrerPolicy="strict-origin-when-cross-origin" 
+                <iframe
+                  src='https://www.youtube.com/embed/d6qzonFP8gc?si=0-uCWfEZbFG7BoqX'
+                  title='YouTube video player'
+                  allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
+                  referrerPolicy='strict-origin-when-cross-origin'
                   allowFullScreen
                 />
               </VideoWrapper>
             </m.div>
           </Grid>
 
-          <Grid xs={12} md={6} sx={{ 
-            textAlign: { xs: 'center', md: 'left' },
-            py: { xs: 4, md: 8 },
-            px: { xs: 2, md: 5 }
-          }}>
-            <m.div 
-              initial="hidden"
-              whileInView="visible" 
+          <Grid
+            xs={12}
+            md={6}
+            sx={{
+              textAlign: { xs: 'center', md: 'left' },
+              py: { xs: 4, md: 8 },
+              px: { xs: 2, md: 5 }
+            }}
+          >
+            <m.div
+              initial='hidden'
+              whileInView='visible'
               viewport={{ once: false, margin: '-100px' }}
               variants={ANIMATIONS.content}
             >
               <m.div variants={ANIMATIONS.title}>
                 <Typography
-                  variant="h3"
+                  variant='h3'
                   sx={{
                     mb: 3,
                     color: 'common.white',
-                    fontWeight: 700,
+                    fontWeight: 700
                   }}
                 >
                   {t('home.cta.title_new')}
@@ -191,7 +201,7 @@ export default function HomeCTA() {
                   sx={{
                     mb: 4,
                     color: 'common.white',
-                    opacity: 0.8,
+                    opacity: 0.8
                   }}
                 >
                   {t('home.cta.description')}
@@ -206,15 +216,17 @@ export default function HomeCTA() {
                 }}
               >
                 <m.div variants={ANIMATIONS.button}>
-                  <StyledButton 
-                    variant="contained"
-                    endIcon={<Box
-                      component="img"
-                      src="/assets/icons/home/landing_resources/button_arrow.svg"
-                      alt="Arrow"
-                      className="arrow-icon"
-                      sx={{ width: 18, height: 18 }}
-                    />}
+                  <StyledButton
+                    variant='contained'
+                    endIcon={
+                      <Box
+                        component='img'
+                        src='/assets/icons/home/landing_resources/button_arrow.svg'
+                        alt='Arrow'
+                        className='arrow-icon'
+                        sx={{ width: 18, height: 18 }}
+                      />
+                    }
                     onClick={handleChatStart}
                   >
                     {t('home.cta.button')}
@@ -227,4 +239,4 @@ export default function HomeCTA() {
       </Container>
     </StyledRoot>
   )
-} 
+}

@@ -26,9 +26,9 @@ export default function HomeFaQ() {
 
   const renderDescription = (
     <Stack spacing={3} sx={{ mb: 10, textAlign: 'center' }}>
-      <m.div 
-        initial={{ opacity: 0, y: 40 }} 
-        whileInView={{ opacity: 1, y: 0 }} 
+      <m.div
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
         viewport={{ once: false, margin: '-150px' }}
       >
@@ -37,9 +37,9 @@ export default function HomeFaQ() {
         </Typography>
       </m.div>
 
-      <m.div 
-        initial={{ opacity: 0, y: -40 }} 
-        whileInView={{ opacity: 1, y: 0 }} 
+      <m.div
+        initial={{ opacity: 0, y: -40 }}
+        whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
         viewport={{ once: false, margin: '-150px' }}
       >
@@ -49,18 +49,18 @@ export default function HomeFaQ() {
   )
 
   const renderFaQ = (
-    <m.div 
-      initial={{ opacity: 0 }} 
-      whileInView={{ opacity: 1 }} 
+    <m.div
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
       viewport={{ once: false, margin: '-150px' }}
     >
       {_faqs &&
         _faqs.map((accordion: any, index: number) => (
-          <m.div 
-            key={accordion.id} 
-            initial={{ opacity: 0, y: 20 }} 
-            whileInView={{ opacity: 1, y: 0 }} 
+          <m.div
+            key={accordion.id}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: index * 0.03 }}
             viewport={{ once: false, margin: '-150px' }}
           >

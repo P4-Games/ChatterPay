@@ -10,7 +10,6 @@ import { alpha, useTheme } from '@mui/material/styles'
 
 import { useTranslate } from 'src/locales'
 
-
 // ----------------------------------------------------------------------
 
 // Animation variants
@@ -22,7 +21,7 @@ const ANIMATIONS = {
       transition: { staggerChildren: 0.1 }
     }
   },
-  
+
   // Individual award animation
   award: {
     hidden: { opacity: 0, y: 30, scale: 0.9 },
@@ -36,7 +35,7 @@ const ANIMATIONS = {
       }
     }
   },
-  
+
   // Title animation
   title: {
     hidden: { opacity: 0, y: 40 },
@@ -59,8 +58,8 @@ export default function HomeAwards() {
   const [lastScrollY, setLastScrollY] = useState(0)
 
   // Estandarizar la altura del contenedor, no de los iconos
-  const STANDARD_CONTAINER_HEIGHT = 100;
-  const STANDARD_CONTAINER_MIN_WIDTH = 180;
+  const STANDARD_CONTAINER_HEIGHT = 100
+  const STANDARD_CONTAINER_MIN_WIDTH = 180
 
   const AWARDS = [
     { name: 'Scroll', image: '/assets/images/home/awards/scroll.svg', height: 40 },
@@ -79,17 +78,17 @@ export default function HomeAwards() {
     const handleScroll = () => {
       const currentScrollY = window.scrollY
       const scrollDifference = Math.abs(currentScrollY - lastScrollY)
-      
+
       // Only update if scroll difference is significant
       if (scrollDifference > 10 && containerRef.current) {
         const rect = containerRef.current.getBoundingClientRect()
         const isInViewport = rect.top < window.innerHeight && rect.bottom > 0
-        
+
         // Change direction only when component is in viewport
         if (isInViewport) {
           setScrollDirection(currentScrollY > lastScrollY ? 'down' : 'up')
         }
-        
+
         setLastScrollY(currentScrollY)
       }
     }
@@ -120,13 +119,13 @@ export default function HomeAwards() {
     >
       <Container>
         <Stack spacing={3} sx={{ textAlign: 'center', mb: 6 }}>
-          <m.div 
-            initial="hidden"
-            whileInView="visible"
+          <m.div
+            initial='hidden'
+            whileInView='visible'
             viewport={{ once: false, margin: '-100px' }}
             variants={ANIMATIONS.title}
           >
-            <Typography variant="h3">
+            <Typography variant='h3'>
               {t('home.awards.title', { defaultValue: 'Awarded by the best:' })}
             </Typography>
           </m.div>
@@ -134,45 +133,45 @@ export default function HomeAwards() {
 
         <m.div
           ref={containerRef}
-          initial="hidden"
-          whileInView="visible"
+          initial='hidden'
+          whileInView='visible'
           viewport={{ once: false, margin: '-100px' }}
           variants={containerAnimation}
         >
-          <Grid 
-            container 
-            spacing={{ xs: 3, md: 4 }} 
-            justifyContent="center" 
-            alignItems="center" 
-            sx={{ 
-              position: 'relative', 
+          <Grid
+            container
+            spacing={{ xs: 3, md: 4 }}
+            justifyContent='center'
+            alignItems='center'
+            sx={{
+              position: 'relative',
               right: '-',
-              mx: 'auto',
+              mx: 'auto'
             }}
           >
             {AWARDS.map((award, index) => (
-              <Grid 
-                key={award.name} 
-                item 
-                xs={6} 
-                sm={4} 
-                md={2.4} 
-                sx={{ 
-                  display: 'flex', 
+              <Grid
+                key={award.name}
+                item
+                xs={6}
+                sm={4}
+                md={2.4}
+                sx={{
+                  display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
+                  justifyContent: 'center'
                 }}
               >
-                <m.div 
+                <m.div
                   variants={ANIMATIONS.award}
-                  style={{ 
+                  style={{
                     width: '100%',
                     display: 'flex',
                     justifyContent: 'center',
-                    alignItems: 'center',
+                    alignItems: 'center'
                   }}
                 >
-                  <Box 
+                  <Box
                     sx={{
                       position: 'relative',
                       display: 'flex',
@@ -194,13 +193,13 @@ export default function HomeAwards() {
                           borderRadius: 2,
                           backgroundColor: alpha('#fff', 0.15),
                           border: `1px solid ${alpha('#9e9e9e', 0.2)}`,
-                          zIndex: 0,
+                          zIndex: 0
                         }
                       })
                     }}
                   >
                     <Box
-                      component="img"
+                      component='img'
                       src={award.image}
                       alt={award.name}
                       sx={{
@@ -215,7 +214,7 @@ export default function HomeAwards() {
                         margin: 0,
                         filter: theme.palette.mode === 'dark' ? 'brightness(1.8)' : 'none',
                         position: 'relative',
-                        zIndex: 1,
+                        zIndex: 1
                       }}
                     />
                   </Box>
@@ -231,16 +230,15 @@ export default function HomeAwards() {
         sx={{
           height: 64,
           width: '100%',
-          backgroundColor: theme.palette.mode === 'dark' 
-            ? theme.palette.background.default 
-            : '#F4F6F8',
+          backgroundColor:
+            theme.palette.mode === 'dark' ? theme.palette.background.default : '#F4F6F8',
           borderTopLeftRadius: 0,
           borderTopRightRadius: 0,
           borderBottomLeftRadius: 32,
           borderBottomRightRadius: 32,
           bottom: -12,
           position: 'relative',
-          zIndex: 10,
+          zIndex: 10
         }}
       />
     </Box>
