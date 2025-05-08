@@ -18,12 +18,13 @@ import { varFade, MotionContainer } from 'src/components/animate'
 // ----------------------------------------------------------------------
 
 const GREEN_COLOR = 'hsla(147, 41%, 21%, 1)'
-const BG_COLOR = '#f5f7f6'
 
 const StyledRoot = styled('div')(({ theme }) => ({
   width: '100%',
   position: 'relative',
-  backgroundColor: BG_COLOR,
+  backgroundColor: theme.palette.mode === 'dark' 
+    ? theme.palette.background.default 
+    : theme.palette.background.neutral,
   [theme.breakpoints.up('md')]: {
     top: 0,
     left: 0,
@@ -48,13 +49,15 @@ const StyledImagePlaceholder = styled(Box)(({ theme }) => ({
 const StyledIcon = styled('img')(({ theme }) => ({
   position: 'absolute',
   zIndex: 1,
-  opacity: 0.5
+  opacity: 0.5,
+  filter: theme.palette.mode === 'dark' ? 'brightness(10)' : 'none',
 }))
 
 const StyledMobileIcon = styled('img')(({ theme }) => ({
   position: 'absolute',
   zIndex: 1,
-  opacity: 0.8
+  opacity: 0.8,
+  filter: theme.palette.mode === 'dark' ? 'brightness(10)' : 'none',
 }))
 
 const StyledCreateButton = styled(Button)(({ theme }) => ({
@@ -103,9 +106,10 @@ const MobileIcons = () => (
     
     <StyledMobileIcon
       src="/assets/icons/home/landing_resources/hero_arrow_inbound.svg"
-      sx={{ position: 'absolute', top: '35%', right: '-25%' }}
       alt="arrow inbound"
+      sx={{ position: 'absolute', top: '35%', right: '-25%' }}
     />
+    
     <StyledMobileIcon
       src="/assets/icons/home/landing_resources/hero_note.svg"
       alt="dollar note"
@@ -118,6 +122,7 @@ const MobileIcons = () => (
       alt="chart"
       sx={{ position: 'absolute', bottom: '60%', left: '-25%'}}
     />
+    
     <StyledMobileIcon
       src="/assets/icons/home/landing_resources/hero_swap.svg"
       alt="swap"
@@ -135,11 +140,13 @@ const DesktopIcons = () => (
       alt="arrow outbound"
       sx={{ top: '25%', left: '80%' }}
     />
+    
     <StyledIcon
       src="/assets/icons/home/landing_resources/hero_arrow_inbound.svg"
       alt="arrow inbound"
       sx={{ top: '40%', left:'80%' }}
     />
+    
     <StyledIcon
       src="/assets/icons/home/landing_resources/hero_note.svg"
       alt="dollar note"
@@ -152,6 +159,7 @@ const DesktopIcons = () => (
       alt="chart"
       sx={{ top: '35%', right: '80%' }}
     />
+    
     <StyledIcon
       src="/assets/icons/home/landing_resources/hero_swap.svg"
       alt="swap"
