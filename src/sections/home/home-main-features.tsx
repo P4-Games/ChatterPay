@@ -110,7 +110,7 @@ const ANIMATIONS = {
       y: 0,
       transition: {
         duration: 0.5,
-        ease: "easeOut"
+        ease: 'easeOut'
       }
     }
   }
@@ -153,41 +153,41 @@ export default function HomeMainFeatures() {
 
   // Handle scroll direction detection
   useEffect(() => {
-    let isScrolling = false;
-    
+    let isScrolling = false
+
     const handleScroll = () => {
       // Skip if already processing a scroll event
-      if (isScrolling) return;
-      
+      if (isScrolling) return
+
       // Set flag to avoid multiple rapid updates
-      isScrolling = true;
-      
+      isScrolling = true
+
       // Use requestAnimationFrame for smoother updates
       window.requestAnimationFrame(() => {
-        const currentScrollY = window.scrollY;
-        const scrollDifference = Math.abs(currentScrollY - lastScrollY);
+        const currentScrollY = window.scrollY
+        const scrollDifference = Math.abs(currentScrollY - lastScrollY)
 
         // Only update if scroll difference is significant and in viewport
         if (scrollDifference > 20 && containerRef.current) {
-          const rect = containerRef.current.getBoundingClientRect();
-          const isInViewport = rect.top < window.innerHeight && rect.bottom > 0;
+          const rect = containerRef.current.getBoundingClientRect()
+          const isInViewport = rect.top < window.innerHeight && rect.bottom > 0
 
           // Change direction only when component is in viewport
           if (isInViewport) {
-            setScrollDirection(currentScrollY > lastScrollY ? 'down' : 'up');
+            setScrollDirection(currentScrollY > lastScrollY ? 'down' : 'up')
           }
 
-          setLastScrollY(currentScrollY);
+          setLastScrollY(currentScrollY)
         }
-        
-        // Reset flag
-        isScrolling = false;
-      });
-    };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+        // Reset flag
+        isScrolling = false
+      })
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [lastScrollY])
 
   // Render a feature card
   const renderCard = (card: CardType, index: number) => {
