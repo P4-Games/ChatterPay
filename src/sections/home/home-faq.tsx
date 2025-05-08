@@ -9,7 +9,6 @@ import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material'
 import { useTranslate } from 'src/locales'
 
 import Iconify from 'src/components/iconify'
-import { varFade, MotionViewport } from 'src/components/animate'
 
 // ----------------------------------------------------------------------
 
@@ -27,33 +26,56 @@ export default function HomeFaQ() {
 
   const renderDescription = (
     <Stack spacing={3} sx={{ mb: 10, textAlign: 'center' }}>
-      <m.div variants={varFade().inUp}>
+      <m.div 
+        initial={{ opacity: 0, y: 40 }} 
+        whileInView={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 0.5 }}
+        viewport={{ once: false, margin: '-100px' }}
+      >
         <Typography component='div' variant='overline' sx={{ mb: 2, color: 'text.disabled' }}>
           {t('home.faq.tag')}
         </Typography>
       </m.div>
 
-      <m.div variants={varFade().inDown}>
+      <m.div 
+        initial={{ opacity: 0, y: -40 }} 
+        whileInView={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 0.5 }}
+        viewport={{ once: false, margin: '-100px' }}
+      >
         <Typography variant='h2'> {t('home.faq.title')}</Typography>
       </m.div>
     </Stack>
   )
 
   const renderFaQ = (
-    <div>
+    <m.div 
+      initial={{ opacity: 0 }} 
+      whileInView={{ opacity: 1 }} 
+      transition={{ duration: 0.5 }}
+      viewport={{ once: false, margin: '-100px' }}
+    >
       {_faqs &&
-        _faqs.map((accordion: any) => (
-          <Accordion key={accordion.id}>
-            <AccordionSummary expandIcon={<Iconify icon='eva:arrow-ios-downward-fill' />}>
-              <Typography variant='subtitle1'>{accordion.question}</Typography>
-            </AccordionSummary>
+        _faqs.map((accordion: any, index: number) => (
+          <m.div 
+            key={accordion.id} 
+            initial={{ opacity: 0, y: 20 }} 
+            whileInView={{ opacity: 1, y: 0 }} 
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+            viewport={{ once: false, margin: '-100px' }}
+          >
+            <Accordion>
+              <AccordionSummary expandIcon={<Iconify icon='eva:arrow-ios-downward-fill' />}>
+                <Typography variant='subtitle1'>{accordion.question}</Typography>
+              </AccordionSummary>
 
-            <AccordionDetails>
-              <Typography>{accordion.answer}</Typography>
-            </AccordionDetails>
-          </Accordion>
+              <AccordionDetails>
+                <Typography>{accordion.answer}</Typography>
+              </AccordionDetails>
+            </Accordion>
+          </m.div>
         ))}
-    </div>
+    </m.div>
   )
 
   return (
@@ -62,7 +84,7 @@ export default function HomeFaQ() {
         py: { xs: 10, md: 15 }
       }}
     >
-      <Container component={MotionViewport}>
+      <Container>
         {renderDescription}
 
         {renderFaQ}
