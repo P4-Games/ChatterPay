@@ -9,12 +9,11 @@ import MainLayout from 'src/layouts/main'
 import ScrollProgress from 'src/components/scroll-progress'
 
 import HomeFaQ from '../home-faq'
+import HomeCTA from '../home-cta'
 import HomeHero from '../home-hero'
-import HomeStackTech from '../home-stack-tech'
-import HomeGetStarted from '../home-get-started'
-import HomeRequestDemo from '../home-request-demo'
-import HomeAllFeatures from '../home-all-features'
+import HomeAwards from '../home-awards'
 import HomeMainFeatures from '../home-main-features'
+import HomeFiatTransfer from '../home-fiat-transfer'
 
 // ----------------------------------------------------------------------
 
@@ -35,15 +34,13 @@ export default function HomeView() {
       >
         <HomeMainFeatures />
 
-        <HomeAllFeatures />
-
-        <HomeRequestDemo />
-
-        <HomeStackTech />
+        <HomeFiatTransfer />
 
         <HomeFaQ />
 
-        <HomeGetStarted />
+        <HomeAwards />
+
+        <HomeCTA />
       </Box>
     </MainLayout>
   )

@@ -103,8 +103,8 @@
   },
   "home": {
     "header": {
-      "sign-up": "Crie sua conta",
-      "sign-in": "Entrar"
+      "sign-in": "Painel",
+      "about-us": "Sobre Nós"
     },
     "help": {
       "need-help": "Precisa de ajuda?"
@@ -128,45 +128,48 @@
       }
     },
     "hero": {
-      "title1": "Enviar dinheiro",
+      "title1": "Envie Dinheiro",
       "title2": "com uma mensagem",
-      "legend": "Transfira criptomoedas facilmente pelo WhatsApp usando nossa plataforma Web3."
-    },
-    "main-features": {
-      "tag": "Principais Funcionalidades",
-      "title1": "Como ChatterPay",
-      "title2": "pode te ajudar?",
-      "card-1": {
-        "title": "Tornar invisível a complexidade do blockchain",
-        "description": "Esconda frases secretas, pop-ups de aprovação de transações e patrocine taxas de gás para transações. Nós lidamos com todos os aspectos técnicos para você."
-      },
-      "card-2": {
-        "title": "Transferir dinheiro facilmente",
-        "description": "Basta enviar uma mensagem de texto via WhatsApp para transferir, receber, trocar e armazenar valor."
-      },
-      "card-3": {
-        "title": "Solicite pagamentos facilmente",
-        "description": "Solicite pagamentos em criptomoedas via WhatsApp. Emita faturas dinâmicas, receba pagamentos em várias moedas e receba notificações ao serem concluídos."
+      "legend": "Transfira criptomoedas facilmente através do WhatsApp usando nossa plataforma Web3.",
+      "new": {
+        "title": "Envie e receba cripto com WhatsApp",
+        "button": "Criar minha conta gratis!"
       }
     },
-    "all-features": {
-      "tag": "Funcionalidades",
-      "title": "Descubra todas as funcionalidades",
-      "features": {
-        "f1": "Transferir fundos para qualquer contato do WhatsApp",
-        "f2": "Receber pagamentos e transferências diretamente no seu WhatsApp",
-        "f3": "Trocar facilmente entre diferentes tokens de maneira amigável ao usuário",
-        "f4": "Manter seus tokens de forma segura mantendo o controle total sobre seus ativos",
-        "f5": "Painel para acompanhamento de saldo e histórico de transações",
-        "f6": "Painel de Administração Interna",
-        "f6-2": "para supervisar e gerenciar contas de usuário",
-        "f7": "Suporte personalizado e eficiente",
-        "f8": "MFA baseado no WhatsApp para autenticação de WebApp",
-        "f9": "MFA baseado em e-mail para recuperação de conta",
-        "f10": "Notificações de transações",
-        "f11": "Gestão e pagamento de taxas",
-        "f12": "Processamento de mensagens multiagente",
-        "f13": "Gestão de chaves privadas com Tecnologia de Abstração de Contas"
+    "fiat-transfer": {
+      "title": "Receba e envie #currency# como um profissional.",
+      "description": "Em breve você poderá receber, converter e enviar moeda fiat para Argentina, Chile, Brasil, Colômbia, México, Costa Rica, Guatemala, Filipinas.",
+      "button": "Vamos movimentar algum fiat",
+      "whatsapp_msg": "Eu gostaria de comprar crypto com fiat!",
+      "currencies": [
+        "pesos argentinos",
+        "dólares",
+        "pesos chilenos",
+        "reais",
+        "pesos colombianos",
+        "pesos mexicanos",
+        "colones",
+        "quetzales",
+        "pesos filipinos"
+      ]
+    },
+    "main-features": {
+      "title1": "Com ChatterPay, o dinheiro é simples.",
+      "card-1": {
+        "title": "Envie dinheiro para seus contatos em todo o mundo instantaneamente",
+        "description": "Envie dinheiro para qualquer lugar do mundo, instantaneamente sem bancos e com taxas baixas. Se seus contatos têm WhatsApp, eles têm ChatterPay."
+      },
+      "card-2": {
+        "title": "Crypto e DeFi, a uma mensagem de distância",
+        "description": "Compre, venda e mantenha criptomoedas como Bitcoin, Ethereum ou Stablecoins com apenas uma mensagem de texto ou áudio."
+      },
+      "card-3": {
+        "title": "Emita certificados com apenas uma foto",
+        "description": "Crie certificados fotográficos onde você pode certificar a data de emissão, e não podem ser excluídos ou modificados."
+      },
+      "card-4": {
+        "title": "A maneira mais barata de enviar dinheiro para o exterior",
+        "description": "Crie sua conta agora gratuitamente, para sempre. Sem taxas de manutenção. Taxa fixa baixa por transferência."
       }
     },
     "request-demo": {
@@ -175,88 +178,49 @@
       "description1": "Entre em contato com nossa equipe para uma demonstração do produto.",
       "description2": "É a carteira que você precisa para entrar no mundo Web3."
     },
-    "tech": {
-      "tag": "Tech",
-      "title": "Tecnologias em que Confiamos",
-      "cards": {
-        "ethereum": {
-          "title": "Ethereum",
-          "description": "Blockchain de camada 1 para contratos inteligentes e aplicações descentralizadas. Garante a segurança das transações."
-        },
-        "scroll": {
-          "title": "Scroll",
-          "description": "Solução de camada 2 para Ethereum, oferecendo transações mais rápidas e econômicas. Projetada para melhorar a eficiência e usabilidade."
-        },
-        "whatsapp": {
-          "title": "WhatsApp",
-          "description": "Plataforma global de mensagens para comunicação. Fornece mensagens seguras e integração fácil com outros serviços."
-        },
-        "openai": {
-          "title": "OpenAI",
-          "description": "Plataforma de IA que compreende e gera texto semelhante ao humano. Impulsiona capacidades avançadas de processamento de linguagem."
-        },
-        "icp": {
-          "title": "ICP",
-          "description": "O ICP oferece infraestrutura descentralizada, simples, imune a ataques cibernéticos, imparável e controlada por DAOs."
-        },
-        "account-abstraction": {
-          "title": "Abstração de Conta",
-          "description": "Permite interagir com blockchains sem a necessidade de criptomoedas específicas. Melhora a flexibilidade e usabilidade para os usuários."
-        }
-      }
-    },
     "faq": {
       "tag": "FaQ",
       "title": "Perguntas frequentes",
-      "still-title": "Ainda tem perguntas?",
-      "still-description": "Por favor, descreva seu caso para receber o conselho mais preciso.",
       "faqs": {
         "faq1": {
-          "question": "O que é ChatterPay?",
-          "answer": "ChatterPay é uma carteira para WhatsApp que integra IA e Abstração de Contas para permitir que qualquer usuário gerencie fundos em blockchain de forma fácil e segura, sem conhecimento técnico."
+          "question": "O que é o ChatterPay?",
+          "answer": "ChatterPay é uma carteira para WhatsApp que permite a qualquer usuário gerenciar fundos em blockchain de forma fácil e segura sem conhecimentos técnicos."
         },
         "faq2": {
           "question": "Como posso criar uma carteira?",
-          "answer": "Para criar uma carteira, você pode fazê-lo diretamente pelo Bot ChatterPay no WhatsApp."
+          "answer": "Para criar uma carteira, você pode fazê-lo diretamente do Bot ChatterPay no WhatsApp, escrevendo algo como 'Gostaria de criar uma conta'. Você pode salvar o seguinte número: {PHONE}. Lembre-se que criar sua conta é 100% gratuito, sem custos de manutenção."
         },
         "faq3": {
-          "question": "Quais são as taxas associadas ao recebimento de pagamentos?",
-          "answer": "ChatterPay cobra uma taxa de 0,01% para cada transferência recebida."
+          "question": "Quais são as taxas?",
+          "answer": "Abrir sua conta é 100% gratuito, sem custos de manutenção. Cobramos apenas uma taxa fixa por transação (swap, transferência) com base no congestionamento da rede, de $0,2 USD a $0,5 USD por transação."
         },
         "faq4": {
           "question": "Posso trocar entre diferentes tokens?",
-          "answer": "Sim, você pode trocar entre USDT, DAI, MATIC, ETH, BTC, ADA e DOT sem limites de transação."
+          "answer": "Sim, você pode trocar entre USDT, USDC, WBTC, WETH e mais moedas sem limites de transação."
         },
         "faq5": {
-          "question": "Como posso verificar meu saldo e transações?",
-          "answer": "Você pode verificar seu saldo e transações a qualquer momento através do nosso painel em https://chatterpay.vercel.app/."
+          "question": "Onde a chave privada da minha carteira é armazenada?",
+          "answer": "Sua chave privada é armazenada com segurança usando a tecnologia de Abstração de Conta em uma blockchain de camada 2 chamada Scroll, garantindo alta segurança e controle do usuário."
         },
         "faq6": {
-          "question": "O que acontece se eu perder meus tokens?",
-          "answer": "O sistema é descentralizado e o usuário é totalmente responsável por gerenciar suas contas. Não oferecemos seguro ou suporte em caso de perdas devido a erros do usuário."
-        },
+          "question": "Como faço login no site?",
+          "answer": "Digite seu número de telefone registrado. Um código de 6 dígitos será enviado para seu telefone por segurança; depois de inserí-lo, você poderá acessar o site."
+        },  
         "faq7": {
-          "question": "Onde posso obter mais informações sobre como usar o ChatterPay?",
-          "answer": "Você pode visitar nosso aplicativo da web em https://chatterpay.vercel.app/ para mais informações e guias futuros."
-        },
-        "faq8": {
-          "question": "Onde está armazenada a chave privada da minha carteira?",
-          "answer": "Sua chave privada é armazenada de forma segura usando a tecnologia de Abstração de Contas em uma blockchain de camada 2 chamada Scroll com a tecnologia 'KeyStore', garantindo alta segurança e controle do usuário."
-        },
-        "faq9": {
-          "question": "O que posso fazer no site?",
-          "answer": "Você pode ver o saldo da sua carteira, verificar seu histórico de transações, ver o endereço da sua carteira e ver as informações do seu usuário."
-        },
-        "faq10": {
-          "question": "Como faço para fazer login no site?",
-          "answer": "Digite seu número de telefone registrado. Um código de 6 dígitos será enviado para o seu telefone por segurança; depois de inseri-lo, você poderá acessar o site."
+          "question": "Como posso entrar em contato com a equipe do ChatterPay?",
+          "answer": "Através do mesmo chat do WhatsApp {PHONE}, você pode solicitar suporte a qualquer momento e responderemos o mais rápido possível."
         }
       }
     },
-    "get-started": {
-      "title": "Comece com",
-      "description": "Todo o poder do Web3 sem complicações.",
-      "cta": "Cadastre-se agora"
+    "awards": {
+      "title": "Premiado pelos melhores:"
+    },
+    "cta": {
+      "title": "Simplifique seu dinheiro. Para sempre. Em segundos.",
+      "title_new": "Simplifique seu dinheiro como Martín. Em segundos, para sempre.",
+      "description": "Sem novos aplicativos. Sem curvas de aprendizado. Apenas envie algumas mensagens e tome o controle de suas finanças. Como Martín e mais de 150 usuários já fizeram.",
+      "button": "Comece a conversar agora",
+      "whatsapp_message": "Oi! Eu quero criar uma conta"
     }
   },
   "login": {
@@ -362,6 +326,32 @@
         "no-notifications": "Você não tem novas notificações",
         "error": "Ocorreu um erro ao tentar obter as notificações. Tente novamente mais tarde."
       }
+    }
+  },
+  "aboutUs": {
+    "hero": {
+      "tag": "Sobre Nós",
+      "title": "Nossa Missão",
+      "description": "ChatterPay está revolucionando a forma como as pessoas enviam dinheiro, combinando pagamentos seguros com o aplicativo de mensagens mais usado no mundo. Nossa missão é tornar as criptomoedas simples, a fim de integrar o próximo bilhão de usuários."
+    },
+    "story": {
+      "title": "Nossa História",
+      "text1": "Fundado em 2024, no The Level Up Hackathon da Ethereum Argentina, onde ganhamos o 1º prêmio na trilha Keystore e fomos a equipe mais votada no Quadratic Funding, depois também ganhamos na Ethereum Uruguay e no ICP Chain Fusion Hackathon BA.",
+      "text2": "Durante esses hackathons, iteramos e melhoramos o produto com base em feedback e usuários iniciais.",
+      "text3": "Recentemente, fomos selecionados para o Scroll Open Campus em Kuala Lumpur, Malásia. É lá que vamos lançar a carteira na rede Scroll, continuando nossa missão de tornar as criptomoedas simples e acessíveis para todos."
+    },
+    "team": {
+      "title": "Conheça Nossa Equipe"
+    },
+    "founders": {
+      "martin": "Martin fez a transição de uma formação em direito e negócios para a inovação Web3, fundando várias startups de blockchain e liderando P4 Tech Solutions, Fin Guru, Chronos Pay, Sistem AI, Chatizalo, Hunters Pride e Number One Fan.",
+      "tomas": "Tomás é um desenvolvedor full-stack e especialista em UI/UX, apaixonado por criar soluções blockchain escaláveis e amigáveis ao usuário. Foi Desenvolvedor Líder na FinGurú, desenvolvedor na Argenenergy e consultor na Invicta Ventures.",
+      "diego": "Diego tem mais de 25 anos de experiência em desenvolvimento e arquitetura de software, tendo trabalhado com múltiplas linguagens de programação e implementado soluções em diversas plataformas e ambientes de nuvem. Ele liderou equipes de desenvolvimento de alto desempenho em grandes corporações."
+    },
+    "contact": {
+      "title": "Entre em Contato",
+      "description": "Adoraríamos ouvir de você. Entre em contato com nossa equipe para quaisquer dúvidas, feedback ou necessidades de suporte. Você pode nos contatar por e-mail em",
+      "button": "Converse Conosco no WhatsApp"
     }
   }
 }

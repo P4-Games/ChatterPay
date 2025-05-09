@@ -40,8 +40,8 @@
   },
   "home": {
     "header": {
-      "sign-up": "Create your account",
-      "sign-in": "Sign in"
+      "sign-in": "Dashboard",
+      "about-us": "About Us"
     },
     "help": {
       "need-help": "Need help?"
@@ -67,43 +67,46 @@
     "hero": {
       "title1": "Send Money",
       "title2": "with a message",
-      "legend": "Transfer crypto easily through WhatsApp using our Web3 platform."
-    },
-    "main-features": {
-      "tag": "Main Features",
-      "title1": "How can ChatterPay",
-      "title2": "help you?",
-      "card-1": {
-        "title": "Make the blockchain complexity invisible",
-        "description": "Hide passphrases, transaction approval pop-ups, and sponsor gas fees for transactions. We handle all the technical stuff for you."
-      },
-      "card-2": {
-        "title": "Transfer money easily",
-        "description": "Simply send a text message via WhatsApp to transfer, receive, swap and store value."
-      },
-      "card-3": {
-        "title": "Request Payments effortlessly",
-        "description": "Request Crypto payments via WhatsApp. Issue dynamic invoices, get paid in various currencies, and receive notifications on completion."
+      "legend": "Transfer crypto easily through WhatsApp using our Web3 platform.",
+      "new": {
+        "title": "Send and receive crypto with WhatsApp",
+        "button": "Create my account for free!"
       }
     },
-    "all-features": {
-      "tag": "Functionalities",
-      "title": "Discover all features",
-      "features": {
-        "f1": "Transfer funds to any WhatsApp contact",
-        "f2": "Receive payments and transfers directly in your WhatsApp",
-        "f3": "Easily swap between different tokens in a user-friendly way",
-        "f4": "Securely hold your tokens while maintaining full control over your assets",
-        "f5": "Dashboard for balance and transaction history tracking",
-        "f6": "Internal Administration Panel",
-        "f6-2": "for supervising and managing user accounts",
-        "f7": "Personalized and efficient support",
-        "f8": "WhatsApp-based MFA for WebApp authentication",
-        "f9": "Email-based MFA for account recovery",
-        "f10": "Transaction notifications",
-        "f11": "Fee management and payment",
-        "f12": "Multi-agent message processing",
-        "f13": "Private key management with Account Abstraction Technology"
+    "fiat-transfer": {
+      "title": "Receive and send #currency# like a pro.",
+      "description": "Soon you will be able to receive, convert and send fiat to Argentina, Chile, Brazil, Colombia, Mexico, Costa Rica, Guatemala, Philippines.",
+      "button": "Let's move some fiat",
+      "whatsapp_msg": "I'd like to buy crypto with fiat!",
+      "currencies": [
+        "Argentine pesos",
+        "dollars",
+        "Chilean pesos", 
+        "Brazilian reais", 
+        "Colombian pesos", 
+        "Mexican pesos", 
+        "Costa Rican colones", 
+        "Guatemalan quetzales", 
+        "Filipino pesos"
+      ]
+    },
+    "main-features": {
+      "title1": "With ChatterPay, money is simple.",
+      "card-1": {
+        "title": "Send money to your contacts across the world instantly",
+        "description": "Send money anywhere in the world, instantly with no banks and low fees. If your contacts have WhatsApp, they have ChatterPay."
+      },
+      "card-2": {
+        "title": "Crypto and DeFi, at one message away",
+        "description": "Buy, Sell and Hold crypto such as Bitcoin, Ethereum or Stablecoins with just one text or audio message."
+      },
+      "card-3": {
+        "title": "Issue certificates with just a photo",
+        "description": "Create photo certificates where you can certify the date of issuing, and cannot be deleted or modified."
+      },
+      "card-4": {
+        "title": "The cheapest way to send money abroad",
+        "description": "Create your account now for free, forever. No maintenance fees. Low fixed fee per transfer."
       }
     },
     "request-demo": {
@@ -112,88 +115,49 @@
       "description1": "Contact our team for a product demonstration.",
       "description2": "It's the wallet you need to enter the Web3 world."
     },
-    "tech": {
-      "tag": "Tech",
-      "title": "Technologies We Rely On",
-      "cards": {
-        "ethereum": {
-          "title": "Ethereum",
-          "description": "Layer 1 Blockchain for smart contracts and decentralized applications. Ensures security for transactions."
-        },
-        "scroll": {
-          "title": "Scroll",
-          "description": "Layer 2 blockchain solution for Ethereum, offering faster and cheaper transactions. Designed to improve efficiency and usability."
-        },
-        "whatsapp": {
-          "title": "WhatsApp",
-          "description": "Global messaging platform for communication. Provides secure messaging and easy integration with other services"
-        },
-        "openai": {
-          "title": "OpenAI",
-          "description": "AI platform that understands and generates human-like text. Powers advanced language processing and learning capabilities."
-        },
-        "icp": {
-          "title": "icp",
-          "description": "ICP offers decentralized infrastructure that is simple, immune to cyber attacks, unstoppable, and controlled by DAOs."
-        },
-        "account-abstraction": {
-          "title": "Account Abstraction",
-          "description": "Concept allowing interaction with blockchains without needing specific cryptocurrencies. Enhances flexibility and usability for users."
-        }
-      }
-    },
     "faq": {
       "tag": "FaQ",
       "title": "Frequently asked questions",
-      "still-title": "Still have questions?",
-      "still-description": "Please describe your case to receive the most accurate advice.",
       "faqs": {
         "faq1": {
           "question": "What is ChatterPay?",
-          "answer": "ChatterPay is a Wallet for WhatsApp that integrates AI and Account Abstraction to allow any user to easily and securely manage funds on the blockchain without technical knowledge."
+          "answer": "ChatterPay is a WhatsApp wallet that allows any user to manage blockchain funds easily and securely without technical knowledge."
         },
         "faq2": {
           "question": "How can I create a wallet?",
-          "answer": "To create a wallet, you can do it directly from the ChatterPay Bot on WhatsApp."
+          "answer": "To create a wallet, you can do it directly from the ChatterPay Bot on WhatsApp by typing something like 'I would like to create an account'. You can save the following number: {PHONE}. Remember that creating your account is 100% free, with no maintenance costs."
         },
         "faq3": {
-          "question": "What are the fees associated with receiving payments?",
-          "answer": "ChatterPay charges a 0.01% fee for each received transfer."
+          "question": "What are the fees?",
+          "answer": "Opening your account is 100% free, with no maintenance costs. We only charge a fixed transaction fee (swap, transfer) based on network congestion from $0.2 USD to $0.5 USD per transaction."
         },
         "faq4": {
-          "question": "Can I swap between different tokens?",
-          "answer": "Yes, you can swap between USDT, DAI, MATIC, ETH, BTC, ADA, and DOT without transaction limits."
+          "question": "Can I exchange between different tokens?",
+          "answer": "Yes, you can exchange between USDT, USDC, WBTC, WETH, and more currencies without transaction limits."
         },
         "faq5": {
-          "question": "How can I check my balance and transactions?",
-          "answer": "You can check your balance and transactions at any time through our dashboard at https://chatterpay.vercel.app/."
+          "question": "Where is my wallet's private key stored?",
+          "answer": "Your private key is securely stored using Account Abstraction technology on a layer 2 blockchain called Scroll, ensuring high security and user control."
         },
         "faq6": {
-          "question": "What happens if I lose my tokens?",
-          "answer": "The system is decentralized, and the user is entirely responsible for managing their accounts. We do not offer insurance or support in case of losses due to user error."
-        },
-        "faq7": {
-          "question": "Where can I get more information about how to use ChatterPay?",
-          "answer": "You can visit our WebApp at https://chatterpay.vercel.app/ for more information and future guides."
-        },
-        "faq8": {
-          "question": "Where is my wallet's private key stored?",
-          "answer": "Your private key is stored securely using Account Abstraction technology on a layer 2 blockchain called Scroll with the 'KeyStore' technology, ensuring high security and user control."
-        },
-        "faq9": {
-          "question": "What can I do on the website?",
-          "answer": "You can view your wallet balance, check your transaction history, see your wallet address, and view your user information."
-        },
-        "faq10": {
           "question": "How do I log in to the website?",
-          "answer": "Enter your registered phone number. A 6-digit code will be sent to your phone for security; once you enter it, you will be able to access the site."
+          "answer": "Enter your registered phone number. A 6-digit code will be sent to your phone for security; once you enter it, you can access the site."
+        },  
+        "faq7": {
+          "question": "How can I contact the ChatterPay team?",
+          "answer": "Through the same WhatsApp chat ({PHONE}), you can request support at any time and we will respond as soon as possible."
         }
       }
     },
-    "get-started": {
-      "title": "Get started with",
-      "description": "All the power of Web3 with none of the hassle.",
-      "cta": "Sign Up Now"
+    "awards": {
+      "title": "Awarded by the best:"
+    },
+    "cta": {
+      "title": "Simplify your money. Forever. In seconds.",
+      "title_new": "Simplify your money like Martín. In seconds, forever.",
+      "description": "No new apps. No learning curves. Just send a few messages and take control of your finance. Like Martín and more than 150 chatters already did.",
+      "button": "Start chatting now",
+      "whatsapp_message": "Hi! I want to create an account"
     }
   },
   "terms": {
@@ -361,6 +325,32 @@
         "no-notifications": "You have no new notifications.",
         "error": "There was an error while trying to fetch the notifications. Please try again later."
       }
+    }
+  },
+  "aboutUs": {
+    "hero": {
+      "tag": "About Us",
+      "title": "Our Mission",
+      "description": "ChatterPay is revolutionizing the way people send money by combining secure payments with the most used messaging app in the world. Our mission is to make crypto simple, in order to onboard the next billion users."
+    },
+    "story": {
+      "title": "Our Story",
+      "text1": "Founded in 2024 at The Level Up Hackathon by Ethereum Argentina, where we won 1st prize in the Keystore track and were the most voted team in Quadratic Funding. We also won at Ethereum Uruguay and ICP Chain Fusion Hackathon BA.",
+      "text2": "During these hackathons, we iterated and improved the product based on feedback and early users.",
+      "text3": "Recently, we were selected for Scroll Open Campus in Kuala Lumpur, Malaysia. This is where we will launch the wallet on the Scroll network, continuing our mission of making crypto simple and accessible to everyone."
+    },
+    "team": {
+      "title": "Meet Our Team"
+    },
+    "founders": {
+      "martin": "Martin transitioned from a legal and business background into Web3 innovation, founding multiple blockchain startups and leading P4 Tech Solutions, Fin Guru, Chronos Pay, Sistem AI, Chatizalo, Hunters Pride, and Number One Fan.",
+      "tomas": "Tomas is a full-stack developer and UI/UX specialist, passionate about creating scalable and user-friendly blockchain solutions. Prev. Lead Developer at FinGurú, dev at Argenenergy, and advisor at Invicta Ventures.",
+      "diego": "Diego has over 25 years of experience in software development and architecture, having worked across multiple programming languages and deployed solutions on diverse platforms and cloud environments. He has led high-performance development teams in large corporations."
+    },
+    "contact": {
+      "title": "Contact Us",
+      "description": "We'd love to hear from you. Get in touch with our team for any inquiries, feedback, or support needs. You can reach us via email at",
+      "button": "Chat With Us on WhatsApp"
     }
   }
 }
