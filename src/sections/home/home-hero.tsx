@@ -1,361 +1,444 @@
-import { m, useScroll } from 'framer-motion'
-import { useRef, useState, useEffect, useCallback } from 'react'
+import { useRef } from 'react'
+import { m } from 'framer-motion'
 
 import Box from '@mui/material/Box'
-import Stack from '@mui/material/Stack'
+import Button from '@mui/material/Button'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Unstable_Grid2'
 import Typography from '@mui/material/Typography'
-import { alpha, styled, useTheme } from '@mui/material/styles'
+import { styled, useTheme } from '@mui/material/styles'
 
 import { useResponsive } from 'src/hooks/use-responsive'
 
-import { useTranslate } from 'src/locales'
-import { HEADER } from 'src/layouts/config-layout'
-import { bgBlur, bgGradient, textGradient } from 'src/theme/css'
+import { useLocales, useTranslate } from 'src/locales'
+import { CHATIZALO_PHONE_NUMBER } from 'src/config-global'
 
+import { SingleWordHighlight } from 'src/components/highlight'
 import { varFade, MotionContainer } from 'src/components/animate'
+
 // ----------------------------------------------------------------------
 
+const GREEN_COLOR = 'hsla(147, 41%, 21%, 1)'
+
 const StyledRoot = styled('div')(({ theme }) => ({
-  ...bgGradient({
-    color: alpha(theme.palette.background.default, theme.palette.mode === 'light' ? 0.9 : 0.94),
-    imgUrl: '/assets/images/background/overlay_3.jpg'
-  }),
   width: '100%',
-  height: '100vh',
   position: 'relative',
+  backgroundColor:
+    theme.palette.mode === 'dark'
+      ? theme.palette.background.default
+      : theme.palette.background.neutral,
   [theme.breakpoints.up('md')]: {
     top: 0,
     left: 0,
-    position: 'fixed'
+    height: 'auto',
+    minHeight: '100vh',
+    maxHeight: '100vh',
+    overflow: 'hidden'
   }
 }))
 
-const StyledWrapper = styled('div')(({ theme }) => ({
-  height: '100%',
+const StyledImagePlaceholder = styled(Box)(({ theme }) => ({
+  width: 318,
+  height: 637,
+  borderRadius: theme.shape.borderRadius * 3,
   overflow: 'hidden',
   position: 'relative',
+  background: 'transparent',
+  [theme.breakpoints.down('md')]: {
+    width: 270,
+    height: 540,
+    margin: '0 auto'
+  },
   [theme.breakpoints.up('md')]: {
-    marginTop: HEADER.H_DESKTOP_OFFSET
+    maxWidth: '100%',
+    maxHeight: '90vh',
+    width: 'auto',
+    height: 'auto',
+    aspectRatio: '318 / 637'
   }
 }))
 
-const StyledTextGradient = styled(m.h1)(({ theme }) => ({
-  ...textGradient(
-    `300deg, ${theme.palette.primary.main} 0%, ${theme.palette.warning.main} 25%, ${theme.palette.primary.main} 50%, ${theme.palette.warning.main} 75%, ${theme.palette.primary.main} 100%`
-  ),
-  padding: 0,
-  marginTop: 8,
-  lineHeight: 1,
-  fontWeight: 900,
-  marginBottom: 24,
-  letterSpacing: 8,
-  textAlign: 'center',
-  backgroundSize: '400%',
-  fontSize: `${64 / 16}rem`,
-  fontFamily: theme.typography.fontSecondaryFamily,
-  [theme.breakpoints.up('md')]: {
-    fontSize: `${96 / 16}rem`
+const StyledIcon = styled('img')(({ theme }) => ({
+  position: 'absolute',
+  zIndex: 1,
+  opacity: 0.5,
+  filter: theme.palette.mode === 'dark' ? 'brightness(10)' : 'none',
+  maxWidth: '10%'
+}))
+
+const StyledMobileIcon = styled('img')(({ theme }) => ({
+  position: 'absolute',
+  zIndex: 1,
+  opacity: 0.8,
+  filter: theme.palette.mode === 'dark' ? 'brightness(10)' : 'none',
+  maxWidth: '20%'
+}))
+
+const StyledCreateButton = styled(Button)(({ theme }) => ({
+  backgroundColor: GREEN_COLOR,
+  color: theme.palette.common.white,
+  fontWeight: 600,
+  fontSize: '1rem',
+  borderRadius: theme.shape.borderRadius * 1.5,
+  '&:hover': {
+    backgroundColor: 'hsla(147, 41%, 16%, 1)'
+  },
+  padding: theme.spacing(1.5, 5),
+  marginTop: theme.spacing(4),
+  [theme.breakpoints.down('md')]: {
+    marginTop: theme.spacing(3),
+    fontSize: '0.9rem'
   }
 }))
 
-const StyledEllipseTop = styled('div')(({ theme }) => ({
-  top: -80,
-  width: 480,
-  right: -80,
-  height: 480,
-  borderRadius: '50%',
-  position: 'absolute',
-  filter: 'blur(100px)',
-  WebkitFilter: 'blur(100px)',
-  backgroundColor: alpha(theme.palette.primary.darker, 0.12)
-}))
-
-const StyledEllipseBottom = styled('div')(({ theme }) => ({
-  height: 400,
-  bottom: -200,
-  left: '10%',
-  right: '10%',
-  borderRadius: '50%',
-  position: 'absolute',
-  filter: 'blur(100px)',
-  WebkitFilter: 'blur(100px)',
-  backgroundColor: alpha(theme.palette.primary.darker, 0.12)
-}))
-
-type StyledPolygonProps = {
-  opacity?: number
-  anchor?: 'left' | 'right'
+// Helper to get language-specific mockup image path
+const getLanguageMockupPath = (langCode: string) => {
+  // Only support 'es', 'en', and 'br', defaulting to 'es' for other languages
+  const supportedLang = ['es', 'en', 'br'].includes(langCode) ? langCode : 'es'
+  return `/assets/images/home/hero/hero_chat_${supportedLang}.gif`
 }
 
-const StyledPolygon = styled('div')<StyledPolygonProps>(
-  ({ opacity = 1, anchor = 'left', theme }) => ({
-    ...bgBlur({
-      opacity,
-      color: theme.palette.background.default
-    }),
-    zIndex: 9,
-    bottom: 0,
-    height: 80,
-    width: '50%',
-    position: 'absolute',
-    clipPath: 'polygon(0% 0%, 100% 100%, 0% 100%)',
-    ...(anchor === 'left' && {
-      left: 0,
-      ...(theme.direction === 'rtl' && {
-        transform: 'scale(-1, 1)'
-      })
-    }),
-    ...(anchor === 'right' && {
-      right: 0,
-      transform: 'scaleX(-1)',
-      ...(theme.direction === 'rtl' && {
-        transform: 'scaleX(1)'
-      })
-    })
-  })
+// Chat animation w mockup
+const MockupImage = ({ imagePath }: { imagePath: string }) => (
+  <Box
+    component='img'
+    src={imagePath}
+    alt='WhatsApp interface showing money transfers'
+    sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
+  />
 )
+
+// Icons for mobile view
+const MobileIcons = () => (
+  <>
+    {/* Mobile icons - Right side of the mockup */}
+    <StyledMobileIcon
+      src='/assets/icons/home/landing_resources/hero_arrow_outbound.svg'
+      alt='arrow outbound'
+      sx={{ position: 'absolute', top: '10%', right: '-15%' }}
+    />
+
+    <StyledMobileIcon
+      src='/assets/icons/home/landing_resources/hero_arrow_inbound.svg'
+      alt='arrow inbound'
+      sx={{ position: 'absolute', top: '35%', right: '-15%' }}
+    />
+
+    <StyledMobileIcon
+      src='/assets/icons/home/landing_resources/hero_note.svg'
+      alt='dollar note'
+      sx={{ position: 'absolute', top: '75%', right: '-15%' }}
+    />
+
+    {/* Mobile icons - Left side of the mockup */}
+    <StyledMobileIcon
+      src='/assets/icons/home/landing_resources/hero_chart.svg'
+      alt='chart'
+      sx={{ position: 'absolute', bottom: '60%', left: '-15%' }}
+    />
+
+    <StyledMobileIcon
+      src='/assets/icons/home/landing_resources/hero_swap.svg'
+      alt='swap'
+      sx={{ position: 'absolute', bottom: '30%', left: '-15%' }}
+    />
+  </>
+)
+
+// Icons for desktop view
+const DesktopIcons = () => (
+  <>
+    {/* Icons at the right side of the mockup */}
+    <StyledIcon
+      src='/assets/icons/home/landing_resources/hero_arrow_outbound.svg'
+      alt='arrow outbound'
+      sx={{ top: '25%', left: '70%', maxWidth: '8%' }}
+    />
+
+    <StyledIcon
+      src='/assets/icons/home/landing_resources/hero_arrow_inbound.svg'
+      alt='arrow inbound'
+      sx={{ top: '40%', left: '70%', maxWidth: '8%' }}
+    />
+
+    <StyledIcon
+      src='/assets/icons/home/landing_resources/hero_note.svg'
+      alt='dollar note'
+      sx={{ bottom: '20%', left: '65%', maxWidth: '8%' }}
+    />
+
+    {/* Icons at the left side of the mockup */}
+    <StyledIcon
+      src='/assets/icons/home/landing_resources/hero_chart.svg'
+      alt='chart'
+      sx={{ top: '35%', right: '70%', maxWidth: '8%' }}
+    />
+
+    <StyledIcon
+      src='/assets/icons/home/landing_resources/hero_swap.svg'
+      alt='swap'
+      sx={{ bottom: '25%', right: '70%', maxWidth: '8%' }}
+    />
+  </>
+)
+
+// ScrollIndicator component for desktop view
+const ScrollIndicator = () => {
+  const theme = useTheme()
+  const isDarkMode = theme.palette.mode === 'dark'
+
+  return (
+    <Box
+      component={m.div}
+      variants={varFade().in}
+      whileInView={{
+        opacity: [0.3, 0.7, 0.3],
+        transition: {
+          duration: 2,
+          ease: 'easeInOut',
+          repeat: Infinity
+        }
+      }}
+      sx={{
+        position: 'absolute',
+        bottom: 24,
+        left: 0,
+        right: 0,
+        textAlign: 'center',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center'
+      }}
+    >
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          mb: 1
+        }}
+      >
+        <Box
+          component='img'
+          src='/assets/icons/home/landing_resources/scroll.svg'
+          alt='scroll'
+          sx={{
+            height: 24,
+            mr: 1,
+            filter: isDarkMode ? 'invert(1)' : 'none'
+          }}
+        />
+        <Typography variant='caption' sx={{ color: 'text.secondary' }}>
+          Scroll to see more
+        </Typography>
+      </Box>
+    </Box>
+  )
+}
 
 // ----------------------------------------------------------------------
 
 export default function HomeHero() {
   const { t } = useTranslate()
+  const { currentLang } = useLocales()
 
   const mdUp = useResponsive('up', 'md')
-
-  const theme = useTheme()
-
+  const lgUp = useResponsive('up', 'lg')
   const heroRef = useRef<HTMLDivElement | null>(null)
 
-  const { scrollY } = useScroll()
+  // Get localized mockup image path
+  const mockupImagePath = getLanguageMockupPath(currentLang.value)
 
-  const [percent, setPercent] = useState(0)
+  // Handle WhatsApp chat start
+  const handleChatStart = () => {
+    const message = encodeURIComponent(
+      t('home.cta.whatsapp_message') || 'Hi! I want to create an account'
+    )
+    window.open(`https://wa.me/${CHATIZALO_PHONE_NUMBER}?text=${message}`, '_blank')
+  }
 
-  const lightMode = theme.palette.mode === 'light'
+  // Find the word "WhatsApp" in the title
+  const titleWords = t('home.hero.new.title').split(' ')
+  const whatsAppIndex = titleWords.findIndex((word) => word.toLowerCase().includes('whatsapp'))
 
-  const getScroll = useCallback(() => {
-    let heroHeight = 0
-
-    if (heroRef.current) {
-      heroHeight = heroRef.current.offsetHeight
+  // Handle title rendering with WhatsApp highlight
+  const renderTitle = () => {
+    if (whatsAppIndex === -1) {
+      return t('home.hero.new.title')
     }
 
-    scrollY.on('change', (scrollHeight) => {
-      const scrollPercent = (scrollHeight * 100) / heroHeight
+    const charWidth = { xs: 20, md: 25, lg: 29 }
 
-      setPercent(Math.floor(scrollPercent))
-    })
-  }, [scrollY])
+    // Calculate width based on screen size
+    let highlightWidth = titleWords[whatsAppIndex].length * charWidth.xs
+    if (lgUp) {
+      highlightWidth = titleWords[whatsAppIndex].length * charWidth.lg
+    } else if (mdUp) {
+      highlightWidth = titleWords[whatsAppIndex].length * charWidth.md
+    }
 
-  useEffect(() => {
-    getScroll()
-  }, [getScroll])
-
-  const transition = {
-    repeatType: 'loop',
-    ease: 'linear',
-    duration: 60 * 4,
-    repeat: Infinity
-  } as const
-
-  const opacity = 1 - percent / 100
-
-  const hide = percent > 120
-
-  const renderDescription = (
-    <Stack
-      alignItems='center'
-      justifyContent='center'
-      sx={{
-        height: 1,
-        mx: 'auto',
-        maxWidth: 480,
-        opacity: opacity > 0 ? opacity : 0,
-        mt: {
-          md: `-${HEADER.H_DESKTOP + percent * 2.5}px`
-        }
-      }}
-    >
-      <m.div variants={varFade().in}>
-        <Typography
-          variant='h2'
+    return (
+      <>
+        {titleWords.slice(0, whatsAppIndex).join(' ')}{' '}
+        <Box
+          component='span'
           sx={{
-            textAlign: 'center',
-            mb: mdUp ? 0 : 5
+            position: 'relative',
+            display: 'inline-block',
+            whiteSpace: 'nowrap'
           }}
         >
-          {t('home.hero.title1')} <br />
-          {t('home.hero.title2')}
-        </Typography>
-      </m.div>
-
-      <m.div variants={varFade().in}>
-        <StyledTextGradient
-          animate={{ backgroundPosition: '200% center' }}
-          transition={{
-            repeatType: 'reverse',
-            ease: 'linear',
-            duration: 20,
-            repeat: Infinity
-          }}
-          sx={{ fontSize: mdUp ? '64px' : '54px' }}
-        >
-          ChatterPay
-        </StyledTextGradient>
-      </m.div>
-
-      <m.div variants={varFade().in}>
-        <Typography variant='body2' sx={{ textAlign: 'center', mb: 5 }}>
-          {t('home.hero.legend')}
-        </Typography>
-      </m.div>
-
-      {!mdUp && (
-        <m.div variants={varFade().in}>
+          {titleWords[whatsAppIndex]}
           <Box
-            component={m.img}
-            src='/assets/images/home/logo.webp'
-            alt='chatterpay'
             sx={{
-              mt: 0,
-              width: '80%',
-              borderRadius: '50%',
-              display: 'block', // Asegura que el margin auto funcione
-              mx: 'auto' // Centra la imagen horizontalmente
+              position: 'absolute',
+              bottom: -17,
+              left: 0,
+              width: '100%',
+              zIndex: 0
             }}
-          />{' '}
-        </m.div>
-      )}
-    </Stack>
-  )
-
-  const renderSlides = (
-    <Stack
-      direction='row'
-      alignItems='flex-start'
-      spacing={7}
-      sx={{
-        height: '150%',
-        position: 'absolute',
-        opacity: opacity > 0 ? opacity : 0,
-        transform: `skew(${-16 - percent / 24}deg, ${4 - percent / 16}deg)`,
-        ...(theme.direction === 'rtl' && {
-          transform: `skew(${16 + percent / 24}deg, ${4 + percent / 16}deg)`
-        })
-      }}
-    >
-      <Stack
-        component={m.div}
-        variants={varFade().in}
-        sx={{
-          width: 280, // original: 344
-          position: 'relative'
-        }}
-      >
-        <Box
-          component={m.img}
-          animate={{ y: ['0%', '100%'] }}
-          transition={transition}
-          alt={lightMode ? 'light_1' : 'dark_1'}
-          src={
-            lightMode
-              ? `/assets/images/home/hero/light_1.webp`
-              : `/assets/images/home/hero/dark_1.webp`
-          }
-          sx={{ position: 'absolute', mt: -5 }}
-        />
-        <Box
-          component={m.img}
-          animate={{ y: ['-100%', '0%'] }}
-          transition={transition}
-          alt={lightMode ? 'light_1' : 'dark_1'}
-          src={
-            lightMode
-              ? `/assets/images/home/hero/light_1.webp`
-              : `/assets/images/home/hero/dark_1.webp`
-          }
-          sx={{ position: 'absolute' }}
-        />
-      </Stack>
-
-      <Stack
-        component={m.div}
-        variants={varFade().in}
-        sx={{ width: 600, position: 'relative', ml: -5 }} // original: width: 720
-      >
-        <Box
-          component={m.img}
-          animate={{ y: ['100%', '0%'] }}
-          transition={transition}
-          alt={lightMode ? 'light_2' : 'dark_2'}
-          src={
-            lightMode
-              ? `/assets/images/home/hero/light_2.webp`
-              : `/assets/images/home/hero/dark_2.webp`
-          }
-          sx={{ position: 'absolute', mt: -5 }}
-        />
-        <Box
-          component={m.img}
-          animate={{ y: ['0%', '-100%'] }}
-          transition={transition}
-          alt={lightMode ? 'light_2' : 'dark_2'}
-          src={
-            lightMode
-              ? `/assets/images/home/hero/light_2.webp`
-              : `/assets/images/home/hero/dark_2.webp`
-          }
-          sx={{ position: 'absolute' }}
-        />
-      </Stack>
-    </Stack>
-  )
-
-  const renderPolygons = (
-    <>
-      <StyledPolygon />
-      <StyledPolygon anchor='right' opacity={1} />
-      <StyledPolygon anchor='right' opacity={1} sx={{ height: 48, zIndex: 10 }} />
-      <StyledPolygon anchor='right' sx={{ zIndex: 11, height: 24 }} />
-    </>
-  )
-
-  const renderEllipses = (
-    <>
-      {mdUp && <StyledEllipseTop />}
-      <StyledEllipseBottom />
-    </>
-  )
+          >
+            <SingleWordHighlight
+              size='xl'
+              color={GREEN_COLOR}
+              width={highlightWidth}
+              strokeWidth={3}
+            />
+          </Box>
+        </Box>
+        {whatsAppIndex < titleWords.length - 1
+          ? ` ${titleWords.slice(whatsAppIndex + 1).join(' ')}`
+          : ''}
+      </>
+    )
+  }
 
   return (
-    <>
-      <StyledRoot
-        ref={heroRef}
+    <StyledRoot ref={heroRef}>
+      <Container
+        component={MotionContainer}
         sx={{
-          ...(hide && {
-            opacity: 0
-          })
+          height: mdUp ? '100%' : 'auto',
+          py: mdUp ? { md: 2, lg: 0 } : 6,
+          pl: { md: 0 },
+          pr: { md: 0 },
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          minHeight: mdUp ? '100vh' : 'auto'
         }}
       >
-        <StyledWrapper>
-          <Container component={MotionContainer} sx={{ height: 1 }}>
-            <Grid container columnSpacing={{ md: 10 }} sx={{ height: 1 }}>
-              <Grid xs={12} md={6}>
-                {renderDescription}
-              </Grid>
+        <Grid
+          container
+          spacing={{ xs: 5, md: 0 }}
+          alignItems='center'
+          sx={{
+            height: 'auto',
+            maxWidth: '100%',
+            mx: 'auto',
+            mt: { xs: 6, md: 0 }
+          }}
+        >
+          {/* Title and CTA section */}
+          <Grid
+            xs={12}
+            md={5}
+            sx={{ textAlign: { xs: 'center', md: 'left' }, mb: { xs: 5, md: 0 } }}
+          >
+            <m.div variants={varFade().in}>
+              <Typography
+                variant='h1'
+                sx={{ mb: 3, fontSize: { xs: 32, md: 40, lg: 46 }, fontWeight: 'bold' }}
+              >
+                {renderTitle()}
+              </Typography>
+            </m.div>
 
-              {mdUp && <Grid md={6}>{renderSlides}</Grid>}
+            <m.div variants={varFade().in}>
+              <StyledCreateButton
+                variant='contained'
+                endIcon={
+                  <Box
+                    component='img'
+                    src='/assets/icons/home/landing_resources/button_arrow_white.svg'
+                    alt='Arrow'
+                    className='arrow-icon'
+                    sx={{ width: 24, height: 24 }}
+                  />
+                }
+                onClick={handleChatStart}
+              >
+                {t('home.hero.new.button')}
+              </StyledCreateButton>
+            </m.div>
+          </Grid>
+
+          {/* Mobile view with mockup and icons */}
+          {!mdUp && (
+            <Grid xs={12} sx={{ display: 'flex', justifyContent: 'center', position: 'relative' }}>
+              <Box
+                sx={{
+                  position: 'relative',
+                  width: '100%',
+                  maxWidth: 280,
+                  height: 'auto',
+                  aspectRatio: '280/560'
+                }}
+              >
+                <MobileIcons />
+
+                {/* Mockup */}
+                <StyledImagePlaceholder
+                  sx={{
+                    width: '100%',
+                    height: 'auto',
+                    aspectRatio: '280/560',
+                    maxWidth: 280,
+                    maxHeight: 560
+                  }}
+                >
+                  <MockupImage imagePath={mockupImagePath} />
+                </StyledImagePlaceholder>
+              </Box>
             </Grid>
-          </Container>
+          )}
 
-          {renderEllipses}
-        </StyledWrapper>
-      </StyledRoot>
+          {/* Desktop view with mockup and icons */}
+          {mdUp && (
+            <Grid md={7} sx={{ position: 'relative', right: { md: 0, lg: '-50px', xl: '-100px' } }}>
+              <Box
+                sx={{
+                  position: 'relative',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height: '100%',
+                  maxWidth: '100%',
+                  ml: 'auto'
+                }}
+              >
+                <DesktopIcons />
 
-      {mdUp && renderPolygons}
+                <Box sx={{ position: 'relative', zIndex: 2, maxWidth: '90%' }}>
+                  <m.div variants={varFade().in}>
+                    <StyledImagePlaceholder
+                      sx={{
+                        maxWidth: { md: '90%', lg: '100%' },
+                        maxHeight: '80vh'
+                      }}
+                    >
+                      <MockupImage imagePath={mockupImagePath} />
+                    </StyledImagePlaceholder>
+                  </m.div>
+                </Box>
+              </Box>
+            </Grid>
+          )}
+        </Grid>
 
-      <Box sx={{ height: { md: '100vh' } }} />
-    </>
+        {/* Scroll indicator (desktop only) */}
+        {mdUp && <ScrollIndicator />}
+      </Container>
+    </StyledRoot>
   )
 }

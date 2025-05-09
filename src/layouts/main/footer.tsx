@@ -33,9 +33,9 @@ export default function Footer({ simple }: FooterProps) {
     {
       headline: 'ChatterPay',
       children: [
-        { name: t('home.footer.links.about-us'), href: '#' },
+        { name: t('home.footer.links.about-us'), href: '/about-us' },
         { name: t('home.footer.links.contact-us'), href: contactUsUrl },
-        { name: t('home.footer.links.faqs'), href: '/' }
+        { name: t('home.footer.links.faqs'), href: '/#faq' }
       ]
     },
     {
