@@ -1,3 +1,5 @@
+import { useMemo } from 'react'
+
 import Box from '@mui/material/Box'
 import Table from '@mui/material/Table'
 import Avatar from '@mui/material/Avatar'
@@ -20,6 +22,7 @@ import { useResponsive } from 'src/hooks/use-responsive'
 
 import { fNumber } from 'src/utils/format-number'
 import { fDate, fTime } from 'src/utils/format-time'
+import { maskAddress } from 'src/utils/format-address'
 
 import { useTranslate } from 'src/locales'
 import { EXPLORER_L2_URL } from 'src/config-global'
@@ -229,6 +232,14 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
     console.info('SHARE', row.id)
   }
 
+  const transactionText = useMemo(()=>{
+    if(phone.length > 0){
+      return phone
+    }
+
+    return maskAddress(userWallet)
+  }, [phone, userWallet]);
+
   const renderAvatar = (
     <Box sx={{ position: 'relative', mr: 2 }}>
       <Badge
@@ -272,7 +283,7 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
             <Iconify icon='eva:external-link-outline' />
           </IconButton>
         </Link>
-        <ListItemText primary={message} secondary={phone} />
+        <ListItemText primary={message} secondary={transactionText} />
       </TableCell>
 
       <TableCell>
@@ -347,7 +358,7 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
           primary={message}
           secondary={
             <>
-              {phone}
+              {transactionText}
               <Box component='span' sx={{ display: 'block', mt: 0.5 }}>
                 {`${fDate(new Date(row.date))} ${fTime(new Date(row.date))}`}
               </Box>
