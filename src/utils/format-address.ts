@@ -4,5 +4,5 @@
  * @returns
  */
 export function maskAddress(address: string): string {
-    return `${address.slice(0, 4)}****${address.slice(-4)}`;
+  return `${address.slice(0, 4)}****${address.slice(-4)}`
 }

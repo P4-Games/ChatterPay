@@ -232,13 +232,13 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
     console.info('SHARE', row.id)
   }
 
-  const transactionText = useMemo(()=>{
-    if(phone.length > 0){
+  const transactionText = useMemo(() => {
+    if (phone.length > 0) {
       return phone
     }
 
     return maskAddress(userWallet)
-  }, [phone, userWallet]);
+  }, [phone, userWallet])
 
   const renderAvatar = (
     <Box sx={{ position: 'relative', mr: 2 }}>
