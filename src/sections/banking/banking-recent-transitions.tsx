@@ -176,18 +176,21 @@ function getContactData(
   userWallet: string,
   data: ITransaction,
   mdUp: boolean
-): { contact: string; phone: string } {
+): { contact: string; phone: string; calculatedAmount: string } {
   let contact: string = ''
   let phone: string = ''
+  let calculatedAmount: string = ''
 
   const trxReceive: boolean = userWallet === data.wallet_to
 
   if (data.type.toLowerCase() === 'swap') {
     contact = (trxReceive ? data.contact_to_name : data.contact_from_name) || ''
     phone = (trxReceive ? data.contact_to_phone : data.contact_from_phone) || ''
+    calculatedAmount = fNumber(data.amount)
   } else {
     contact = (trxReceive ? data.contact_from_name : data.contact_to_name) || ''
     phone = (trxReceive ? data.contact_from_phone : data.contact_to_phone) || ''
+    calculatedAmount = fNumber(data.amount - (trxReceive ? data.fee || 0 : 0))
   }
 
   // hide contact name in mobile
@@ -195,7 +198,7 @@ function getContactData(
     contact = ''
   }
 
-  return { contact, phone }
+  return { contact, phone, calculatedAmount }
 }
 
 function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTransitionsRowProps) {
@@ -203,7 +206,7 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
   const { t } = useTranslate()
   const lightMode = theme.palette.mode === 'light'
   const trxReceive: boolean = userWallet === row.wallet_to
-  const { contact, phone } = getContactData(userWallet, row, mdUp)
+  const { contact, phone, calculatedAmount } = getContactData(userWallet, row, mdUp)
   const message: string = `${
     trxReceive ? t('transactions.receive-from') : t('transactions.sent-to')
   } ${contact}`
@@ -273,7 +276,7 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
       </TableCell>
 
       <TableCell>
-        {fNumber(row.amount)} {row.token}
+        {calculatedAmount} {row.token}
       </TableCell>
 
       <TableCell>{row.type}</TableCell>
@@ -360,7 +363,7 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
 
       <TableCell sx={{ width: '35%', textAlign: 'right' }}>
         <ListItemText
-          primary={`${fNumber(row.amount)} ${row.token}`}
+          primary={`${calculatedAmount} ${row.token}`}
           secondary={
             <Label
               variant={lightMode ? 'soft' : 'filled'}
