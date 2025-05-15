@@ -529,13 +529,7 @@ export async function getUserTransactions(wallet: string): Promise<ITransaction[
             $ifNull: ['$contact_to_user.photo', '/assets/images/home/logo.png']
           },
           token: 1,
-          amount: {
-            $cond: {
-              if: { $eq: ['$type', 'transfer'] },
-              then: { $subtract: ['$amount', { $ifNull: ['$fee', 0] }] },
-              else: '$amount'
-            }
-          },
+          amount: 1,
           fee: 1,
           type: 1,
           status: 1,
