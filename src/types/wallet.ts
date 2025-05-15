@@ -67,6 +67,7 @@ export type ITransaction = {
   contact_to_avatar_url: string | null
   token: string
   amount: number
+  fee: number
   type: string
   status: string
 }
