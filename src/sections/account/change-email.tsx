@@ -40,7 +40,6 @@ export default function ChangeEmail() {
   const { counting, countdown, startCountdown } = useCountdownSeconds(60)
 
   const ChangeEmailSchema = Yup.object().shape({
-    oldEmail: Yup.string().email(t('common.must-be-valid-email')).required(t('common.required')),
     newEmail: Yup.string().email(t('common.must-be-valid-email')).required(t('common.required')),
     confirmEmail: Yup.string()
       .oneOf([Yup.ref('newEmail')], t('common.emails-must-match'))
