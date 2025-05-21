@@ -24,13 +24,13 @@ export default function Analytics() {
   useEffect(() => {
     if (GA_MEASUREMENT_ID) {
       window.gtag('config', GA_MEASUREMENT_ID, {
-        page_path: pathname + searchParams.toString(),
+        page_path: pathname + searchParams.toString()
       })
     }
 
     if (MS_CLARITY_ID && window.clarity) {
-      window.clarity('consent');
-      window.clarity('set', 'disableFilterAnimation', true);
+      window.clarity('consent')
+      window.clarity('set', 'disableFilterAnimation', true)
     }
   }, [pathname, searchParams])
 
@@ -45,11 +45,11 @@ export default function Analytics() {
         <>
           <Script
             src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-            strategy="afterInteractive"
+            strategy='afterInteractive'
           />
           <Script
-            id="gtag-init"
-            strategy="afterInteractive"
+            id='gtag-init'
+            strategy='afterInteractive'
             dangerouslySetInnerHTML={{
               __html: `
                 window.dataLayer = window.dataLayer || [];
@@ -59,7 +59,7 @@ export default function Analytics() {
                   page_path: window.location.pathname,
                   send_page_view: false
                 });
-              `,
+              `
             }}
           />
         </>
@@ -68,8 +68,8 @@ export default function Analytics() {
       {/* Microsoft Clarity */}
       {MS_CLARITY_ID && (
         <Script
-          id="microsoft-clarity"
-          strategy="lazyOnload"
+          id='microsoft-clarity'
+          strategy='lazyOnload'
           dangerouslySetInnerHTML={{
             __html: `
               (function(c,l,a,r,i,t,y){
@@ -79,10 +79,10 @@ export default function Analytics() {
                 c[a]('consent');
                 c[a]('set', 'disableFilterAnimation', true);
               })(window, document, "clarity", "script", "${MS_CLARITY_ID}");
-            `,
+            `
           }}
         />
       )}
     </>
   )
-} 
+}
