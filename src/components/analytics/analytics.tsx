@@ -1,7 +1,7 @@
 'use client'
 
 import Script from 'next/script'
-import { useEffect } from 'react'
+import { Suspense , useEffect } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
 
 import { MS_CLARITY_ID, GA_MEASUREMENT_ID } from '../../config-global'
@@ -17,7 +17,7 @@ declare global {
   }
 }
 
-export default function Analytics() {
+function AnalyticsContent() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
@@ -84,5 +84,13 @@ export default function Analytics() {
         />
       )}
     </>
+  )
+}
+
+export default function Analytics() {
+  return (
+    <Suspense fallback={null}>
+      <AnalyticsContent />
+    </Suspense>
   )
 }
