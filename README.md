@@ -51,6 +51,7 @@ This repository contains the source code for the landing page and user dashboard
 - Routing: [React router v6](https://reactrouter.com/en/main/start/overview)
 - Linting: [ESLint](https://eslint.org)
 - Formatting: [Prettier](https://prettier.io)
+- Analytics: [Google Analytics](https://analytics.google.com/) [MS Clarity](https://clarity.microsoft.com/)
 
 **deploy with**:
 
