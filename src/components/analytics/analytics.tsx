@@ -1,7 +1,7 @@
 'use client'
 
 import Script from 'next/script'
-import { Suspense , useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
 
 import { MS_CLARITY_ID, GA_MEASUREMENT_ID } from '../../config-global'
