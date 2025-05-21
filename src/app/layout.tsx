@@ -13,6 +13,7 @@ import ProgressBar from 'src/components/progress-bar'
 import { MotionLazy } from 'src/components/animate/motion-lazy'
 import SnackbarProvider from 'src/components/snackbar/snackbar-provider'
 import { SettingsDrawer, SettingsProvider } from 'src/components/settings'
+import Analytics from 'src/components/analytics/analytics'
 
 import { AuthProvider } from 'src/auth/context/jwt'
 
@@ -77,6 +78,7 @@ export default function RootLayout({ children }: Props) {
                   <SnackbarProvider>
                     <SettingsDrawer />
                     <ProgressBar />
+                    <Analytics />
                     {children}
                   </SnackbarProvider>
                 </MotionLazy>

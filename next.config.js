@@ -20,7 +20,9 @@ module.exports = {
       'cilxj-yiaaa-aaaag-alkxq-cai.icp0.io',
       'gateway.pinata.cloud',
       'w.wallhaven.cc',
-      'img.freepik.com'
+      'img.freepik.com',
+      'www.googletagmanager.com',
+      'www.clarity.ms'
     ],
     remotePatterns: [
       {
@@ -50,6 +52,18 @@ module.exports = {
       {
         protocol: 'https',
         hostname: 'w.wallhaven.cc',
+        port: '',
+        pathname: '/**'
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.googletagmanager.com',
+        port: '',
+        pathname: '/**'
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.clarity.ms',
         port: '',
         pathname: '/**'
       }
@@ -93,6 +107,22 @@ module.exports = {
           {
             key: 'Cache-Control',
             value: 'public, max-age=9999999999, must-revalidate'
+          }
+        ]
+      },
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: `
+              default-src 'self';
+              script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.clarity.ms;
+              connect-src 'self' https://www.google-analytics.com https://www.clarity.ms https://b.clarity.ms;
+              img-src 'self' data: https:;
+              style-src 'self' 'unsafe-inline';
+              frame-src 'self';
+            `.replace(/\s+/g, ' ').trim()
           }
         ]
       }
