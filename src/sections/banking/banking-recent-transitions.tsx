@@ -1,3 +1,5 @@
+import { useMemo } from 'react'
+
 import Box from '@mui/material/Box'
 import Table from '@mui/material/Table'
 import Avatar from '@mui/material/Avatar'
@@ -20,6 +22,7 @@ import { useResponsive } from 'src/hooks/use-responsive'
 
 import { fNumber } from 'src/utils/format-number'
 import { fDate, fTime } from 'src/utils/format-time'
+import { maskAddress } from 'src/utils/format-address'
 
 import { useTranslate } from 'src/locales'
 import { EXPLORER_L2_URL } from 'src/config-global'
@@ -176,18 +179,24 @@ function getContactData(
   userWallet: string,
   data: ITransaction,
   mdUp: boolean
-): { contact: string; phone: string } {
+): { contact: string; phone: string; walletTo: string; calculatedAmount: string } {
   let contact: string = ''
   let phone: string = ''
+  let walletTo: string = ''
+  let calculatedAmount: string = ''
 
   const trxReceive: boolean = userWallet === data.wallet_to
 
   if (data.type.toLowerCase() === 'swap') {
     contact = (trxReceive ? data.contact_to_name : data.contact_from_name) || ''
     phone = (trxReceive ? data.contact_to_phone : data.contact_from_phone) || ''
+    calculatedAmount = fNumber(data.amount)
+    walletTo = data.wallet_to || ''
   } else {
     contact = (trxReceive ? data.contact_from_name : data.contact_to_name) || ''
     phone = (trxReceive ? data.contact_from_phone : data.contact_to_phone) || ''
+    calculatedAmount = fNumber(data.amount - (trxReceive ? data.fee || 0 : 0))
+    walletTo = data.wallet_to || ''
   }
 
   // hide contact name in mobile
@@ -195,7 +204,7 @@ function getContactData(
     contact = ''
   }
 
-  return { contact, phone }
+  return { contact, phone, walletTo, calculatedAmount }
 }
 
 function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTransitionsRowProps) {
@@ -203,7 +212,7 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
   const { t } = useTranslate()
   const lightMode = theme.palette.mode === 'light'
   const trxReceive: boolean = userWallet === row.wallet_to
-  const { contact, phone } = getContactData(userWallet, row, mdUp)
+  const { contact, phone, walletTo, calculatedAmount } = getContactData(userWallet, row, mdUp)
   const message: string = `${
     trxReceive ? t('transactions.receive-from') : t('transactions.sent-to')
   } ${contact}`
@@ -225,6 +234,14 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
     popover.onClose()
     console.info('SHARE', row.id)
   }
+
+  const getToIdentifier = useMemo(() => {
+    if (phone.length > 0) {
+      return phone
+    }
+
+    return maskAddress(walletTo)
+  }, [phone, walletTo])
 
   const renderAvatar = (
     <Box sx={{ position: 'relative', mr: 2 }}>
@@ -269,11 +286,11 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
             <Iconify icon='eva:external-link-outline' />
           </IconButton>
         </Link>
-        <ListItemText primary={message} secondary={phone} />
+        <ListItemText primary={message} secondary={getToIdentifier} />
       </TableCell>
 
       <TableCell>
-        {fNumber(row.amount)} {row.token}
+        {calculatedAmount} {row.token}
       </TableCell>
 
       <TableCell>{row.type}</TableCell>
@@ -344,7 +361,7 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
           primary={message}
           secondary={
             <>
-              {phone}
+              {getToIdentifier}
               <Box component='span' sx={{ display: 'block', mt: 0.5 }}>
                 {`${fDate(new Date(row.date))} ${fTime(new Date(row.date))}`}
               </Box>
@@ -360,7 +377,7 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
 
       <TableCell sx={{ width: '35%', textAlign: 'right' }}>
         <ListItemText
-          primary={`${fNumber(row.amount)} ${row.token}`}
+          primary={`${calculatedAmount} ${row.token}`}
           secondary={
             <Label
               variant={lightMode ? 'soft' : 'filled'}
