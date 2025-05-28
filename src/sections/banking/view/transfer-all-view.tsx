@@ -20,7 +20,7 @@ export default function TransferAllView() {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
-        heading={t('menu.email')}
+        heading={t('menu.transfer-all')}
         links={[
           { name: t('menu._dashboard'), href: paths.dashboard.root },
           { name: t('menu.transfer-all') }

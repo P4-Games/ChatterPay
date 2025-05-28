@@ -46,10 +46,11 @@ export function fNumber(inputValue: InputValue) {
   if (!inputValue) return ''
 
   const number = Number(inputValue)
+  const isSmall = Math.abs(number) < 0.01 && number !== 0
 
   const fm = new Intl.NumberFormat(code, {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2
+    minimumFractionDigits: isSmall ? 4 : 0,
+    maximumFractionDigits: isSmall ? 8 : 2
   }).format(number)
 
   return fm
