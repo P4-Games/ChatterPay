@@ -115,14 +115,14 @@ module.exports = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: `
-              default-src 'self';
-              script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.clarity.ms;
-              connect-src 'self' https://www.google-analytics.com https://www.clarity.ms https://b.clarity.ms;
-              img-src 'self' data: https:;
-              style-src 'self' 'unsafe-inline';
-              frame-src 'self';
-            `.replace(/\s+/g, ' ').trim()
+          value: `
+            default-src 'self';
+            script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.clarity.ms https://www.google.com https://www.gstatic.com;
+            connect-src 'self' https://www.google-analytics.com https://www.clarity.ms https://b.clarity.ms https://www.google.com https://www.gstatic.com;
+            img-src 'self' data: https:;
+            style-src 'self' 'unsafe-inline';
+            frame-src 'self' https://www.google.com;
+          `.replace(/\s+/g, ' ').trim()
           }
         ]
       }
