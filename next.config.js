@@ -111,32 +111,33 @@ module.exports = {
         ]
       },
       {
-        source: '/:path*',
-      headers: [
-        {
-          key: 'Content-Security-Policy',
-          value: `
-            default-src 'self';
-            script-src 'self' 'unsafe-inline' 'unsafe-eval'
-              https://www.googletagmanager.com
-              https://www.clarity.ms
-              https://www.google.com
-              https://www.gstatic.com;
-
-            connect-src 'self'
-              https://www.google-analytics.com
-              https://www.clarity.ms
-              https://b.clarity.ms
-              https://www.google.com
-              https://www.gstatic.com
-              https://api.iconify.design
-              https://api.simplesvg.com
-              https://api.unisvg.com;
-
-            img-src 'self' data: https:;
-            style-src 'self' 'unsafe-inline';
-            frame-src 'self' https://www.google.com;
-          `.replace(/\s+/g, ' ').trim()
+     source: '/:path*',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: `
+              default-src 'self';
+              script-src 'self' 'unsafe-inline' 'unsafe-eval'
+                https://www.googletagmanager.com
+                https://www.clarity.ms
+                https://www.google.com
+                https://www.youtube.com
+                https://www.gstatic.com;
+              
+              connect-src 'self'
+                https://www.google-analytics.com
+                https://www.clarity.ms
+                https://b.clarity.ms
+                https://www.google.com
+                https://www.gstatic.com
+                https://api.iconify.design
+                https://api.simplesvg.com
+                https://api.unisvg.com;
+              
+              img-src 'self' data: https:;
+              style-src 'self' 'unsafe-inline';
+              frame-src 'self' https://www.google.com https://www.youtube.com;
+            `.replace(/\s+/g, ' ').trim()
           }
         ]
       }
