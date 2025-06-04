@@ -120,6 +120,8 @@ module.exports = {
               script-src 'self' 'unsafe-inline' 'unsafe-eval'
                 https://www.googletagmanager.com
                 https://www.clarity.ms
+                https://c.clarity.ms
+                https://b.clarity.ms
                 https://www.google.com
                 https://www.youtube.com
                 https://www.gstatic.com;
