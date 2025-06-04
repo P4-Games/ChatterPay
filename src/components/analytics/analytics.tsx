@@ -28,10 +28,26 @@ function AnalyticsContent() {
       })
     }
 
-    if (MS_CLARITY_ID && window.clarity) {
-      window.clarity('consent')
-      window.clarity('set', 'disableFilterAnimation', true)
+    if (MS_CLARITY_ID) {
+      const maxAttempts = 10
+      let attempts = 0
+
+      const interval = setInterval(() => {
+        if (typeof window.clarity === 'function') {
+          window.clarity('consent')
+          window.clarity('set', 'disableFilterAnimation', true)
+          clearInterval(interval)
+        } else {
+          attempts += 1
+          if (attempts >= maxAttempts) {
+            clearInterval(interval)
+          }
+        }
+      }, 1000)
+
+      return () => clearInterval(interval)
     }
+    return undefined
   }, [pathname, searchParams])
 
   if (!GA_MEASUREMENT_ID && !MS_CLARITY_ID) {
