@@ -111,7 +111,7 @@ module.exports = {
         ]
       },
       {
-     source: '/:path*',
+      source: '/:path*',
         headers: [
           {
             key: 'Content-Security-Policy',
