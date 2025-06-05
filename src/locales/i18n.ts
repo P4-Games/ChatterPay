@@ -31,6 +31,9 @@ i18n
     defaultNS: 'translations',
     interpolation: {
       escapeValue: false
+    },
+    react: {
+      useSuspense: true
     }
   })
 

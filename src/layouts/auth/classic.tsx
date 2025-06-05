@@ -10,6 +10,7 @@ import { useTranslate } from 'src/locales'
 
 import Logo from 'src/components/logo'
 
+import BaseLayout from '../baseLayout'
 import LanguagePopover from '../common/language-popover'
 
 // ----------------------------------------------------------------------
@@ -100,20 +101,22 @@ export default function AuthClassicLayout({ children, image, title }: Props) {
   )
 
   return (
-    <Stack
-      component='main'
-      direction='row'
-      sx={{
-        minHeight: '100vh'
-      }}
-    >
-      {renderLogo}
+    <BaseLayout>
+      <Stack
+        component='main'
+        direction='row'
+        sx={{
+          minHeight: '100vh'
+        }}
+      >
+        {renderLogo}
 
-      {mdUp && renderSection}
+        {mdUp && renderSection}
 
-      {renderContent}
+        {renderContent}
 
-      {renderLanguagePopover}
-    </Stack>
+        {renderLanguagePopover}
+      </Stack>
+    </BaseLayout>
   )
 }

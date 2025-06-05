@@ -344,10 +344,10 @@
       "title": "Conheça Nossa Equipe"
     },
     "founders": {
-      "martin": "Martin fez a transição de uma formação em direito e negócios para a inovação Web3, fundando várias startups de blockchain e liderando P4 Tech Solutions, Fin Guru, Chronos Pay, Sistem AI, Chatizalo, Hunters Pride e Number One Fan.",
-      "tomas": "Tomás é um desenvolvedor full-stack e especialista em UI/UX, apaixonado por criar soluções blockchain escaláveis e amigáveis ao usuário. Foi Desenvolvedor Líder na FinGurú, desenvolvedor na Argenenergy e consultor na Invicta Ventures.",
-      "diego": "Diego tem mais de 25 anos de experiência em desenvolvimento e arquitetura de software, tendo trabalhado com múltiplas linguagens de programação e implementado soluções em diversas plataformas e ambientes de nuvem. Ele liderou equipes de desenvolvimento de alto desempenho em grandes corporações."
-    },
+  "martin": "Martin migrou do direito e dos negócios para a Web3. Fundou startups de blockchain e liderou iniciativas na Fin Guru, P4 Tech, Sistem AI, Chatizalo e outras.",
+  "tomas": "Tomás é dev full-stack e especialista em UX. É apaixonado por soluções blockchain escaláveis e já liderou projetos na FinGurú, Argenenergy e como consultor na Invicta Ventures.",
+  "diego": "Diego é arquiteto de software com mais de 25 anos de experiência. Liderou equipes, desenvolveu sistemas em nuvem e atuou em grandes empresas de tecnologia."
+},
     "contact": {
       "title": "Entre em Contato",
       "description": "Adoraríamos ouvir de você. Entre em contato com nossa equipe para quaisquer dúvidas, feedback ou necessidades de suporte. Você pode nos contatar por e-mail em",
