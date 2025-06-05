@@ -343,10 +343,10 @@
       "title": "Meet Our Team"
     },
     "founders": {
-      "martin": "Martin transitioned from a legal and business background into Web3 innovation, founding multiple blockchain startups and leading P4 Tech Solutions, Fin Guru, Chronos Pay, Sistem AI, Chatizalo, Hunters Pride, and Number One Fan.",
-      "tomas": "Tomas is a full-stack developer and UI/UX specialist, passionate about creating scalable and user-friendly blockchain solutions. Prev. Lead Developer at FinGurú, dev at Argenenergy, and advisor at Invicta Ventures.",
-      "diego": "Diego has over 25 years of experience in software development and architecture, having worked across multiple programming languages and deployed solutions on diverse platforms and cloud environments. He has led high-performance development teams in large corporations."
-    },
+     "martin": "Martin transitioned from law and business into Web3 innovation. He founded several blockchain startups and led projects at P4 Tech, Fin Guru, Sistem AI, and more.",
+  "tomas": "Tomas is a full-stack developer and UX expert. He builds scalable blockchain systems and led teams at FinGurú, Argenenergy, and advised at Invicta Ventures.",
+  "diego": "Diego is a software architect with 25+ years of experience. He led teams, built cloud systems, and worked with many languages across major tech companies."
+},
     "contact": {
       "title": "Contact Us",
       "description": "We'd love to hear from you. Get in touch with our team for any inquiries, feedback, or support needs. You can reach us via email at",

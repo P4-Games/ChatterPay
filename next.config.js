@@ -20,7 +20,9 @@ module.exports = {
       'cilxj-yiaaa-aaaag-alkxq-cai.icp0.io',
       'gateway.pinata.cloud',
       'w.wallhaven.cc',
-      'img.freepik.com'
+      'img.freepik.com',
+      'www.googletagmanager.com',
+      'www.clarity.ms'
     ],
     remotePatterns: [
       {
@@ -50,6 +52,18 @@ module.exports = {
       {
         protocol: 'https',
         hostname: 'w.wallhaven.cc',
+        port: '',
+        pathname: '/**'
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.googletagmanager.com',
+        port: '',
+        pathname: '/**'
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.clarity.ms',
         port: '',
         pathname: '/**'
       }
@@ -93,6 +107,38 @@ module.exports = {
           {
             key: 'Cache-Control',
             value: 'public, max-age=9999999999, must-revalidate'
+          }
+        ]
+      },
+      {
+      source: '/:path*',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: `
+              default-src 'self';
+              script-src 'self' 'unsafe-inline' 'unsafe-eval'
+                https://www.googletagmanager.com
+                https://*.clarity.ms
+                https://www.google.com
+                https://www.youtube.com
+                https://www.gstatic.com;
+              
+              connect-src 'self'
+                https://www.google-analytics.com
+                https://analytics.google.com
+                https://stats.g.doubleclick.net
+                https://*.clarity.ms
+                https://www.google.com
+                https://www.gstatic.com
+                https://api.iconify.design
+                https://api.simplesvg.com
+                https://api.unisvg.com;
+              
+              img-src 'self' data: https:;
+              style-src 'self' 'unsafe-inline';
+              frame-src 'self' https://www.google.com https://www.youtube.com;
+            `.replace(/\s+/g, ' ').trim()
           }
         ]
       }

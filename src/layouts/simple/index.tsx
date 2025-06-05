@@ -1,3 +1,4 @@
+import BaseLayout from '../baseLayout'
 import Header from '../common/header-simple'
 
 // ----------------------------------------------------------------------
@@ -8,9 +9,9 @@ type Props = {
 
 export default function SimpleLayout({ children }: Props) {
   return (
-    <>
+    <BaseLayout>
       <Header />
       {children}
-    </>
+    </BaseLayout>
   )
 }
