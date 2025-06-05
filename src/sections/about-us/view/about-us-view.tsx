@@ -4,6 +4,7 @@ import { m, useScroll } from 'framer-motion'
 
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
+import Link from '@mui/material/Link'
 import Button from '@mui/material/Button'
 import Avatar from '@mui/material/Avatar'
 import Container from '@mui/material/Container'
@@ -326,7 +327,9 @@ export default function AboutUsView() {
                   "We'd love to hear from you. Get in touch with our team for any inquiries, feedback, or support needs. You can reach us via email at"
                 )}{' '}
                 <Box component='span' sx={{ fontWeight: 'bold' }}>
-                  {CONTACT_EMAIL}
+                  <Link href={`mailto:${CONTACT_EMAIL}`} underline='hover'>
+                    {CONTACT_EMAIL}
+                  </Link>
                 </Box>
               </Typography>
             </m.div>
