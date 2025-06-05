@@ -122,6 +122,7 @@ module.exports = {
                 https://www.clarity.ms
                 https://c.clarity.ms
                 https://b.clarity.ms
+                https://f.clarity.ms
                 https://www.google.com
                 https://www.youtube.com
                 https://www.gstatic.com;
@@ -132,6 +133,7 @@ module.exports = {
                 https://www.clarity.ms
                 https://b.clarity.ms
                 https://c.clarity.ms
+                https://f.clarity.ms
                 https://www.google.com
                 https://www.gstatic.com
                 https://api.iconify.design
