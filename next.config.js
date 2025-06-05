@@ -119,10 +119,7 @@ module.exports = {
               default-src 'self';
               script-src 'self' 'unsafe-inline' 'unsafe-eval'
                 https://www.googletagmanager.com
-                https://www.clarity.ms
-                https://c.clarity.ms
-                https://b.clarity.ms
-                https://f.clarity.ms
+                https://*.clarity.ms
                 https://www.google.com
                 https://www.youtube.com
                 https://www.gstatic.com;
@@ -130,10 +127,7 @@ module.exports = {
               connect-src 'self'
                 https://www.google-analytics.com
                 https://analytics.google.com
-                https://www.clarity.ms
-                https://b.clarity.ms
-                https://c.clarity.ms
-                https://f.clarity.ms
+                https://*.clarity.ms
                 https://www.google.com
                 https://www.gstatic.com
                 https://api.iconify.design
