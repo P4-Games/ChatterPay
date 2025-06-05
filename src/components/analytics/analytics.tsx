@@ -22,9 +22,16 @@ function AnalyticsContent() {
   const searchParams = useSearchParams()
 
   useEffect(() => {
+    const { hostname } = window.location
+    const isDev = hostname.startsWith('dev.')
+    const domain = hostname.replace(/^(www\.|dev\.)+/, '')
+    const env = isDev ? 'development' : 'production'
+
     if (GA_MEASUREMENT_ID) {
       window.gtag('config', GA_MEASUREMENT_ID, {
-        page_path: pathname + searchParams.toString()
+        page_path: pathname + searchParams.toString(),
+        env,
+        domain
       })
     }
 
