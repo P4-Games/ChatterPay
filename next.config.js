@@ -127,6 +127,7 @@ module.exports = {
               connect-src 'self'
                 https://www.google-analytics.com
                 https://analytics.google.com
+                https://stats.g.doubleclick.net
                 https://*.clarity.ms
                 https://www.google.com
                 https://www.gstatic.com

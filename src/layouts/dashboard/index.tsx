@@ -8,6 +8,7 @@ import { useSettingsContext } from 'src/components/settings'
 import Main from './main'
 import Header from './header'
 import NavMini from './nav-mini'
+import BaseLayout from '../baseLayout'
 import NavVertical from './nav-vertical'
 import NavHorizontal from './nav-horizontal'
 
@@ -36,19 +37,19 @@ export default function DashboardLayout({ children }: Props) {
 
   if (isHorizontal) {
     return (
-      <>
+      <BaseLayout>
         <Header onOpenNav={nav.onTrue} />
 
         {lgUp ? renderHorizontal : renderNavVertical}
 
         <Main>{children}</Main>
-      </>
+      </BaseLayout>
     )
   }
 
   if (isMini) {
     return (
-      <>
+      <BaseLayout>
         <Header onOpenNav={nav.onTrue} />
 
         <Box
@@ -62,12 +63,12 @@ export default function DashboardLayout({ children }: Props) {
 
           <Main>{children}</Main>
         </Box>
-      </>
+      </BaseLayout>
     )
   }
 
   return (
-    <>
+    <BaseLayout>
       <Header onOpenNav={nav.onTrue} />
 
       <Box
@@ -81,6 +82,6 @@ export default function DashboardLayout({ children }: Props) {
 
         <Main>{children}</Main>
       </Box>
-    </>
+    </BaseLayout>
   )
 }
