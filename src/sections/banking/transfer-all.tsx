@@ -1,6 +1,8 @@
 import * as Yup from 'yup'
-import { useForm } from 'react-hook-form'
+import { isAddress } from 'ethers'
+import { Trans } from 'react-i18next'
 import { useMemo, useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 
 import Box from '@mui/material/Box'
@@ -16,6 +18,7 @@ import { useRouter } from 'src/routes/hooks'
 
 import { useTranslate } from 'src/locales'
 import { useAuthContext } from 'src/auth/hooks'
+import { NETWORK_NAME } from 'src/config-global'
 import { transferAll } from 'src/app/api/hooks/use-wallet'
 
 import { useSnackbar } from 'src/components/snackbar'
@@ -32,8 +35,8 @@ export default function TransferAll() {
 
   const TransferAllSchema = Yup.object().shape({
     wallet: Yup.string()
-      .matches(/^0x[a-zA-Z0-9]*$/, t('common.invalid-char'))
       .required(t('common.required'))
+      .test('is-eth-address', t('common.msg.invalid-wallet'), (value) => isAddress(value ?? ''))
   })
 
   const defaultValues = useMemo(
@@ -50,12 +53,9 @@ export default function TransferAll() {
   })
 
   const {
-    watch,
     handleSubmit,
     formState: { isSubmitting, isValid }
   } = methods
-
-  const wallet = watch('wallet')
 
   // ----------------------------------------------------------------------
 
@@ -65,7 +65,11 @@ export default function TransferAll() {
 
   const onSubmit = async (data: any) => {
     try {
-      const walletTo = wallet.startsWith('0x') ? wallet : `0x${wallet}`
+      const walletTo = data.wallet.startsWith('0x') ? data.wallet : `0x${data.wallet}`
+      if (!isAddress(walletTo)) {
+        setErrorMsg(t('common.msg.invalid-wallet'))
+        return
+      }
       await transferAll(user!.id, { walletTo })
       router.push(paths.dashboard.root)
       setErrorMsg('')
@@ -91,6 +95,13 @@ export default function TransferAll() {
               sm: 'repeat(1, 1fr)'
             }}
           >
+            <Alert severity='warning'>
+              <Trans
+                i18nKey='transfer-all.warning'
+                components={{ bold: <strong /> }}
+                values={{ NETWORK: NETWORK_NAME }}
+              />
+            </Alert>
             <Alert severity='info'>{t('transfer-all.info')}</Alert>
             <RHFTextField
               type='wallet'
