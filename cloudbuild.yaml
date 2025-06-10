@@ -132,7 +132,6 @@ steps:
   - name: 'bash'
     script: |
       #!/usr/bin/env bash
-      echo 'BACKEND_API_TOKEN en cloudbuild.yaml 1: $BACKEND_API_TOKEN_SECRET'
     secretEnv: [
       'BACKEND_API_TOKEN_SECRET'
     ]
