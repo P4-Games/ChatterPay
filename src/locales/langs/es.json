@@ -273,8 +273,8 @@
     "table-download": "Descargar",
     "table-print": "Imprimir",
     "table-share": "Compartir",
-    "receive-from": "Recibido dinero de",
-    "sent-to": "Enviado dinero a"
+    "receive-from": "Recibiste de",
+    "sent-to": "Enviaste a"
   },
   "transfer-all": {
     "info": "Indica una dirección de billetera en donde se enviarán todos los fondos que tengas en Chatterpay",

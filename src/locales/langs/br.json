@@ -274,8 +274,8 @@
     "table-download": "Baixar",
     "table-print": "Imprimir",
     "table-share": "Compartilhar",
-    "receive-from": "Recebido dinheiro de",
-    "sent-to": "Enviado dinheiro para"
+    "receive-from": "Recebeu de",
+    "sent-to": "Enviou para"
   },
   "transfer-all": {
     "info": "Indica um endereço de carteira para onde serão enviados todos os fundos que você possui no Chatterpay.",
