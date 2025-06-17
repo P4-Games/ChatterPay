@@ -1,5 +1,3 @@
-import { useMemo } from 'react'
-
 import Box from '@mui/material/Box'
 import Table from '@mui/material/Table'
 import Avatar from '@mui/material/Avatar'
@@ -179,32 +177,35 @@ function getContactData(
   userWallet: string,
   data: ITransaction,
   mdUp: boolean
-): { contact: string; phone: string; walletTo: string; calculatedAmount: string } {
-  let contact: string = ''
-  let phone: string = ''
-  let walletTo: string = ''
+): { contactName: string; contactIdentifier: string; calculatedAmount: string } {
+  let contactName: string = ''
+  let contactIdentifier: string = ''
   let calculatedAmount: string = ''
 
   const trxReceive: boolean = userWallet === data.wallet_to
 
   if (data.type.toLowerCase() === 'swap') {
-    contact = (trxReceive ? data.contact_to_name : data.contact_from_name) || ''
-    phone = (trxReceive ? data.contact_to_phone : data.contact_from_phone) || ''
+    contactName = (trxReceive ? data.contact_to_name : data.contact_from_name) || ''
+    contactIdentifier = (trxReceive ? data.contact_to_phone : data.contact_from_phone) || ''
     calculatedAmount = fNumber(data.amount)
-    walletTo = data.wallet_to || ''
   } else {
-    contact = (trxReceive ? data.contact_from_name : data.contact_to_name) || ''
-    phone = (trxReceive ? data.contact_from_phone : data.contact_to_phone) || ''
+    // 'transfer' or 'deposit'
+    contactName = (trxReceive ? data.contact_from_name : data.contact_to_name) || ''
+    contactIdentifier = (trxReceive ? data.contact_from_phone : data.contact_to_phone) || ''
     calculatedAmount = fNumber(data.amount - (trxReceive ? data.fee || 0 : 0))
-    walletTo = data.wallet_to || ''
+  }
+
+  // case: Identifier is a wallet
+  if (contactIdentifier.startsWith('0x')) {
+    contactIdentifier = maskAddress(contactIdentifier)
   }
 
   // hide contact name in mobile
   if (!mdUp) {
-    contact = ''
+    contactName = ''
   }
 
-  return { contact, phone, walletTo, calculatedAmount }
+  return { contactName, contactIdentifier, calculatedAmount }
 }
 
 function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTransitionsRowProps) {
@@ -212,10 +213,10 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
   const { t } = useTranslate()
   const lightMode = theme.palette.mode === 'light'
   const trxReceive: boolean = userWallet === row.wallet_to
-  const { contact, phone, walletTo, calculatedAmount } = getContactData(userWallet, row, mdUp)
+  const { contactName, contactIdentifier, calculatedAmount } = getContactData(userWallet, row, mdUp)
   const message: string = `${
     trxReceive ? t('transactions.receive-from') : t('transactions.sent-to')
-  } ${contact}`
+  } ${contactName}`
   const trxLink = `${EXPLORER_L2_URL}/tx/${row.trx_hash}`
 
   const popover = usePopover()
@@ -234,14 +235,6 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
     popover.onClose()
     console.info('SHARE', row.id)
   }
-
-  const getToIdentifier = useMemo(() => {
-    if (phone.length > 0) {
-      return phone
-    }
-
-    return maskAddress(walletTo)
-  }, [phone, walletTo])
 
   const renderAvatar = (
     <Box sx={{ position: 'relative', mr: 2 }}>
@@ -286,7 +279,7 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
             <Iconify icon='eva:external-link-outline' />
           </IconButton>
         </Link>
-        <ListItemText primary={message} secondary={getToIdentifier} />
+        <ListItemText primary={message} secondary={contactIdentifier} />
       </TableCell>
 
       <TableCell>
@@ -361,7 +354,7 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
           primary={message}
           secondary={
             <>
-              {getToIdentifier}
+              {contactIdentifier}
               <Box component='span' sx={{ display: 'block', mt: 0.5 }}>
                 {`${fDate(new Date(row.date))} ${fTime(new Date(row.date))}`}
               </Box>
