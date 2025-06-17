@@ -517,13 +517,13 @@ export async function getUserTransactions(wallet: string): Promise<ITransaction[
           _id: 1,
           date: 1,
           wallet_from: 1,
-          contact_from_phone: { $ifNull: ['$contact_from_user.phone_number', ''] },
+          contact_from_phone: { $ifNull: ['$contact_from_user.phone_number', '$wallet_from'] }, // ifNull => Case: External wallet
           contact_from_name: { $ifNull: ['$contact_from_user.name', ''] },
           contact_from_avatar_url: {
             $ifNull: ['$contact_from_user.photo', '/assets/images/home/logo.png']
           },
           wallet_to: 1,
-          contact_to_phone: { $ifNull: ['$contact_to_user.phone_number', ''] },
+          contact_to_phone: { $ifNull: ['$contact_to_user.phone_number', '$wallet_to'] }, // ifNull => Case: External wallet
           contact_to_name: { $ifNull: ['$contact_to_user.name', ''] },
           contact_to_avatar_url: {
             $ifNull: ['$contact_to_user.photo', '/assets/images/home/logo.png']

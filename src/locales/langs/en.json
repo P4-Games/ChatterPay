@@ -273,8 +273,8 @@
     "table-download": "Download",
     "table-print": "Print",
     "table-share": "Share",
-    "receive-from": "Received money from",
-    "sent-to": "Sent money to"
+    "receive-from": "Received from",
+    "sent-to": "Sent to"
   },
   "transfer-all": {
     "info": "Indicates a wallet address where all funds in Chatterpay will be sent.",
