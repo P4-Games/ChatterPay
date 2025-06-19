@@ -23,7 +23,8 @@
     "copied": "Copiado",
     "msg": {
       "update-success": "¡Actualización exitosa!",
-      "update-error": "Error de actualización"
+      "update-error": "Error de actualización",
+      "invalid-wallet": "Dirección de billetera inválida"
     }
   },
   "menu": {
@@ -272,11 +273,12 @@
     "table-download": "Descargar",
     "table-print": "Imprimir",
     "table-share": "Compartir",
-    "receive-from": "Recibido dinero de",
-    "sent-to": "Enviado dinero a"
+    "receive-from": "Recibiste de",
+    "sent-to": "Enviaste a"
   },
   "transfer-all": {
     "info": "Indica una dirección de billetera en donde se enviarán todos los fondos que tengas en Chatterpay",
+    "warning": "Importante: Estás por retirar tus fondos a una wallet externa. Asegúrate de que la dirección de destino sea correcta y compatible con la red <bold>{{NETWORK}}</bold>. ChatterPay no puede revertir transacciones enviadas a una dirección o red incorrecta.",
     "msgs": {
       "ok": "Los fondos fueron transferidos. Los verás en la billetera indicada en breve.",
       "error": "Hubo un error al intentar transferir los fondos."
