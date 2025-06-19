@@ -52,6 +52,8 @@ export const NFT_IMAGE_REPOSITORY = (
 ).toLowerCase()
 export const CHATIZALO_PHONE_NUMBER = process.env.NEXT_PUBLIC_CHATIZALO_PHONE_NUMBER || 0
 
+export const NETWORK_NAME = process.env.NEXT_PUBLIC_NETWORK || 'Scroll'
+
 // analytics
 export const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || ''
 export const MS_CLARITY_ID = process.env.NEXT_PUBLIC_MS_CLARITY_ID || ''

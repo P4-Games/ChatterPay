@@ -23,7 +23,8 @@
     "copied": "Copiado",
     "msg": {
       "update-success": "Atualização bem-sucedida!",
-      "update-error": "Erro de atualização"
+      "update-error": "Erro de atualização",
+      "invalid-wallet": "Endereço de carteira inválido"
     }
   },
   "menu": {
@@ -273,11 +274,12 @@
     "table-download": "Baixar",
     "table-print": "Imprimir",
     "table-share": "Compartilhar",
-    "receive-from": "Recebido dinheiro de",
-    "sent-to": "Enviado dinheiro para"
+    "receive-from": "Recebeu de",
+    "sent-to": "Enviou para"
   },
   "transfer-all": {
     "info": "Indica um endereço de carteira para onde serão enviados todos os fundos que você possui no Chatterpay.",
+    "warning": "Importante: Você está prestes a sacar seus fundos para uma carteira externa. Verifique se o endereço de destino está correto e é compatível com a rede <bold>{{NETWORK}}</bold>. O ChatterPay não pode reverter transações enviadas para o endereço ou rede errados.",
     "msgs": {
       "ok": "Os fundos foram transferidos. Você os verá na carteira indicada em breve.",
       "error": "Houve um erro ao tentar transferir os fundos."
