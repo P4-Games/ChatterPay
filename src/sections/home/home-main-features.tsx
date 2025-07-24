@@ -311,7 +311,7 @@ export default function HomeMainFeatures() {
             <img
               src='/assets/images/home/awards/icp.png'
               alt='ICP Logo'
-              style={{ width: '24px', height: 'auto' }}
+              style={{ height: '30px', width: 'auto' }}
             />
           </Box>
         )}
