@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from 'react'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Stack from '@mui/material/Stack'
+import Button from '@mui/material/Button'
 import Container from '@mui/material/Container'
 import { useTheme } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
@@ -206,7 +207,7 @@ export default function HomeMainFeatures() {
         sx={{
           textAlign: isFullWidth ? { xs: 'center', md: 'left' } : 'center',
           bgcolor: cardBgColor,
-          p: (th) => th.spacing(5, 6),
+          p: (th) => th.spacing(10, 6),
           color: textColor,
           height: '100%',
           display: 'flex',
@@ -247,6 +248,18 @@ export default function HomeMainFeatures() {
           >
             {card.description}
           </Typography>
+
+          {card.title === t('home.main-features.card-3.title') && (
+            <Button
+              component='a'
+              href='https://api.whatsapp.com/send/?phone=5491164629653&text=Hi%21+I+want+to+create+a+certificate&type=phone_number&app_absent=0'
+              target='_blank'
+              variant='contained'
+              sx={{ mt: 2 }}
+            >
+              Create Certificate
+            </Button>
+          )}
         </Box>
 
         {/* Card image */}
@@ -276,6 +289,32 @@ export default function HomeMainFeatures() {
             }}
           />
         </Box>
+        {card.title === t('home.main-features.card-3.title') && (
+          <Box
+            sx={{
+              position: 'absolute',
+              bottom: 16,
+              right: 16,
+              display: 'flex',
+              alignItems: 'center',
+              backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'action.hover',
+              borderRadius: '12px',
+              padding: '4px 8px'
+            }}
+          >
+            <Typography
+              variant='caption'
+              sx={{ color: isDarkMode ? 'common.white' : 'text.primary', mr: 1 }}
+            >
+              All certificates are stored in ICP
+            </Typography>
+            <img
+              src='/assets/images/home/awards/icp.png'
+              alt='ICP Logo'
+              style={{ width: '24px', height: 'auto' }}
+            />
+          </Box>
+        )}
       </Card>
     )
   }
