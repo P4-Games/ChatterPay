@@ -14,8 +14,8 @@ import { RouterLink } from 'src/routes/components'
 import { useTranslate } from 'src/locales'
 import { _socials, BOT_WAPP_URL, CONTACT_EMAIL } from 'src/config-global'
 
-import Logo from 'src/components/logo'
 import Iconify from 'src/components/iconify'
+import Logo, { LogoWithName } from 'src/components/logo'
 
 // ----------------------------------------------------------------------
 
@@ -90,8 +90,7 @@ export default function Footer({ simple }: FooterProps) {
           textAlign: { xs: 'center', md: 'unset' }
         }}
       >
-        <Logo sx={{ mb: 3 }} />
-
+        <LogoWithName sx={{ mb: 3, height: { xs: 28, md: 40 } }} />
         <Grid
           container
           justifyContent={{

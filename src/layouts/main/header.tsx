@@ -14,8 +14,8 @@ import { useResponsive } from 'src/hooks/use-responsive'
 import { bgBlur } from 'src/theme/css'
 import { useTranslate } from 'src/locales'
 
-import Logo from 'src/components/logo'
 import Iconify from 'src/components/iconify'
+import { LogoWithName } from 'src/components/logo'
 
 import NavMobile from './nav/mobile'
 import { HEADER } from '../config-layout'
@@ -81,7 +81,11 @@ export default function Header() {
             justifyContent: 'space-between'
           }}
         >
-          {mdUp ? <Logo /> : <NavMobile data={navConfigMobile} />}
+          {mdUp ? (
+            <LogoWithName sx={{ height: { xs: 28, md: 40 } }} />
+          ) : (
+            <NavMobile data={navConfigMobile} />
+          )}
           <Stack direction='row' alignItems='center' spacing={2}>
             {mdUp && (
               <Stack direction='row' spacing={3}>
