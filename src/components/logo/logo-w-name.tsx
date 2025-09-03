@@ -20,8 +20,8 @@ const LogoWithName = forwardRef<HTMLImageElement, LogoWithNameProps>(
     const isDark = theme.palette.mode === 'dark'
 
     const src = isDark
-      ? '/assets/images/home/logo-w-name.png'
-      : '/assets/images/home/logo-w-name-black.png'
+      ? '/assets/images/home/logo-w-name.svg'
+      : '/assets/images/home/logo-w-name-black.svg'
 
     const img = (
       <Box
