@@ -17,7 +17,7 @@ const Logo = forwardRef<HTMLDivElement, LogoProps>(
     const logo = (
       <Box
         component='img'
-        src='/assets/images/home/logo.png'
+        src='/assets/images/home/logo.svg'
         alt='chatterpay'
         sx={{ width: 40, height: 40, borderRadius: '90%', cursor: 'pointer', ...sx }}
       />
