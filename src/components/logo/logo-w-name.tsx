@@ -1,34 +1,53 @@
 import { forwardRef } from 'react'
 
 import Link from '@mui/material/Link'
+import { useTheme } from '@mui/material/styles'
 import Box, { BoxProps } from '@mui/material/Box'
 
 import { RouterLink } from 'src/routes/components'
 
 // ----------------------------------------------------------------------
 
-export interface LogoProps extends BoxProps {
+export interface LogoWithNameProps extends BoxProps {
   disabledLink?: boolean
+  /** preferred height in px; width scales automatically */
+  heightPx?: number
 }
 
-const LogoWithName = forwardRef<HTMLDivElement, LogoProps>(
-  ({ disabledLink = false, sx, ...other }, ref) => {
-    const logo = (
+const LogoWithName = forwardRef<HTMLImageElement, LogoWithNameProps>(
+  ({ disabledLink = false, sx, heightPx = 36, ...other }, ref) => {
+    const theme = useTheme()
+    const isDark = theme.palette.mode === 'dark'
+
+    const src = isDark
+      ? '/assets/images/home/logo-w-name.png'
+      : '/assets/images/home/logo-w-name-black.png'
+
+    const img = (
       <Box
         component='img'
-        src='/assets/images/home/logo-w-name.png'
-        alt='chatterpay'
-        sx={{ width: 40, height: 40, borderRadius: '90%', cursor: 'pointer', ...sx }}
+        ref={ref}
+        src={src}
+        alt='ChatterPay'
+        sx={{
+          display: 'block',
+          height: heightPx, // controla el tamaño visible
+          width: 'auto', // mantiene proporción horizontal
+          // cursor solo si es clickeable
+          ...(disabledLink ? {} : { cursor: 'pointer' }),
+          ...sx
+        }}
+        {...other}
       />
     )
 
     if (disabledLink) {
-      return logo
+      return img
     }
 
     return (
-      <Link component={RouterLink} href='/' sx={{ display: 'contents' }}>
-        {logo}
+      <Link component={RouterLink} href='/' sx={{ display: 'inline-flex', lineHeight: 0 }}>
+        {img}
       </Link>
     )
   }
