@@ -97,6 +97,7 @@
     "rehype-highlight": "^7.0.0",
     "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.0",
+    "sharp": "^0.34.3",
     "simplebar-react": "^3.2.4",
     "slick-carousel": "^1.8.1",
     "stylis": "^4.3.0",
