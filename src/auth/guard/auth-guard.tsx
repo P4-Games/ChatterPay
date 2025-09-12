@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 
 import { paths } from 'src/routes/paths'
 import { useRouter } from 'src/routes/hooks'
@@ -34,26 +34,15 @@ function Container({ children }: Props) {
 
   const [checked, setChecked] = useState(false)
 
-  const check = useCallback(() => {
-    if (!authenticated) {
-      const searchParams = new URLSearchParams({
-        returnTo: window.location.pathname
-      }).toString()
-
-      const loginPath = loginPaths[method]
-
-      const href = `${loginPath}?${searchParams}`
-
-      router.replace(href)
-    } else {
-      setChecked(true)
-    }
-  }, [authenticated, method, router])
-
   useEffect(() => {
-    check()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    if (authenticated) {
+      setChecked(true)
+      return
+    }
+    const searchParams = new URLSearchParams({ returnTo: window.location.pathname }).toString()
+    const loginPath = loginPaths[method]
+    router.replace(`${loginPath}?${searchParams}`)
+  }, [authenticated, method, router])
 
   if (!checked) {
     return null
