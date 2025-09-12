@@ -7,7 +7,7 @@ import { getStorageItem } from 'src/hooks/use-local-storage'
 import { STORAGE_KEY_TOKEN } from 'src/config-global'
 import { post, fetcher, endpoints } from 'src/app/api/hooks/api-resolver'
 
-import { JwtPayload, jwtPayloadUser } from 'src/types/jwt'
+import { JwtPayload } from 'src/types/jwt'
 
 import { AuthContext } from './auth-context'
 import { jwtDecode, setSession, isValidToken, getAuthorizationHeader } from './utils'
@@ -121,40 +121,36 @@ export function AuthProvider({ children }: Props) {
 
       if (jwtToken && isValidToken(jwtToken)) {
         setSession(jwtToken)
-        const decodedToken: JwtPayload = jwtDecode(jwtToken)
-        const tokenUser: jwtPayloadUser = decodedToken.user
 
+        // Opcional: decodificar y pre-hidratar usuario “provisional”
+        const decoded: JwtPayload = jwtDecode(jwtToken)
+        const tokenUser = decoded.user
+
+        // marca authenticated mientras validás backend
+        dispatch({
+          type: Types.INITIAL,
+          payload: { user: { id: tokenUser.id, jwtToken } as AuthUserType }
+        })
+
+        // ahora validá con backend
         const res = await fetcher([
           endpoints.dashboard.user.id(tokenUser.id),
           { headers: getAuthorizationHeader() }
         ])
-        const user = res
-
-        dispatch({
-          type: Types.INITIAL,
-          payload: {
-            user: {
-              ...user,
-              jwtToken
-            }
-          }
-        })
+        dispatch({ type: Types.UPDATE_USER, payload: { user: { ...res, jwtToken } } })
       } else {
-        dispatch({
-          type: Types.INITIAL,
-          payload: {
-            user: null
-          }
-        })
+        dispatch({ type: Types.INITIAL, payload: { user: null } })
       }
-    } catch (error) {
-      console.error(error && error.message ? error.message : error)
-      dispatch({
-        type: Types.INITIAL,
-        payload: {
-          user: null
-        }
-      })
+    } catch (err: any) {
+      // Solo desloguear si backend dice 401/403
+      const status = err?.response?.status
+      if (status === 401 || status === 403) {
+        setSession(null)
+        dispatch({ type: Types.INITIAL, payload: { user: null } })
+      } else {
+        // mantener sesión provisional y reintentar luego
+        console.error('initialize (transient)', err?.message ?? err)
+      }
     }
   }, [])
 
