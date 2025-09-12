@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+import { CHP_DSH_NAME } from 'src/config-global'
 import { getIpFromRequest } from 'src/app/api/middleware/utils/network-utils'
-import { extractjwtTokenFromHeader } from 'src/app/api/middleware/utils/jwt-utils'
 import { checkUserHaveActiveSession } from 'src/app/api/services/db/chatterpay-db-service'
+import {
+  extractJwtTokenFromCookie,
+  extractjwtTokenFromHeader
+} from 'src/app/api/middleware/utils/jwt-utils'
 
 import { JwtPayload } from 'src/types/jwt'
 
@@ -22,9 +26,18 @@ export async function validateRequestSecurity(
 ): Promise<AuthContext | NextResponse> {
   const ip = getIpFromRequest(req)
 
-  const jwtTokenDecoded: JwtPayload | null = extractjwtTokenFromHeader(
+  // Try Authorization header first (legacy)
+  let jwtTokenDecoded: JwtPayload | null = extractjwtTokenFromHeader(
     req.headers.get('Authorization')
   )
+
+  // If no header, try HttpOnly cookie
+  if (!jwtTokenDecoded) {
+    const cookie = req.cookies.get(CHP_DSH_NAME)?.value
+    if (cookie) {
+      jwtTokenDecoded = extractJwtTokenFromCookie(cookie)
+    }
+  }
 
   if (!jwtTokenDecoded) {
     return NextResponse.json(

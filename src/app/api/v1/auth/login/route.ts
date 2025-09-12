@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { generateJwtToken } from 'src/app/api/middleware/utils/jwt-utils'
 import { getIpFromRequest } from 'src/app/api/middleware/utils/network-utils'
 import { validateRecaptcha } from 'src/app/api/services/google/recaptcha-service'
+import { CHP_DSH_NAME, IS_DEVELOPMENT, USER_SESSION_EXPIRATION_MINUTES } from 'src/config-global'
 import {
   getUserByPhone,
   updateUserCode,
@@ -101,7 +102,19 @@ export async function POST(req: NextRequest) {
     // clean 2fa code used in bdd
     updateUserCode(user.id, undefined)
 
-    return NextResponse.json(data)
+    // ------------------ HttpOnly cookie (added) ------------------
+    const res = NextResponse.json(data)
+    res.cookies.set({
+      name: CHP_DSH_NAME,
+      value: data.jwtToken,
+      httpOnly: true,
+      secure: !IS_DEVELOPMENT,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: Number(USER_SESSION_EXPIRATION_MINUTES) * 60
+    })
+    return res
+    // -------------------------------------------------------------
   } catch (ex) {
     console.error(ex)
     return new NextResponse(JSON.stringify({ error: 'Error in authentication' }), {
