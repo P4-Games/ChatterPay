@@ -133,9 +133,10 @@ export function AuthProvider({ children }: Props) {
     try {
       await post(endpoints.dashboard.user.logout(id), {})
     } catch (error) {
-      console.error('logout', (error as any)?.message)
+      console.error('logout error:', (error as any)?.message)
+    } finally {
+      dispatch({ type: Types.LOGOUT })
     }
-    dispatch({ type: Types.LOGOUT })
   }, [])
 
   const updateUser = useCallback((user: AuthUserType) => {
