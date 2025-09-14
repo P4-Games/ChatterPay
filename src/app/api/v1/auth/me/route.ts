@@ -8,7 +8,7 @@ import { jwtPayloadUser } from 'src/types/jwt'
 
 // ----------------------------------------------------------------------
 
-  const defaultUser: jwtPayloadUser = {
+const defaultUser: jwtPayloadUser = {
   id: '',
   displayName: '',
   wallet: '',
@@ -17,7 +17,6 @@ import { jwtPayloadUser } from 'src/types/jwt'
   photoURL: '',
   phoneNumber: ''
 }
-
 
 export async function GET() {
   const token = cookies().get(CHP_DSH_NAME)?.value

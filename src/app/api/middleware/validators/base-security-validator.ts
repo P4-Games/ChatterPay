@@ -2,9 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import { CHP_DSH_NAME } from 'src/config-global'
 import { getIpFromRequest } from 'src/app/api/middleware/utils/network-utils'
-import {
-  extractJwtTokenFromCookie
-} from 'src/app/api/middleware/utils/jwt-utils'
+import { extractJwtTokenFromCookie } from 'src/app/api/middleware/utils/jwt-utils'
 import { checkUserHaveActiveSession } from 'src/app/api/services/db/chatterpay-db-service'
 
 import { JwtPayload } from 'src/types/jwt'
@@ -27,10 +25,7 @@ export async function validateRequestSecurity(
 
   // 1. Try HttpOnly cookie (new standard)
   const cookie = req.cookies.get(CHP_DSH_NAME)?.value
-  const jwtTokenDecoded: JwtPayload | null = cookie
-    ? extractJwtTokenFromCookie(cookie)
-    : null
-
+  const jwtTokenDecoded: JwtPayload | null = cookie ? extractJwtTokenFromCookie(cookie) : null
 
   // 2. Reject if no valid token
   if (!jwtTokenDecoded) {
