@@ -71,7 +71,7 @@ export function AuthProvider({ children }: Props) {
 
   const initialize = useCallback(async () => {
     try {
-      const res = await fetcher([endpoints.auth.me() || 'none', {}])
+      const res = await fetcher([endpoints.auth.me(), {}])
       dispatch({ type: Types.INITIAL, payload: { user: res?.user || null } })
     } catch (err: any) {
       const status = err?.response?.status
