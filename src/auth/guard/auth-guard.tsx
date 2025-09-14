@@ -27,8 +27,6 @@ export default function AuthGuard({ children }: Props) {
   useEffect(() => {
     if (loading) return
 
-    console.log('auth-guard', authenticated)
-
     if (authenticated) {
       setReady(true)
     } else {
