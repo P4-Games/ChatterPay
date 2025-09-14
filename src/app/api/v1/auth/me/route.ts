@@ -4,12 +4,25 @@ import { NextResponse } from 'next/server'
 import { CHP_DSH_NAME } from 'src/config-global'
 import { verifyJwtToken } from 'src/app/api/middleware/utils/jwt-utils'
 
+import { jwtPayloadUser } from 'src/types/jwt'
+
 // ----------------------------------------------------------------------
+
+  const defaultUser: jwtPayloadUser = {
+  id: '',
+  displayName: '',
+  wallet: '',
+  walletEOA: '',
+  email: '',
+  photoURL: '',
+  phoneNumber: ''
+}
+
 
 export async function GET() {
   const token = cookies().get(CHP_DSH_NAME)?.value
   if (!token) {
-    return NextResponse.json({ user: null }, { status: 401 })
+    return NextResponse.json({ user: defaultUser }, { status: 200 })
   }
 
   try {
