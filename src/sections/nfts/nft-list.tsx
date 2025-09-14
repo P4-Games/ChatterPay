@@ -21,7 +21,7 @@ export default function NftList({ nfts }: Props) {
     setPage(value)
   }
 
- const paginatedNfts = Array.isArray(nfts)
+  const paginatedNfts = Array.isArray(nfts)
     ? nfts.slice((page - 1) * itemsPerPage, page * itemsPerPage)
     : []
 
