@@ -38,7 +38,7 @@ export async function getBalancesWithTotalsFromBackend(walletAddress: string): P
   const cacheKey = `getBalancesWithTotalsFromBackend.${walletAddress}`
   const fromCache = cache.get(cacheKey) as IBalances
   if (fromCache) {
-    console.info('from cache:', cacheKey, fromCache)
+    console.info('from cache:', cacheKey)
     return fromCache
   }
 
