@@ -145,7 +145,9 @@ export function AuthProvider({ children }: Props) {
 
   // ----------------------------------------------------------------------
 
-  const checkAuthenticated = state.user ? 'authenticated' : 'unauthenticated'
+  const checkAuthenticated =
+    state.user?.id && state.user.id.trim() !== '' ? 'authenticated' : 'unauthenticated'
+
   const status = state.loading ? 'loading' : checkAuthenticated
 
   const memoizedValue = useMemo(
