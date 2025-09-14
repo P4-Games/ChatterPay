@@ -71,12 +71,8 @@ export function AuthProvider({ children }: Props) {
 
   const initialize = useCallback(async () => {
     try {
-      const res = await fetcher([endpoints.auth.me(), {}])
-      if (res?.user) {
-        dispatch({ type: Types.INITIAL, payload: { user: res.user } })
-      } else {
-        dispatch({ type: Types.INITIAL, payload: { user: null } })
-      }
+      const res = await fetcher([endpoints.auth.me() || 'none', {}])
+      dispatch({ type: Types.INITIAL, payload: { user: res?.user || null } })
     } catch (err: any) {
       const status = err?.response?.status
       const message = err?.message || ''
@@ -85,7 +81,7 @@ export function AuthProvider({ children }: Props) {
         // expected: no session, user not logged in
         dispatch({ type: Types.INITIAL, payload: { user: null } })
       } else {
-        console.error('initialize error', err?.message ?? err)
+        console.warn('initialize error', err?.message ?? err)
         dispatch({ type: Types.INITIAL, payload: { user: null } })
       }
     }
