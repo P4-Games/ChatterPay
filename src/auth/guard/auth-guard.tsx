@@ -20,32 +20,27 @@ type Props = {
 }
 
 export default function AuthGuard({ children }: Props) {
-  const { loading } = useAuthContext()
-
-  return <>{loading ? <SplashScreen /> : <Container>{children}</Container>}</>
-}
-
-// ----------------------------------------------------------------------
-
-function Container({ children }: Props) {
   const router = useRouter()
-
-  const { authenticated, method } = useAuthContext()
-
-  const [checked, setChecked] = useState(false)
+  const { loading, authenticated, method } = useAuthContext()
+  const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    if (authenticated) {
-      setChecked(true)
-      return
-    }
-    const searchParams = new URLSearchParams({ returnTo: window.location.pathname }).toString()
-    const loginPath = loginPaths[method]
-    router.replace(`${loginPath}?${searchParams}`)
-  }, [authenticated, method, router])
+    if (loading) return
 
-  if (!checked) {
-    return null
+    if (authenticated) {
+      setReady(true)
+    } else {
+      // Not logged in -> redirect to login
+      const searchParams = new URLSearchParams({ returnTo: window.location.pathname }).toString()
+      const loginPath = loginPaths[method]
+      router.replace(`${loginPath}?${searchParams}`)
+      setReady(false)
+    }
+  }, [authenticated, loading, method, router])
+
+  // Always block rendering until auth is resolved
+  if (loading || !ready) {
+    return <SplashScreen />
   }
 
   return <>{children}</>

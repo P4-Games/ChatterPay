@@ -145,7 +145,7 @@ export default function JwtLoginView() {
     if (authenticated) {
       router.push(PATH_AFTER_LOGIN)
     } else {
-      console.log('not authenticated')
+      console.info('not authenticated')
     }
   }, [authenticated, router])
 

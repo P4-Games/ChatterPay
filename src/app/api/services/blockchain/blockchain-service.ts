@@ -38,7 +38,7 @@ export async function getBalancesWithTotalsFromBackend(walletAddress: string): P
   const cacheKey = `getBalancesWithTotalsFromBackend.${walletAddress}`
   const fromCache = cache.get(cacheKey) as IBalances
   if (fromCache) {
-    console.info('from cache:', cacheKey, fromCache)
+    console.info('from cache:', cacheKey)
     return fromCache
   }
 
@@ -52,7 +52,7 @@ export async function getBalancesWithTotalsFromBackend(walletAddress: string): P
     })
     responseBalances = response.data.data
   } catch (error) {
-    console.error('Error fetching balance from backend:', error)
+    console.error('Error fetching balance from backend:', error.message)
     responseBalances = defaultBalances
   }
 

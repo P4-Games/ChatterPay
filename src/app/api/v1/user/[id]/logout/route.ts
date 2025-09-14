@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+import { CHP_DSH_NAME, IS_DEVELOPMENT } from 'src/config-global'
 import { updateUserSessionStatus } from 'src/app/api/services/db/chatterpay-db-service'
 import { validateRequestSecurity } from 'src/app/api/middleware/validators/base-security-validator'
 import { validateUserCommonsInputs } from 'src/app/api/middleware/validators/user-common-inputs-validator'
@@ -24,7 +25,18 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
       'terminated'
     )
 
-    return NextResponse.json({ result })
+    // --- Clean HttpOnly cookie too ---
+    const res = NextResponse.json({ result })
+    res.cookies.set({
+      name: CHP_DSH_NAME,
+      value: '',
+      httpOnly: true,
+      secure: !IS_DEVELOPMENT,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 0
+    })
+    return res
   } catch (ex) {
     console.error(ex)
     return new NextResponse(JSON.stringify({ error: 'Error in update user' }), {

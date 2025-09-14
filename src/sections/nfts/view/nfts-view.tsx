@@ -14,6 +14,7 @@ import { useSettingsContext } from 'src/components/settings'
 import { LoadingScreen } from 'src/components/loading-screen'
 
 import { INFT } from 'src/types/wallet'
+import { IAccount } from 'src/types/account'
 
 import NftList from '../nft-list'
 
@@ -23,19 +24,23 @@ export default function NftsView() {
   const { t } = useTranslate()
   const settings = useSettingsContext()
   const { user }: { user: AuthUserType } = useAuthContext()
-  const [walletAddress, setWalletAddress] = useState<string | null>(null)
+  const [walletAddress, setWalletAddress] = useState<string>('')
+  const [contextUser] = useState<IAccount | null>(null)
 
   useEffect(() => {
-    if (user && user.wallet) {
+    if (user?.wallet) {
       setWalletAddress(user.wallet)
     }
   }, [user])
 
+  useEffect(() => {
+    if (contextUser && contextUser.wallet) {
+      setWalletAddress(contextUser.wallet)
+    }
+  }, [contextUser])
+
   const { data: nfts, isLoading: loadingNfts }: { data: INFT[]; isLoading: boolean } =
-    useGetWalletNfts(
-      // 'none' => // avoid slow context-user load issues
-      walletAddress || 'none'
-    )
+    useGetWalletNfts(walletAddress)
 
   const notFound = !nfts || !nfts.length
   const renderContent = (

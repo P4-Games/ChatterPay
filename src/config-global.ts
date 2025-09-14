@@ -62,6 +62,7 @@ export const MS_CLARITY_ID = process.env.NEXT_PUBLIC_MS_CLARITY_ID || ''
 
 // internal
 export const STORAGE_OPTION = 'local'
+export const CHP_DSH_NAME = 'chp_dsh_data'
 export const USER_SESSION_EXPIRATION_MINUTES = 60
 export const PATH_AFTER_LOGIN = `/dashboard`
 export const IS_DEVELOPMENT =
