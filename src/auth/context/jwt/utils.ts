@@ -1,5 +1,3 @@
-import { paths } from 'src/routes/paths'
-
 import { getStorageItem, setStorageItem, removeStorageItem } from 'src/hooks/use-local-storage'
 
 import { STORAGE_KEY_TOKEN } from 'src/config-global'
@@ -38,24 +36,6 @@ export const isValidToken = (jwtToken: string) => {
   const now = Math.floor(Date.now() / 1000)
   const SKEW = 60 // tolerance
   return decoded.exp > now + SKEW
-}
-
-// ----------------------------------------------------------------------
-
-const handleTokenExpiration = () => {
-  alert('Token expired')
-  removeStorageItem(STORAGE_KEY_TOKEN)
-  delete axiosInstance.defaults.headers.common.Authorization
-  window.location.href = paths.auth.jwt.login
-}
-
-export const tokenExpired = (exp: number) => {
-  const timeLeft = exp * 1000 - Date.now()
-  if (timeLeft <= 0) {
-    handleTokenExpiration()
-    return
-  }
-  setTimeout(handleTokenExpiration, timeLeft)
 }
 
 // ----------------------------------------------------------------------
