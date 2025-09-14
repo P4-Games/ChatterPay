@@ -19,7 +19,7 @@ export default function LoginButton({ sx }: Props) {
   return (
     <Button
       component={fromICP ? 'a' : RouterLink}
-      href={paths.auth.jwt.login}
+      href={paths.dashboard.root}
       variant='soft'
       sx={{ mr: 1, ...sx }}
     >

@@ -82,7 +82,7 @@ export default function JwtRegisterView() {
       <Stack direction='row' spacing={0.5}>
         <Typography variant='body2'> {t('register.already-account')}</Typography>
 
-        <Link href={paths.auth.jwt.login} component={RouterLink} variant='subtitle2'>
+        <Link href={paths.dashboard.root} component={RouterLink} variant='subtitle2'>
           {t('register.sign-in')}
         </Link>
       </Stack>
