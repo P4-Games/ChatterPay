@@ -1,5 +1,3 @@
-import { paths } from 'src/routes/paths'
-
 import { getStorageItem, setStorageItem, removeStorageItem } from 'src/hooks/use-local-storage'
 
 import { STORAGE_KEY_TOKEN } from 'src/config-global'
@@ -11,17 +9,20 @@ export function jwtDecode(token: string) {
   try {
     const base64Url = token.split('.')[1]
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
-    const jsonPayload = decodeURIComponent(
-      window
-        .atob(base64)
-        .split('')
-        .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
-        .join('')
-    )
+
+    const jsonPayload =
+      typeof window === 'undefined'
+        ? Buffer.from(base64, 'base64').toString('utf-8')
+        : decodeURIComponent(
+            window
+              .atob(base64)
+              .split('')
+              .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
+              .join('')
+          )
 
     return JSON.parse(jsonPayload)
-  } catch (error) {
-    console.error('Error in decode jwt', error)
+  } catch {
     return {}
   }
 }
@@ -29,52 +30,20 @@ export function jwtDecode(token: string) {
 // ----------------------------------------------------------------------
 
 export const isValidToken = (jwtToken: string) => {
-  if (typeof jwtToken !== 'string') return false
-  if (!jwtToken.trim()) return false
-
-  try {
-    const decoded: { exp?: number } = jwtDecode(jwtToken)
-    if (!decoded.exp) {
-      return false
-    }
-
-    const currentTime = Date.now() / 1000
-
-    return decoded.exp > currentTime
-  } catch (error) {
-    console.error('Error decoding JWT:', error)
-    return false
-  }
-}
-
-// ----------------------------------------------------------------------
-
-const handleTokenExpiration = () => {
-  alert('Token expired')
-  removeStorageItem(STORAGE_KEY_TOKEN)
-  delete axiosInstance.defaults.headers.common.Authorization
-  window.location.href = paths.auth.jwt.login
-}
-
-export const tokenExpired = (exp: number) => {
-  const timeLeft = exp * 1000 - Date.now()
-  if (timeLeft <= 0) {
-    handleTokenExpiration()
-    return
-  }
-  setTimeout(handleTokenExpiration, timeLeft)
+  if (typeof jwtToken !== 'string' || !jwtToken.trim()) return false
+  const decoded: { exp?: number } = jwtDecode(jwtToken)
+  if (!decoded.exp) return false
+  const now = Math.floor(Date.now() / 1000)
+  const SKEW = 60 // tolerance
+  return decoded.exp > now + SKEW
 }
 
 // ----------------------------------------------------------------------
 
 export const setSession = (jwtToken: string | null) => {
   if (jwtToken) {
-    setStorageItem(STORAGE_KEY_TOKEN, jwtToken, false)
+    setStorageItem(STORAGE_KEY_TOKEN, jwtToken)
     axiosInstance.defaults.headers.common.Authorization = `Bearer ${jwtToken}`
-
-    // This function below will handle when token is expired
-    const { exp } = jwtDecode(jwtToken)
-    tokenExpired(exp)
   } else {
     removeStorageItem(STORAGE_KEY_TOKEN)
     delete axiosInstance.defaults.headers.common.Authorization

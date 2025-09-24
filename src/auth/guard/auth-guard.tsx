@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 
 import { paths } from 'src/routes/paths'
 import { useRouter } from 'src/routes/hooks'
@@ -20,43 +20,27 @@ type Props = {
 }
 
 export default function AuthGuard({ children }: Props) {
-  const { loading } = useAuthContext()
-
-  return <>{loading ? <SplashScreen /> : <Container>{children}</Container>}</>
-}
-
-// ----------------------------------------------------------------------
-
-function Container({ children }: Props) {
   const router = useRouter()
-
-  const { authenticated, method } = useAuthContext()
-
-  const [checked, setChecked] = useState(false)
-
-  const check = useCallback(() => {
-    if (!authenticated) {
-      const searchParams = new URLSearchParams({
-        returnTo: window.location.pathname
-      }).toString()
-
-      const loginPath = loginPaths[method]
-
-      const href = `${loginPath}?${searchParams}`
-
-      router.replace(href)
-    } else {
-      setChecked(true)
-    }
-  }, [authenticated, method, router])
+  const { loading, authenticated, method } = useAuthContext()
+  const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    check()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    if (loading) return
 
-  if (!checked) {
-    return null
+    if (authenticated) {
+      setReady(true)
+    } else {
+      // Not logged in -> redirect to login
+      const searchParams = new URLSearchParams({ returnTo: window.location.pathname }).toString()
+      const loginPath = loginPaths[method]
+      router.replace(`${loginPath}?${searchParams}`)
+      setReady(false)
+    }
+  }, [authenticated, loading, method, router])
+
+  // Always block rendering until auth is resolved
+  if (loading || !ready) {
+    return <SplashScreen />
   }
 
   return <>{children}</>

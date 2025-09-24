@@ -62,6 +62,7 @@ export const MS_CLARITY_ID = process.env.NEXT_PUBLIC_MS_CLARITY_ID || ''
 
 // internal
 export const STORAGE_OPTION = 'local'
+export const CHP_DSH_NAME = 'chp_dsh_data'
 export const USER_SESSION_EXPIRATION_MINUTES = 60
 export const PATH_AFTER_LOGIN = `/dashboard`
 export const IS_DEVELOPMENT =
@@ -281,5 +282,21 @@ export const _socials = [
     colorDark: '#FFFFFF',
     colorLight: '#181717',
     path: 'https://github.com/chatterpay'
+  },
+  {
+    value: 'discord',
+    name: 'Discord',
+    icon: 'ic:baseline-discord',
+    colorDark: '#5865F2',
+    colorLight: '#5865F2',
+    path: 'https://discord.com/invite/5VHk28uUeq'
+  },
+  {
+    value: 'linktree',
+    name: 'Linktree',
+    icon: 'simple-icons:linktree',
+    colorDark: '#39E09B',
+    colorLight: '#39E09B',
+    path: 'https://linktr.ee/chatterpay'
   }
 ]

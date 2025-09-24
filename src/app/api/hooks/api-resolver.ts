@@ -23,12 +23,16 @@ axiosInstance.interceptors.request.use((config) => {
 
   return config
 })
-
 axiosInstance.interceptors.response.use(
   (res) => res,
-  (error) => Promise.reject((error.response && error.response.data) || 'Something went wrong')
+  (error) => {
+    if (error.response?.status === 401) {
+      return Promise.reject(error)
+    }
+    console.error('[API Error]', error.message)
+    return Promise.reject(error)
+  }
 )
-
 export default axiosInstance
 
 // ----------------------------------------------------------------------
@@ -37,6 +41,7 @@ export const fetcher = async (args: string | [string, AxiosRequestConfig]) => {
   const [url, config] = Array.isArray(args) ? args : [args]
   const res = await axiosInstance.get(url, {
     ...config,
+    withCredentials: true,
     headers: {
       ...(axiosInstance.defaults.headers as Record<string, string>),
       ...(config?.headers as Record<string, string>)
@@ -80,7 +85,8 @@ function getFullBotEndpoint(endpoint: string): string {
 export const endpoints = {
   auth: {
     code: () => getFullUIEndpoint(`auth/code`),
-    login: () => getFullUIEndpoint(`auth/login`)
+    login: () => getFullUIEndpoint(`auth/login`),
+    me: () => getFullUIEndpoint('auth/me')
   },
   nft: {
     id: (id: string) => getFullUIEndpoint(`nft/${id}`)
