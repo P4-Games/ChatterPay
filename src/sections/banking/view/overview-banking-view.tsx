@@ -25,13 +25,13 @@ export default function OverviewBankingView() {
   const { t } = useTranslate()
   const settings = useSettingsContext()
   const { user }: { user: AuthUserType } = useAuthContext()
-  const [walletAddress, setWalletAddress] = useState<string | null>(null)
-  const [contextUser, setContextUser] = useState<IAccount | null>(null)
+  const [walletAddress, setWalletAddress] = useState<string>('')
+  const [contextUser] = useState<IAccount | null>(null)
 
   useEffect(() => {
-    if (!user) return
-    // @ts-ignore
-    setContextUser(user)
+    if (user?.wallet) {
+      setWalletAddress(user.wallet)
+    }
   }, [user])
 
   useEffect(() => {
@@ -39,42 +39,39 @@ export default function OverviewBankingView() {
       setWalletAddress(contextUser.wallet)
     }
   }, [contextUser])
-
   const { data: balances, isLoading: isLoadingBalances }: { data: IBalances; isLoading: boolean } =
-    // 'none' => // avoid slow context-user load issues
-    useGetWalletBalance(walletAddress || 'none')
+    useGetWalletBalance(walletAddress)
 
   const {
     data: transactions,
-    isLoading: isLoadingTrxs // 'none' => // avoid slow context-user load issues
-  }: { data: ITransaction[]; isLoading: boolean } = useGetWalletTransactions(
-    walletAddress || 'none'
-  )
+    isLoading: isLoadingTrxs
+  }: { data: ITransaction[]; isLoading: boolean } = useGetWalletTransactions(walletAddress)
+
+  // ✅ Fallbacks si no hay wallet
+  const safeBalances: IBalances =
+    !walletAddress || isLoadingBalances
+      ? { wallet: '', balances: [], totals: { usd: 0, ars: 0, brl: 0, uyu: 0 } }
+      : balances
+
+  const safeTransactions: ITransaction[] = !walletAddress || isLoadingTrxs ? [] : transactions
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
       <Grid container spacing={3}>
         <Grid xs={12} md={12}>
-          <BankingBalances
-            title={t('balances.title')}
-            tableData={
-              isLoadingBalances
-                ? { wallet: '', balances: [], totals: { usd: 0, ars: 0, brl: 0, uyu: 0 } }
-                : balances
-            }
-          />
+          <BankingBalances title={t('balances.title')} tableData={safeBalances} />
         </Grid>
 
         <Grid xs={12} md={12}>
           <Stack spacing={3}>
             <BankingRecentTransitions
               title={t('transactions.title')}
-              isLoading={isLoadingTrxs}
-              tableData={isLoadingTrxs ? [] : transactions}
+              isLoading={isLoadingTrxs || !walletAddress}
+              tableData={safeTransactions}
               tableLabels={[
                 { id: 'description', label: t('transactions.table-transaction') },
                 { id: 'amount', label: t('transactions.table-amount') },
-                { id: 'amount', label: t('transactions.table-type') },
+                { id: 'amount-TYPE', label: t('transactions.table-type') },
                 { id: 'date', label: t('transactions.table-date') },
                 { id: 'status', label: t('transactions.table-status') },
                 { id: '' }
