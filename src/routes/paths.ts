@@ -12,6 +12,16 @@ export const paths = {
   terms: '/terms',
   policy: '/policy',
   aboutUs: '/about-us',
+
+  products: {
+    root: '/products',
+    basic: '/products/basic',
+    chatterpoints: '/products/chatterpoints',
+    staking: '/products/staking',
+    b2b: '/products/b2b'
+  },
+  roadmap: '/roadmap',
+
   auth: {
     jwt: {
       login: `${ROOTS.AUTH}/jwt/login`,
