@@ -42,7 +42,10 @@
   "home": {
     "header": {
       "sign-in": "Dashboard",
-      "about-us": "About Us"
+      "about-us": "About Us",
+      "products": "Products",
+      "roadmap": "Roadmap",
+      "development": "Demo"
     },
     "help": {
       "need-help": "Need help?"
@@ -56,8 +59,12 @@
       "all-rights": "All rights reserved",
       "made-by": "made by",
       "links": {
+        "explore": "Explore",
         "about-us": "About us",
         "contact-us": "Contact us",
+        "products": "Products",
+        "roadmap": "Roadmap",
+        "development": "Demo",
         "faqs": "FAQs",
         "legal": "Legal",
         "terms": "Terms and Conditions",
@@ -345,14 +352,52 @@
       "title": "Meet Our Team"
     },
     "founders": {
-     "martin": "Martin transitioned from law and business into Web3 innovation. He founded several blockchain startups and led projects at P4 Tech, Fin Guru, Sistem AI, and more.",
-  "tomas": "Tomas is a full-stack developer and UX expert. He builds scalable blockchain systems and led teams at FinGurú, Argenenergy, and advised at Invicta Ventures.",
-  "diego": "Diego is a software architect with 25+ years of experience. He led teams, built cloud systems, and worked with many languages across major tech companies."
-},
+      "martin": "Martin transitioned from law and business into Web3 innovation. He founded several blockchain startups and led projects at P4 Tech, Fin Guru, Sistem AI, and more.",
+      "tomas": "Tomas is a full-stack developer and UX expert. He builds scalable blockchain systems and led teams at FinGurú, Argenenergy, and advised at Invicta Ventures.",
+      "diego": "Diego is a software architect with 25+ years of experience. He led teams, built cloud systems, and worked with many languages across major tech companies."
+    },
     "contact": {
       "title": "Contact Us",
       "description": "We'd love to hear from you. Get in touch with our team for any inquiries, feedback, or support needs. You can reach us via email at",
       "button": "Chat With Us on WhatsApp"
+    }
+  },
+  "development": {
+    "hero": {
+      "tag": "Demo",
+      "title": "Playground",
+      "label": "Test the future of crypto payments — safe, free, and on testnet.",
+      "description":"Use our testing site to try ChatterPay at no cost. Send, swap, and explore features using testnet tokens. Build confidence and see what’s possible before using it in production.",
+      "cta": "Go to testing Site"
+    }
+  },
+  "products": {
+    "hero": {
+      "tag": "products",
+      "title": "Explore",
+      "label": "Discover what you can do with ChatterPay.",
+      "states": {
+        "dev": "In development",
+        "live": "Live",
+        "planned": "Planned"
+      },
+      "cta": "Learn more",
+      "core": {
+        "title": "Core Features",
+        "description": "Send money instantly to WhatsApp contacts, swap crypto like BTC or ETH, withdraw funds to any wallet, and create NFT certificates with just a photo."
+      },
+      "chatterpoints": {
+        "title": "Chatterpoints",
+        "description": "Earn points through operations, social networks actions and games."
+      },
+      "staking": {
+        "title": "Staking",
+        "description": "Earn while supporting the network."
+      },
+      "b2b": {
+        "title": "B2B",
+        "description": "Integrate crypto flows into your product."
+      }
     }
   }
 }

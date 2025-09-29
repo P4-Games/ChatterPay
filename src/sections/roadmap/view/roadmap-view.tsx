@@ -23,8 +23,8 @@ export default function RoadmapView(): JSX.Element {
         {/* Hero Section */}
         <Box
           sx={{
-            pt: { xs: 5, md: 4 },
-            pb: { xs: 6, md: 8 },
+            pt: { xs: 5, md: 8 },
+            pb: { xs: 6, md: 10 },
             textAlign: 'center'
           }}
         >
@@ -47,7 +47,7 @@ export default function RoadmapView(): JSX.Element {
               viewport={{ once: false, margin: '-20px' }}
             >
               <Typography variant='h2' sx={{ mb: 1 }}>
-                ChatterPay Roadmap 🗺️
+                ChatterPay Roadmap
               </Typography>
 
               <Typography variant='body2' sx={{ mb: 3, color: 'text.disabled' }}>

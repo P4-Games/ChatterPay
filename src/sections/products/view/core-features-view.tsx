@@ -18,7 +18,7 @@ import ScrollProgress from 'src/components/scroll-progress'
  * Renders the "Core Features" page with sections for Transfer, Swap,
  * Withdraw, and Create NFTs.
  */
-export default function BasicFeaturesView(): JSX.Element {
+export default function CoreFeaturesView(): JSX.Element {
   const { scrollYProgress } = useScroll()
 
   return (
@@ -42,7 +42,7 @@ export default function BasicFeaturesView(): JSX.Element {
               viewport={{ once: false, margin: '-20px' }}
             >
               <Typography component='div' variant='overline' sx={{ color: 'text.disabled', mb: 1 }}>
-                Core Features ⚙️
+                Core Features
               </Typography>
             </m.div>
 

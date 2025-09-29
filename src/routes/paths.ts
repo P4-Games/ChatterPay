@@ -21,6 +21,7 @@ export const paths = {
     b2b: '/products/b2b'
   },
   roadmap: '/roadmap',
+  development: '/development',
 
   auth: {
     jwt: {

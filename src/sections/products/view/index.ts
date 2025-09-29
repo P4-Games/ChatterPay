@@ -1,5 +1,5 @@
 export { default as B2BView } from './b2b-view'
 export { default as StakingView } from './staking-view'
 export { default as ProductView } from './product-view'
-export { default as BasicFeaturesView } from './basic-view'
+export { default as CoreFeaturesView } from './core-features-view'
 export { default as ChatterPointsView } from './chatterpoints-view'

@@ -23,8 +23,8 @@ export default function B2BView(): JSX.Element {
         {/* Hero Section */}
         <Box
           sx={{
-            pt: { xs: 5, md: 4 },
-            pb: { xs: 6, md: 8 },
+            pt: { xs: 5, md: 8 },
+            pb: { xs: 6, md: 10 },
             textAlign: 'center'
           }}
         >
@@ -47,7 +47,7 @@ export default function B2BView(): JSX.Element {
               viewport={{ once: false, margin: '-20px' }}
             >
               <Typography variant='h2' sx={{ mb: 1 }}>
-                B2B 💼
+                B2B
               </Typography>
 
               <Typography variant='body2' sx={{ mb: 3, color: 'text.disabled' }}>

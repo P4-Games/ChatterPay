@@ -1,13 +1,15 @@
 'use client'
 
 import Link from 'next/link'
-import { useScroll } from 'framer-motion'
+import { m, useScroll } from 'framer-motion'
 
 import {
   Box,
   Grid,
   Card,
   Chip,
+  alpha,
+  useTheme,
   Container,
   Typography,
   CardContent,
@@ -24,60 +26,114 @@ import ScrollProgress from 'src/components/scroll-progress'
 export default function ProductView(): JSX.Element {
   const { scrollYProgress } = useScroll()
   const { t } = useTranslate()
+  const theme = useTheme()
 
   return (
     <MainLayout>
       <ScrollProgress scrollYProgress={scrollYProgress} />
 
-      <Container maxWidth='lg' sx={{ py: { xs: 6, md: 10 } }}>
-        <Box sx={{ textAlign: 'center', mb: 6 }}>
-          <Typography variant='h3' component='h1' gutterBottom>
-            {t('Products') ?? 'Products'}
-          </Typography>
-          <Typography color='text.secondary'>
-            {t('Discover what you can do with ChatterPay.') ??
-              'Discover what you can do with ChatterPay.'}
-          </Typography>
+      <Box sx={{ bgcolor: 'background.default' }}>
+        {/* Hero Section */}
+        <Box
+          sx={{
+            pt: { xs: 5, md: 8 },
+            pb: { xs: 6, md: 10 },
+            textAlign: 'center'
+          }}
+        >
+          <Container>
+            <m.div
+              initial={{ opacity: 0, y: -40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              viewport={{ once: false, margin: '-20px' }}
+            >
+              <Typography component='div' variant='overline' sx={{ color: 'text.disabled', mb: 2 }}>
+                {t('products.hero.tag', 'Products')}
+              </Typography>
+            </m.div>
+
+            <m.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.4, delay: 0.2 }}
+              viewport={{ once: false, margin: '-20px' }}
+            >
+              <Typography variant='h2' sx={{ mb: 3 }}>
+                {t('products.hero.title', 'Explore')}
+              </Typography>
+
+              <Typography sx={{ maxWidth: 720, mx: 'auto', color: 'text.secondary' }}>
+                {t('products.hero.label') ?? 'Discover what you can do with ChatterPay.'}
+              </Typography>
+            </m.div>
+          </Container>
         </Box>
 
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={6} md={6}>
-            <Tile
-              href='/products/basic'
-              title='Core Features ⚙️'
-              description='Send money instantly to WhatsApp contacts, swap crypto like BTC or ETH, withdraw funds to any wallet, and create NFT certificates with just a photo.'
-              badge='Live'
-            />
-          </Grid>
+        {/* Products Grid Section */}
+        <Box
+          sx={{
+            py: { xs: 8, md: 12 },
+            bgcolor: alpha(theme.palette.primary.main, 0.04)
+          }}
+        >
+          <Container>
+            <Grid container spacing={3}>
+              <Grid item xs={12} sm={6} md={6}>
+                <Tile
+                  href='/products/basic'
+                  title={`${t('products.hero.core.title', 'Core Features')} ⚙️`}
+                  description={t(
+                    'products.hero.core.description',
+                    'Send money instantly to WhatsApp contacts, swap crypto like BTC or ETH, withdraw funds to any wallet, and create NFT certificates with just a photo.'
+                  )}
+                  badge='Live'
+                  cta={`${t('products.hero.cta', 'Learn more')} →`}
+                />
+              </Grid>
 
-          <Grid item xs={12} sm={6} md={6}>
-            <Tile
-              href='/products/chatterpoints'
-              title='ChatterPoints 🎯'
-              description='Earn points through actions and games.'
-              badge='In development'
-            />
-          </Grid>
+              <Grid item xs={12} sm={6} md={6}>
+                <Tile
+                  href='/products/chatterpoints'
+                  title={`${t('products.hero.chatterpoints.title', 'Chatterpoints')} 🎯`}
+                  description={t(
+                    'products.hero.chatterpoints.description',
+                    'Earn points through actions and games.'
+                  )}
+                  badge='In development'
+                  cta={`${t('products.hero.cta', 'Learn more')} →`}
+                />
+              </Grid>
 
-          <Grid item xs={12} sm={6} md={6}>
-            <Tile
-              href='/products/staking'
-              title='Staking 💎'
-              description='Earn while supporting the network.'
-              badge='In development'
-            />
-          </Grid>
+              <Grid item xs={12} sm={6} md={6}>
+                <Tile
+                  href='/products/staking'
+                  title={`${t('products.hero.staking.title', 'Staking')} 💎`}
+                  description={t(
+                    'products.hero.staking.description',
+                    'Earn while supporting the network.'
+                  )}
+                  badge='In development'
+                  cta={`${t('products.hero.cta', 'Learn more')} →`}
+                />
+              </Grid>
 
-          <Grid item xs={12} sm={6} md={6}>
-            <Tile
-              href='/products/b2b'
-              title='B2B 💼'
-              description='Integrate crypto flows into your product.'
-              badge='Planned'
-            />
-          </Grid>
-        </Grid>
-      </Container>
+              <Grid item xs={12} sm={6} md={6}>
+                <Tile
+                  href='/products/b2b'
+                  title={`${t('products.hero.b2b.title', 'B2B')} 💼`}
+                  description={t(
+                    'products.hero.b2b.description',
+                    'Integrate crypto flows into your product.'
+                  )}
+                  badge='Planned'
+                  cta={`${t('products.hero.cta', 'Learn more')} →`}
+                />
+              </Grid>
+            </Grid>
+          </Container>
+        </Box>
+      </Box>
     </MainLayout>
   )
 }
@@ -89,12 +145,13 @@ function Tile(props: {
   title: string
   description: string
   badge: string
+  cta: string
 }): JSX.Element {
-  const { href, title, description, badge } = props
+  const { href, title, description, badge, cta } = props
 
   const getColor = (label: string) => {
-    if (label === 'Live') return 'success'
-    if (label === 'In development') return 'warning'
+    if (label.toLowerCase() === 'live') return 'success'
+    if (label.toLowerCase() === 'in development') return 'warning'
     return 'default'
   }
 
@@ -126,7 +183,7 @@ function Tile(props: {
           <Typography color='text.secondary'>{description}</Typography>
           <Box sx={{ flexGrow: 1 }} />
           <Typography variant='body2' sx={{ textDecoration: 'underline' }}>
-            Learn more →
+            {cta}
           </Typography>
         </CardContent>
       </CardActionArea>

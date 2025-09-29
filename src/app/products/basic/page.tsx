@@ -1,4 +1,4 @@
-import { BasicFeaturesView } from 'src/sections/products/view'
+import { CoreFeaturesView } from 'src/sections/products/view'
 
 // ----------------------------------------------------------------------
 
@@ -7,5 +7,5 @@ export const metadata = {
 }
 
 export default function ProductsBasicPage() {
-  return <BasicFeaturesView />
+  return <CoreFeaturesView />
 }
