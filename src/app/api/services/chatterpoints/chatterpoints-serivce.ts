@@ -2,74 +2,11 @@ import axios from 'axios'
 
 import { UI_BASE_URL, BACKEND_API_URL, BACKEND_API_TOKEN } from 'src/config-global'
 
-// ---------------------------------------------------------------------------------------------
-
-export type IncludeKind = 'games' | 'operations' | 'social' | 'prizes'
-
-export type GameType = 'WORDLE' | 'HANGMAN' | string
-export type SocialPlatform = 'X' | 'INSTAGRAM' | 'TIKTOK' | 'YOUTUBE' | string
-
-export interface UserHistoryFilters {
-  include?: IncludeKind[]
-  from?: string | Date
-  to?: string | Date
-  gameTypes?: GameType[]
-  gameIds?: string[]
-  platforms?: SocialPlatform[]
-}
-
-export interface UserGamePlay {
-  cycleId: string
-  periodId: string
-  gameId: string
-  gameType: GameType
-  at: string // ISO
-  guess?: string
-  result?: string
-  points: number
-  won: boolean
-}
-
-export interface UserOperationEntry {
-  cycleId: string
-  type: string
-  amount: number
-  userLevel?: string
-  points: number
-  at: string // ISO
-}
-
-export interface UserSocialAction {
-  cycleId: string
-  platform: SocialPlatform
-  action: string
-  points: number
-  at: string // ISO
-}
-
-export interface UserPrize {
-  cycleId: string
-  rank: number // 1..3
-  prize: number
-  totalPoints: number
-  endAt: string // ISO
-}
-
-export interface UserHistoryResult {
-  status?: 'ok' | 'error'
-  include: IncludeKind[]
-  window: { from: string; to: string }
-  games?: UserGamePlay[]
-  operations?: UserOperationEntry[]
-  social?: UserSocialAction[]
-  prizes?: UserPrize[]
-  totals: {
-    games: number
-    operations: number
-    social: number
-    grandTotal: number
-  }
-}
+import {
+  IncludeKind,
+  UserHistoryFilters,
+  ChatterpointsHistoryResult
+} from 'src/types/chatterpoints'
 
 // ---------------------------------------------------------------------------------------------
 
@@ -95,7 +32,7 @@ function makeDefaultHistory(
   include: IncludeKind[],
   fromISO: string,
   toISOValue: string
-): UserHistoryResult {
+): ChatterpointsHistoryResult {
   return {
     status: 'error',
     include,
@@ -148,7 +85,7 @@ function makeDefaultHistory(
  * @param {SocialPlatform[]} [filters.platforms]
  *   Optional social platforms to filter (e.g., `['X','INSTAGRAM','TIKTOK','YOUTUBE']`).
  *
- * @returns {Promise<UserHistoryResult>}
+ * @returns {Promise<ChatterpointsHistoryResult>}
  *   Resolves with the history payload returned by the backend.
  *   If the backend call fails or is non-2xx, returns an object with empty lists and `status: 'error'`.
  *
@@ -167,15 +104,16 @@ function makeDefaultHistory(
  */
 export async function getUserChatterpointsHistory(
   userId: string,
+  channel_user_id: string,
   filters: UserHistoryFilters = {}
-): Promise<UserHistoryResult> {
+): Promise<ChatterpointsHistoryResult> {
   const include = (filters.include?.length ? filters.include : DEFAULT_INCLUDE).slice()
 
   const fromISO = toISO(filters.from) ?? thirtyDaysAgoISO()
   const toISOValue = toISO(filters.to) ?? nowISO()
 
   const payload = {
-    userId,
+    channel_user_id,
     include,
     from: fromISO,
     to: toISOValue,
@@ -185,7 +123,7 @@ export async function getUserChatterpointsHistory(
   }
 
   try {
-    const resp = await axios.post<UserHistoryResult>(
+    const resp = await axios.post<ChatterpointsHistoryResult>(
       `${BACKEND_API_URL}/chatterpoints/user/history`,
       payload,
       {
@@ -217,7 +155,13 @@ export async function getUserChatterpointsHistory(
     )
     return makeDefaultHistory(include, fromISO, toISOValue)
   } catch (error: any) {
-    console.error('getUserChatterpointsHistory: error calling backend', error?.message || error)
+    if (error.code === 'ECONNREFUSED') {
+      console.warn(
+        `getUserChatterpointsHistory: backend no disponible en ${BACKEND_API_URL}/chatterpoints/user/history`
+      )
+    } else {
+      console.error('getUserChatterpointsHistory: error inesperado', error?.message || error)
+    }
     return makeDefaultHistory(include, fromISO, toISOValue)
   }
 }
