@@ -99,10 +99,7 @@ export const endpoints = {
       code: (id: string) => getFullUIEndpoint(`user/${id}/code`),
       updateEmail: (id: string) => getFullUIEndpoint(`user/${id}/email`),
       transferAll: (id: string) => getFullUIEndpoint(`user/${id}/transfer-all`),
-      logout: (id: string) => getFullUIEndpoint(`user/${id}/logout`),
-      chatterpoints: {
-        history: (id: string) => getFullUIEndpoint(`user/${id}/chatterpoints/history`)
-      }
+      logout: (id: string) => getFullUIEndpoint(`user/${id}/logout`)
     },
     wallet: {
       balance: (id: string) => getFullUIEndpoint(`wallet/${id}/balance`),
@@ -115,6 +112,9 @@ export const endpoints = {
         root: (id: string) => getFullUIEndpoint(`wallet/${id}/nfts`),
         id: (walletId: string, nftId: string) =>
           getFullUIEndpoint(`wallet/${walletId}/nfts/${nftId}`)
+      },
+      chatterpoints: {
+        history: (id: string) => getFullUIEndpoint(`wallet/${id}/chatterpoints/history`)
       }
     }
   },

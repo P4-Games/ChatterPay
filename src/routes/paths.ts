@@ -35,6 +35,9 @@ export const paths = {
       root: `${ROOTS.DASHBOARD}/nfts`,
       content: (id: string) => `${ROOTS.DASHBOARD}/nfts`
     },
+    chatterpoints: {
+      root: `${ROOTS.DASHBOARD}/chatterpoints`
+    },
     transfer: {
       all: `${ROOTS.DASHBOARD}/transfer/all`
     },

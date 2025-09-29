@@ -19,6 +19,7 @@ const icon = (name: string) => (
 const ICONS = {
   user: icon('ic_user'),
   nft: icon('ic_label'),
+  chatterpoints: icon('ic_chatterpoints'),
   account: icon('ic_account'),
   notification: icon('ic_mail'),
   banking: icon('ic_banking')
@@ -39,6 +40,11 @@ export function useNavData() {
             title: t('menu._dashboard'),
             path: paths.dashboard.root,
             icon: ICONS.banking
+          },
+          {
+            title: t('menu.chatterpoints'),
+            path: paths.dashboard.chatterpoints.root,
+            icon: ICONS.chatterpoints
           },
           {
             title: t('menu.nfts'),

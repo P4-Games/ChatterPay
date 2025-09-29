@@ -31,6 +31,7 @@
     "overview": "Visión general",
     "_dashboard": "Tablero",
     "nfts": "NFTs",
+    "chatterpoints": "Chatterpoints",
     "management": "Gestión",
     "user": "Usuario",
     "account": "Cuenta",
@@ -312,6 +313,14 @@
       "cta-msg": "¡Reclamá tu certificado en blockchain gratis!",
       "opensea-alt": "logo open sea",
       "wapp-msg": "Me gustaría mintear el NFT"
+    }
+  },
+  "chatterpoints": {
+    "totals": {
+      "total": "Puntos Total",
+      "games": "En Juegos",
+      "operations": "En Operaciones",
+      "social": "En Redes Sociales" 
     }
   },
   "account": {
