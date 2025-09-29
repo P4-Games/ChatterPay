@@ -99,7 +99,10 @@ export const endpoints = {
       code: (id: string) => getFullUIEndpoint(`user/${id}/code`),
       updateEmail: (id: string) => getFullUIEndpoint(`user/${id}/email`),
       transferAll: (id: string) => getFullUIEndpoint(`user/${id}/transfer-all`),
-      logout: (id: string) => getFullUIEndpoint(`user/${id}/logout`)
+      logout: (id: string) => getFullUIEndpoint(`user/${id}/logout`),
+      chatterpoints: {
+        history: (id: string) => getFullUIEndpoint(`user/${id}/chatterpoints/history`)
+      }
     },
     wallet: {
       balance: (id: string) => getFullUIEndpoint(`wallet/${id}/balance`),
