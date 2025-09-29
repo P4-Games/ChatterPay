@@ -2,15 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import { getUserById } from 'src/app/api/services/db/chatterpay-db-service'
 import { validateRequestSecurity } from 'src/app/api/middleware/validators/base-security-validator'
-import { validateUserCommonsInputs } from 'src/app/api/middleware/validators/user-common-inputs-validator'
-import {
-  GameType,
-  IncludeKind,
-  SocialPlatform,
-  getUserChatterpointsHistory
-} from 'src/app/api/services/chatterpoints/chatterpoints-serivce'
+import { getUserChatterpointsHistory } from 'src/app/api/services/chatterpoints/chatterpoints-serivce'
+import { validateWalletCommonsInputs as validateWalletCommonInputs } from 'src/app/api/middleware/validators/wallet-common-inputs-validator'
 
 import type { IAccount } from 'src/types/account'
+import { GameType, IncludeKind, SocialPlatform } from 'src/types/chatterpoints'
 
 // ----------------------------------------------------------------------
 
@@ -79,13 +75,15 @@ export async function GET(
   { params }: { params: IParams }
 ): Promise<NextResponse> {
   try {
-    const userValidationResult = await validateUserCommonsInputs(req, params.id)
-    if (userValidationResult instanceof NextResponse) return userValidationResult
+    const walletValidationResult = await validateWalletCommonInputs(req, params.id)
+    if (walletValidationResult instanceof NextResponse) return walletValidationResult
 
-    const securityCheckResult = await validateRequestSecurity(req, params.id)
+    const { userId } = walletValidationResult
+
+    const securityCheckResult = await validateRequestSecurity(req, userId)
     if (securityCheckResult instanceof NextResponse) return securityCheckResult
 
-    const user: IAccount | undefined = await getUserById(params.id)
+    const user: IAccount | undefined = await getUserById(userId)
     if (!user) {
       return new NextResponse(
         JSON.stringify({ code: 'USER_NOT_FOUND', error: 'user not found with that id' }),
@@ -102,7 +100,7 @@ export async function GET(
     const gameIds = parseCSV(sp.get('gameIds'))
     const platforms = parseCSV(sp.get('platforms')) as SocialPlatform[] | undefined
 
-    const data = await getUserChatterpointsHistory(params.id, {
+    const data = await getUserChatterpointsHistory(user.id, user.phone_number, {
       include,
       from,
       to,
