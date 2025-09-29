@@ -40,14 +40,19 @@ export default function Header() {
       path: paths.aboutUs
     },
     {
-      title: 'Products',
-      icon: <Iconify icon='solar:bag-bold-duotone' />,
+      title: t('home.header.products'),
+      icon: <Iconify icon='solar:box-bold-duotone' />,
       path: paths.products.root
     },
     {
-      title: 'Roadmap',
-      icon: <Iconify icon='solar:route-bold-duotone' />,
+      title: t('home.header.roadmap'),
+      icon: <Iconify icon='solar:map-bold-duotone' />,
       path: paths.roadmap
+    },
+    {
+      title: t('home.header.development'),
+      icon: <Iconify icon='solar:magic-stick-bold-duotone' />,
+      path: paths.development
     },
     {
       title: t('home.header.sign-in'),
@@ -104,7 +109,7 @@ export default function Header() {
                   href={paths.products.root}
                   sx={{ fontWeight: 600, color: 'text.primary' }}
                 >
-                  Products
+                  {t('home.header.products')}
                 </Button>
 
                 <Button
@@ -112,7 +117,15 @@ export default function Header() {
                   href={paths.roadmap}
                   sx={{ fontWeight: 600, color: 'text.primary' }}
                 >
-                  Roadmap
+                  {t('home.header.roadmap')}
+                </Button>
+
+                <Button
+                  component={RouterLink}
+                  href={paths.development}
+                  sx={{ fontWeight: 600, color: 'text.primary' }}
+                >
+                  {t('home.header.development')}
                 </Button>
 
                 <LoginButton />
