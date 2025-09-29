@@ -12,6 +12,17 @@ export const paths = {
   terms: '/terms',
   policy: '/policy',
   aboutUs: '/about-us',
+
+  products: {
+    root: '/products',
+    basic: '/products/basic',
+    chatterpoints: '/products/chatterpoints',
+    staking: '/products/staking',
+    b2b: '/products/b2b'
+  },
+  roadmap: '/roadmap',
+  development: '/development',
+
   auth: {
     jwt: {
       login: `${ROOTS.AUTH}/jwt/login`,
@@ -23,6 +34,9 @@ export const paths = {
     nfts: {
       root: `${ROOTS.DASHBOARD}/nfts`,
       content: (id: string) => `${ROOTS.DASHBOARD}/nfts`
+    },
+    chatterpoints: {
+      root: `${ROOTS.DASHBOARD}/chatterpoints`
     },
     transfer: {
       all: `${ROOTS.DASHBOARD}/transfer/all`

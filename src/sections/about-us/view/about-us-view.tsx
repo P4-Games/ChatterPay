@@ -87,8 +87,8 @@ export default function AboutUsView() {
         {/* Hero Section */}
         <Box
           sx={{
-            pt: { xs: 10, md: 15 },
-            pb: { xs: 6, md: 8 },
+            pt: { xs: 5, md: 8 },
+            pb: { xs: 6, md: 10 },
             textAlign: 'center'
           }}
         >

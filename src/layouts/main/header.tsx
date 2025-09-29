@@ -1,3 +1,4 @@
+// src/layouts/main/header.tsx
 import Box from '@mui/material/Box'
 import { Stack } from '@mui/system'
 import AppBar from '@mui/material/AppBar'
@@ -28,11 +29,8 @@ import SettingsModeButton from '../common/settings-mode-button'
 
 export default function Header() {
   const theme = useTheme()
-
   const { t } = useTranslate()
-
   const mdUp = useResponsive('up', 'md')
-
   const offsetTop = useOffSetTop(HEADER.H_DESKTOP)
 
   const navConfigMobile = [
@@ -40,6 +38,21 @@ export default function Header() {
       title: t('home.header.about-us'),
       icon: <Iconify icon='solar:info-circle-bold-duotone' />,
       path: paths.aboutUs
+    },
+    {
+      title: t('home.header.products'),
+      icon: <Iconify icon='solar:box-bold-duotone' />,
+      path: paths.products.root
+    },
+    {
+      title: t('home.header.roadmap'),
+      icon: <Iconify icon='solar:map-bold-duotone' />,
+      path: paths.roadmap
+    },
+    {
+      title: t('home.header.development'),
+      icon: <Iconify icon='solar:magic-stick-bold-duotone' />,
+      path: paths.development
     },
     {
       title: t('home.header.sign-in'),
@@ -53,21 +66,14 @@ export default function Header() {
       <Toolbar
         disableGutters
         sx={{
-          height: {
-            xs: HEADER.H_MOBILE,
-            md: HEADER.H_DESKTOP
-          },
+          height: { xs: HEADER.H_MOBILE, md: HEADER.H_DESKTOP },
           transition: theme.transitions.create(['height'], {
             easing: theme.transitions.easing.easeInOut,
             duration: theme.transitions.duration.shorter
           }),
           ...(offsetTop && {
-            ...bgBlur({
-              color: theme.palette.background.default
-            }),
-            height: {
-              md: HEADER.H_DESKTOP_OFFSET
-            }
+            ...bgBlur({ color: theme.palette.background.default }),
+            height: { md: HEADER.H_DESKTOP_OFFSET }
           })
         }}
       >
@@ -86,22 +92,46 @@ export default function Header() {
           ) : (
             <NavMobile data={navConfigMobile} />
           )}
+
           <Stack direction='row' alignItems='center' spacing={2}>
             {mdUp && (
               <Stack direction='row' spacing={3}>
                 <Button
                   component={RouterLink}
                   href={paths.aboutUs}
-                  sx={{
-                    fontWeight: 600,
-                    color: 'text.primary'
-                  }}
+                  sx={{ fontWeight: 600, color: 'text.primary' }}
                 >
                   {t('home.header.about-us')}
                 </Button>
+
+                <Button
+                  component={RouterLink}
+                  href={paths.products.root}
+                  sx={{ fontWeight: 600, color: 'text.primary' }}
+                >
+                  {t('home.header.products')}
+                </Button>
+
+                <Button
+                  component={RouterLink}
+                  href={paths.roadmap}
+                  sx={{ fontWeight: 600, color: 'text.primary' }}
+                >
+                  {t('home.header.roadmap')}
+                </Button>
+
+                <Button
+                  component={RouterLink}
+                  href={paths.development}
+                  sx={{ fontWeight: 600, color: 'text.primary' }}
+                >
+                  {t('home.header.development')}
+                </Button>
+
                 <LoginButton />
               </Stack>
             )}
+
             <Stack spacing={1} direction='row'>
               <LanguagePopover />
               <SettingsModeButton />
