@@ -99,7 +99,7 @@ export default function NftItemClaim({ nftId, nftData }: NftItemClaimProps) {
             initial={{ scale: 1 }}
             whileHover={{ scale: 1.1, cursor: 'pointer' }}
             transition={{ duration: 0.1 }}
-            onClick={handleOpenOpenSea}
+            onClick={handleOpenOpenSea as any}
             style={{
               position: 'absolute',
               bottom: '10px',
