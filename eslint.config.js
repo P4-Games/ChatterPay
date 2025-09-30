@@ -1,18 +1,15 @@
-// eslint.config.cjs
 const js = require('@eslint/js')
-const tsParser = require('@typescript-eslint/parser')
-const tsPlugin = require('@typescript-eslint/eslint-plugin')
 const react = require('eslint-plugin-react')
-const reactHooks = require('eslint-plugin-react-hooks')
+const prettier = require('eslint-plugin-prettier')
+const tsParser = require('@typescript-eslint/parser')
 const nextPlugin = require('@next/eslint-plugin-next')
+const reactHooks = require('eslint-plugin-react-hooks')
+const tsPlugin = require('@typescript-eslint/eslint-plugin')
 const perfectionist = require('eslint-plugin-perfectionist')
 const unusedImports = require('eslint-plugin-unused-imports')
-const prettier = require('eslint-plugin-prettier')
 
 module.exports = [
-  js.configs.recommended,
   {
-    files: ['**/*.{js,jsx,ts,tsx}'],
     ignores: [
       '**/build/**',
       '**/dist/**',
@@ -31,6 +28,12 @@ module.exports = [
       'src/setupTests.{js,ts}',
       'commitlint.config.js',
     ],
+  },
+
+  js.configs.recommended,
+
+  {
+    files: ['**/*.{js,jsx,ts,tsx}'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
@@ -159,7 +162,7 @@ module.exports = [
     },
   },
 
-  // type-aware linting solo para TS
+  // type-aware linting solo para TS en src/
   {
     files: ['src/**/*.{ts,tsx}'],
     languageOptions: {
