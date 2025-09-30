@@ -2575,7 +2575,7 @@
     socket.io-client "^4.5.2"
     tslib "^2.3.0"
 
-"@pushprotocol/uiweb@^1.7.3":
+"@pushprotocol/uiweb@1.7.3":
   version "1.7.3"
   resolved "https://registry.yarnpkg.com/@pushprotocol/uiweb/-/uiweb-1.7.3.tgz#d2aa426dd566c4ac6efeca5850291a8596503664"
   integrity sha512-6YPE564k1HBFw+kzylesELBOsKub6WNMdDI8qjZXhea0H4oKru03INv3/nnJEmtJsfk6z/6U0bG3D+RYdxbdBA==
@@ -4553,6 +4553,11 @@ async-function@^1.0.0:
   resolved "https://registry.yarnpkg.com/async-function/-/async-function-1.0.0.tgz#509c9fca60eaf85034c6829838188e4e4c8ffb2b"
   integrity sha512-hsU18Ae8CDTR6Kgu9DYf0EbCr/a5iGL0rytQDobUcdpYOKokk8LEjVphnXkDkgpi0wYVsqrXuP0bZxJaTqdgoA==
 
+async-generator-function@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/async-generator-function/-/async-generator-function-1.0.0.tgz#9bcc76d7fd147171e7ead5d2a2cfc3579c99f28e"
+  integrity sha512-+NAXNqgCrB95ya4Sr66i1CL2hqLVckAk7xwRYWdcm39/ELQ6YNn1aw5r0bdQtqNZgQpEWzc5yc/igXc7aL5SLA==
+
 asynckit@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/asynckit/-/asynckit-0.4.0.tgz#c79ed97f7f34cb8f2ba1bc9790bcc366474b4b79"
@@ -4583,7 +4588,7 @@ axios@^0.27.2:
     follow-redirects "^1.14.9"
     form-data "^4.0.0"
 
-axios@^1.6.2:
+axios@^1.12.0:
   version "1.12.2"
   resolved "https://registry.yarnpkg.com/axios/-/axios-1.12.2.tgz#6c307390136cf7a2278d09cec63b136dfc6e6da7"
   integrity sha512-vMJzPewAlRyOgxV2dU0Cuz2O8zzzx9VYtbJOaBgXFeLc4IV/Eg50n4LowmehOOR61S8ZMpc2K5Sa7g6A4jfkUw==
@@ -6434,15 +6439,18 @@ get-caller-file@^2.0.1, get-caller-file@^2.0.5:
   integrity sha512-DyFP3BM/3YHTQOCUL/w0OZHR0lpKeGrxotcHWcqNEdnltqFwXVfhEBQ94eIo34AfQpo0rGki4cyIiftY06h2Fg==
 
 get-intrinsic@^1.2.4, get-intrinsic@^1.2.5, get-intrinsic@^1.2.6, get-intrinsic@^1.2.7, get-intrinsic@^1.3.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/get-intrinsic/-/get-intrinsic-1.3.0.tgz#743f0e3b6964a93a5491ed1bffaae054d7f98d01"
-  integrity sha512-9fSjSaos/fRIVIp+xSJlE6lfwhES7LNtKaCBIamHsjr2na1BiABJPo0mOjjz8GJDURarmCPGqaiVg5mfjb98CQ==
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/get-intrinsic/-/get-intrinsic-1.3.1.tgz#7f03d6cc8df96ae803c35cf23590510f28357173"
+  integrity sha512-fk1ZVEeOX9hVZ6QzoBNEC55+Ucqg4sTVwrVuigZhuRPESVFpMyXnd3sbXvPOwp7Y9riVyANiqhEuRF0G1aVSeQ==
   dependencies:
+    async-function "^1.0.0"
+    async-generator-function "^1.0.0"
     call-bind-apply-helpers "^1.0.2"
     es-define-property "^1.0.1"
     es-errors "^1.3.0"
     es-object-atoms "^1.1.1"
     function-bind "^1.1.2"
+    generator-function "^2.0.0"
     get-proto "^1.0.1"
     gopd "^1.2.0"
     has-symbols "^1.1.0"
@@ -7004,12 +7012,11 @@ is-fullwidth-code-point@^3.0.0:
   integrity sha512-zymm5+u+sCsSWyD9qNaejV3DFvhCKclKdizYaJUuHA83RLjb7nSuGnddCHGv0hk+KY7BMAlsWeK4Ueg6EV6XQg==
 
 is-generator-function@^1.0.10:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/is-generator-function/-/is-generator-function-1.1.1.tgz#7995bc35528dedea93ff0a0b05b168862cc8dc11"
-  integrity sha512-Gn8BWUdrTzf9XUJAvqIYP7QnSC3mKs8QjQdGdJ7HmBemzZo14wj/OVmmAwgxDX/7WhFEjboybL4VhXGIQYPlOA==
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/is-generator-function/-/is-generator-function-1.1.0.tgz#bf3eeda931201394f57b5dba2800f91a238309ca"
+  integrity sha512-nPUB5km40q9e8UfN/Zc24eLlzdSf9OfKByBw9CIdw4H1giPMeA0OIJvbchsCu4npfI2QcMVBsGEBHKZ7wLTWmQ==
   dependencies:
     call-bound "^1.0.3"
-    generator-function "^2.0.0"
     get-proto "^1.0.0"
     has-tostringtag "^1.0.2"
     safe-regex-test "^1.1.0"
@@ -8799,7 +8806,7 @@ react-property@2.0.0:
   resolved "https://registry.yarnpkg.com/react-property/-/react-property-2.0.0.tgz#2156ba9d85fa4741faf1918b38efc1eae3c6a136"
   integrity sha512-kzmNjIgU32mO4mmH5+iUyrqlpFQhF8K2k7eZ4fdLSOPFrD1XgEuSBv9LDEgxRXTMBqMd8ppT0x6TIzqE5pdGdw==
 
-react-quill@^2.0.0:
+react-quill@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/react-quill/-/react-quill-2.0.0.tgz#67a0100f58f96a246af240c9fa6841b363b3e017"
   integrity sha512-4qQtv1FtCfLgoD3PXAur5RyxuUbPXQGOHgTlFie3jtxp43mXDtzCKaOgQ3mLyZfi1PUlyjycfivKelFhy13QUg==
