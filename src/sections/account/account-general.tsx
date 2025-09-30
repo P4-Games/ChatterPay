@@ -96,7 +96,7 @@ export default function AccountGeneral() {
       })
 
       enqueueSnackbar(confirmMsg)
-    } catch (error) {
+    } catch {
       enqueueSnackbar(errorMsg, { variant: 'error' })
     }
   })

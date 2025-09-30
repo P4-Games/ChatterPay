@@ -1,4 +1,4 @@
-/* eslint-disable perfectionist/sort-imports */
+ 
 import 'src/utils/highlight'
 
 import dynamic from 'next/dynamic'

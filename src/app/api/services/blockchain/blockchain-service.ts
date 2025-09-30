@@ -215,7 +215,7 @@ async function getBalances(walletAddress: string): Promise<any[]> {
                     uyu: tokenRateCoinGecko.uyu * tokenBalanceFormatted
                   }
                 })
-              } catch (error) {
+              } catch {
                 console.error(
                   `Error getting ${token.token} balance of ${walletAddress} on ${network.config.chainName}`
                 )
@@ -351,7 +351,7 @@ async function getCoingeckoConversionRates() {
     const response = await axios.get(ratesConvCompleteUrl)
 
     return response.data
-  } catch (error) {
+  } catch {
     return {
       ethereum: {
         usd: 0,
