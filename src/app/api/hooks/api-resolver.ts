@@ -112,6 +112,9 @@ export const endpoints = {
         root: (id: string) => getFullUIEndpoint(`wallet/${id}/nfts`),
         id: (walletId: string, nftId: string) =>
           getFullUIEndpoint(`wallet/${walletId}/nfts/${nftId}`)
+      },
+      chatterpoints: {
+        history: (id: string) => getFullUIEndpoint(`wallet/${id}/chatterpoints/history`)
       }
     }
   },

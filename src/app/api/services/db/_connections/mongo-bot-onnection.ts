@@ -27,13 +27,13 @@ if (!USE_MOCK) {
   if (NODE_ENV === 'development') {
     // In development mode, use a global variable so that the value
     // is preserved across module reloads caused by HMR (Hot Module Replacement).
-    // @ts-ignore
+    // @ts-expect-error "error-expected"
     if (!global._mongoClientPromiseBot) {
       clientBot = new MongoClient(uri, options)
-      // @ts-ignore
+      // @ts-expect-error "error-expected"
       global._mongoClientPromiseBot = clientBot.connect()
     }
-    // @ts-ignore
+    // @ts-expect-error "error-expected"
     clientPromiseBot = global._mongoClientPromiseBot
   } else {
     // In production mode, it's best to not use a global variable.

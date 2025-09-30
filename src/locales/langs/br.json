@@ -31,6 +31,7 @@
     "overview": "Visão geral",
     "_dashboard": "Painel",
     "nfts": "NFTs",
+    "chatterpoints": "Chatterpoints",
     "management": "Gestão",
     "user": "Usuário",
     "account": "Conta",
@@ -105,7 +106,10 @@
   "home": {
     "header": {
       "sign-in": "Painel",
-      "about-us": "Sobre Nós"
+      "about-us": "Sobre Nós",
+      "products": "Produtos",
+      "roadmap": "Reteiro",
+      "development": "Demo"
     },
     "help": {
       "need-help": "Precisa de ajuda?"
@@ -119,9 +123,13 @@
       "all-rights": "Todos os direitos reservados",
       "made-by": "feito por",
       "links": {
+        "explore": "Explorar",
         "about-us": "Sobre nós",
         "contact-us": "Contate-nos",
         "faqs": "Perguntas frequentes",
+        "products": "Produtos",
+        "roadmap": "Reteiro",
+        "development": "Demo",
         "legal": "Legal",
         "terms": "Termos e condições",
         "privacy": "Política de privacidade",
@@ -308,6 +316,14 @@
       "wapp-msg": "Gostaria de mintar o NFT"
     }
   },
+  "chatterpoints": {
+    "totals": {
+      "total": "Pontos Totais",
+      "games": "Em Jogos",
+      "operations": "Em Operações",
+      "social": "Em Redes Sociais"
+    }
+  },
   "account": {
     "title": "Conta",
     "change-email": "Alterar",
@@ -346,14 +362,52 @@
       "title": "Conheça Nossa Equipe"
     },
     "founders": {
-  "martin": "Martin migrou do direito e dos negócios para a Web3. Fundou startups de blockchain e liderou iniciativas na Fin Guru, P4 Tech, Sistem AI, Chatizalo e outras.",
-  "tomas": "Tomás é dev full-stack e especialista em UX. É apaixonado por soluções blockchain escaláveis e já liderou projetos na FinGurú, Argenenergy e como consultor na Invicta Ventures.",
-  "diego": "Diego é arquiteto de software com mais de 25 anos de experiência. Liderou equipes, desenvolveu sistemas em nuvem e atuou em grandes empresas de tecnologia."
-},
+      "martin": "Martin migrou do direito e dos negócios para a Web3. Fundou startups de blockchain e liderou iniciativas na Fin Guru, P4 Tech, Sistem AI, Chatizalo e outras.",
+      "tomas": "Tomás é dev full-stack e especialista em UX. É apaixonado por soluções blockchain escaláveis e já liderou projetos na FinGurú, Argenenergy e como consultor na Invicta Ventures.",
+      "diego": "Diego é arquiteto de software com mais de 25 anos de experiência. Liderou equipes, desenvolveu sistemas em nuvem e atuou em grandes empresas de tecnologia."
+    },
     "contact": {
       "title": "Entre em Contato",
       "description": "Adoraríamos ouvir de você. Entre em contato com nossa equipe para quaisquer dúvidas, feedback ou necessidades de suporte. Você pode nos contatar por e-mail em",
       "button": "Converse Conosco no WhatsApp"
+    }
+  },
+  "development": {
+    "hero": {
+      "tag": "Demo",
+      "title": "Sitio de Prova",
+      "label": "Teste o futuro dos pagamentos cripto — seguro, gratuito e em testnet.",
+      "description": "Use nosso ambiente de testes para experimentar o ChatterPay sem custos. Envie, troque e explore recursos com tokens de testnet. Ganhe confiança e descubra o que é possível antes de usar em produção.",
+      "cta": "Ir ao ambiente de testes"
+    }
+  },
+  "products": {
+    "hero": {
+      "tag": "produtos",
+      "title": "Explorar",
+      "label": "Descubra o que você pode fazer com o ChatterPay.",
+      "states": {
+        "dev": "Em desenvolvimento",
+        "live": "Ativo",
+        "planned": "Planejado"
+      },
+      "cta": "Saiba mais",
+      "core": {
+        "title": "Funcionalidades Principais",
+        "description": "Envie dinheiro instantaneamente para contatos do WhatsApp, troque criptos como BTC ou ETH, retire fundos para qualquer carteira e crie certificados NFT apenas com uma foto."
+      },
+      "chatterpoints": {
+        "title":"Chatterpoints",
+        "description": "Ganhe pontos por meio de operações, ações em redes sociais e jogos."
+      },
+      "staking": {
+        "title": "Staking",
+        "description": "Ganhe enquanto apoia a rede."
+      },
+      "b2b": {
+        "title": "B2B",
+        "description": "Integre fluxos de cripto ao seu produto."
+      }
     }
   }
 }

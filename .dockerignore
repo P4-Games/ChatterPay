@@ -1,0 +1,44 @@
+# Dependencies
+node_modules
+
+# Logs
+*.log
+
+# OS-specific directories and files
+.DS_Store
+Thumbs.db
+
+# IDE/Editor directories and files
+.idea
+.vscode
+*.swp
+*.swo
+
+# TypeScript config files
+tsconfig.tsbuildinfo
+
+# Test and coverage files
+coverage
+
+# Temporary files
+*.tmp
+*.temp
+
+# Backup files
+*.bak
+
+# Cache files
+.cache
+
+# Git-specific files
+.git
+.gitignore
+
+# Docker files
+Dockerfile
+.dockerignore
+
+# Other files and directories not needed in the Docker image
+README.md
+LICENSE
+tests

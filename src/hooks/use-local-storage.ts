@@ -14,7 +14,7 @@ function localStorageAvailable(): boolean {
     window.localStorage.setItem(key, key)
     window.localStorage.removeItem(key)
     return true
-  } catch (error) {
+  } catch {
     return false
   }
 }
@@ -25,7 +25,7 @@ function sessionStorageAvailable(): boolean {
     window.sessionStorage.setItem(key, key)
     window.sessionStorage.removeItem(key)
     return true
-  } catch (error) {
+  } catch {
     return false
   }
 }

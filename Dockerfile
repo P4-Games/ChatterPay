@@ -1,15 +1,16 @@
+# Stage 1: dependencies
 FROM node:20-alpine AS deps
 WORKDIR /app
-COPY package.json yarn.lock ./ 
-RUN apk add --no-cache libc6-compat bash curl && \
-    curl -o- -L https://yarnpkg.com/install.sh | bash && \
-    export PATH="$PATH:$(yarn global bin)" && \
-    yarn install --frozen-lockfile
-#
+RUN apk add --no-cache libc6-compat bash
+COPY package.json yarn.lock ./
+# use corepack instead of curl
+RUN corepack enable && yarn install --frozen-lockfile
+
+# Stage 2: builder
 FROM node:20-alpine AS builder
 WORKDIR /app
-#
-# args
+
+# build arguments
 ARG APP_ENV
 ARG MONGODB
 ARG MONGODB_BOT
@@ -44,8 +45,8 @@ ARG NEXT_PUBLIC_CHATIZALO_PHONE_NUMBER
 ARG NEXT_PUBLIC_GA_MEASUREMENT_ID
 ARG NEXT_PUBLIC_MS_CLARITY_ID
 ARG NEXT_PUBLIC_NETWORK
-#
-# env
+
+# environment variables
 ENV NODE_ENV production
 ENV APP_ENV $APP_ENV
 ENV MONGODB $MONGODB
@@ -81,29 +82,29 @@ ENV NEXT_PUBLIC_CHATIZALO_PHONE_NUMBER $NEXT_PUBLIC_CHATIZALO_PHONE_NUMBER
 ENV NEXT_PUBLIC_GA_MEASUREMENT_ID $NEXT_PUBLIC_GA_MEASUREMENT_ID
 ENV NEXT_PUBLIC_MS_CLARITY_ID $NEXT_PUBLIC_MS_CLARITY_ID
 ENV NEXT_PUBLIC_NETWORK $NEXT_PUBLIC_NETWORK
-#
+
+# copy dependencies and source
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-RUN echo "***********************"
-RUN env
-RUN echo $BACKEND_API_TOKEN
-RUN echo $BACKEND_API_TOKEN_SECRET
-RUN echo "***********************"
+# build the Next.js app
+RUN yarn build
 
-RUN npm run build
-#
+# Stage 3: runner
 FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV production
 
-RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
+RUN addgroup --system --gid 1001 nodejs \
+&& adduser --system --uid 1001 nextjs
+
+# copy only what’s needed to run
 COPY --from=builder /app/next.config.js ./
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/package.json ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-#
+
 USER nextjs
 EXPOSE 3000
 ENV PORT 3000
