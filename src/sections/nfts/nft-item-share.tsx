@@ -64,7 +64,6 @@ export default function NftItemShare({ nftId, nftData }: NftItemClaimProps) {
       await navigator.clipboard.writeText(`${nftUrl}`)
       enqueueSnackbar(t('common.copied'), { variant: 'info' })
     } catch (err) {
-       
       console.error('Error al copiar:', err)
     }
   }
@@ -82,7 +81,6 @@ export default function NftItemShare({ nftId, nftData }: NftItemClaimProps) {
           url: `${nftUrl}`
         })
       } catch (err) {
-         
         console.error('Error al compartir:', err)
       }
     } else {
