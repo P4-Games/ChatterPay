@@ -44,7 +44,7 @@ export default function ChangeEmail() {
     confirmEmail: Yup.string()
       .oneOf([Yup.ref('newEmail')], t('common.emails-must-match'))
       .required(t('common.required')),
-    // @ts-ignore
+    // @ts-expect-error "error-expected"
     code: Yup.string().when('codeSent', {
       is: true,
       then: Yup.string()
@@ -64,7 +64,6 @@ export default function ChangeEmail() {
   )
 
   const methods = useForm({
-    // @ts-ignore
     resolver: yupResolver(ChangeEmailSchema),
     defaultValues
   })
@@ -85,7 +84,7 @@ export default function ChangeEmail() {
   // guardar el telefono en estado, por cambios en el contexdto del user
   useEffect(() => {
     if (!user) return
-    // @ts-ignore
+    // @ts-expect-error "error-expected"
     setContextUser(user)
   }, [user])
 
@@ -94,10 +93,9 @@ export default function ChangeEmail() {
       startCountdown()
       setErrorMsg('')
 
-      // @ts-ignore
       await generate2faCodeEmail?.(
         contextUser!.id,
-        // @ts-ignore
+        // @ts-expect-error "error-expected"
         contextUser!.phoneNumber,
         t('account.email.code-bot')
       )
@@ -125,7 +123,7 @@ export default function ChangeEmail() {
 
   const onSubmit = async (data: any) => {
     try {
-      // @ts-ignore
+      // @ts-expect-error "error-expected"
       await updateEmail?.(contextUser!.phoneNumber, data.code || '', confirmEmail, contextUser!.id)
       router.push(paths.dashboard.user.root)
       setErrorMsg('')

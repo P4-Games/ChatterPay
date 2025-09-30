@@ -56,7 +56,7 @@ jobs:
         run: yarn tsc --noEmit
 
       - name: Run ESLint
-        run: yarn eslint . --max-warnings=0
+        run: yarn lint --max-warnings=0
 
   docker-build:
     name: Build Docker Image

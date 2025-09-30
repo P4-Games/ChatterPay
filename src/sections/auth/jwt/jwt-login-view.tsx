@@ -55,7 +55,7 @@ export default function JwtLoginView() {
       .max(12, t('common.must-be-max').replace('{MAX_DIGITS}', '12'))
       .matches(/^[0-9]+$/, t('common.must-be-numeric'))
       .required(t('common.required')),
-    // @ts-ignore
+    // @ts-expect-error "error-expected"
     code: Yup.string().when('codeSent', {
       is: true,
       then: Yup.string()
@@ -267,7 +267,6 @@ export default function JwtLoginView() {
   )
 
   const renderRecaptcha = (
-    /* @ts-ignore */
     <Captcha
       key={recaptchaKey} // Usar la clave para forzar el re-montaje
       ref={captchaRef}
