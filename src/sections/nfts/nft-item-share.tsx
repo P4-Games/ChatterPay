@@ -48,7 +48,9 @@ export default function NftItemShare({ nftId, nftData }: NftItemClaimProps) {
     const text = nftData.metadata.description
 
     const shareUrls = {
-      twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(nftUrl)}`,
+      twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+        text
+      )}&url=${encodeURIComponent(nftUrl)}`,
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(nftUrl)}`,
       whatsapp: `https://wa.me/?text=${encodeURIComponent(`${text} ${nftUrl}`)}`,
       linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(nftUrl)}`
