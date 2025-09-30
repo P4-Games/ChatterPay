@@ -115,7 +115,6 @@ export async function upsertOneCommon(
   }
 }
 
- 
 export async function upsertManyCommon(
   dbName: string,
   colName: string,

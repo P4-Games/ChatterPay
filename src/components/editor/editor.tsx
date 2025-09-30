@@ -1,4 +1,3 @@
- 
 import 'src/utils/highlight'
 
 import dynamic from 'next/dynamic'

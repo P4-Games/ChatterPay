@@ -78,16 +78,11 @@ export default function NextAppDirEmotionCacheProvider(props: NextAppDirEmotionC
           <style
             key={name}
             data-emotion={`${registry.cache.key}-global ${name}`}
-             
             dangerouslySetInnerHTML={{ __html: style }}
           />
         ))}
         {styles && (
-          <style
-            data-emotion={dataEmotionAttribute}
-             
-            dangerouslySetInnerHTML={{ __html: styles }}
-          />
+          <style data-emotion={dataEmotionAttribute} dangerouslySetInnerHTML={{ __html: styles }} />
         )}
       </>
     )
