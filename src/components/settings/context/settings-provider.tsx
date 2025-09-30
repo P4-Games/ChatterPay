@@ -81,6 +81,6 @@ export function SettingsProvider({ children, defaultSettings }: SettingsProvider
     ]
   )
 
-  // @ts-expect-error 'expected-error'
+  // @ts-expect-error "error-expected" 'expected-error'
   return <SettingsContext.Provider value={memoizedValue}>{children}</SettingsContext.Provider>
 }

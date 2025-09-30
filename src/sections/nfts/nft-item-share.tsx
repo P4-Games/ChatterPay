@@ -64,6 +64,7 @@ export default function NftItemShare({ nftId, nftData }: NftItemClaimProps) {
       await navigator.clipboard.writeText(`${nftUrl}`)
       enqueueSnackbar(t('common.copied'), { variant: 'info' })
     } catch (err) {
+       
       console.error('Error al copiar:', err)
     }
   }
@@ -81,6 +82,7 @@ export default function NftItemShare({ nftId, nftData }: NftItemClaimProps) {
           url: `${nftUrl}`
         })
       } catch (err) {
+         
         console.error('Error al compartir:', err)
       }
     } else {
@@ -124,11 +126,7 @@ export default function NftItemShare({ nftId, nftData }: NftItemClaimProps) {
           marginTop: '20px'
         }}
       >
-        <Card
-          sx={{
-            position: 'relative'
-          }}
-        >
+        <Card sx={{ position: 'relative' }}>
           <Box sx={{ maxWidth: 400, maxHeight: 400, overflow: 'hidden' }}>
             <Image
               layout='responsive'
@@ -153,25 +151,32 @@ export default function NftItemShare({ nftId, nftData }: NftItemClaimProps) {
               </IconButton>
             </m.div>
 
-            <m.button
+            {/* Contenedor animado + botón nativo: 100% type-safe */}
+            <m.div
               initial={{ scale: 1 }}
               whileHover={{ scale: 1.1, cursor: 'pointer' }}
               transition={{ duration: 0.1 }}
-              onClick={handleOpenOpenSea}
-              style={{
-                backgroundColor: 'white',
-                border: 'none',
-                borderRadius: '50%',
-                padding: '8px'
-              }}
             >
-              <Image
-                width={24}
-                height={24}
-                src='https://storage.googleapis.com/opensea-static/Logomark/Logomark-Blue.svg'
-                alt={t('nfts.claim.opensea-alt')}
-              />
-            </m.button>
+              <button
+                type='button'
+                onClick={handleOpenOpenSea}
+                style={{
+                  backgroundColor: 'white',
+                  border: 'none',
+                  borderRadius: '50%',
+                  padding: '8px',
+                  cursor: 'pointer'
+                }}
+                aria-label={t('nfts.claim.opensea-alt')}
+              >
+                <Image
+                  width={24}
+                  height={24}
+                  src='https://storage.googleapis.com/opensea-static/Logomark/Logomark-Blue.svg'
+                  alt={t('nfts.claim.opensea-alt')}
+                />
+              </button>
+            </m.div>
           </Box>
         </Card>
 

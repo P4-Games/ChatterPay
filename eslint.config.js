@@ -82,6 +82,7 @@ module.exports = [
       'react/jsx-no-useless-fragment': ['warn', { allowExpressions: true }],
       'prefer-destructuring': ['warn', { object: true, array: false }],
       'react/no-unstable-nested-components': ['warn', { allowAsProps: true }],
+      '@typescript-eslint/ban-ts-comment': ['warn', { 'ts-expect-error': 'allow-with-description' }],
       '@typescript-eslint/no-unused-vars': [
         'warn',
         {
