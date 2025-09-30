@@ -31,6 +31,7 @@
     "overview": "Visión general",
     "_dashboard": "Tablero",
     "nfts": "NFTs",
+    "chatterpoints": "Chatterpoints",
     "management": "Gestión",
     "user": "Usuario",
     "account": "Cuenta",
@@ -105,7 +106,10 @@
   "home": {
     "header": {
       "sign-in": "Dashboard",
-      "about-us": "Sobre Nosotros"
+      "about-us": "Sobre Nosotros",
+      "products": "Productos",
+      "roadmap": "Roadmap",
+      "development": "Demo"
     },
     "help": {
       "need-help": "¿Necesitas ayuda?"
@@ -119,8 +123,12 @@
       "all-rights": "Todos los derechos reservados",
       "made-by": "realizado por",
       "links": {
+        "explore": "Explorar",
         "about-us": "Acerca de nosotros",
         "contact-us": "Contáctanos",
+        "products": "Productos",
+        "roadmap": "Roadmap",
+        "development": "Demo",
         "faqs": "Preguntas frecuentes",
         "legal": "Legal",
         "terms": "Términos y condiciones",
@@ -307,6 +315,14 @@
       "wapp-msg": "Me gustaría mintear el NFT"
     }
   },
+  "chatterpoints": {
+    "totals": {
+      "total": "Puntos Total",
+      "games": "En Juegos",
+      "operations": "En Operaciones",
+      "social": "En Redes Sociales" 
+    }
+  },
   "account": {
     "title": "Cuenta",
     "change-email": "Cambiar",
@@ -353,6 +369,44 @@
       "title": "Contáctanos",
       "description": "Nos encantaría saber de ti. Ponte en contacto con nuestro equipo para cualquier consulta, comentario o necesidad de soporte. Puedes contactarnos por correo electrónico en",
       "button": "Chatea con Nosotros en WhatsApp"
+    }
+  },
+  "development": {
+    "hero": {
+      "tag": "Demo",
+      "title": "Sitio de Pruebas",
+      "label": "Prueba el futuro de los pagos cripto — seguro, gratis y en testnet.",
+      "description": "Usa nuestro entorno de pruebas para experimentar ChatterPay sin costos. Envía, intercambia y explora funciones con tokens de testnet. Gana confianza y descubre lo que es posible antes de usarlo en producción.",
+      "cta": "Ir al Sitio de pruebas"
+    }
+  },
+  "products": {
+    "hero": {
+      "tag": "productos",
+      "title": "Explorar",
+      "label": "Descubre lo que puedes hacer con ChatterPay.",
+      "states": {
+        "dev": "En desarrollo",
+        "live": "Activo",
+        "planned": "Planificado"
+      },
+      "cta": "Saber más",
+      "core": {
+        "title": "Funcionalidades Principales",
+        "description": "Envía dinero al instante a contactos de WhatsApp, intercambia criptomonedas como BTC o ETH, retira fondos a cualquier billetera y crea certificados NFT con solo una foto."
+      },
+      "chatterpoints": {
+        "title": "Chatterpoints",
+        "description": "Gana puntos a través de operaciones, acciones en redes sociales y juegos."
+      },
+      "staking": {
+        "title": "Staking",
+        "description": "Gana mientras apoyas la red."
+      },
+      "b2b": {
+        "title": "B2B",
+        "description": "Integra flujos cripto en tu producto."
+      }
     }
   }
 }

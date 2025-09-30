@@ -47,7 +47,6 @@ export default function TransferAll() {
   )
 
   const methods = useForm({
-    // @ts-ignore
     resolver: yupResolver(TransferAllSchema),
     defaultValues
   })

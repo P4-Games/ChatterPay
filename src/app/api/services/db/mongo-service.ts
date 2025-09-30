@@ -115,7 +115,6 @@ export async function upsertOneCommon(
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function upsertManyCommon(
   dbName: string,
   colName: string,

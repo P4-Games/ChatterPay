@@ -43,7 +43,7 @@ export default function SettingsButton({ sx }: Props) {
         }}
       >
         <IconButton
-          component={m.button}
+          component={m.button as any}
           whileTap='tap'
           whileHover='hover'
           variants={varHover(1.05)}
