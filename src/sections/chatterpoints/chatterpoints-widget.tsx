@@ -37,10 +37,9 @@ export default function ChatterpointWidget({ tableData, loading = false, ...othe
 
   return (
     <Box {...other}>
-      {/* Chip global de estado */}
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
         <Chip
-          label='In Development'
+          label={t('products.hero.states.beta', 'total')}
           size='small'
           sx={{
             fontWeight: 'bold',
