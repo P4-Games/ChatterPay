@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import type { ReactNode } from 'react'
 import { m, useScroll } from 'framer-motion'
 
 import {
@@ -18,6 +19,7 @@ import {
 
 import MainLayout from 'src/layouts/main'
 import { useTranslate } from 'src/locales'
+import { TelegramIcon } from 'src/assets/icons'
 
 import ScrollProgress from 'src/components/scroll-progress'
 
@@ -82,25 +84,39 @@ export default function ProductView(): JSX.Element {
               <Grid item xs={12} sm={6} md={6}>
                 <Tile
                   href='/products/basic'
-                  title={`${t('products.hero.core.title', 'Core Features')} ⚙️`}
+                  title={`⚙️ ${t('products.hero.core.title', 'Core Features')}`}
                   description={t(
                     'products.hero.core.description',
                     'Send money instantly to WhatsApp contacts, swap crypto like BTC or ETH, withdraw funds to any wallet, and create NFT certificates with just a photo.'
                   )}
-                  badge='Live'
+                  badge={t('products.hero.states.live', 'Live')}
                   cta={`${t('products.hero.cta', 'Learn more')} →`}
                 />
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
                 <Tile
+                  href='/products/telegram'
+                  title={t('products.hero.telegram.title', 'Telegram')}
+                  description={t(
+                    'products.hero.telegram.description',
+                    'Access ChatterPay directly from Telegram. Check your wallet and balance without leaving the chat — fast, secure, and private.'
+                  )}
+                  badge={t('products.hero.states.live', 'Live')}
+                  cta={`${t('products.hero.cta', 'Learn more')} →`}
+                  icon={<TelegramIcon />}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6} md={6}>
+                <Tile
                   href='/products/chatterpoints'
-                  title={`${t('products.hero.chatterpoints.title', 'Chatterpoints')} 🎯`}
+                  title={`🎯 ${t('products.hero.chatterpoints.title', 'Chatterpoints')}`}
                   description={t(
                     'products.hero.chatterpoints.description',
                     'Earn points through actions and games.'
                   )}
-                  badge='In development'
+                  badge={t('products.hero.states.beta', 'Beta')}
                   cta={`${t('products.hero.cta', 'Learn more')} →`}
                 />
               </Grid>
@@ -108,12 +124,12 @@ export default function ProductView(): JSX.Element {
               <Grid item xs={12} sm={6} md={6}>
                 <Tile
                   href='/products/staking'
-                  title={`${t('products.hero.staking.title', 'Staking')} 💎`}
+                  title={`💎 ${t('products.hero.staking.title', 'Staking')}`}
                   description={t(
                     'products.hero.staking.description',
                     'Earn while supporting the network.'
                   )}
-                  badge='In development'
+                  badge={t('products.hero.states.dev', 'In development')}
                   cta={`${t('products.hero.cta', 'Learn more')} →`}
                 />
               </Grid>
@@ -121,12 +137,12 @@ export default function ProductView(): JSX.Element {
               <Grid item xs={12} sm={6} md={6}>
                 <Tile
                   href='/products/b2b'
-                  title={`${t('products.hero.b2b.title', 'B2B')} 💼`}
+                  title={`💼 ${t('products.hero.b2b.title', 'B2B')}`}
                   description={t(
                     'products.hero.b2b.description',
                     'Integrate crypto flows into your product.'
                   )}
-                  badge='Planned'
+                  badge={t('products.hero.states.planned', 'Planned')}
                   cta={`${t('products.hero.cta', 'Learn more')} →`}
                 />
               </Grid>
@@ -146,13 +162,33 @@ function Tile(props: {
   description: string
   badge: string
   cta: string
+  icon?: ReactNode
 }): JSX.Element {
-  const { href, title, description, badge, cta } = props
+  const { href, title, description, badge, cta, icon } = props
 
   const getColor = (label: string) => {
-    if (label.toLowerCase() === 'live') return 'success'
-    if (label.toLowerCase() === 'in development') return 'warning'
-    return 'default'
+    const v = (label || '').toLowerCase().trim()
+
+    if (v === 'live' || v === 'activo' || v === 'ativo') return 'success' as const
+    if (v.includes('beta')) return 'warning' as const
+    if (
+      v === 'in development' ||
+      v === 'dev' ||
+      v.includes('desarrollo') ||
+      v.includes('desenvolvimento')
+    ) {
+      return 'warning' as const
+    }
+    if (
+      v === 'planned' ||
+      v.includes('próxim') || // próximamente
+      v.includes('planeado') ||
+      v.includes('planejado') ||
+      v.includes('em breve')
+    ) {
+      return 'info' as const
+    }
+    return 'default' as const
   }
 
   return (
@@ -174,7 +210,13 @@ function Tile(props: {
               mb: 0.5
             }}
           >
-            <Typography variant='h6' noWrap title={title}>
+            <Typography
+              variant='h6'
+              noWrap
+              title={title}
+              sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+            >
+              {icon && <Box sx={{ width: 20, height: 20, flex: '0 0 auto' }}>{icon}</Box>}
               {title}
             </Typography>
             <Chip label={badge} size='small' color={getColor(badge)} />

@@ -387,6 +387,7 @@
       "label": "Discover what you can do with ChatterPay.",
       "states": {
         "dev": "In development",
+        "beta": "Beta Version",
         "live": "Live",
         "planned": "Planned"
       },
@@ -406,7 +407,12 @@
       "b2b": {
         "title": "B2B",
         "description": "Integrate crypto flows into your product."
+      },
+      "telegram": {
+        "title": "Telegram",
+        "description": "Access ChatterPay directly from Telegram. Check your wallet and balance without leaving the chat — fast, secure, and private."
       }
+
     }
   }
 }
