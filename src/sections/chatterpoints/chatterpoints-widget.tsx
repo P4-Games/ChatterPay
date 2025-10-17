@@ -44,8 +44,8 @@ export default function ChatterpointWidget({ tableData, loading = false, ...othe
           sx={{
             fontWeight: 'bold',
             letterSpacing: 0.5,
-            bgcolor: 'warning.light',
-            color: 'warning.dark'
+            bgcolor: 'secondary.light',
+            color: 'secondary.dark'
           }}
         />
       </Box>
