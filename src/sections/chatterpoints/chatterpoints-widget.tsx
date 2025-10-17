@@ -39,7 +39,7 @@ export default function ChatterpointWidget({ tableData, loading = false, ...othe
     <Box {...other}>
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
         <Chip
-          label={t('products.hero.states.beta', 'total')}
+          label={t('products.hero.states.beta', 'beta')}
           size='small'
           sx={{
             fontWeight: 'bold',
