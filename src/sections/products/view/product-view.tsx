@@ -170,7 +170,7 @@ function Tile(props: {
     const v = (label || '').toLowerCase().trim()
 
     if (v === 'live' || v === 'activo' || v === 'ativo') return 'success' as const
-    if (v.includes('beta')) return 'warning' as const
+    if (v.includes('beta')) return 'secondary' as const
     if (
       v === 'in development' ||
       v === 'dev' ||
@@ -181,7 +181,7 @@ function Tile(props: {
     }
     if (
       v === 'planned' ||
-      v.includes('próxim') || // próximamente
+      v.includes('próxim') ||
       v.includes('planeado') ||
       v.includes('planejado') ||
       v.includes('em breve')

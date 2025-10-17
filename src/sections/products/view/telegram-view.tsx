@@ -3,24 +3,37 @@
 import { m, useScroll } from 'framer-motion'
 
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
 
 import MainLayout from 'src/layouts/main'
+import { UI_BASE_URL } from 'src/config-global'
+import { useTranslate } from 'src/locales/use-locales'
 
 import ScrollProgress from 'src/components/scroll-progress'
-
 // ----------------------------------------------------------------------
+
+function getTelegramUrl(): string {
+  const url = new URL(UI_BASE_URL)
+  const hostname = url.hostname.toLowerCase()
+
+  if (hostname === 'localhost' || hostname.startsWith('dev.')) {
+    return 'https://t.me/chatterpay_dev_bot'
+  }
+
+  return 'https://t.me/chatterpay_bot'
+}
 
 export default function TelegramView(): JSX.Element {
   const { scrollYProgress } = useScroll()
+  const { t } = useTranslate()
 
   return (
     <MainLayout>
       <ScrollProgress scrollYProgress={scrollYProgress} />
 
       <Box sx={{ bgcolor: 'background.default' }}>
-        {/* Hero Section */}
         <Box
           sx={{
             pt: { xs: 5, md: 8 },
@@ -51,14 +64,18 @@ export default function TelegramView(): JSX.Element {
               </Typography>
 
               <Typography variant='body2' sx={{ mb: 3, color: 'text.disabled' }}>
-                🚀 Now available on Telegram — check your wallet and balance directly from the chat.
+                🚧 This page is under construction — check back soon for updates.
               </Typography>
 
-              <Typography sx={{ maxWidth: 720, mx: 'auto', color: 'text.secondary' }}>
+              <Typography sx={{ maxWidth: 720, mx: 'auto', color: 'text.secondary', mb: 3 }}>
                 ChatterPay brings its crypto experience to Telegram. You can already connect your
                 wallet and view your balance, with more features coming soon for seamless crypto
                 transfers, swaps, and staking — all within your favorite messaging app.
               </Typography>
+
+              <Button variant='contained' size='large' href={getTelegramUrl()} target='_blank'>
+                {t('telegram.hero.cta', 'Go to telegram bot')} →
+              </Button>
             </m.div>
           </Container>
         </Box>
