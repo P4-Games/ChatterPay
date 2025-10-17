@@ -92,6 +92,11 @@ export default function TelegramView(): JSX.Element {
             component='img'
             src='/assets/images/illustrations/telegram.png'
             alt='Telegram preview'
+            onError={(e) => {
+              const target = e.currentTarget
+              target.onerror = null
+              target.src = '/assets/images/no-image.png'
+            }}
             sx={{
               maxWidth: { xs: '90%', md: '600px' },
               maxHeight: { xs: 300, md: 400 },
