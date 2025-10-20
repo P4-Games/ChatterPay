@@ -110,8 +110,8 @@ module.exports = {
           }
         ]
       },
-      {
-      source: '/:path*',
+      {  
+        source: '/:path*',
         headers: [
           {
             key: 'Content-Security-Policy',
@@ -138,7 +138,12 @@ module.exports = {
               img-src 'self' data: https:;
               style-src 'self' 'unsafe-inline';
               frame-src 'self' https://www.google.com https://www.youtube.com;
+              frame-ancestors 'self';
             `.replace(/\s+/g, ' ').trim()
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY'
           }
         ]
       }
