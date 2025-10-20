@@ -18,6 +18,7 @@ export const paths = {
     basic: '/products/basic',
     chatterpoints: '/products/chatterpoints',
     staking: '/products/staking',
+    telegram: '/products/telegram',
     b2b: '/products/b2b'
   },
   roadmap: '/roadmap',
