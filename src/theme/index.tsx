@@ -4,7 +4,11 @@ import { useMemo } from 'react'
 import merge from 'lodash/merge'
 
 import CssBaseline from '@mui/material/CssBaseline'
-import { createTheme, ThemeOptions, ThemeProvider as MuiThemeProvider } from '@mui/material/styles'
+import {
+  createTheme,
+  type ThemeOptions,
+  ThemeProvider as MuiThemeProvider
+} from '@mui/material/styles'
 
 import { useLocales } from 'src/locales'
 

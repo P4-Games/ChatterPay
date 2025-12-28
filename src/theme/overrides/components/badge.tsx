@@ -1,5 +1,5 @@
-import { Theme } from '@mui/material/styles'
-import { BadgeProps, badgeClasses } from '@mui/material/Badge'
+import type { Theme } from '@mui/material/styles'
+import { type BadgeProps, badgeClasses } from '@mui/material/Badge'
 
 // ----------------------------------------------------------------------
 

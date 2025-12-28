@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import MenuItem from '@mui/material/MenuItem'
 import IconButton from '@mui/material/IconButton'
-import Card, { CardProps } from '@mui/material/Card'
+import Card, { type CardProps } from '@mui/material/Card'
 import {
   Box,
   Stack,
@@ -11,7 +11,7 @@ import {
   Tooltip,
   Popover,
   Typography,
-  SelectChangeEvent
+  type SelectChangeEvent
 } from '@mui/material'
 
 import { paths } from 'src/routes/paths'
@@ -27,7 +27,7 @@ import { BOT_WAPP_URL, EXPLORER_L1_URL, EXPLORER_L2_URL } from 'src/config-globa
 
 import Iconify from 'src/components/iconify'
 
-import { IBalances, CurrencyKey } from 'src/types/wallet'
+import type { IBalances, CurrencyKey } from 'src/types/wallet'
 
 // ----------------------------------------------------------------------
 

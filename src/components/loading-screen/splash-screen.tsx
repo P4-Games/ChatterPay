@@ -4,7 +4,7 @@ import { m } from 'framer-motion'
 import { useState, useEffect } from 'react'
 
 import { alpha } from '@mui/material/styles'
-import Box, { BoxProps } from '@mui/material/Box'
+import Box, { type BoxProps } from '@mui/material/Box'
 
 import Logo from '../logo'
 

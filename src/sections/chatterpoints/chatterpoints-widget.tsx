@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Chip from '@mui/material/Chip'
-import { CardProps } from '@mui/material/Card'
+import type { CardProps } from '@mui/material/Card'
 
 import { useTranslate } from 'src/locales'
 

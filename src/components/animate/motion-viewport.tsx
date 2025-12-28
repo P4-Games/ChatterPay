@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import { m, MotionProps } from 'framer-motion'
+import { m, type MotionProps } from 'framer-motion'
 
-import Box, { BoxProps } from '@mui/material/Box'
+import Box, { type BoxProps } from '@mui/material/Box'
 
 import { useResponsive } from 'src/hooks/use-responsive'
 import { getStorageItem } from 'src/hooks/use-local-storage'

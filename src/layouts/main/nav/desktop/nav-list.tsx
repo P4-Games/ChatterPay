@@ -14,7 +14,7 @@ import { paper } from 'src/theme/css'
 
 import { HEADER } from '../../../config-layout'
 import { NavItem, NavItemDashboard } from './nav-item'
-import { NavListProps, NavSubListProps } from '../types'
+import type { NavListProps, NavSubListProps } from '../types'
 
 // ----------------------------------------------------------------------
 

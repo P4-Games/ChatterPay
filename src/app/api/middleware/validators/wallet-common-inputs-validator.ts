@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 
 import { getUserIdByWallet } from 'src/app/api/services/db/chatterpay-db-service'
 
-import { IErrorResponse } from 'src/types/api'
+import type { IErrorResponse } from 'src/types/api'
 
 // ----------------------------------------------------------------------
 

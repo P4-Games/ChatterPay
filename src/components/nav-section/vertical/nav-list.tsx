@@ -6,7 +6,7 @@ import { usePathname } from 'src/routes/hooks'
 import { useActiveLink } from 'src/routes/hooks/use-active-link'
 
 import NavItem from './nav-item'
-import { NavListProps, NavSubListProps } from '../types'
+import type { NavListProps, NavSubListProps } from '../types'
 
 // ----------------------------------------------------------------------
 

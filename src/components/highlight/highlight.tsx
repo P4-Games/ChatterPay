@@ -1,7 +1,7 @@
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { m } from 'framer-motion'
 
-import { HighlightSize, SingleWordHighlightProps } from './types'
+import type { HighlightSize, SingleWordHighlightProps } from './types'
 
 export default function SingleWordHighlight({
   size = 'lg',

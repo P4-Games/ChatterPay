@@ -11,7 +11,7 @@ import { DateCalendar } from '@mui/x-date-pickers/DateCalendar'
 
 import { useResponsive } from 'src/hooks/use-responsive'
 
-import { DateRangePickerProps } from './types'
+import type { DateRangePickerProps } from './types'
 
 // ----------------------------------------------------------------------
 

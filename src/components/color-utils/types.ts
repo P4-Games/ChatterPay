@@ -1,4 +1,4 @@
-import { StackProps } from '@mui/material/Stack'
+import type { StackProps } from '@mui/material/Stack'
 
 // ----------------------------------------------------------------------
 

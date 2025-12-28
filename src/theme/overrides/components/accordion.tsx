@@ -1,4 +1,4 @@
-import { Theme } from '@mui/material/styles'
+import type { Theme } from '@mui/material/styles'
 import { accordionClasses } from '@mui/material/Accordion'
 import { typographyClasses } from '@mui/material/Typography'
 import { accordionSummaryClasses } from '@mui/material/AccordionSummary'

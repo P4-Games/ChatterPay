@@ -3,7 +3,7 @@ import Link from '@mui/material/Link'
 
 import { RouterLink } from 'src/routes/components'
 
-import { BreadcrumbsLinkProps } from './types'
+import type { BreadcrumbsLinkProps } from './types'
 
 // ----------------------------------------------------------------------
 

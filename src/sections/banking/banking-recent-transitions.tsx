@@ -11,7 +11,7 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import CardHeader from '@mui/material/CardHeader'
 import IconButton from '@mui/material/IconButton'
-import Card, { CardProps } from '@mui/material/Card'
+import Card, { type CardProps } from '@mui/material/Card'
 import ListItemText from '@mui/material/ListItemText'
 import Badge, { badgeClasses } from '@mui/material/Badge'
 import TableContainer from '@mui/material/TableContainer'
@@ -37,7 +37,7 @@ import {
   TableHeadCustom
 } from 'src/components/table'
 
-import { ITransaction } from 'src/types/wallet'
+import type { ITransaction } from 'src/types/wallet'
 
 // ----------------------------------------------------------------------
 

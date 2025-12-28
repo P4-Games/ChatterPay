@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography'
 import Breadcrumbs from '@mui/material/Breadcrumbs'
 
 import LinkItem from './link-item'
-import { CustomBreadcrumbsProps } from './types'
+import type { CustomBreadcrumbsProps } from './types'
 
 // ----------------------------------------------------------------------
 

@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server'
 
 import { getNftById } from 'src/app/api/services/db/chatterpay-db-service'
 
-import { INFT } from 'src/types/wallet'
-import { IErrorResponse } from 'src/types/api'
+import type { INFT } from 'src/types/wallet'
+import type { IErrorResponse } from 'src/types/api'
 
 // ----------------------------------------------------------------------
 

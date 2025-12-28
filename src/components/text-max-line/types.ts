@@ -1,6 +1,6 @@
-import { LinkProps } from '@mui/material/Link'
-import { TypographyProps } from '@mui/material/Typography'
-import { Variant } from '@mui/material/styles/createTypography'
+import type { LinkProps } from '@mui/material/Link'
+import type { TypographyProps } from '@mui/material/Typography'
+import type { Variant } from '@mui/material/styles/createTypography'
 
 // ----------------------------------------------------------------------
 

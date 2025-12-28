@@ -9,7 +9,7 @@ import EmptyContent from 'src/components/empty-content'
 import { useSettingsContext } from 'src/components/settings'
 import { LoadingScreen } from 'src/components/loading-screen'
 
-import { INFT } from 'src/types/wallet'
+import type { INFT } from 'src/types/wallet'
 
 import NftItemShare from '../nft-item-share'
 

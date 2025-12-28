@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 import Container from '@mui/material/Container'
 
 import { useTranslate } from 'src/locales'
-import { AuthUserType } from 'src/auth/types'
+import type { AuthUserType } from 'src/auth/types'
 import { useAuthContext } from 'src/auth/hooks'
 import { useGetWalletNfts } from 'src/app/api/hooks/'
 
@@ -13,8 +13,8 @@ import EmptyContent from 'src/components/empty-content'
 import { useSettingsContext } from 'src/components/settings'
 import { LoadingScreen } from 'src/components/loading-screen'
 
-import { INFT } from 'src/types/wallet'
-import { IAccount } from 'src/types/account'
+import type { INFT } from 'src/types/wallet'
+import type { IAccount } from 'src/types/account'
 
 import NftList from '../nft-list'
 
