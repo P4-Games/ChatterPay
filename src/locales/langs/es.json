@@ -40,6 +40,27 @@
     "notifications": "Notificaciones",
     "transfer-all": "Retirar Tudo"
   },
+  "referrals": {
+    "title": "Referidos",
+    "my-code": "Tu código de referido",
+    "usage-count": "Usado {COUNT} veces",
+    "referred-by": "Código de quien te refirió",
+    "not-set": "(sin código)",
+    "input-label": "Código de referido",
+    "input-placeholder": "Ej: 52047NV1BO",
+    "save-button": "Guardar",
+    "messages": {
+      "saved": "Código guardado"
+    },
+    "errors": {
+      "missing-code": "Ingresá un código",
+      "referrer-not-found": "El código de referido no existe",
+      "already-set": "Ya tenés un código de referido cargado",
+      "self-referral": "No podés referirte a vos mismo",
+      "user-not-found": "Usuario no encontrado",
+      "submit-failed": "No se pudo guardar el código"
+    }
+  },
   "terms": {
     "title": "Términos y Condiciones",
     "introduction": {
