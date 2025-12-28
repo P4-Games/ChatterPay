@@ -26,6 +26,12 @@ jobs:
       - name: Run TypeScript type check
         run: yarn type-check
 
+      - name: Normalize line endings (tracked files only)
+        run: |
+          # Ensure consistent LF line endings across environments (respecting .gitignore)
+          git config --global core.autocrlf false
+          git ls-files -z | xargs -0 sed -i 's/\r$//'
+          
       - name: Run Biome
         run: yarn biome check .
 
