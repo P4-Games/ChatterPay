@@ -1,4 +1,4 @@
-import { Db, ObjectId, Collection, MongoClient } from 'mongodb'
+import { type Db, ObjectId, type Collection, type MongoClient } from 'mongodb'
 
 import { getClientPromise } from './_connections/mongo-connection'
 

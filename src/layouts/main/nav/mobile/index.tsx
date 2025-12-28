@@ -10,7 +10,7 @@ import SvgColor from 'src/components/svg-color'
 import Scrollbar from 'src/components/scrollbar'
 
 import NavList from './nav-list'
-import { NavProps } from '../types'
+import type { NavProps } from '../types'
 
 // ----------------------------------------------------------------------
 

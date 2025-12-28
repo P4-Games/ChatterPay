@@ -235,7 +235,7 @@
         "faq6": {
           "question": "Como faço login no site?",
           "answer": "Digite seu número de telefone registrado. Um código de 6 dígitos será enviado para seu telefone por segurança; depois de inserí-lo, você poderá acessar o site."
-        },  
+        },
         "faq7": {
           "question": "Como posso entrar em contato com a equipe do ChatterPay?",
           "answer": "Através do mesmo chat do WhatsApp {PHONE}, você pode solicitar suporte a qualquer momento e responderemos o mais rápido possível."
@@ -419,7 +419,7 @@
         "description": "Envie dinheiro instantaneamente para contatos do WhatsApp, troque criptos como BTC ou ETH, retire fundos para qualquer carteira e crie certificados NFT apenas com uma foto."
       },
       "chatterpoints": {
-        "title":"Chatterpoints",
+        "title": "Chatterpoints",
         "description": "Ganhe pontos por meio de operações, ações em redes sociais e jogos."
       },
       "staking": {

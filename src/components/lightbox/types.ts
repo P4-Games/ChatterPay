@@ -1,4 +1,4 @@
-import { LightboxExternalProps } from 'yet-another-react-lightbox'
+import type { LightboxExternalProps } from 'yet-another-react-lightbox'
 
 // ----------------------------------------------------------------------
 

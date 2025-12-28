@@ -2,7 +2,7 @@ import axios from 'axios'
 
 import { UI_BASE_URL, BACKEND_API_URL, BACKEND_API_TOKEN } from 'src/config-global'
 
-import {
+import type {
   IncludeKind,
   UserHistoryFilters,
   ChatterpointsHistoryResult

@@ -1,5 +1,5 @@
-import { Theme } from '@mui/material/styles'
-import { DialogProps } from '@mui/material/Dialog'
+import type { Theme } from '@mui/material/styles'
+import type { DialogProps } from '@mui/material/Dialog'
 
 // ----------------------------------------------------------------------
 

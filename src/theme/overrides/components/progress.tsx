@@ -1,5 +1,5 @@
-import { Theme, alpha } from '@mui/material/styles'
-import { LinearProgressProps, linearProgressClasses } from '@mui/material/LinearProgress'
+import { type Theme, alpha } from '@mui/material/styles'
+import { type LinearProgressProps, linearProgressClasses } from '@mui/material/LinearProgress'
 
 // ----------------------------------------------------------------------
 

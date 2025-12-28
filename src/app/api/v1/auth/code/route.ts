@@ -1,5 +1,5 @@
 import { createHash } from 'crypto'
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 
 import { getIpFromRequest } from 'src/app/api/middleware/utils/network-utils'
 import { send2FACode } from 'src/app/api/services/chatizalo/chatizalo-service'
@@ -17,7 +17,7 @@ import {
   USER_SESSION_EXPIRATION_MINUTES
 } from 'src/config-global'
 
-import { IAccount } from 'src/types/account'
+import type { IAccount } from 'src/types/account'
 
 // ----------------------------------------------------------------------
 

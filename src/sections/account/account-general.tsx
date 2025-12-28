@@ -31,7 +31,7 @@ import Iconify from 'src/components/iconify/iconify'
 import { useSnackbar } from 'src/components/snackbar'
 import FormProvider, { RHFTextField } from 'src/components/hook-form'
 
-import { IAccount } from 'src/types/account'
+import type { IAccount } from 'src/types/account'
 
 // ----------------------------------------------------------------------
 

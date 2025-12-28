@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 
 import { getUserById } from 'src/app/api/services/db/chatterpay-db-service'
 import { validateRequestSecurity } from 'src/app/api/middleware/validators/base-security-validator'
@@ -6,7 +6,7 @@ import { getUserChatterpointsHistory } from 'src/app/api/services/chatterpoints/
 import { validateWalletCommonsInputs as validateWalletCommonInputs } from 'src/app/api/middleware/validators/wallet-common-inputs-validator'
 
 import type { IAccount } from 'src/types/account'
-import { GameType, IncludeKind, SocialPlatform } from 'src/types/chatterpoints'
+import type { GameType, IncludeKind, SocialPlatform } from 'src/types/chatterpoints'
 
 // ----------------------------------------------------------------------
 

@@ -1,5 +1,5 @@
 import Typography from '@mui/material/Typography'
-import Paper, { PaperProps } from '@mui/material/Paper'
+import Paper, { type PaperProps } from '@mui/material/Paper'
 
 // ----------------------------------------------------------------------
 

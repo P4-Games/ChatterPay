@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 
 import { CHP_DSH_NAME } from 'src/config-global'
 import { getIpFromRequest } from 'src/app/api/middleware/utils/network-utils'
 import { extractJwtTokenFromCookie } from 'src/app/api/middleware/utils/jwt-utils'
 import { checkUserHaveActiveSession } from 'src/app/api/services/db/chatterpay-db-service'
 
-import { JwtPayload } from 'src/types/jwt'
+import type { JwtPayload } from 'src/types/jwt'
 
 // ----------------------------------------------------------------------
 

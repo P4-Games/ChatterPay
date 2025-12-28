@@ -13,7 +13,7 @@ import {
   nodeProviderUrlSepolia
 } from 'src/config-global'
 
-import { IBalance, IBalances, CurrencyKey } from 'src/types/wallet'
+import type { IBalance, IBalances, CurrencyKey } from 'src/types/wallet'
 
 import TokenPriceFeedsAbi from './_abis/TokenPriceFeedsAbi.json'
 

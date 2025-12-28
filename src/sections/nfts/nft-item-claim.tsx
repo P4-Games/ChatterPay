@@ -11,7 +11,7 @@ import { BOT_WAPP_URL, NFT_MARKETPLACE_URL, NFT_IMAGE_REPOSITORY } from 'src/con
 
 import { varFade } from 'src/components/animate'
 
-import { INFT, ImageURLRepository } from 'src/types/wallet'
+import type { INFT, ImageURLRepository } from 'src/types/wallet'
 
 // ----------------------------------------------------------------------
 

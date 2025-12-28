@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from 'react'
+import type React from 'react'
+import { useState, useEffect } from 'react'
 import { NotificationItem } from '@pushprotocol/uiweb'
 
 import { Box, Card, Stack, Tooltip, Typography, IconButton, CircularProgress } from '@mui/material'
 
 import { useTranslate } from 'src/locales'
-import { AuthUserType } from 'src/auth/types'
+import type { AuthUserType } from 'src/auth/types'
 import { useAuthContext } from 'src/auth/hooks'
 import { useGetWalletNotifications } from 'src/app/api/hooks'
 import { notificationsRefreshInterval } from 'src/config-global'
 
 import Iconify from 'src/components/iconify'
 
-import { pushNotification } from 'src/types/notifications'
+import type { pushNotification } from 'src/types/notifications'
 
 // ----------------------------------------------------------------------
 

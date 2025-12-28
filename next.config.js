@@ -110,7 +110,7 @@ module.exports = {
           }
         ]
       },
-      {  
+      {
         source: '/:path*',
         headers: [
           {
@@ -139,7 +139,9 @@ module.exports = {
               style-src 'self' 'unsafe-inline';
               frame-src 'self' https://www.google.com https://www.youtube.com;
               frame-ancestors 'self';
-            `.replace(/\s+/g, ' ').trim()
+            `
+              .replace(/\s+/g, ' ')
+              .trim()
           },
           {
             key: 'X-Frame-Options',

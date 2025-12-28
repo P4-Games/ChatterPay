@@ -1,4 +1,4 @@
-import { alpha, Theme } from '@mui/material/styles'
+import { alpha, type Theme } from '@mui/material/styles'
 import { ratingClasses } from '@mui/material/Rating'
 import { svgIconClasses } from '@mui/material/SvgIcon'
 

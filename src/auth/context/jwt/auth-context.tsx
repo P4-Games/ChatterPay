@@ -2,7 +2,7 @@
 
 import { createContext } from 'react'
 
-import { JWTContextType } from '../../types'
+import type { JWTContextType } from '../../types'
 
 // ----------------------------------------------------------------------
 

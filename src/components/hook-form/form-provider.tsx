@@ -1,4 +1,4 @@
-import { UseFormReturn, FormProvider as Form } from 'react-hook-form'
+import { type UseFormReturn, FormProvider as Form } from 'react-hook-form'
 
 // ----------------------------------------------------------------------
 

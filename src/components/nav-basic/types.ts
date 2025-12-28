@@ -1,6 +1,6 @@
-import { StackProps } from '@mui/material/Stack'
-import { Theme, SxProps } from '@mui/material/styles'
-import { ListItemButtonProps } from '@mui/material/ListItemButton'
+import type { StackProps } from '@mui/material/Stack'
+import type { Theme, SxProps } from '@mui/material/styles'
+import type { ListItemButtonProps } from '@mui/material/ListItemButton'
 
 // ----------------------------------------------------------------------
 

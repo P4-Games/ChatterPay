@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 
 import { getWalletNfts } from 'src/app/api/services/db/chatterpay-db-service'
 import { validateRequestSecurity } from 'src/app/api/middleware/validators/base-security-validator'

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 
 import { submitReferralByCode } from 'src/app/api/services/referral/referral-service'
 import { validateRequestSecurity } from 'src/app/api/middleware/validators/base-security-validator'

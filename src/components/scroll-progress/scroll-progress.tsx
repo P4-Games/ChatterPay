@@ -1,6 +1,6 @@
-import { m, useSpring, MotionValue } from 'framer-motion'
+import { m, useSpring, type MotionValue } from 'framer-motion'
 
-import Box, { BoxProps } from '@mui/material/Box'
+import Box, { type BoxProps } from '@mui/material/Box'
 
 // ----------------------------------------------------------------------
 

@@ -111,12 +111,12 @@
       "currencies": [
         "Argentine pesos",
         "dollars",
-        "Chilean pesos", 
-        "Brazilian reais", 
-        "Colombian pesos", 
-        "Mexican pesos", 
-        "Costa Rican colones", 
-        "Guatemalan quetzales", 
+        "Chilean pesos",
+        "Brazilian reais",
+        "Colombian pesos",
+        "Mexican pesos",
+        "Costa Rican colones",
+        "Guatemalan quetzales",
         "Filipino pesos"
       ]
     },
@@ -172,7 +172,7 @@
         "faq6": {
           "question": "How do I log in to the website?",
           "answer": "Enter your registered phone number. A 6-digit code will be sent to your phone for security; once you enter it, you can access the site."
-        },  
+        },
         "faq7": {
           "question": "How can I contact the ChatterPay team?",
           "answer": "Through the same WhatsApp chat ({PHONE}), you can request support at any time and we will respond as soon as possible."
@@ -336,12 +336,12 @@
       "wapp-msg": "I would like to mint the NFT"
     }
   },
-    "chatterpoints": {
+  "chatterpoints": {
     "totals": {
       "total": "Total Points",
       "games": "In Games",
       "operations": "In Operations",
-      "social": "In Social Networks" 
+      "social": "In Social Networks"
     }
   },
   "account": {
@@ -397,7 +397,7 @@
       "tag": "Demo",
       "title": "Playground",
       "label": "Test the future of crypto payments — safe, free, and on testnet.",
-      "description":"Use our testing site to try ChatterPay at no cost. Send, swap, and explore features using testnet tokens. Build confidence and see what’s possible before using it in production.",
+      "description": "Use our testing site to try ChatterPay at no cost. Send, swap, and explore features using testnet tokens. Build confidence and see what’s possible before using it in production.",
       "cta": "Go to testing Site"
     }
   },

@@ -1,4 +1,4 @@
-import axios, { AxiosHeaders, AxiosRequestConfig } from 'axios'
+import axios, { AxiosHeaders, type AxiosRequestConfig } from 'axios'
 
 import { BOT_API_URL, UI_BASE_URL } from 'src/config-global'
 
