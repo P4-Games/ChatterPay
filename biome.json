@@ -14,6 +14,7 @@
       "!coverage",
       "!dist",
       "!.vscode",
+      "!public",
       "!node_modules",
       "!**/*.md",
       "!**/abis"
