@@ -40,6 +40,27 @@
     "notifications": "Notificações",
     "transfer-all": "Retirar Tudo"
   },
+  "referrals": {
+    "title": "Indicações",
+    "my-code": "Seu código de indicação",
+    "usage-count": "Usado {COUNT} vezes",
+    "referred-by": "Código de quem te indicou",
+    "not-set": "(não definido)",
+    "input-label": "Código de indicação",
+    "input-placeholder": "Ex: 52047NV1BO",
+    "save-button": "Salvar",
+    "messages": {
+      "saved": "Código salvo"
+    },
+    "errors": {
+      "missing-code": "Informe um código",
+      "referrer-not-found": "Código de indicação não encontrado",
+      "already-set": "Você já tem um código de indicação definido",
+      "self-referral": "Autoindicação não é permitida",
+      "user-not-found": "Usuário não encontrado",
+      "submit-failed": "Não foi possível salvar o código"
+    }
+  },
   "terms": {
     "title": "Termos e Condições",
     "introduction": {
