@@ -40,6 +40,27 @@
     "notifications": "Notifications",
     "transfer-all": "Withdraw All"
   },
+  "referrals": {
+    "title": "Referrals",
+    "my-code": "Your referral code",
+    "usage-count": "Used {COUNT} times",
+    "referred-by": "Referred by code",
+    "not-set": "(not set)",
+    "input-label": "Referral code",
+    "input-placeholder": "Ex: 52047NV1BO",
+    "save-button": "Save",
+    "messages": {
+      "saved": "Code saved"
+    },
+    "errors": {
+      "missing-code": "Enter a code",
+      "referrer-not-found": "Referral code not found",
+      "already-set": "You already have a referral code set",
+      "self-referral": "Self-referral is not allowed",
+      "user-not-found": "User not found",
+      "submit-failed": "Couldn't save the code"
+    }
+  },
   "home": {
     "header": {
       "sign-in": "Dashboard",
