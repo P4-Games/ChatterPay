@@ -37,8 +37,7 @@
     "account": "Cuenta",
     "logout": "Cerrar Sesión",
     "email": "Cambiar Correo",
-    "notifications": "Notificaciones",
-    "transfer-all": "Retirar Tudo"
+    "notifications": "Notificaciones"
   },
   "referrals": {
     "title": "Referidos",
@@ -288,7 +287,6 @@
     "title": "Balance Estimado",
     "deposit": "Depositar",
     "send": "Enviar",
-    "transfer-all": "Retirar",
     "wapp-msg": "Hola!"
   },
   "transactions": {
@@ -304,17 +302,6 @@
     "table-share": "Compartir",
     "receive-from": "Recibiste de",
     "sent-to": "Enviaste a"
-  },
-  "transfer-all": {
-    "info": "Indica una dirección de billetera en donde se enviarán todos los fondos que tengas en Chatterpay",
-    "warning": "Importante: Estás por retirar tus fondos a una wallet externa. Asegúrate de que la dirección de destino sea correcta y compatible con la red <bold>{{NETWORK}}</bold>. ChatterPay no puede revertir transacciones enviadas a una dirección o red incorrecta.",
-    "msgs": {
-      "ok": "Los fondos fueron transferidos. Los verás en la billetera indicada en breve.",
-      "error": "Hubo un error al intentar transferir los fondos."
-    },
-    "actions": {
-      "transfer": "Transferir Todo"
-    }
   },
   "nfts": {
     "view-trx": "Ver detalles de la transacción",

@@ -104,7 +104,6 @@ export const endpoints = {
         submitByCode: (id: string) => getFullUIEndpoint(`user/${id}/referral/submit-by-code`)
       },
       updateEmail: (id: string) => getFullUIEndpoint(`user/${id}/email`),
-      transferAll: (id: string) => getFullUIEndpoint(`user/${id}/transfer-all`),
       logout: (id: string) => getFullUIEndpoint(`user/${id}/logout`)
     },
     wallet: {

@@ -37,8 +37,7 @@
     "account": "Account",
     "logout": "Logout",
     "email": "Email Change",
-    "notifications": "Notifications",
-    "transfer-all": "Withdraw All"
+    "notifications": "Notifications"
   },
   "referrals": {
     "title": "Referrals",
@@ -288,7 +287,6 @@
     "title": "Estimated Balance",
     "deposit": "Deposit",
     "send": "Send",
-    "transfer-all": "Withdraw",
     "wapp-msg": "Hi!"
   },
   "transactions": {
@@ -304,17 +302,6 @@
     "table-share": "Share",
     "receive-from": "Received from",
     "sent-to": "Sent to"
-  },
-  "transfer-all": {
-    "info": "Indicates a wallet address where all funds in Chatterpay will be sent.",
-    "warning": "Important: You are about to withdraw your funds to an external wallet. Please make sure the destination address is correct and compatible with the <bold>{{NETWORK}}</bold> network. ChatterPay cannot reverse transactions sent to the wrong address or network.",
-    "msgs": {
-      "ok": "The funds were transferred. You will see them in the indicated wallet shortly.",
-      "error": "There was an error attempting to transfer the funds."
-    },
-    "actions": {
-      "transfer": "Transfer All"
-    }
   },
   "nfts": {
     "view-trx": "View Transacton Details",
