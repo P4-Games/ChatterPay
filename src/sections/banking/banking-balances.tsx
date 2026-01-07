@@ -14,7 +14,6 @@ import {
   type SelectChangeEvent
 } from '@mui/material'
 
-import { paths } from 'src/routes/paths'
 import { useRouter } from 'src/routes/hooks'
 
 import { useBoolean } from 'src/hooks/use-boolean'
@@ -147,19 +146,6 @@ export default function BankingBalances({
         onClick={() => window.open(sendReciveUrl, '_blank')}
       >
         {t('balances.send')}
-      </Button>
-      <Button
-        fullWidth={!mdUp}
-        sx={{
-          px: mdUp ? undefined : 2,
-          mx: mdUp ? 0 : 1
-        }}
-        variant='outlined'
-        color='warning'
-        startIcon={<Iconify icon='mdi:arrow-collapse-all' />}
-        onClick={() => router.push(paths.dashboard.transfer.all)}
-      >
-        {t('balances.transfer-all')}
       </Button>
     </Stack>
   )
