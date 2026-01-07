@@ -19,21 +19,6 @@ import TokenPriceFeedsAbi from './_abis/TokenPriceFeedsAbi.json'
 
 // ---------------------------------------------------------------------------------------------
 
-export async function transferAll(channelUserId: string, walletTo: string): Promise<boolean> {
-  try {
-    const data = { channel_user_id: channelUserId, dst_address: walletTo }
-    await axios.post(`${BACKEND_API_URL}/withdraw_all`, data, {
-      headers: {
-        Origin: UI_BASE_URL,
-        Authorization: `Bearer ${BACKEND_API_TOKEN}`
-      }
-    })
-    return true
-  } catch (error) {
-    console.error('Error transfering all funds:', error)
-    return true // avoid transfer-all error
-  }
-}
 export async function getBalancesWithTotalsFromBackend(walletAddress: string): Promise<IBalances> {
   const cacheKey = `getBalancesWithTotalsFromBackend.${walletAddress}`
   const fromCache = cache.get(cacheKey) as IBalances
