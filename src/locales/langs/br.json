@@ -24,7 +24,8 @@
     "msg": {
       "update-success": "Atualização bem-sucedida!",
       "update-error": "Erro de atualização",
-      "invalid-wallet": "Endereço de carteira inválido"
+      "invalid-wallet": "Endereço de carteira inválido",
+      "unexpected-error": "Ocorreu um erro inesperado. Por favor, tente novamente mais tarde."
     }
   },
   "menu": {

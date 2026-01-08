@@ -24,7 +24,8 @@
     "msg": {
       "update-success": "Update Success!",
       "update-error": "Update error",
-      "invalid-wallet": "Invalid wallet address"
+      "invalid-wallet": "Invalid wallet address",
+      "unexpected-error": "An unexpected error occurred. Please try again later."
     }
   },
   "menu": {
