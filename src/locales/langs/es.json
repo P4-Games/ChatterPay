@@ -24,7 +24,8 @@
     "msg": {
       "update-success": "¡Actualización exitosa!",
       "update-error": "Error de actualización",
-      "invalid-wallet": "Dirección de billetera inválida"
+      "invalid-wallet": "Dirección de billetera inválida",
+      "unexpected-error": "Ocurrió un error inesperado. Por favor, intentá nuevamente más tarde."
     }
   },
   "menu": {
