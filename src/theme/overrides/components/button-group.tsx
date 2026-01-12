@@ -1,5 +1,5 @@
-import { alpha, Theme } from '@mui/material/styles'
-import { ButtonGroupProps, buttonGroupClasses } from '@mui/material/ButtonGroup'
+import { alpha, type Theme } from '@mui/material/styles'
+import { type ButtonGroupProps, buttonGroupClasses } from '@mui/material/ButtonGroup'
 
 // ----------------------------------------------------------------------
 

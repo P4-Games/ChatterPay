@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 
 import { getUserTransactions } from 'src/app/api/services/db/chatterpay-db-service'
 import { validateRequestSecurity } from 'src/app/api/middleware/validators/base-security-validator'
 import { validateWalletCommonsInputs as validateWalletCommonInputs } from 'src/app/api/middleware/validators/wallet-common-inputs-validator'
 
-import { ITransaction } from 'src/types/wallet'
+import type { ITransaction } from 'src/types/wallet'
 
 // ----------------------------------------------------------------------
 

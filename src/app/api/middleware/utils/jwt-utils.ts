@@ -2,8 +2,8 @@ import jwt from 'jsonwebtoken'
 
 import { JWT_SECRET, USER_SESSION_EXPIRATION_MINUTES } from 'src/config-global'
 
-import { UserSession } from 'src/types/account'
-import { JwtPayload, jwtPayloadUser } from 'src/types/jwt'
+import type { UserSession } from 'src/types/account'
+import type { JwtPayload, jwtPayloadUser } from 'src/types/jwt'
 
 // ----------------------------------------------------------------------
 

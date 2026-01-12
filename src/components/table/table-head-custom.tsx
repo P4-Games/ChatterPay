@@ -3,7 +3,7 @@ import TableRow from '@mui/material/TableRow'
 import Checkbox from '@mui/material/Checkbox'
 import TableHead from '@mui/material/TableHead'
 import TableCell from '@mui/material/TableCell'
-import { Theme, SxProps } from '@mui/material/styles'
+import type { Theme, SxProps } from '@mui/material/styles'
 import TableSortLabel from '@mui/material/TableSortLabel'
 
 // ----------------------------------------------------------------------

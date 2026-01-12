@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 
 import { send2FACode } from 'src/app/api/services/chatizalo/chatizalo-service'
 import { BOT_API_URL, BOT_API_TOKEN, botApiWappEnabled } from 'src/config-global'
@@ -6,7 +6,7 @@ import { getUserByPhone, updateUserCode } from 'src/app/api/services/db/chatterp
 import { validateRequestSecurity } from 'src/app/api/middleware/validators/base-security-validator'
 import { validateUserCommonsInputs } from 'src/app/api/middleware/validators/user-common-inputs-validator'
 
-import { IAccount } from 'src/types/account'
+import type { IAccount } from 'src/types/account'
 
 // ----------------------------------------------------------------------
 type IParams = {

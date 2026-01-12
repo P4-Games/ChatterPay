@@ -3,7 +3,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import Chip from '@mui/material/Chip'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
-import Autocomplete, { AutocompleteProps } from '@mui/material/Autocomplete'
+import Autocomplete, { type AutocompleteProps } from '@mui/material/Autocomplete'
 
 import { allCountries } from 'src/app/api/services/db/_data/countries-data'
 

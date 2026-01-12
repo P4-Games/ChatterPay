@@ -1,5 +1,5 @@
-import { Theme } from '@mui/material/styles'
-import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
+import type { Theme } from '@mui/material/styles'
+import SvgIcon, { type SvgIconProps } from '@mui/material/SvgIcon'
 
 import Iconify from 'src/components/iconify'
 

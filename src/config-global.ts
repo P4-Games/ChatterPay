@@ -1,7 +1,7 @@
 import { ENV } from '@pushprotocol/restapi/src/lib/constants'
 
-import { Network } from './types/networks'
-import { IBalance, IBalances } from './types/wallet'
+import type { Network } from './types/networks'
+import type { IBalance, IBalances } from './types/wallet'
 
 // ----------------------------------------------------------------------
 

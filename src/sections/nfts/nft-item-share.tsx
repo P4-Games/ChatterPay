@@ -23,7 +23,7 @@ import { NFT_MARKETPLACE_URL, NFT_IMAGE_REPOSITORY } from 'src/config-global'
 
 import { varFade } from 'src/components/animate'
 
-import { INFT, ImageURLRepository } from 'src/types/wallet'
+import type { INFT, ImageURLRepository } from 'src/types/wallet'
 
 // ----------------------------------------------------------------------
 

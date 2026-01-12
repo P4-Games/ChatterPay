@@ -1,4 +1,4 @@
-import { Db, MongoClient, ServerApiVersion } from 'mongodb'
+import { type Db, MongoClient, ServerApiVersion } from 'mongodb'
 
 import { NODE_ENV, USE_MOCK, MONGODB_BOT } from 'src/config-global'
 

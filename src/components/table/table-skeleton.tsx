@@ -1,7 +1,7 @@
 import Stack from '@mui/material/Stack'
 import Skeleton from '@mui/material/Skeleton'
 import TableCell from '@mui/material/TableCell'
-import TableRow, { TableRowProps } from '@mui/material/TableRow'
+import TableRow, { type TableRowProps } from '@mui/material/TableRow'
 
 // ----------------------------------------------------------------------
 

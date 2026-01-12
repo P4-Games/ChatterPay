@@ -7,14 +7,14 @@ import Container from '@mui/material/Container'
 import Grid from '@mui/material/Unstable_Grid2'
 
 import { useTranslate } from 'src/locales'
-import { AuthUserType } from 'src/auth/types'
+import type { AuthUserType } from 'src/auth/types'
 import { useAuthContext } from 'src/auth/hooks'
 import { useGetWalletBalance, useGetWalletTransactions } from 'src/app/api/hooks'
 
 import { useSettingsContext } from 'src/components/settings'
 
-import { IAccount } from 'src/types/account'
-import { IBalances, ITransaction } from 'src/types/wallet'
+import type { IAccount } from 'src/types/account'
+import type { IBalances, ITransaction } from 'src/types/wallet'
 
 import BankingBalances from '../banking-balances'
 import BankingRecentTransitions from '../banking-recent-transitions'

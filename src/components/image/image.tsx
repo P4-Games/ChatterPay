@@ -5,7 +5,7 @@ import Box from '@mui/material/Box'
 import { alpha, useTheme } from '@mui/material/styles'
 
 import { getRatio } from './utils'
-import { ImageProps } from './types'
+import type { ImageProps } from './types'
 
 // ----------------------------------------------------------------------
 

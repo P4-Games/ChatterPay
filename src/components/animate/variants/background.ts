@@ -1,4 +1,4 @@
-import { BackgroundType } from '../types'
+import type { BackgroundType } from '../types'
 
 // ----------------------------------------------------------------------
 

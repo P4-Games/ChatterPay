@@ -24,7 +24,8 @@
     "msg": {
       "update-success": "¡Actualización exitosa!",
       "update-error": "Error de actualización",
-      "invalid-wallet": "Dirección de billetera inválida"
+      "invalid-wallet": "Dirección de billetera inválida",
+      "unexpected-error": "Ocurrió un error inesperado. Por favor, intentá nuevamente más tarde."
     }
   },
   "menu": {
@@ -37,8 +38,28 @@
     "account": "Cuenta",
     "logout": "Cerrar Sesión",
     "email": "Cambiar Correo",
-    "notifications": "Notificaciones",
-    "transfer-all": "Retirar Tudo"
+    "notifications": "Notificaciones"
+  },
+  "referrals": {
+    "title": "Referidos",
+    "my-code": "Tu código de referido",
+    "usage-count": "Usado {COUNT} veces",
+    "referred-by": "Código de quien te refirió",
+    "not-set": "(sin código)",
+    "input-label": "Código de referido",
+    "input-placeholder": "Ej: 52047NV1BO",
+    "save-button": "Guardar",
+    "messages": {
+      "saved": "Código guardado"
+    },
+    "errors": {
+      "missing-code": "Ingresá un código",
+      "referrer-not-found": "El código de referido no existe",
+      "already-set": "Ya tenés un código de referido cargado",
+      "self-referral": "No podés referirte a vos mismo",
+      "user-not-found": "Usuario no encontrado",
+      "submit-failed": "No se pudo guardar el código"
+    }
   },
   "terms": {
     "title": "Términos y Condiciones",
@@ -153,12 +174,12 @@
       "currencies": [
         "pesos argentinos",
         "dólares",
-        "pesos chilenos", 
-        "reais", 
-        "pesos colombianos", 
-        "pesos mexicanos", 
-        "colones", 
-        "quetzales", 
+        "pesos chilenos",
+        "reais",
+        "pesos colombianos",
+        "pesos mexicanos",
+        "colones",
+        "quetzales",
         "pesos filipinos"
       ]
     },
@@ -214,7 +235,7 @@
         "faq6": {
           "question": "¿Cómo inicio sesión en el sitio web?",
           "answer": "Ingresa tu número de teléfono registrado. Se enviará un código de 6 dígitos a tu teléfono por seguridad; una vez que lo ingreses, podrás acceder al sitio."
-        },  
+        },
         "faq7": {
           "question": "¿Cómo puedo contactar al equipo de ChatterPay?",
           "answer": "A través del mismo chat de WhatsApp ({PHONE}), podes solicitar soporte en cualquier momento y te responderemos lo antes posible."
@@ -267,7 +288,6 @@
     "title": "Balance Estimado",
     "deposit": "Depositar",
     "send": "Enviar",
-    "transfer-all": "Retirar",
     "wapp-msg": "Hola!"
   },
   "transactions": {
@@ -283,17 +303,6 @@
     "table-share": "Compartir",
     "receive-from": "Recibiste de",
     "sent-to": "Enviaste a"
-  },
-  "transfer-all": {
-    "info": "Indica una dirección de billetera en donde se enviarán todos los fondos que tengas en Chatterpay",
-    "warning": "Importante: Estás por retirar tus fondos a una wallet externa. Asegúrate de que la dirección de destino sea correcta y compatible con la red <bold>{{NETWORK}}</bold>. ChatterPay no puede revertir transacciones enviadas a una dirección o red incorrecta.",
-    "msgs": {
-      "ok": "Los fondos fueron transferidos. Los verás en la billetera indicada en breve.",
-      "error": "Hubo un error al intentar transferir los fondos."
-    },
-    "actions": {
-      "transfer": "Transferir Todo"
-    }
   },
   "nfts": {
     "view-trx": "Ver detalles de la transacción",
@@ -320,7 +329,7 @@
       "total": "Puntos Total",
       "games": "En Juegos",
       "operations": "En Operaciones",
-      "social": "En Redes Sociales" 
+      "social": "En Redes Sociales"
     }
   },
   "account": {
@@ -362,7 +371,7 @@
     },
     "founders": {
       "martin": "Martin pasó de tener experiencia en derecho y negocios a liderar proyectos de innovación Web3. Fundó startups de blockchain y lidera equipos en Fin Guru, P4 Tech, Sistem AI, Chatizalo y más.",
-        "tomas": "Tomás es full-stack dev y especialista en UI/UX. Diseña soluciones blockchain escalables y usables. Trabajó en FinGurú, Argenenergy y fue asesor en Invicta Ventures.",
+      "tomas": "Tomás es full-stack dev y especialista en UI/UX. Diseña soluciones blockchain escalables y usables. Trabajó en FinGurú, Argenenergy y fue asesor en Invicta Ventures.",
       "diego": "Diego es arquitecto de software con más de 25 años de experiencia. Ha liderado equipos, diseñado sistemas cloud y trabajado con múltiples lenguajes en grandes empresas."
     },
     "contact": {

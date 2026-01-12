@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 
-import { IErrorResponse } from 'src/types/api'
+import type { IErrorResponse } from 'src/types/api'
 
 // ----------------------------------------------------------------------
 

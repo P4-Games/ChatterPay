@@ -1,6 +1,6 @@
-import { AvatarProps } from '@mui/material/Avatar'
-import { alpha, Theme } from '@mui/material/styles'
-import { AvatarGroupProps, avatarGroupClasses } from '@mui/material/AvatarGroup'
+import type { AvatarProps } from '@mui/material/Avatar'
+import { alpha, type Theme } from '@mui/material/styles'
+import { type AvatarGroupProps, avatarGroupClasses } from '@mui/material/AvatarGroup'
 
 // ----------------------------------------------------------------------
 

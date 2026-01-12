@@ -3,7 +3,7 @@ import { memo } from 'react'
 import Stack from '@mui/material/Stack'
 
 import NavList from './nav-list'
-import { NavProps } from '../types'
+import type { NavProps } from '../types'
 
 // ----------------------------------------------------------------------
 

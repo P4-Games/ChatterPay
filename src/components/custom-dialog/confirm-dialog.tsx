@@ -4,7 +4,7 @@ import DialogTitle from '@mui/material/DialogTitle'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 
-import { ConfirmDialogProps } from './types'
+import type { ConfirmDialogProps } from './types'
 
 // ----------------------------------------------------------------------
 

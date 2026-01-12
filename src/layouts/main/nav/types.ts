@@ -1,5 +1,5 @@
-import { StackProps } from '@mui/material/Stack'
-import { ListItemButtonProps } from '@mui/material/ListItemButton'
+import type { StackProps } from '@mui/material/Stack'
+import type { ListItemButtonProps } from '@mui/material/ListItemButton'
 
 // ----------------------------------------------------------------------
 

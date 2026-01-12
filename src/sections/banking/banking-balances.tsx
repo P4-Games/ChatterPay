@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import MenuItem from '@mui/material/MenuItem'
 import IconButton from '@mui/material/IconButton'
-import Card, { CardProps } from '@mui/material/Card'
+import Card, { type CardProps } from '@mui/material/Card'
 import {
   Box,
   Stack,
@@ -11,10 +11,9 @@ import {
   Tooltip,
   Popover,
   Typography,
-  SelectChangeEvent
+  type SelectChangeEvent
 } from '@mui/material'
 
-import { paths } from 'src/routes/paths'
 import { useRouter } from 'src/routes/hooks'
 
 import { useBoolean } from 'src/hooks/use-boolean'
@@ -27,7 +26,7 @@ import { BOT_WAPP_URL, EXPLORER_L1_URL, EXPLORER_L2_URL } from 'src/config-globa
 
 import Iconify from 'src/components/iconify'
 
-import { IBalances, CurrencyKey } from 'src/types/wallet'
+import type { IBalances, CurrencyKey } from 'src/types/wallet'
 
 // ----------------------------------------------------------------------
 
@@ -147,19 +146,6 @@ export default function BankingBalances({
         onClick={() => window.open(sendReciveUrl, '_blank')}
       >
         {t('balances.send')}
-      </Button>
-      <Button
-        fullWidth={!mdUp}
-        sx={{
-          px: mdUp ? undefined : 2,
-          mx: mdUp ? 0 : 1
-        }}
-        variant='outlined'
-        color='warning'
-        startIcon={<Iconify icon='mdi:arrow-collapse-all' />}
-        onClick={() => router.push(paths.dashboard.transfer.all)}
-      >
-        {t('balances.transfer-all')}
       </Button>
     </Stack>
   )

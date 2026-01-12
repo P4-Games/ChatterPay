@@ -24,7 +24,8 @@
     "msg": {
       "update-success": "Atualização bem-sucedida!",
       "update-error": "Erro de atualização",
-      "invalid-wallet": "Endereço de carteira inválido"
+      "invalid-wallet": "Endereço de carteira inválido",
+      "unexpected-error": "Ocorreu um erro inesperado. Por favor, tente novamente mais tarde."
     }
   },
   "menu": {
@@ -37,8 +38,28 @@
     "account": "Conta",
     "logout": "Sair",
     "email": "Alterar Email",
-    "notifications": "Notificações",
-    "transfer-all": "Retirar Tudo"
+    "notifications": "Notificações"
+  },
+  "referrals": {
+    "title": "Indicações",
+    "my-code": "Seu código de indicação",
+    "usage-count": "Usado {COUNT} vezes",
+    "referred-by": "Código de quem te indicou",
+    "not-set": "(não definido)",
+    "input-label": "Código de indicação",
+    "input-placeholder": "Ex: 52047NV1BO",
+    "save-button": "Salvar",
+    "messages": {
+      "saved": "Código salvo"
+    },
+    "errors": {
+      "missing-code": "Informe um código",
+      "referrer-not-found": "Código de indicação não encontrado",
+      "already-set": "Você já tem um código de indicação definido",
+      "self-referral": "Autoindicação não é permitida",
+      "user-not-found": "Usuário não encontrado",
+      "submit-failed": "Não foi possível salvar o código"
+    }
   },
   "terms": {
     "title": "Termos e Condições",
@@ -214,7 +235,7 @@
         "faq6": {
           "question": "Como faço login no site?",
           "answer": "Digite seu número de telefone registrado. Um código de 6 dígitos será enviado para seu telefone por segurança; depois de inserí-lo, você poderá acessar o site."
-        },  
+        },
         "faq7": {
           "question": "Como posso entrar em contato com a equipe do ChatterPay?",
           "answer": "Através do mesmo chat do WhatsApp {PHONE}, você pode solicitar suporte a qualquer momento e responderemos o mais rápido possível."
@@ -268,7 +289,6 @@
     "title": "Saldo Estimado",
     "deposit": "Depositar",
     "send": "Enviar",
-    "transfer-all": "Retirar",
     "wapp-msg": "Olá!"
   },
   "transactions": {
@@ -284,17 +304,6 @@
     "table-share": "Compartilhar",
     "receive-from": "Recebeu de",
     "sent-to": "Enviou para"
-  },
-  "transfer-all": {
-    "info": "Indica um endereço de carteira para onde serão enviados todos os fundos que você possui no Chatterpay.",
-    "warning": "Importante: Você está prestes a sacar seus fundos para uma carteira externa. Verifique se o endereço de destino está correto e é compatível com a rede <bold>{{NETWORK}}</bold>. O ChatterPay não pode reverter transações enviadas para o endereço ou rede errados.",
-    "msgs": {
-      "ok": "Os fundos foram transferidos. Você os verá na carteira indicada em breve.",
-      "error": "Houve um erro ao tentar transferir os fundos."
-    },
-    "actions": {
-      "transfer": "Transferir Tudo"
-    }
   },
   "nfts": {
     "view-trx": "Ver detalhes da transação",
@@ -398,7 +407,7 @@
         "description": "Envie dinheiro instantaneamente para contatos do WhatsApp, troque criptos como BTC ou ETH, retire fundos para qualquer carteira e crie certificados NFT apenas com uma foto."
       },
       "chatterpoints": {
-        "title":"Chatterpoints",
+        "title": "Chatterpoints",
         "description": "Ganhe pontos por meio de operações, ações em redes sociais e jogos."
       },
       "staking": {

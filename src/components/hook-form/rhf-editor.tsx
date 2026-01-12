@@ -3,7 +3,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 
 import FormHelperText from '@mui/material/FormHelperText'
 
-import Editor, { EditorProps } from '../editor'
+import Editor, { type EditorProps } from '../editor'
 
 // ----------------------------------------------------------------------
 

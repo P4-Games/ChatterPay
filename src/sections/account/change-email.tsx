@@ -22,7 +22,7 @@ import { useAuthContext } from 'src/auth/hooks'
 import { useSnackbar } from 'src/components/snackbar'
 import FormProvider, { RHFCode, RHFTextField } from 'src/components/hook-form'
 
-import { IAccount } from 'src/types/account'
+import type { IAccount } from 'src/types/account'
 
 // ----------------------------------------------------------------------
 

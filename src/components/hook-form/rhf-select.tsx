@@ -6,10 +6,10 @@ import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import Checkbox from '@mui/material/Checkbox'
 import InputLabel from '@mui/material/InputLabel'
-import { Theme, SxProps } from '@mui/material/styles'
+import type { Theme, SxProps } from '@mui/material/styles'
 import FormHelperText from '@mui/material/FormHelperText'
-import TextField, { TextFieldProps } from '@mui/material/TextField'
-import FormControl, { FormControlProps } from '@mui/material/FormControl'
+import TextField, { type TextFieldProps } from '@mui/material/TextField'
+import FormControl, { type FormControlProps } from '@mui/material/FormControl'
 
 // ----------------------------------------------------------------------
 

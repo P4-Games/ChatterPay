@@ -1,5 +1,5 @@
 import * as PushAPI from '@pushprotocol/restapi'
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 
 import { PUSH_NETWORK, PUSH_ENVIRONMENT } from 'src/config-global'
 import { validateRequestSecurity } from 'src/app/api/middleware/validators/base-security-validator'

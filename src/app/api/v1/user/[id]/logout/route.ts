@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 
 import { CHP_DSH_NAME, IS_DEVELOPMENT } from 'src/config-global'
 import { updateUserSessionStatus } from 'src/app/api/services/db/chatterpay-db-service'

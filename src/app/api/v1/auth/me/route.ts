@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server'
 import { CHP_DSH_NAME } from 'src/config-global'
 import { verifyJwtToken } from 'src/app/api/middleware/utils/jwt-utils'
 
-import { jwtPayloadUser } from 'src/types/jwt'
+import type { jwtPayloadUser } from 'src/types/jwt'
 
 // ----------------------------------------------------------------------
 

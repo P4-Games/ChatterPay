@@ -51,13 +51,6 @@ export function useGetWalletNotifications(
 }
 // ----------------------------------------------------------------------
 
-export async function transferAll(userId: string, data: { walletTo: string }) {
-  const res = await post(endpoints.dashboard.user.transferAll(userId), data, {
-    headers: getAuthorizationHeader()
-  })
-  return res
-}
-
 function getNotificationsCacheUrl(walletId: string, pageIndex: number = 1, pageSize: number = 15) {
   const endpoint = endpoints.dashboard.wallet.notifications(walletId, pageIndex, pageSize)
   return [endpoint, { params: { endpoint: 'notifications' } }]

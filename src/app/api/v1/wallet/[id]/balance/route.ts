@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 
 import { defaultBalance, GET_BALANCES_FROM_BACKEND } from 'src/config-global'
 import { validateRequestSecurity } from 'src/app/api/middleware/validators/base-security-validator'
@@ -8,7 +8,7 @@ import {
 } from 'src/app/api/services/blockchain/blockchain-service'
 import { validateWalletCommonsInputs as validateWalletCommonInputs } from 'src/app/api/middleware/validators/wallet-common-inputs-validator'
 
-import { IBalances } from 'src/types/wallet'
+import type { IBalances } from 'src/types/wallet'
 
 // ----------------------------------------------------------------------
 

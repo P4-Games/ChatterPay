@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 
 import { validateRequestSecurity } from 'src/app/api/middleware/validators/base-security-validator'
 import { validateUserCommonsInputs } from 'src/app/api/middleware/validators/user-common-inputs-validator'
@@ -8,7 +8,7 @@ import {
   updateUserEmail
 } from 'src/app/api/services/db/chatterpay-db-service'
 
-import { IAccount } from 'src/types/account'
+import type { IAccount } from 'src/types/account'
 
 // ----------------------------------------------------------------------
 
