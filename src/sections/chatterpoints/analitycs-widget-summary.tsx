@@ -1,14 +1,14 @@
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Skeleton from '@mui/material/Skeleton'
-import { CardProps } from '@mui/material/Card'
+import type { CardProps } from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
 import { alpha, useTheme } from '@mui/material/styles'
 
 import { fShortenNumber } from 'src/utils/format-number'
 
 import { bgGradient } from 'src/theme/css'
-import { ColorSchema } from 'src/theme/palette'
+import type { ColorSchema } from 'src/theme/palette'
 
 // ----------------------------------------------------------------------
 

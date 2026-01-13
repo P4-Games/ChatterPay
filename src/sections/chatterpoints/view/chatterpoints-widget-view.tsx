@@ -6,14 +6,14 @@ import Container from '@mui/material/Container'
 import Grid from '@mui/material/Unstable_Grid2'
 
 import { useTranslate } from 'src/locales'
-import { AuthUserType } from 'src/auth/types'
+import type { AuthUserType } from 'src/auth/types'
 import { useAuthContext } from 'src/auth/hooks'
 import { useGetChatterpointsSummary } from 'src/app/api/hooks'
 
 import { useSettingsContext } from 'src/components/settings'
 
-import { IAccount } from 'src/types/account'
-import { ChatterpointsHistoryResult } from 'src/types/chatterpoints'
+import type { IAccount } from 'src/types/account'
+import type { ChatterpointsHistoryResult } from 'src/types/chatterpoints'
 
 import ChatterpointWidget from '../chatterpoints-widget'
 

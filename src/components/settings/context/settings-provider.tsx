@@ -7,7 +7,7 @@ import { getStorageItem, useLocalStorage } from 'src/hooks/use-local-storage'
 
 import { STORAGE_KEY_SETTINGS } from 'src/config-global'
 
-import { SettingsValueProps } from '../types'
+import type { SettingsValueProps } from '../types'
 import { SettingsContext } from './settings-context'
 
 // ----------------------------------------------------------------------

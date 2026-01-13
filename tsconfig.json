@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "target": "es5",
+    "target": "ES2020",
     "downlevelIteration": true,
     "lib": ["dom", "dom.iterable", "esnext"],
     "strict": true,
@@ -17,7 +17,7 @@
     "isolatedModules": true,
     "strictNullChecks": true,
     "resolveJsonModule": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "noFallthroughCasesInSwitch": true,
     "useUnknownInCatchVariables": false,
     "allowSyntheticDefaultImports": true,
@@ -28,6 +28,6 @@
       }
     ]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "build/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": ["next-env.d.ts", "./**/*.ts", "./**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules", "dist", "build", ".vscode", ".dic", "scripts"]
 }

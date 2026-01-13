@@ -1,4 +1,4 @@
-import { alpha, Theme } from '@mui/material/styles'
+import { alpha, type Theme } from '@mui/material/styles'
 import { inputBaseClasses } from '@mui/material/InputBase'
 import { inputLabelClasses } from '@mui/material/InputLabel'
 import { filledInputClasses } from '@mui/material/FilledInput'

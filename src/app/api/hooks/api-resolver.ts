@@ -1,4 +1,4 @@
-import axios, { AxiosHeaders, AxiosRequestConfig } from 'axios'
+import axios, { AxiosHeaders, type AxiosRequestConfig } from 'axios'
 
 import { BOT_API_URL, UI_BASE_URL } from 'src/config-global'
 
@@ -97,8 +97,13 @@ export const endpoints = {
       id: (id: string) => getFullUIEndpoint(`user/${id}`),
       update: (id: string) => getFullUIEndpoint(`user/${id}`),
       code: (id: string) => getFullUIEndpoint(`user/${id}/code`),
+      referral: {
+        codeWithUsageCount: (id: string) =>
+          getFullUIEndpoint(`user/${id}/referral/code-with-usage-count`),
+        byCode: (id: string) => getFullUIEndpoint(`user/${id}/referral/by-code`),
+        submitByCode: (id: string) => getFullUIEndpoint(`user/${id}/referral/submit-by-code`)
+      },
       updateEmail: (id: string) => getFullUIEndpoint(`user/${id}/email`),
-      transferAll: (id: string) => getFullUIEndpoint(`user/${id}/transfer-all`),
       logout: (id: string) => getFullUIEndpoint(`user/${id}/logout`)
     },
     wallet: {

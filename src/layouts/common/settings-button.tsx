@@ -2,7 +2,7 @@ import { m } from 'framer-motion'
 
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
-import { Theme, SxProps } from '@mui/material/styles'
+import type { Theme, SxProps } from '@mui/material/styles'
 import Badge, { badgeClasses } from '@mui/material/Badge'
 
 import Iconify from 'src/components/iconify'

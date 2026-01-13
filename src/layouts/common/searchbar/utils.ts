@@ -1,6 +1,6 @@
 import { flattenArray } from 'src/utils/flatten-array'
 
-import { NavProps, NavItemBaseProps } from 'src/components/nav-section'
+import type { NavProps, NavItemBaseProps } from 'src/components/nav-section'
 
 // ----------------------------------------------------------------------
 
@@ -11,7 +11,7 @@ type ItemProps = {
 }
 
 export function getAllItems({ data }: NavProps) {
-  const reduceItems = data.map((list) => handleLoop(list.items, list.subheader)).flat()
+  const reduceItems = data.flatMap((list) => handleLoop(list.items, list.subheader))
 
   const items = flattenArray(reduceItems).map((option) => {
     const group = splitPath(reduceItems, option.path)

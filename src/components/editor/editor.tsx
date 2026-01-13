@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic'
 import { alpha } from '@mui/material/styles'
 import Skeleton from '@mui/material/Skeleton'
 
-import { EditorProps } from './types'
+import type { EditorProps } from './types'
 import { StyledEditor } from './styles'
 import Toolbar, { formats } from './toolbar'
 

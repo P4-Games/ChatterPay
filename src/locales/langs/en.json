@@ -24,7 +24,8 @@
     "msg": {
       "update-success": "Update Success!",
       "update-error": "Update error",
-      "invalid-wallet": "Invalid wallet address"
+      "invalid-wallet": "Invalid wallet address",
+      "unexpected-error": "An unexpected error occurred. Please try again later."
     }
   },
   "menu": {
@@ -37,8 +38,28 @@
     "account": "Account",
     "logout": "Logout",
     "email": "Email Change",
-    "notifications": "Notifications",
-    "transfer-all": "Withdraw All"
+    "notifications": "Notifications"
+  },
+  "referrals": {
+    "title": "Referrals",
+    "my-code": "Your referral code",
+    "usage-count": "Used {COUNT} times",
+    "referred-by": "Referred by code",
+    "not-set": "(not set)",
+    "input-label": "Referral code",
+    "input-placeholder": "Ex: 52047NV1BO",
+    "save-button": "Save",
+    "messages": {
+      "saved": "Code saved"
+    },
+    "errors": {
+      "missing-code": "Enter a code",
+      "referrer-not-found": "Referral code not found",
+      "already-set": "You already have a referral code set",
+      "self-referral": "Self-referral is not allowed",
+      "user-not-found": "User not found",
+      "submit-failed": "Couldn't save the code"
+    }
   },
   "home": {
     "header": {
@@ -90,12 +111,12 @@
       "currencies": [
         "Argentine pesos",
         "dollars",
-        "Chilean pesos", 
-        "Brazilian reais", 
-        "Colombian pesos", 
-        "Mexican pesos", 
-        "Costa Rican colones", 
-        "Guatemalan quetzales", 
+        "Chilean pesos",
+        "Brazilian reais",
+        "Colombian pesos",
+        "Mexican pesos",
+        "Costa Rican colones",
+        "Guatemalan quetzales",
         "Filipino pesos"
       ]
     },
@@ -151,7 +172,7 @@
         "faq6": {
           "question": "How do I log in to the website?",
           "answer": "Enter your registered phone number. A 6-digit code will be sent to your phone for security; once you enter it, you can access the site."
-        },  
+        },
         "faq7": {
           "question": "How can I contact the ChatterPay team?",
           "answer": "Through the same WhatsApp chat ({PHONE}), you can request support at any time and we will respond as soon as possible."
@@ -267,7 +288,6 @@
     "title": "Estimated Balance",
     "deposit": "Deposit",
     "send": "Send",
-    "transfer-all": "Withdraw",
     "wapp-msg": "Hi!"
   },
   "transactions": {
@@ -283,17 +303,6 @@
     "table-share": "Share",
     "receive-from": "Received from",
     "sent-to": "Sent to"
-  },
-  "transfer-all": {
-    "info": "Indicates a wallet address where all funds in Chatterpay will be sent.",
-    "warning": "Important: You are about to withdraw your funds to an external wallet. Please make sure the destination address is correct and compatible with the <bold>{{NETWORK}}</bold> network. ChatterPay cannot reverse transactions sent to the wrong address or network.",
-    "msgs": {
-      "ok": "The funds were transferred. You will see them in the indicated wallet shortly.",
-      "error": "There was an error attempting to transfer the funds."
-    },
-    "actions": {
-      "transfer": "Transfer All"
-    }
   },
   "nfts": {
     "view-trx": "View Transacton Details",
@@ -315,12 +324,12 @@
       "wapp-msg": "I would like to mint the NFT"
     }
   },
-    "chatterpoints": {
+  "chatterpoints": {
     "totals": {
       "total": "Total Points",
       "games": "In Games",
       "operations": "In Operations",
-      "social": "In Social Networks" 
+      "social": "In Social Networks"
     }
   },
   "account": {
@@ -376,7 +385,7 @@
       "tag": "Demo",
       "title": "Playground",
       "label": "Test the future of crypto payments — safe, free, and on testnet.",
-      "description":"Use our testing site to try ChatterPay at no cost. Send, swap, and explore features using testnet tokens. Build confidence and see what’s possible before using it in production.",
+      "description": "Use our testing site to try ChatterPay at no cost. Send, swap, and explore features using testnet tokens. Build confidence and see what’s possible before using it in production.",
       "cta": "Go to testing Site"
     }
   },

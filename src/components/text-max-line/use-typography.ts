@@ -1,5 +1,5 @@
 import { useTheme } from '@mui/material/styles'
-import { Variant } from '@mui/material/styles/createTypography'
+import type { Variant } from '@mui/material/styles/createTypography'
 
 import { useWidth } from 'src/hooks/use-responsive'
 

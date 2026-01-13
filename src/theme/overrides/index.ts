@@ -1,6 +1,6 @@
 import merge from 'lodash/merge'
 
-import { Theme } from '@mui/material/styles'
+import type { Theme } from '@mui/material/styles'
 
 import { fab } from './components/fab'
 import { card } from './components/card'

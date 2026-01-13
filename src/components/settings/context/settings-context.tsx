@@ -2,7 +2,7 @@
 
 import { useContext, createContext } from 'react'
 
-import { SettingsContextProps } from '../types'
+import type { SettingsContextProps } from '../types'
 
 // ----------------------------------------------------------------------
 

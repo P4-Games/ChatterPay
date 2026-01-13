@@ -1,5 +1,5 @@
 import { useTheme } from '@mui/material/styles'
-import IconButton, { IconButtonProps } from '@mui/material/IconButton'
+import IconButton, { type IconButtonProps } from '@mui/material/IconButton'
 
 import { useResponsive } from 'src/hooks/use-responsive'
 

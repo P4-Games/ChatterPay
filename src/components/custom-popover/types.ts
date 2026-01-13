@@ -1,4 +1,4 @@
-import { PopoverProps } from '@mui/material/Popover'
+import type { PopoverProps } from '@mui/material/Popover'
 
 // ----------------------------------------------------------------------
 

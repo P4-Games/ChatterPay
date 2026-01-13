@@ -30,7 +30,7 @@ import {
 import Iconify from 'src/components/iconify'
 import CustomPopover, { usePopover } from 'src/components/custom-popover'
 
-import { INFT, ImageURLRepository } from 'src/types/wallet'
+import type { INFT, ImageURLRepository } from 'src/types/wallet'
 
 // ----------------------------------------------------------------------
 

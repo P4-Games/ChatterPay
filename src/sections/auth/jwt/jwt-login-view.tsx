@@ -34,11 +34,41 @@ import FormProvider, { RHFCode, RHFTextField } from 'src/components/hook-form'
 
 // ----------------------------------------------------------------------
 
+type ApiError = {
+  code?: string
+  error?: string
+}
+const getApiError = (ex: unknown): ApiError => {
+  if (typeof ex !== 'object' || ex === null) {
+    return {}
+  }
+
+  // Axios-style error
+  if ('response' in ex) {
+    const response = (ex as any).response
+    if (response?.data) {
+      return {
+        code: response.data.code,
+        error: response.data.error
+      }
+    }
+  }
+
+  // Plain object error
+  if ('code' in ex || 'error' in ex) {
+    return ex as ApiError
+  }
+
+  return {}
+}
+
 export default function JwtLoginView() {
   const { t } = useTranslate()
   const { generate2faCodeLogin, loginWithCode, authenticated } = useAuthContext()
   const router = useRouter()
-  const [errorMsg, setErrorMsg] = useState('')
+
+  const [errorKey, setErrorKey] = useState<string | null>(null)
+
   const [codeSent, setCodeSent] = useState(false)
   const { counting, countdown, startCountdown } = useCountdownSeconds(120)
   const [selectedCountry, setSelectedCountry] = useState('54')
@@ -48,7 +78,7 @@ export default function JwtLoginView() {
   const captchaRef = useRef<Captcha>(null)
   const { currentLang } = useLocales()
   const [language, setLanguage] = useState(getRecaptchaLng(currentLang.value))
-  const [recaptchaKey, setRecaptchaKey] = useState(0) // Clave para forzar re-render
+  const [recaptchaKey, setRecaptchaKey] = useState(0)
 
   const LoginSchema = Yup.object().shape({
     phone: Yup.string()
@@ -90,25 +120,31 @@ export default function JwtLoginView() {
       try {
         const recaptchaToken = await captchaRef.current?.executeAsync()
 
-        startCountdown()
-        setErrorMsg('')
+        setErrorKey(null)
         setValue('code', '')
+
         await generate2faCodeLogin?.(
           `${selectedCountry}${data.phone}`,
           t('login.msg.code-bot'),
           recaptchaToken || ''
         )
-        enqueueSnackbar(`${t('login.msg.code-sent')} ${phone.toString()}`, { variant: 'info' })
+
+        startCountdown()
         setCodeSent(true)
+
+        enqueueSnackbar(`${t('login.msg.code-sent')} ${phone.toString()}`, { variant: 'info' })
       } catch (ex) {
         console.error(ex)
-        if (typeof ex === 'string') {
-          setErrorMsg(ex)
-        } else if (ex.code === 'USER_NOT_FOUND') {
-          setErrorMsg(t('login.msg.invalid-user'))
-        } else {
-          setErrorMsg(ex.error)
+
+        const apiError = getApiError(ex)
+
+        if (apiError.code === 'USER_NOT_FOUND') {
+          setErrorKey('login.msg.invalid-user')
+          setCodeSent(false)
+          return
         }
+
+        setErrorKey('common.msg.unexpected-error')
       }
     },
     [enqueueSnackbar, generate2faCodeLogin, phone, selectedCountry, setValue, startCountdown, t]
@@ -118,23 +154,30 @@ export default function JwtLoginView() {
     try {
       const fullPhoneNumber = `${selectedCountry}${data.phone}`
       const recaptchaToken = await captchaRef.current?.executeAsync()
+
+      setErrorKey(null)
+
       await loginWithCode?.(fullPhoneNumber, data.code || '', recaptchaToken || '')
+
       router.push(returnTo || PATH_AFTER_LOGIN)
-      setErrorMsg('')
     } catch (ex) {
       console.error(ex)
-      if (typeof ex === 'string') {
-        setErrorMsg(ex)
-      } else if (ex.code === 'USER_NOT_FOUND') {
-        setErrorMsg(t('login.msg.invalid-user'))
-      } else if (ex.code === 'AUTH_INVALID_CODE') {
-        setErrorMsg(t('login.msg.invalid-code'))
-      } else {
-        setErrorMsg(ex.error)
+
+      const apiError = getApiError(ex)
+
+      if (apiError.code === 'USER_NOT_FOUND') {
+        setErrorKey('login.msg.invalid-user')
+        return
       }
+
+      if (apiError.code === 'AUTH_INVALID_CODE') {
+        setErrorKey('login.msg.invalid-code')
+        return
+      }
+
+      setErrorKey('common.msg.unexpected-error')
     }
   })
-
   const handleCountryChange = (event: any) => {
     setSelectedCountry(event.target.value)
   }
@@ -193,12 +236,28 @@ export default function JwtLoginView() {
             label={t('common.phone-number')}
             placeholder='1155557777'
             type='number'
-            inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+            inputProps={{
+              inputMode: 'numeric',
+              pattern: '[0-9]*',
+              maxLength: 12,
+              onKeyDown: (e) => {
+                if (
+                  !/[0-9]/.test(e.key) &&
+                  e.key !== 'Backspace' &&
+                  e.key !== 'Delete' &&
+                  e.key !== 'ArrowLeft' &&
+                  e.key !== 'ArrowRight' &&
+                  e.key !== 'Tab'
+                ) {
+                  e.preventDefault()
+                }
+              }
+            }}
           />
           <Alert severity='info' sx={{ mb: 3 }}>
             {t('login.msg.enter-phone')}
           </Alert>
-          {errorMsg && <Alert severity='error'>{errorMsg}</Alert>}
+          {errorKey && <Alert severity='error'>{t(errorKey)}</Alert>}
           <LoadingButton
             fullWidth
             color='inherit'
@@ -233,7 +292,7 @@ export default function JwtLoginView() {
           <Alert severity='info'>{t('login.msg.code-info')}</Alert>
           <RHFCode name='code' />
 
-          {errorMsg && <Alert severity='error'>{errorMsg}</Alert>}
+          {errorKey && <Alert severity='error'>{t(errorKey)}</Alert>}
           <LoadingButton
             fullWidth
             color='inherit'

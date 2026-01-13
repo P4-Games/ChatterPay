@@ -1,4 +1,4 @@
-import { Theme, alpha } from '@mui/material/styles'
+import { type Theme, alpha } from '@mui/material/styles'
 import { tableRowClasses } from '@mui/material/TableRow'
 import { tableCellClasses } from '@mui/material/TableCell'
 

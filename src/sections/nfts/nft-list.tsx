@@ -3,7 +3,7 @@ import { useState } from 'react'
 import Box from '@mui/material/Box'
 import Pagination, { paginationClasses } from '@mui/material/Pagination'
 
-import { INFT } from 'src/types/wallet'
+import type { INFT } from 'src/types/wallet'
 
 import NftItem from './nft-item'
 

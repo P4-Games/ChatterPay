@@ -3,7 +3,7 @@ import { forwardRef } from 'react'
 
 import Box from '@mui/material/Box'
 import { styled } from '@mui/material/styles'
-import Link, { LinkProps } from '@mui/material/Link'
+import Link, { type LinkProps } from '@mui/material/Link'
 import CardActionArea from '@mui/material/CardActionArea'
 import ListItemButton from '@mui/material/ListItemButton'
 
@@ -11,7 +11,7 @@ import { RouterLink } from 'src/routes/components'
 
 import Iconify from 'src/components/iconify'
 
-import { NavItemProps, NavItemStateProps } from '../types'
+import type { NavItemProps, NavItemStateProps } from '../types'
 
 // ----------------------------------------------------------------------
 

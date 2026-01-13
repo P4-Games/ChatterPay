@@ -10,7 +10,7 @@ import Box from '@mui/material/Box'
 
 import Iconify from '../iconify'
 import StyledLightbox from './styles'
-import { LightBoxProps } from './types'
+import type { LightBoxProps } from './types'
 
 // ----------------------------------------------------------------------
 

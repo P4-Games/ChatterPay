@@ -5,7 +5,7 @@ import { alpha } from '@mui/material/styles'
 import ButtonBase from '@mui/material/ButtonBase'
 
 import Iconify from '../iconify'
-import { ColorPickerProps } from './types'
+import type { ColorPickerProps } from './types'
 
 // ----------------------------------------------------------------------
 

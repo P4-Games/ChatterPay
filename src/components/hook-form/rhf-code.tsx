@@ -1,5 +1,5 @@
 import { Controller, useFormContext } from 'react-hook-form'
-import { MuiOtpInput, MuiOtpInputProps } from 'mui-one-time-password-input'
+import { MuiOtpInput, type MuiOtpInputProps } from 'mui-one-time-password-input'
 
 import FormHelperText from '@mui/material/FormHelperText'
 

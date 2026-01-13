@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 
 import { generateJwtToken } from 'src/app/api/middleware/utils/jwt-utils'
 import { getIpFromRequest } from 'src/app/api/middleware/utils/network-utils'
@@ -11,8 +11,8 @@ import {
   validateUserHave1SessionCreated
 } from 'src/app/api/services/db/chatterpay-db-service'
 
-import { jwtPayloadUser } from 'src/types/jwt'
-import { IAccount, UserSession } from 'src/types/account'
+import type { jwtPayloadUser } from 'src/types/jwt'
+import type { IAccount, UserSession } from 'src/types/account'
 
 // ----------------------------------------------------------------------
 

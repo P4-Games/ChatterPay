@@ -5,7 +5,7 @@ import { useMemo, useEffect, useReducer, useCallback } from 'react'
 import { post, fetcher, endpoints } from 'src/app/api/hooks/api-resolver'
 
 import { AuthContext } from './auth-context'
-import { AuthUserType, ActionMapType, AuthStateType, AuthUserCodeType } from '../../types'
+import type { AuthUserType, ActionMapType, AuthStateType, AuthUserCodeType } from '../../types'
 
 // ----------------------------------------------------------------------
 enum Types {

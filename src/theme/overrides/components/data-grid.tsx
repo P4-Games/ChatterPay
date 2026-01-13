@@ -1,6 +1,6 @@
 import { listClasses } from '@mui/material/List'
 import { paperClasses } from '@mui/material/Paper'
-import { Theme, alpha } from '@mui/material/styles'
+import { type Theme, alpha } from '@mui/material/styles'
 import { buttonClasses } from '@mui/material/Button'
 import { iconButtonClasses } from '@mui/material/IconButton'
 import { inputLabelClasses } from '@mui/material/InputLabel'
