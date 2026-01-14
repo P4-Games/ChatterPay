@@ -89,7 +89,7 @@ export default function OverviewBankingView() {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
       <Grid container spacing={3}>
-        <Grid xs={12} md={12}>
+        <Grid xs={12}>
           <BankingBalances title={t('balances.title')} tableData={safeBalances} />
         </Grid>
 
@@ -103,20 +103,18 @@ export default function OverviewBankingView() {
         </Grid>
 
         <Grid xs={12} md={7}>
-          <Stack spacing={3}>
-            <BankingRecentTransitions
-              title={t('transactions.title')}
-              isLoading={isLoadingTrxs || !walletAddress}
-              tableData={safeTransactions}
-              tableLabels={[
-                { id: 'description', label: t('transactions.table-transaction') },
-                { id: 'amount', label: t('transactions.table-amount') },
-                { id: 'date', label: t('transactions.table-date') },
-                { id: '' }
-              ]}
-              userWallet={walletAddress || ''}
-            />
-          </Stack>
+          <BankingRecentTransitions
+            title={t('transactions.title')}
+            isLoading={isLoadingTrxs || !walletAddress}
+            tableData={safeTransactions}
+            tableLabels={[
+              { id: 'description', label: t('transactions.table-transaction') },
+              { id: 'amount', label: t('transactions.table-amount') },
+              { id: 'date', label: t('transactions.table-date') },
+              { id: '' }
+            ]}
+            userWallet={walletAddress || ''}
+          />
         </Grid>
       </Grid>
     </Container>

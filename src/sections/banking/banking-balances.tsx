@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { enqueueSnackbar } from 'notistack'
+import QRCode from 'react-qr-code'
 
 import MenuItem from '@mui/material/MenuItem'
 import IconButton from '@mui/material/IconButton'
@@ -9,8 +11,10 @@ import {
   Button,
   Select,
   Tooltip,
-  Popover,
+  Dialog,
   Typography,
+  DialogTitle,
+  DialogContent,
   type SelectChangeEvent
 } from '@mui/material'
 
@@ -22,7 +26,7 @@ import { useResponsive } from 'src/hooks/use-responsive'
 import { fNumber } from 'src/utils/format-number'
 
 import { useTranslate } from 'src/locales'
-import { BOT_WAPP_URL, EXPLORER_L1_URL, EXPLORER_L2_URL } from 'src/config-global'
+import { BOT_WAPP_URL, EXPLORER_L2_URL } from 'src/config-global'
 
 import Iconify from 'src/components/iconify'
 
@@ -42,7 +46,6 @@ export default function BankingBalances({
   tableData,
   ...other
 }: Props) {
-  const walletLinkL1 = `${EXPLORER_L1_URL}/address/${tableData?.wallet || ''}`
   const walletLinkL2 = `${EXPLORER_L2_URL}/address/${tableData?.wallet || ''}`
 
   const { t } = useTranslate()
@@ -50,9 +53,7 @@ export default function BankingBalances({
   const mdUp = useResponsive('up', 'md')
   const [selectedCurrency, setSelectedCurrency] = useState<CurrencyKey>('usd')
   const currency = useBoolean()
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const open = Boolean(anchorEl)
-  const id = open ? 'wallet-links-popover' : undefined
+  const depositModal = useBoolean()
   const router = useRouter()
 
   const sendReciveUrl = BOT_WAPP_URL.replaceAll('MESSAGE', t('balances.wapp-msg'))
@@ -61,12 +62,9 @@ export default function BankingBalances({
     setSelectedCurrency(event.target.value as CurrencyKey)
   }
 
-  const handleOpenPopover = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget)
-  }
-
-  const handleClosePopover = () => {
-    setAnchorEl(null)
+  const handleCopyAddress = () => {
+    navigator.clipboard.writeText(tableData?.wallet || '')
+    enqueueSnackbar('Address copied!', { variant: 'success' })
   }
 
   const renderTitle = (
@@ -75,41 +73,11 @@ export default function BankingBalances({
       <IconButton color='inherit' onClick={currency.onToggle} sx={{ opacity: 0.48 }}>
         <Iconify icon={currency.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
       </IconButton>
-      <IconButton onClick={handleOpenPopover}>
-        <Tooltip title='View Wallet Links' arrow>
+      <IconButton onClick={() => window.open(walletLinkL2, '_blank')}>
+        <Tooltip title='View on Explorer' arrow>
           <Iconify icon='eva:external-link-outline' />
         </Tooltip>
       </IconButton>
-      <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClosePopover}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left'
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left'
-        }}
-      >
-        <Box
-          sx={{
-            p: 2,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2
-          }}
-        >
-          <Button onClick={() => window.open(walletLinkL1, '_blank')} variant='contained'>
-            l1
-          </Button>
-          <Button onClick={() => window.open(walletLinkL2, '_blank')} variant='contained'>
-            l2
-          </Button>
-        </Box>
-      </Popover>
     </Stack>
   )
 
@@ -130,7 +98,7 @@ export default function BankingBalances({
         variant='contained'
         color='primary'
         startIcon={<Iconify icon='eva:diagonal-arrow-left-down-fill' />}
-        onClick={() => window.open(sendReciveUrl, '_blank')}
+        onClick={depositModal.onTrue}
       >
         {t('balances.deposit')}
       </Button>
@@ -201,5 +169,46 @@ export default function BankingBalances({
     </Card>
   )
 
-  return mdUp ? renderSummaryDesktop : renderSummaryMobile
+  const renderDepositModal = (
+    <Dialog open={depositModal.value} onClose={depositModal.onFalse} maxWidth='xs' fullWidth>
+      <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        Deposit
+        <IconButton onClick={depositModal.onFalse} sx={{ ml: 'auto' }}>
+          <Iconify icon='eva:close-fill' />
+        </IconButton>
+      </DialogTitle>
+      <DialogContent>
+        <Stack spacing={3} alignItems='center' sx={{ py: 2 }}>
+          <Box sx={{ p: 2, bgcolor: 'background.neutral', borderRadius: 2 }}>
+            <QRCode value={tableData?.wallet || ''} size={200} />
+          </Box>
+          
+          <Stack spacing={1} sx={{ width: 1 }}>
+            <Typography variant='caption' color='text.secondary'>
+              Wallet Address
+            </Typography>
+            <Typography variant='body2' sx={{ wordBreak: 'break-all', fontFamily: 'monospace' }}>
+              {tableData?.wallet}
+            </Typography>
+          </Stack>
+
+          <Button
+            fullWidth
+            variant='contained'
+            startIcon={<Iconify icon='eva:copy-fill' />}
+            onClick={handleCopyAddress}
+          >
+            Copy Address
+          </Button>
+        </Stack>
+      </DialogContent>
+    </Dialog>
+  )
+
+  return (
+    <>
+      {mdUp ? renderSummaryDesktop : renderSummaryMobile}
+      {renderDepositModal}
+    </>
+  )
 }

@@ -2,10 +2,11 @@
 
 import { useMemo, useState } from 'react'
 
+import Avvvatars from 'avvvatars-react'
+
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Stack from '@mui/material/Stack'
-import Avatar from '@mui/material/Avatar'
 import Switch from '@mui/material/Switch'
 import Skeleton from '@mui/material/Skeleton'
 import { useTheme } from '@mui/material/styles'
@@ -96,7 +97,7 @@ export default function BankingAssetBreakdown({
     >
       <Iconify icon='eva:inbox-outline' width={64} sx={{ mb: 2, opacity: 0.48 }} />
       <Typography variant='body2'>
-        {hideSmallBalances ? 'No balances above $1' : 'No assets found'}
+        {hideSmallBalances ? 'No balances above $1' : 'No balance'}
       </Typography>
     </Box>
   )
@@ -125,17 +126,26 @@ export default function BankingAssetBreakdown({
       >
         {/* Token Info */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flex: 1 }}>
-          <Avatar
-            src={logoUrl}
-            alt={balance.token}
-            sx={{
-              width: 40,
-              height: 40,
-              bgcolor: 'background.neutral'
-            }}
-          >
-            <Iconify icon='mdi:currency-usd' width={24} />
-          </Avatar>
+          {logoUrl ? (
+            <Box
+              component='img'
+              src={logoUrl}
+              alt={balance.token}
+              sx={{
+                width: 40,
+                height: 40,
+                borderRadius: '50%',
+                flexShrink: 0
+              }}
+            />
+          ) : (
+            <Avvvatars
+              value={balance.token}
+              style='character'
+              size={40}
+              displayValue={balance.token.substring(0, 2)}
+            />
+          )}
           <Box>
             <Typography variant='subtitle2'>{balance.token}</Typography>
             <Typography variant='caption' sx={{ color: 'text.secondary' }}>
@@ -189,13 +199,14 @@ export default function BankingAssetBreakdown({
                 Hide &lt;$1
               </Typography>
             }
+            sx={{ m: 0, gap: 1 }}
           />
         }
-        sx={{ mb: 1 }}
+        sx={{ pb: 1, '& .MuiCardHeader-action': { alignSelf: 'center', m: 0 } }}
       />
 
       <Scrollbar sx={{ maxHeight: 440 }}>
-        <Stack spacing={0.5}>
+        <Stack spacing={0}>
           {isLoading && renderLoading}
           {!isLoading && processedBalances.length === 0 && renderEmpty}
           {!isLoading && processedBalances.map(renderAssetRow)}

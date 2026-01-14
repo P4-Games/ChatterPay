@@ -257,14 +257,10 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
           }
         }}
       >
-        <Avatar
-          src={row.contact_to_avatar_url || ''}
-          sx={{
-            width: 48,
-            height: 48,
-            color: 'text.secondary',
-            bgcolor: 'background.neutral'
-          }}
+        <Avvvatars
+          value={trxReceive ? row.wallet_from : (row.wallet_to || '')}
+          style='shape'
+          size={48}
         />
       </Badge>
     </Box>

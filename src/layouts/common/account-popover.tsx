@@ -1,8 +1,9 @@
 import { m } from 'framer-motion'
 
+import Avvvatars from 'avvvatars-react'
+
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
-import Avatar from '@mui/material/Avatar'
 import Divider from '@mui/material/Divider'
 import { alpha } from '@mui/material/styles'
 import MenuItem from '@mui/material/MenuItem'
@@ -74,17 +75,12 @@ export default function AccountPopover() {
           })
         }}
       >
-        <Avatar
-          src={user?.photoURL}
-          alt={user?.displayName}
-          sx={{
-            width: 36,
-            height: 36,
-            border: (theme) => `solid 2px ${theme.palette.background.default}`
-          }}
-        >
-          {user?.displayName?.charAt(0).toUpperCase()}
-        </Avatar>
+        <Avvvatars
+          value={user?.phoneNumber || user?.displayName || ''}
+          displayValue={user?.displayName?.substring(0, 2).toUpperCase()}
+          style='shape'
+          size={36}
+        />
       </IconButton>
 
       <CustomPopover open={popover.open} onClose={popover.onClose} sx={{ width: 200, p: 0 }}>
