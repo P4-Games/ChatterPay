@@ -72,19 +72,20 @@ export default function AuthClassicLayout({ children, image, title }: Props) {
       alignItems='center'
       justifyContent='center'
       sx={{
-        bgcolor: 'background.default'
+        bgcolor: 'background.default',
+        height: '100%',
+        overflow: 'hidden'
       }}
     >
       <Box
         component='img'
         alt='auth'
-        src={image || '/assets/images/illustrations/dashboard.png'}
+        src={image || 'https://tmdm.com.ar/u/public/chatterpay_login.webp'}
         sx={{
-          maxWidth: {
-            xs: 480,
-            lg: 560,
-            xl: 720
-          }
+          width: '100%',
+          height: '100%',
+          maxHeight: '100vh',
+          objectFit: 'cover'
         }}
       />
     </Stack>
