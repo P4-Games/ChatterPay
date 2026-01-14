@@ -56,7 +56,7 @@ export default function AuthClassicLayout({ children, image, title }: Props) {
         width: 1,
         mx: 'auto',
         maxWidth: 480,
-        px: { xs: 2, md: 8 },
+        px: { xs: 2, md: 5 },
         pt: { xs: 15, md: 20 },
         pb: { xs: 15, md: 0 }
       }}
@@ -107,9 +107,9 @@ export default function AuthClassicLayout({ children, image, title }: Props) {
       >
         {renderLogo}
 
-        {mdUp && renderSection}
-
         {renderContent}
+
+        {mdUp && renderSection}
 
         {renderLanguagePopover}
       </Stack>

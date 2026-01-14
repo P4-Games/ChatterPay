@@ -262,7 +262,17 @@ export default function JwtLoginView() {
               }
             }}
           />
-          <Alert severity='info' sx={{ mb: 3 }}>
+          <Alert 
+            severity='info' 
+            sx={{ 
+              mb: 3,
+              bgcolor: '#B8F6C9',
+              color: 'text.primary',
+              '& .MuiAlert-icon': {
+                color: 'primary.main'
+              }
+            }}
+          >
             {t('login.msg.enter-phone')}
           </Alert>
           {errorKey && <Alert severity='error'>{t(errorKey)}</Alert>}
@@ -297,7 +307,19 @@ export default function JwtLoginView() {
             </Select>
           </FormControl>
           <RHFTextField disabled name='phone' label='Phone Number' type='number' value={phone} />
-          <Alert severity='info'>{t('login.msg.code-info')}</Alert>
+          <Alert 
+            severity='info' 
+            sx={{ 
+              mb: 3,
+              bgcolor: '#B8F6C9',
+              color: 'text.primary',
+              '& .MuiAlert-icon': {
+                color: 'primary.main'
+              }
+            }}
+          >
+            {t('login.msg.code-info')}
+          </Alert>
           <RHFCode 
             name='code' 
             onComplete={() => {
@@ -311,7 +333,7 @@ export default function JwtLoginView() {
           {errorKey && <Alert severity='error'>{t(errorKey)}</Alert>}
           <LoadingButton
             fullWidth
-            color='inherit'
+            color='primary'
             size='large'
             type='submit'
             variant='contained'

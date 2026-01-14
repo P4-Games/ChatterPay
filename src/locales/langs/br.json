@@ -284,6 +284,13 @@
     "and": "e",
     "wapp-msg": "Oi, quero me registrar no Chatterpay!"
   },
+  "deposit": {
+    "title": "Depositar",
+    "network": "Rede",
+    "network-warning": "Qualquer ativo enviado em outra rede será perdido",
+    "wallet-address": "Endereço da carteira",
+    "copy-address": "Copiar endereço"
+  },
   "balances": {
     "title": "Seu dinheiro",
     "deposit": "Depositar",

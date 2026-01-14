@@ -283,6 +283,13 @@
     "and": "and",
     "wapp-msg": "Hi, i want to register in chatterpay!"
   },
+  "deposit": {
+    "title": "Deposit",
+    "network": "Network",
+    "network-warning": "Any asset sent in other network will be lost",
+    "wallet-address": "Wallet Address",
+    "copy-address": "Copy Address"
+  },
   "balances": {
     "title": "Your money",
     "deposit": "Deposit",
