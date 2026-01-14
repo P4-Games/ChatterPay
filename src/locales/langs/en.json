@@ -258,7 +258,7 @@
     "new-user": "New User?",
     "create-account": "Create an account",
     "send-code": "Send Code to Whatsapp",
-    "login": "login",
+    "login": "Login",
     "resend-code": "Resend Code",
     "dont-have-code": "Don't have a code?",
     "msg": {
@@ -276,7 +276,7 @@
     "already-account": "Already have an account?",
     "sign-in": "Sign in",
     "create-account": "Create Account",
-    "create-account-bot": "Create Acoount from WhatsApp",
+    "create-account-bot": "Create Acount from WhatsApp",
     "terms-of-service": "Terms of Service",
     "privacy-policy": "Privacy Policy",
     "by-signing": "By signing up, I agree to",

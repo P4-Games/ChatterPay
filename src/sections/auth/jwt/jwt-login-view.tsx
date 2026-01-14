@@ -202,7 +202,7 @@ export default function JwtLoginView() {
   // ----------------------------------------------------------------------
 
   const renderHead = (
-    <Stack spacing={2} sx={{ mb: 5 }}>
+    <Stack spacing={1.5} sx={{ mb: 5, px: 4 }}>
       <Typography variant='h4'>{t('login.title')}</Typography>
       <Stack direction='row' spacing={0.5}>
         <Typography variant='body2'>{t('login.new-user')}</Typography>
@@ -214,7 +214,7 @@ export default function JwtLoginView() {
   )
 
   const renderForm = (
-    <Stack spacing={2.5}>
+    <Stack spacing={2} sx={{ px: 4 }}>
       {!codeSent ? (
         <>
           <FormControl fullWidth>

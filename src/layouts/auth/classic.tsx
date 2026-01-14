@@ -31,7 +31,8 @@ export default function AuthClassicLayout({ children, image, title }: Props) {
       sx={{
         zIndex: 9,
         position: 'absolute',
-        m: { xs: 2, md: 5 }
+        mx: { xs: 4, md: 8 },
+        mt: { xs: 2, md: 5 }
       }}
     />
   )
@@ -55,7 +56,7 @@ export default function AuthClassicLayout({ children, image, title }: Props) {
       sx={{
         width: 1,
         mx: 'auto',
-        maxWidth: 480,
+        maxWidth: 600,
         px: { xs: 2, md: 5 },
         pt: { xs: 15, md: 20 },
         pb: { xs: 15, md: 0 }
@@ -73,17 +74,17 @@ export default function AuthClassicLayout({ children, image, title }: Props) {
       justifyContent='center'
       sx={{
         bgcolor: 'background.default',
-        height: '100%',
+        height: '100vh',
         overflow: 'hidden'
       }}
     >
       <Box
         component='img'
         alt='auth'
-        src={image || 'https://tmdm.com.ar/u/public/chatterpay_login.webp'}
+        src={image || 'https://storage.googleapis.com/chatbot-multimedia/chatterpay/images/login_graphic.webp'}
         sx={{
           width: '100%',
-          height: '100%',
+          height: '100vh',
           maxHeight: '100vh',
           objectFit: 'cover'
         }}
