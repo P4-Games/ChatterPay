@@ -286,13 +286,13 @@
     "wapp-msg": "Oi, quero me registrar no Chatterpay!"
   },
   "balances": {
-    "title": "Saldo Estimado",
+    "title": "Seu dinheiro",
     "deposit": "Depositar",
     "send": "Enviar",
     "wapp-msg": "Olá!"
   },
   "transactions": {
-    "title": "Transações Recentes",
+    "title": "Histórico",
     "table-transaction": "Transação",
     "table-amount": "Montante",
     "table-date": "Data",

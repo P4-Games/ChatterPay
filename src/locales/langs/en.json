@@ -285,13 +285,13 @@
     "wapp-msg": "Hi, i want to register in chatterpay!"
   },
   "balances": {
-    "title": "Estimated Balance",
+    "title": "Your money",
     "deposit": "Deposit",
     "send": "Send",
     "wapp-msg": "Hi!"
   },
   "transactions": {
-    "title": "Recent Transactions",
+    "title": "History",
     "table-transaction": "Transaction",
     "table-amount": "Amount",
     "table-date": "Date",
