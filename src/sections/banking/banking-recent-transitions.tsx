@@ -271,7 +271,7 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
   )
 
   const renderContentDesktop = (
-    <TableRow>
+    <TableRow sx={{ opacity: row.status === 'pending' ? 0.6 : 1 }}>
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
         {renderAvatar}
         <Link href={trxLink} target='_blank' rel='noopener' sx={{ mr: 1 }}>
@@ -286,8 +286,6 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
         {calculatedAmount} {row.token}
       </TableCell>
 
-      <TableCell>{row.type}</TableCell>
-
       <TableCell>
         <ListItemText
           primary={fDate(new Date(row.date))}
@@ -301,19 +299,6 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
         />
       </TableCell>
 
-      <TableCell>
-        <Label
-          variant={lightMode ? 'soft' : 'filled'}
-          color={
-            (row.status === 'completed' && 'success') ||
-            (row.status === 'progress' && 'warning') ||
-            'error'
-          }
-        >
-          {row.status}
-        </Label>
-      </TableCell>
-
       <TableCell align='right' sx={{ pr: 1 }}>
         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
           <Iconify icon='eva:more-vertical-fill' />
@@ -323,7 +308,7 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
   )
 
   const renderContentMobile = (
-    <TableRow>
+    <TableRow sx={{ opacity: row.status === 'pending' ? 0.6 : 1 }}>
       <TableCell sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
         <Link href={trxLink} target='_blank' rel='noopener' sx={{ mr: 1 }}>
           <Badge
@@ -371,18 +356,6 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
       <TableCell sx={{ width: '35%', textAlign: 'right' }}>
         <ListItemText
           primary={`${calculatedAmount} ${row.token}`}
-          secondary={
-            <Label
-              variant={lightMode ? 'soft' : 'filled'}
-              color={
-                (row.status === 'completed' && 'success') ||
-                (row.status === 'progress' && 'warning') ||
-                'error'
-              }
-            >
-              {row.status}
-            </Label>
-          }
           secondaryTypographyProps={{
             mt: 0.5,
             component: 'span',
