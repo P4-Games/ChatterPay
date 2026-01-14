@@ -72,13 +72,7 @@ export default function AuthClassicLayout({ children, image, title }: Props) {
       alignItems='center'
       justifyContent='center'
       sx={{
-        ...bgGradient({
-          color: alpha(
-            theme.palette.background.default,
-            theme.palette.mode === 'light' ? 0.88 : 0.94
-          ),
-          imgUrl: '/assets/images/background/overlay_2.jpg'
-        })
+        bgcolor: 'background.default'
       }}
     >
       <Box
