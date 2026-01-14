@@ -241,6 +241,14 @@ export default function JwtLoginView() {
               pattern: '[0-9]*',
               maxLength: 12,
               onKeyDown: (e) => {
+                // Handle Enter key to submit
+                if (e.key === 'Enter' && !isSubmitting && selectedCountry && phone) {
+                  e.preventDefault()
+                  handleSubmit(handleSendCode)()
+                  return
+                }
+                
+                // Filter non-numeric keys
                 if (
                   !/[0-9]/.test(e.key) &&
                   e.key !== 'Backspace' &&
@@ -290,7 +298,15 @@ export default function JwtLoginView() {
           </FormControl>
           <RHFTextField disabled name='phone' label='Phone Number' type='number' value={phone} />
           <Alert severity='info'>{t('login.msg.code-info')}</Alert>
-          <RHFCode name='code' />
+          <RHFCode 
+            name='code' 
+            onComplete={() => {
+              // Auto-submit when code is complete (6 digits)
+              if (!isSubmitting) {
+                onSubmit()
+              }
+            }}
+          />
 
           {errorKey && <Alert severity='error'>{t(errorKey)}</Alert>}
           <LoadingButton
