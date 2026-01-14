@@ -49,7 +49,7 @@ export function fNumber(inputValue: InputValue) {
   const isSmall = Math.abs(number) < 0.01 && number !== 0
 
   const fm = new Intl.NumberFormat(code, {
-    minimumFractionDigits: isSmall ? 4 : 0,
+    minimumFractionDigits: isSmall ? 4 : 2,
     maximumFractionDigits: isSmall ? 8 : 2
   }).format(number)
 

@@ -206,7 +206,7 @@ export default function JwtLoginView() {
       <Typography variant='h4'>{t('login.title')}</Typography>
       <Stack direction='row' spacing={0.5}>
         <Typography variant='body2'>{t('login.new-user')}</Typography>
-        <Link component={RouterLink} href={paths.auth.jwt.register} variant='subtitle2'>
+        <Link component={RouterLink} href={paths.auth.jwt.register} variant='subtitle2' color='primary'>
           {t('login.create-account')}
         </Link>
       </Stack>
@@ -268,7 +268,7 @@ export default function JwtLoginView() {
           {errorKey && <Alert severity='error'>{t(errorKey)}</Alert>}
           <LoadingButton
             fullWidth
-            color='inherit'
+            color='primary'
             size='large'
             type='button'
             variant='contained'

@@ -69,7 +69,7 @@ export default function BankingBalances({
 
   const renderTitle = (
     <Stack direction='row' alignItems='center' spacing={0.5} sx={{ ml: 1 }}>
-      <Typography variant='h6'>{title || 'Estimated Balance'} </Typography>
+      <Typography variant='h6'>{title || 'Your money'} </Typography>
       <IconButton color='inherit' onClick={currency.onToggle} sx={{ opacity: 0.48 }}>
         <Iconify icon={currency.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
       </IconButton>
@@ -121,8 +121,8 @@ export default function BankingBalances({
   const renderTotal = (
     <Stack direction='row' alignItems='center' spacing={1} sx={{ mb: 2, px: 2, ml: 1 }}>
       <Typography variant='h3'>
-        {currency.value
-          ? fNumber(tableData && tableData.totals && tableData.totals[selectedCurrency]) || 0.0
+        {"$ "}{currency.value
+          ? fNumber(tableData && tableData.totals && tableData.totals[selectedCurrency]) || '0.00'
           : '********'}
       </Typography>
       <Select

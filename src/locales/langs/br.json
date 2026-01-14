@@ -254,7 +254,6 @@
     }
   },
   "login": {
-    "hi": "Oi, bem-vindo de volta",
     "title": "Entrar no ChatterPay",
     "new-user": "Novo usuário?",
     "create-account": "Criar uma conta",
