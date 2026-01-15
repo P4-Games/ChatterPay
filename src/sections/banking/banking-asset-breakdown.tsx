@@ -105,6 +105,7 @@ export default function BankingAssetBreakdown({
   const renderAssetRow = (balance: IBalance) => {
     const price = priceData[balance.token] || { usd: 0, usd_24h_change: 0 }
     const priceChange = price.usd_24h_change
+    const hasPriceChange = priceData[balance.token] && priceChange !== 0
     const isPositiveChange = priceChange >= 0
     const logoUrl = tokenLogos[balance.token]
 
@@ -157,25 +158,27 @@ export default function BankingAssetBreakdown({
         {/* Value and Change */}
         <Box sx={{ textAlign: 'right' }}>
           <Typography variant='subtitle2'>${fNumber(balance.balance_conv.usd)}</Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 0.5 }}>
-            <Iconify
-              icon={isPositiveChange ? 'eva:trending-up-fill' : 'eva:trending-down-fill'}
-              width={16}
-              sx={{
-                color: isPositiveChange ? 'success.main' : 'error.main'
-              }}
-            />
-            <Typography
-              variant='caption'
-              sx={{
-                color: isPositiveChange ? 'success.main' : 'error.main',
-                fontWeight: 600
-              }}
-            >
-              {isPositiveChange ? '+' : ''}
-              {fNumber(priceChange)}%
-            </Typography>
-          </Box>
+          {hasPriceChange && (
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 0.5 }}>
+              <Iconify
+                icon={isPositiveChange ? 'eva:trending-up-fill' : 'eva:trending-down-fill'}
+                width={16}
+                sx={{
+                  color: isPositiveChange ? 'success.main' : 'error.main'
+                }}
+              />
+              <Typography
+                variant='caption'
+                sx={{
+                  color: isPositiveChange ? 'success.main' : 'error.main',
+                  fontWeight: 600
+                }}
+              >
+                {isPositiveChange ? '+' : ''}
+                {fNumber(priceChange)}%
+              </Typography>
+            </Box>
+          )}
         </Box>
       </Box>
     )

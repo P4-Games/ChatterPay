@@ -114,6 +114,7 @@ export default function OverviewBankingView() {
               { id: '' }
             ]}
             userWallet={walletAddress || ''}
+            tokenLogos={tokenLogos}
           />
         </Grid>
       </Grid>

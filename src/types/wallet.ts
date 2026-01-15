@@ -1,6 +1,7 @@
 export type IBalance = {
   network: string
   token: string
+  tokenAddress?: string
   balance: number
   balance_conv: {
     usd: number

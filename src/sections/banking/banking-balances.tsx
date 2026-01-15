@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { enqueueSnackbar } from 'notistack'
 import QRCode from 'react-qr-code'
 
@@ -55,9 +55,32 @@ export default function BankingBalances({
 
   const mdUp = useResponsive('up', 'md')
   const [selectedCurrency, setSelectedCurrency] = useState<CurrencyKey>('usd')
-  const currency = useBoolean()
+  const currency = useBoolean(true) // Default to true (shown)
   const depositModal = useBoolean()
   const router = useRouter()
+
+  // Load balance visibility preference from localStorage
+  useEffect(() => {
+    const savedPreference = localStorage.getItem('showBalanceAmount')
+    if (savedPreference !== null) {
+      if (savedPreference === 'true') {
+        currency.onTrue()
+      } else {
+        currency.onFalse()
+      }
+    }
+  }, [])
+
+  // Save preference when toggled
+  const handleToggleVisibility = () => {
+    const newValue = !currency.value
+    if (newValue) {
+      currency.onTrue()
+    } else {
+      currency.onFalse()
+    }
+    localStorage.setItem('showBalanceAmount', String(newValue))
+  }
 
   const sendReciveUrl = BOT_WAPP_URL.replaceAll('MESSAGE', t('balances.wapp-msg'))
 
@@ -73,7 +96,7 @@ export default function BankingBalances({
   const renderTitle = (
     <Stack direction='row' alignItems='center' spacing={0.5} sx={{ ml: 1 }}>
       <Typography variant='h6'>{title || 'Your money'} </Typography>
-      <IconButton color='inherit' onClick={currency.onToggle} sx={{ opacity: 0.48 }}>
+      <IconButton color='inherit' onClick={handleToggleVisibility} sx={{ opacity: 0.48 }}>
         <Iconify icon={currency.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
       </IconButton>
       <IconButton onClick={() => window.open(walletLinkL2, '_blank')}>

@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react'
+
 import Box from '@mui/material/Box'
 import Table from '@mui/material/Table'
 import Avatar from '@mui/material/Avatar'
@@ -5,6 +7,7 @@ import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
 import MenuItem from '@mui/material/MenuItem'
 import TableRow from '@mui/material/TableRow'
+import Tooltip from '@mui/material/Tooltip'
 import { Link, Skeleton } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import TableBody from '@mui/material/TableBody'
@@ -38,6 +41,7 @@ import {
 } from 'src/components/table'
 
 import type { ITransaction } from 'src/types/wallet'
+import Avvvatars from 'avvvatars-react'
 
 // ----------------------------------------------------------------------
 
@@ -48,6 +52,7 @@ interface Props extends CardProps {
   tableData: ITransaction[]
   tableLabels: any
   userWallet: string
+  tokenLogos?: Record<string, string>
 }
 
 export default function BankingRecentTransitions({
@@ -57,18 +62,48 @@ export default function BankingRecentTransitions({
   isLoading,
   tableData,
   userWallet,
+  tokenLogos = {},
   ...other
 }: Props) {
   const mdUp = useResponsive('up', 'md')
   const { t } = useTranslate()
   const table = useTable()
+  const [maskAmounts, setMaskAmounts] = useState(false)
+
+  // Load mask preference from localStorage
+  useEffect(() => {
+    const savedPreference = localStorage.getItem('maskTransactionAmounts')
+    if (savedPreference !== null) {
+      setMaskAmounts(savedPreference === 'true')
+    }
+  }, [])
+
+  // Save mask preference to localStorage
+  const handleToggleMask = () => {
+    const newValue = !maskAmounts
+    setMaskAmounts(newValue)
+    localStorage.setItem('maskTransactionAmounts', String(newValue))
+  }
 
   const denseHeight = table.dense ? 56 : 56 + 20
   const notFound = !tableData || !tableData.length
 
   // ----------------------------------------------------------------------
 
-  const renderTitle = <CardHeader title={title} subheader={subheader} sx={{ mb: 2 }} />
+  const renderTitle = (
+    <CardHeader
+      title={title}
+      subheader={subheader}
+      action={
+        <Tooltip title={maskAmounts ? 'Show amounts' : 'Hide amounts'}>
+          <IconButton onClick={handleToggleMask} size='small'>
+            <Iconify icon={maskAmounts ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
+          </IconButton>
+        </Tooltip>
+      }
+      sx={{ mb: 3, px: 3, pt: 3 }}
+    />
+  )
 
   const renderConent = (
     <TableContainer sx={{ overflow: 'unset' }}>
@@ -84,6 +119,8 @@ export default function BankingRecentTransitions({
                   userWallet={userWallet}
                   row={row}
                   mdUp={mdUp}
+                  maskAmounts={maskAmounts}
+                  tokenLogos={tokenLogos}
                 />
               ))}
 
@@ -171,6 +208,8 @@ type BankingRecentTransitionsRowProps = {
   userWallet: string
   row: ITransaction
   mdUp: boolean
+  maskAmounts: boolean
+  tokenLogos: Record<string, string>
 }
 
 function getContactData(
@@ -192,7 +231,8 @@ function getContactData(
     // 'transfer' or 'deposit'
     contactName = (trxReceive ? data.contact_from_name : data.contact_to_name) || ''
     contactIdentifier = (trxReceive ? data.contact_from_phone : data.contact_to_phone) || ''
-    calculatedAmount = fNumber(data.amount - (trxReceive ? data.fee || 0 : 0))
+    // Subtract fee when sending, not when receiving
+    calculatedAmount = fNumber(data.amount - (!trxReceive ? data.fee || 0 : 0))
   }
 
   // case: Identifier is a wallet
@@ -208,7 +248,7 @@ function getContactData(
   return { contactName, contactIdentifier, calculatedAmount }
 }
 
-function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTransitionsRowProps) {
+function BankingRecentTransitionsRow({ userWallet, row, mdUp, maskAmounts, tokenLogos }: BankingRecentTransitionsRowProps) {
   const theme = useTheme()
   const { t } = useTranslate()
   const lightMode = theme.palette.mode === 'light'
@@ -220,6 +260,9 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
   const trxLink = `${EXPLORER_L2_URL}/tx/${row.trx_hash}`
 
   const popover = usePopover()
+
+  // Mask amount if enabled
+  const displayAmount = maskAmounts ? '***' : calculatedAmount
 
   const handleDownload = () => {
     popover.onClose()
@@ -235,6 +278,38 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
     popover.onClose()
     console.info('SHARE', row.id)
   }
+
+  const tokenLogo = tokenLogos[row.token]
+
+  const renderTokenIcon = (
+    <Box
+      sx={{
+        width: 24,
+        height: 24,
+        borderRadius: '50%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        mr: 1,
+        flexShrink: 0
+      }}
+    >
+      {tokenLogo ? (
+        <Box
+          component='img'
+          src={tokenLogo}
+          alt={row.token}
+          sx={{
+            width: 24,
+            height: 24,
+            borderRadius: '50%'
+          }}
+        />
+      ) : (
+        <Avvvatars value={row.token} style='character' size={24} displayValue={row.token.substring(0, 2)} />
+      )}
+    </Box>
+  )
 
   const renderAvatar = (
     <Box sx={{ position: 'relative', mr: 2 }}>
@@ -258,8 +333,8 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
         }}
       >
         <Avvvatars
-          value={trxReceive ? row.wallet_from : (row.wallet_to || '')}
-          style='shape'
+          value={contactName || (trxReceive ? row.wallet_from : (row.wallet_to || ''))}
+          style={contactName ? 'character' : 'shape'}
           size={48}
         />
       </Badge>
@@ -268,21 +343,21 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
 
   const renderContentDesktop = (
     <TableRow sx={{ opacity: row.status === 'pending' ? 0.6 : 1 }}>
-      <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
+      <TableCell sx={{ display: 'flex', alignItems: 'center', py: 2, pl: 3 }}>
         {renderAvatar}
-        <Link href={trxLink} target='_blank' rel='noopener' sx={{ mr: 1 }}>
-          <IconButton>
-            <Iconify icon='eva:external-link-outline' />
-          </IconButton>
-        </Link>
-        <ListItemText primary={message} secondary={contactIdentifier} />
+        <ListItemText primary={message} secondary={contactIdentifier} sx={{ minWidth: 0 }} />
       </TableCell>
 
-      <TableCell>
-        {calculatedAmount} {row.token}
+      <TableCell sx={{ py: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {renderTokenIcon}
+          <Box>
+            {displayAmount} {row.token}
+          </Box>
+        </Box>
       </TableCell>
 
-      <TableCell>
+      <TableCell sx={{ py: 2 }}>
         <ListItemText
           primary={fDate(new Date(row.date))}
           secondary={fTime(new Date(row.date))}
@@ -295,18 +370,25 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
         />
       </TableCell>
 
-      <TableCell align='right' sx={{ pr: 1 }}>
-        <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
-          <Iconify icon='eva:more-vertical-fill' />
-        </IconButton>
+      <TableCell align='right' sx={{ py: 2, pr: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 0.5 }}>
+          <Link href={trxLink} target='_blank' rel='noopener'>
+            <IconButton size='small'>
+              <Iconify icon='eva:external-link-outline' />
+            </IconButton>
+          </Link>
+          <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+            <Iconify icon='eva:more-vertical-fill' />
+          </IconButton>
+        </Box>
       </TableCell>
     </TableRow>
   )
 
   const renderContentMobile = (
     <TableRow sx={{ opacity: row.status === 'pending' ? 0.6 : 1 }}>
-      <TableCell sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
-        <Link href={trxLink} target='_blank' rel='noopener' sx={{ mr: 1 }}>
+      <TableCell sx={{ display: 'flex', alignItems: 'center', py: 2, pl: 3 }}>
+        <Box sx={{ position: 'relative', mr: 1.5 }}>
           <Badge
             overlap='circular'
             color={trxReceive ? 'success' : 'error'}
@@ -322,15 +404,19 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
               />
             }
             sx={{
-              ml: 0.5,
-              mr: 2,
               [`& .${badgeClasses.badge}`]: {
                 p: 0,
                 width: 20
               }
             }}
-          />
-        </Link>
+          >
+            <Avvvatars
+              value={contactName || (trxReceive ? row.wallet_from : (row.wallet_to || ''))}
+              style={contactName ? 'character' : 'shape'}
+              size={40}
+            />
+          </Badge>
+        </Box>
         <ListItemText
           primary={message}
           secondary={
@@ -341,29 +427,37 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
               </Box>
             </>
           }
+          primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           secondaryTypographyProps={{
             mt: 0.5,
             component: 'span',
             typography: 'caption'
           }}
+          sx={{ minWidth: 0, flex: 1 }}
         />
       </TableCell>
 
-      <TableCell sx={{ width: '35%', textAlign: 'right' }}>
-        <ListItemText
-          primary={`${calculatedAmount} ${row.token}`}
-          secondaryTypographyProps={{
-            mt: 0.5,
-            component: 'span',
-            typography: 'caption'
-          }}
-        />
+      <TableCell sx={{ textAlign: 'right', py: 2, whiteSpace: 'nowrap' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+          {renderTokenIcon}
+          <ListItemText
+            primary={`${displayAmount} ${row.token}`}
+            primaryTypographyProps={{ typography: 'body2', fontWeight: 600 }}
+          />
+        </Box>
       </TableCell>
 
-      <TableCell align='right' sx={{ width: '5%', pr: 1 }}>
-        <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
-          <Iconify icon='eva:more-vertical-fill' />
-        </IconButton>
+      <TableCell align='right' sx={{ py: 2, pr: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 0.5 }}>
+          <Link href={trxLink} target='_blank' rel='noopener'>
+            <IconButton size='small'>
+              <Iconify icon='eva:external-link-outline' />
+            </IconButton>
+          </Link>
+          <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen} size='small'>
+            <Iconify icon='eva:more-vertical-fill' />
+          </IconButton>
+        </Box>
       </TableCell>
     </TableRow>
   )

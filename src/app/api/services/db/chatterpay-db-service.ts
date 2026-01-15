@@ -4,7 +4,7 @@ import { DB_BOT_NAME, DB_CHATTERPAY_NAME } from 'src/config-global'
 
 import type { JwtPayload } from 'src/types/jwt'
 import type { LastUserConversation } from 'src/types/chat'
-import type { INFT, ITransaction } from 'src/types/wallet'
+import type { INFT, IToken, ITransaction } from 'src/types/wallet'
 import type { IAccount, UserSession } from 'src/types/account'
 
 import { getClientPromise } from './_connections/mongo-connection'
@@ -24,6 +24,7 @@ const SCHEMA_USERS: string = 'users'
 const SCHEMA_TRANSACTIONS: string = 'transactions'
 const SCHEMA_NFTS: string = 'nfts'
 const SCHEMA_USER_CONVERSATIONS: string = 'user_conversations'
+const SCHEMA_TOKENS: string = 'tokens'
 
 // ----------------------------------------------------------------------
 
@@ -552,6 +553,35 @@ export async function getUserTransactions(wallet: string): Promise<ITransaction[
   }))
 
   return transactions
+}
+
+export async function getTokens(): Promise<IToken[] | undefined> {
+  const client = await getClientPromise()
+  const db = client.db(DB_CHATTERPAY_NAME)
+
+  const tokens = await db
+    .collection(SCHEMA_TOKENS)
+    .find({})
+    .toArray()
+
+  if (!tokens || tokens.length === 0) {
+    return undefined
+  }
+
+  return tokens.map((token: any) => ({
+    _id: getFormattedId(token._id),
+    name: token.name,
+    chain_id: token.chain_id,
+    decimals: token.decimals,
+    address: token.address,
+    symbol: token.symbol,
+    logo: token.logo,
+    type: token.type,
+    ramp_enabled: token.ramp_enabled,
+    display_decimals: token.display_decimals,
+    display_symbol: token.display_symbol,
+    operations_limits: token.operations_limits
+  }))
 }
 
 export async function getLastConversacionUserId(
