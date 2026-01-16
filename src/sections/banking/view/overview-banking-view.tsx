@@ -31,6 +31,32 @@ export default function OverviewBankingView() {
   const [walletAddress, setWalletAddress] = useState<string>('')
   const [contextUser] = useState<IAccount | null>(null)
   const [priceData, setPriceData] = useState<Record<string, TokenPriceData>>({})
+  
+  // Global hide/show state for all values (balance, assets, transactions)
+  const [hideValues, setHideValues] = useState(false)
+  
+  // Global currency selection state
+  const [selectedCurrency, setSelectedCurrency] = useState<'usd' | 'ars' | 'brl' | 'uyu'>('usd')
+
+  // Load hide preference from localStorage
+  useEffect(() => {
+    const savedPreference = localStorage.getItem('hideAllValues')
+    if (savedPreference !== null) {
+      setHideValues(savedPreference === 'true')
+    }
+  }, [])
+
+  // Save hide preference to localStorage
+  const handleToggleHideValues = () => {
+    const newValue = !hideValues
+    setHideValues(newValue)
+    localStorage.setItem('hideAllValues', String(newValue))
+  }
+  
+  // Handle currency change
+  const handleCurrencyChange = (currency: 'usd' | 'ars' | 'brl' | 'uyu') => {
+    setSelectedCurrency(currency)
+  }
 
   // Fetch tokens from database
   const { data: tokensData } = useGetTokens()
@@ -90,19 +116,29 @@ export default function OverviewBankingView() {
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
       <Grid container spacing={3}>
         <Grid xs={12}>
-          <BankingBalances title={t('balances.title')} tableData={safeBalances} />
+          <BankingBalances 
+            title={t('balances.title')} 
+            tableData={safeBalances} 
+            hideValues={hideValues}
+            onToggleHideValues={handleToggleHideValues}
+            selectedCurrency={selectedCurrency}
+            onCurrencyChange={handleCurrencyChange}
+          />
         </Grid>
 
-        <Grid xs={12} md={5}>
+        {/* Responsive grid: 1 column mobile, 1 column small tablet, 2 columns large tablet, 5 cols desktop, 5 cols TV */}
+        <Grid xs={12} sm={12} md={6} lg={5} xl={5}>
           <BankingAssetBreakdown
             balances={safeBalances.balances}
             priceData={priceData}
             tokenLogos={tokenLogos}
             isLoading={isLoadingBalances || !walletAddress}
+            hideValues={hideValues}
+            selectedCurrency={selectedCurrency}
           />
         </Grid>
 
-        <Grid xs={12} md={7}>
+        <Grid xs={12} sm={12} md={6} lg={7} xl={7}>
           <BankingRecentTransitions
             title={t('transactions.title')}
             isLoading={isLoadingTrxs || !walletAddress}
@@ -115,6 +151,7 @@ export default function OverviewBankingView() {
             ]}
             userWallet={walletAddress || ''}
             tokenLogos={tokenLogos}
+            hideValues={hideValues}
           />
         </Grid>
       </Grid>

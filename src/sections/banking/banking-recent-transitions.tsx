@@ -8,6 +8,7 @@ import Divider from '@mui/material/Divider'
 import MenuItem from '@mui/material/MenuItem'
 import TableRow from '@mui/material/TableRow'
 import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import { Link, Skeleton } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import TableBody from '@mui/material/TableBody'
@@ -53,6 +54,7 @@ interface Props extends CardProps {
   tableLabels: any
   userWallet: string
   tokenLogos?: Record<string, string>
+  hideValues?: boolean
 }
 
 export default function BankingRecentTransitions({
@@ -63,27 +65,12 @@ export default function BankingRecentTransitions({
   tableData,
   userWallet,
   tokenLogos = {},
+  hideValues = false,
   ...other
 }: Props) {
   const mdUp = useResponsive('up', 'md')
   const { t } = useTranslate()
   const table = useTable()
-  const [maskAmounts, setMaskAmounts] = useState(false)
-
-  // Load mask preference from localStorage
-  useEffect(() => {
-    const savedPreference = localStorage.getItem('maskTransactionAmounts')
-    if (savedPreference !== null) {
-      setMaskAmounts(savedPreference === 'true')
-    }
-  }, [])
-
-  // Save mask preference to localStorage
-  const handleToggleMask = () => {
-    const newValue = !maskAmounts
-    setMaskAmounts(newValue)
-    localStorage.setItem('maskTransactionAmounts', String(newValue))
-  }
 
   const denseHeight = table.dense ? 56 : 56 + 20
   const notFound = !tableData || !tableData.length
@@ -94,14 +81,7 @@ export default function BankingRecentTransitions({
     <CardHeader
       title={title}
       subheader={subheader}
-      action={
-        <Tooltip title={maskAmounts ? 'Show amounts' : 'Hide amounts'}>
-          <IconButton onClick={handleToggleMask} size='small'>
-            <Iconify icon={maskAmounts ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
-          </IconButton>
-        </Tooltip>
-      }
-      sx={{ mb: 3, px: 3, pt: 3 }}
+      sx={{ mb: 2, px: 3, pt: 3, pb: 0 }}
     />
   )
 
@@ -109,7 +89,7 @@ export default function BankingRecentTransitions({
     <TableContainer sx={{ overflow: 'unset' }}>
       <Scrollbar>
         <Table sx={{ minWidth: mdUp ? 720 : 300 }}>
-          {mdUp && <TableHeadCustom headLabel={tableLabels} />}
+          {mdUp && <TableHeadCustom headLabel={tableLabels} sx={{ '& th': { px: 3 } }} />}
 
           <TableBody>
             {!notFound &&
@@ -119,7 +99,7 @@ export default function BankingRecentTransitions({
                   userWallet={userWallet}
                   row={row}
                   mdUp={mdUp}
-                  maskAmounts={maskAmounts}
+                  hideValues={hideValues}
                   tokenLogos={tokenLogos}
                 />
               ))}
@@ -208,7 +188,7 @@ type BankingRecentTransitionsRowProps = {
   userWallet: string
   row: ITransaction
   mdUp: boolean
-  maskAmounts: boolean
+  hideValues: boolean
   tokenLogos: Record<string, string>
 }
 
@@ -248,7 +228,7 @@ function getContactData(
   return { contactName, contactIdentifier, calculatedAmount }
 }
 
-function BankingRecentTransitionsRow({ userWallet, row, mdUp, maskAmounts, tokenLogos }: BankingRecentTransitionsRowProps) {
+function BankingRecentTransitionsRow({ userWallet, row, mdUp, hideValues, tokenLogos }: BankingRecentTransitionsRowProps) {
   const theme = useTheme()
   const { t } = useTranslate()
   const lightMode = theme.palette.mode === 'light'
@@ -262,7 +242,7 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp, maskAmounts, token
   const popover = usePopover()
 
   // Mask amount if enabled
-  const displayAmount = maskAmounts ? '***' : calculatedAmount
+  const displayAmount = hideValues ? '***' : calculatedAmount
 
   const handleDownload = () => {
     popover.onClose()
@@ -357,17 +337,13 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp, maskAmounts, token
         </Box>
       </TableCell>
 
-      <TableCell sx={{ py: 2 }}>
-        <ListItemText
-          primary={fDate(new Date(row.date))}
-          secondary={fTime(new Date(row.date))}
-          primaryTypographyProps={{ typography: 'body2' }}
-          secondaryTypographyProps={{
-            mt: 0.5,
-            component: 'span',
-            typography: 'caption'
-          }}
-        />
+      <TableCell sx={{ py: 2, whiteSpace: 'nowrap' }}>
+        <Typography variant='body2'>
+          {fDate(new Date(row.date), 'dd MMM yyyy')}
+        </Typography>
+        <Typography variant='caption' sx={{ color: 'text.secondary', display: 'block', mt: 0.5 }}>
+          {fTime(new Date(row.date))}
+        </Typography>
       </TableCell>
 
       <TableCell align='right' sx={{ py: 2, pr: 3 }}>

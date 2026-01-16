@@ -31,13 +31,17 @@ type Props = {
   priceData: Record<string, TokenPriceData>
   tokenLogos: Record<string, string>
   isLoading?: boolean
+  hideValues?: boolean
+  selectedCurrency?: 'usd' | 'ars' | 'brl' | 'uyu'
 }
 
 export default function BankingAssetBreakdown({
   balances,
   priceData,
   tokenLogos,
-  isLoading = false
+  isLoading = false,
+  hideValues = false,
+  selectedCurrency = 'usd'
 }: Props) {
   const theme = useTheme()
   const { t } = useTranslate()
@@ -108,6 +112,12 @@ export default function BankingAssetBreakdown({
     const hasPriceChange = priceData[balance.token] && priceChange !== 0
     const isPositiveChange = priceChange >= 0
     const logoUrl = tokenLogos[balance.token]
+    const hasBalance = balance.balance > 0
+    
+    // Get value for selected currency
+    const currencyValue = balance.balance_conv[selectedCurrency] || 0
+    const displayValue = hasBalance ? fNumber(currencyValue) : '0'
+    const currencyLabel = selectedCurrency.toUpperCase()
 
     return (
       <Box
@@ -118,11 +128,12 @@ export default function BankingAssetBreakdown({
           justifyContent: 'space-between',
           py: 1.5,
           px: 2,
+          opacity: hasBalance ? 1 : 0.7,
           '&:hover': {
             bgcolor: 'action.hover',
             borderRadius: 1
           },
-          transition: theme.transitions.create(['background-color'])
+          transition: theme.transitions.create(['background-color', 'opacity'])
         }}
       >
         {/* Token Info */}
@@ -157,8 +168,10 @@ export default function BankingAssetBreakdown({
 
         {/* Value and Change */}
         <Box sx={{ textAlign: 'right' }}>
-          <Typography variant='subtitle2'>${fNumber(balance.balance_conv.usd)}</Typography>
-          {hasPriceChange && (
+          <Typography variant='subtitle2'>
+            ${hideValues ? '***' : displayValue} {currencyLabel}
+          </Typography>
+          {hasPriceChange && hasBalance && (
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 0.5 }}>
               <Iconify
                 icon={isPositiveChange ? 'eva:trending-up-fill' : 'eva:trending-down-fill'}
@@ -205,11 +218,11 @@ export default function BankingAssetBreakdown({
             sx={{ m: 0, gap: 1 }}
           />
         }
-        sx={{ pb: 1, '& .MuiCardHeader-action': { alignSelf: 'center', m: 0 } }}
+        sx={{ pb: 2, px: 3, pt: 3, '& .MuiCardHeader-action': { alignSelf: 'center', m: 0 } }}
       />
 
       <Scrollbar sx={{ maxHeight: 440 }}>
-        <Stack spacing={0}>
+        <Stack spacing={0} sx={{ px: 1 }}>
           {isLoading && renderLoading}
           {!isLoading && processedBalances.length === 0 && renderEmpty}
           {!isLoading && processedBalances.map(renderAssetRow)}
