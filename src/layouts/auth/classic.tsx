@@ -81,7 +81,10 @@ export default function AuthClassicLayout({ children, image, title }: Props) {
       <Box
         component='img'
         alt='auth'
-        src={image || 'https://storage.googleapis.com/chatbot-multimedia/chatterpay/images/login_graphic.webp'}
+        src={
+          image ||
+          'https://storage.googleapis.com/chatbot-multimedia/chatterpay/images/login_graphic.webp'
+        }
         sx={{
           width: '100%',
           height: '100vh',

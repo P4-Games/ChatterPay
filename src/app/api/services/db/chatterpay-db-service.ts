@@ -559,10 +559,7 @@ export async function getTokens(): Promise<IToken[] | undefined> {
   const client = await getClientPromise()
   const db = client.db(DB_CHATTERPAY_NAME)
 
-  const tokens = await db
-    .collection(SCHEMA_TOKENS)
-    .find({})
-    .toArray()
+  const tokens = await db.collection(SCHEMA_TOKENS).find({}).toArray()
 
   if (!tokens || tokens.length === 0) {
     return undefined

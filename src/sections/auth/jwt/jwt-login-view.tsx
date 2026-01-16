@@ -206,7 +206,12 @@ export default function JwtLoginView() {
       <Typography variant='h4'>{t('login.title')}</Typography>
       <Stack direction='row' spacing={0.5}>
         <Typography variant='body2'>{t('login.new-user')}</Typography>
-        <Link component={RouterLink} href={paths.auth.jwt.register} variant='subtitle2' color='primary'>
+        <Link
+          component={RouterLink}
+          href={paths.auth.jwt.register}
+          variant='subtitle2'
+          color='primary'
+        >
           {t('login.create-account')}
         </Link>
       </Stack>
@@ -247,7 +252,7 @@ export default function JwtLoginView() {
                   handleSubmit(handleSendCode)()
                   return
                 }
-                
+
                 // Filter non-numeric keys
                 if (
                   !/[0-9]/.test(e.key) &&
@@ -262,9 +267,9 @@ export default function JwtLoginView() {
               }
             }}
           />
-          <Alert 
-            severity='info' 
-            sx={{ 
+          <Alert
+            severity='info'
+            sx={{
               mb: 3,
               bgcolor: '#B8F6C9',
               color: 'text.primary',
@@ -307,9 +312,9 @@ export default function JwtLoginView() {
             </Select>
           </FormControl>
           <RHFTextField disabled name='phone' label='Phone Number' type='number' value={phone} />
-          <Alert 
-            severity='info' 
-            sx={{ 
+          <Alert
+            severity='info'
+            sx={{
               mb: 3,
               bgcolor: '#B8F6C9',
               color: 'text.primary',
@@ -320,8 +325,8 @@ export default function JwtLoginView() {
           >
             {t('login.msg.code-info')}
           </Alert>
-          <RHFCode 
-            name='code' 
+          <RHFCode
+            name='code'
             onComplete={() => {
               // Auto-submit when code is complete (6 digits)
               if (!isSubmitting) {

@@ -132,7 +132,8 @@ export default function BankingBalances({
   const renderTotal = (
     <Stack direction='row' alignItems='center' spacing={1} sx={{ mb: 2, px: 2, ml: 1 }}>
       <Typography variant='h3'>
-        {"$ "}{!hideValues
+        {'$ '}
+        {!hideValues
           ? fNumber(tableData && tableData.totals && tableData.totals[selectedCurrency]) || '0.00'
           : '********'}
       </Typography>
@@ -204,7 +205,7 @@ export default function BankingBalances({
           >
             <QRCode value={tableData?.wallet || ''} size={200} />
           </Box>
-          
+
           <Stack spacing={1} sx={{ width: 1 }}>
             <Typography variant='caption' color='text.secondary'>
               {t('deposit.wallet-address')}
@@ -213,11 +214,11 @@ export default function BankingBalances({
               {tableData?.wallet}
             </Typography>
           </Stack>
-          
+
           {/* Network Info */}
-          <Stack 
-            direction='row' 
-            spacing={1.5} 
+          <Stack
+            direction='row'
+            spacing={1.5}
             alignItems='center'
             sx={{
               width: '100%',
@@ -245,7 +246,7 @@ export default function BankingBalances({
           <Alert severity='warning' sx={{ width: '100%' }}>
             {t('deposit.network-warning')}
           </Alert>
-          
+
           <Button
             fullWidth
             variant='contained'

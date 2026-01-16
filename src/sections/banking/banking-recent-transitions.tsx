@@ -78,11 +78,7 @@ export default function BankingRecentTransitions({
   // ----------------------------------------------------------------------
 
   const renderTitle = (
-    <CardHeader
-      title={title}
-      subheader={subheader}
-      sx={{ mb: 2, px: 3, pt: 3, pb: 0 }}
-    />
+    <CardHeader title={title} subheader={subheader} sx={{ mb: 2, px: 3, pt: 3, pb: 0 }} />
   )
 
   const renderConent = (
@@ -228,7 +224,13 @@ function getContactData(
   return { contactName, contactIdentifier, calculatedAmount }
 }
 
-function BankingRecentTransitionsRow({ userWallet, row, mdUp, hideValues, tokenLogos }: BankingRecentTransitionsRowProps) {
+function BankingRecentTransitionsRow({
+  userWallet,
+  row,
+  mdUp,
+  hideValues,
+  tokenLogos
+}: BankingRecentTransitionsRowProps) {
   const theme = useTheme()
   const { t } = useTranslate()
   const lightMode = theme.palette.mode === 'light'
@@ -286,7 +288,12 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp, hideValues, tokenL
           }}
         />
       ) : (
-        <Avvvatars value={row.token} style='character' size={24} displayValue={row.token.substring(0, 2)} />
+        <Avvvatars
+          value={row.token}
+          style='character'
+          size={24}
+          displayValue={row.token.substring(0, 2)}
+        />
       )}
     </Box>
   )
@@ -313,7 +320,7 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp, hideValues, tokenL
         }}
       >
         <Avvvatars
-          value={contactName || (trxReceive ? row.wallet_from : (row.wallet_to || ''))}
+          value={contactName || (trxReceive ? row.wallet_from : row.wallet_to || '')}
           style={contactName ? 'character' : 'shape'}
           size={48}
         />
@@ -338,9 +345,7 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp, hideValues, tokenL
       </TableCell>
 
       <TableCell sx={{ py: 2, whiteSpace: 'nowrap' }}>
-        <Typography variant='body2'>
-          {fDate(new Date(row.date), 'dd MMM yyyy')}
-        </Typography>
+        <Typography variant='body2'>{fDate(new Date(row.date), 'dd MMM yyyy')}</Typography>
         <Typography variant='caption' sx={{ color: 'text.secondary', display: 'block', mt: 0.5 }}>
           {fTime(new Date(row.date))}
         </Typography>
@@ -387,7 +392,7 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp, hideValues, tokenL
             }}
           >
             <Avvvatars
-              value={contactName || (trxReceive ? row.wallet_from : (row.wallet_to || ''))}
+              value={contactName || (trxReceive ? row.wallet_from : row.wallet_to || '')}
               style={contactName ? 'character' : 'shape'}
               size={40}
             />
@@ -430,7 +435,11 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp, hideValues, tokenL
               <Iconify icon='eva:external-link-outline' />
             </IconButton>
           </Link>
-          <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen} size='small'>
+          <IconButton
+            color={popover.open ? 'inherit' : 'default'}
+            onClick={popover.onOpen}
+            size='small'
+          >
             <Iconify icon='eva:more-vertical-fill' />
           </IconButton>
         </Box>

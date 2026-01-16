@@ -84,13 +84,15 @@ export function getPrimary(preset: PresetType, mode: 'light' | 'dark' = 'light')
   if (preset === 'default') {
     return mode === 'light' ? primaryLight : primaryDark
   }
-  
+
   // For other presets, use their defined colors
-  return {
-    cyan,
-    purple,
-    blue,
-    orange,
-    red
-  }[preset] || (mode === 'light' ? primaryLight : primaryDark)
+  return (
+    {
+      cyan,
+      purple,
+      blue,
+      orange,
+      red
+    }[preset] || (mode === 'light' ? primaryLight : primaryDark)
+  )
 }

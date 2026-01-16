@@ -31,10 +31,10 @@ export default function OverviewBankingView() {
   const [walletAddress, setWalletAddress] = useState<string>('')
   const [contextUser] = useState<IAccount | null>(null)
   const [priceData, setPriceData] = useState<Record<string, TokenPriceData>>({})
-  
+
   // Global hide/show state for all values (balance, assets, transactions)
   const [hideValues, setHideValues] = useState(false)
-  
+
   // Global currency selection state
   const [selectedCurrency, setSelectedCurrency] = useState<'usd' | 'ars' | 'brl' | 'uyu'>('usd')
 
@@ -52,7 +52,7 @@ export default function OverviewBankingView() {
     setHideValues(newValue)
     localStorage.setItem('hideAllValues', String(newValue))
   }
-  
+
   // Handle currency change
   const handleCurrencyChange = (currency: 'usd' | 'ars' | 'brl' | 'uyu') => {
     setSelectedCurrency(currency)
@@ -116,9 +116,9 @@ export default function OverviewBankingView() {
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
       <Grid container spacing={3}>
         <Grid xs={12}>
-          <BankingBalances 
-            title={t('balances.title')} 
-            tableData={safeBalances} 
+          <BankingBalances
+            title={t('balances.title')}
+            tableData={safeBalances}
             hideValues={hideValues}
             onToggleHideValues={handleToggleHideValues}
             selectedCurrency={selectedCurrency}

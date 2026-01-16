@@ -113,7 +113,7 @@ export default function BankingAssetBreakdown({
     const isPositiveChange = priceChange >= 0
     const logoUrl = tokenLogos[balance.token]
     const hasBalance = balance.balance > 0
-    
+
     // Get value for selected currency
     const currencyValue = balance.balance_conv[selectedCurrency] || 0
     const displayValue = hasBalance ? fNumber(currencyValue) : '0'
@@ -172,7 +172,9 @@ export default function BankingAssetBreakdown({
             ${hideValues ? '***' : displayValue} {currencyLabel}
           </Typography>
           {hasPriceChange && hasBalance && (
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 0.5 }}>
+            <Box
+              sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 0.5 }}
+            >
               <Iconify
                 icon={isPositiveChange ? 'eva:trending-up-fill' : 'eva:trending-down-fill'}
                 width={16}
