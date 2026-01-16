@@ -75,12 +75,20 @@ export default function AccountPopover() {
           })
         }}
       >
-        <Avvvatars
-          value={user?.phoneNumber || user?.displayName || ''}
-          displayValue={user?.displayName?.substring(0, 2).toUpperCase()}
-          style='shape'
-          size={36}
-        />
+        <Box
+          sx={{
+            minWidth: 34,
+            position: 'relative',
+            left: -0.2
+          }}
+        >
+          <Avvvatars
+            value={user?.phoneNumber || user?.displayName || ''}
+            displayValue={user?.displayName?.substring(0, 2).toUpperCase()}
+            style='shape'
+            size={34}
+          />
+        </Box>
       </IconButton>
 
       <CustomPopover open={popover.open} onClose={popover.onClose} sx={{ width: 200, p: 0 }}>
