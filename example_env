@@ -21,8 +21,6 @@ HANDLE_VERCEL_FREE_PLAN_TIMEOUT=true
 API3_ENABLED=false
 JWT_SECRET={some secret text}
 RECAPTCHA_API_KEY={recaptcha api key}
-PUSH_NETWORK= 11155111 | 421614 | 42161
-PUSH_ENVIRONMENT= dev | staging | prod
 UI_BASE_URL='localhost'
 
 # client-side
