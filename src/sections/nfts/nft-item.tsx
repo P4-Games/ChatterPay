@@ -209,9 +209,6 @@ export default function NftItem({ nft }: Props) {
           {renderClickableLink(metadata.image_url.gcp, 'Google')}
           {', '}
           {'   '}
-          {renderClickableLink(metadata.image_url.icp, 'ICP')}
-          {', '}
-          {'   '}
           {renderClickableLink(metadata.image_url.ipfs, 'IPFS')}
           <Typography variant='h6' sx={{ marginTop: 2 }}>
             {t('nfts.item.meta-description')}
