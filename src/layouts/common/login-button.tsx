@@ -5,7 +5,6 @@ import { paths } from 'src/routes/paths'
 import { RouterLink } from 'src/routes/components'
 
 import { useTranslate } from 'src/locales'
-import { fromICP } from 'src/config-global'
 
 // ----------------------------------------------------------------------
 
@@ -17,12 +16,7 @@ export default function LoginButton({ sx }: Props) {
   const { t } = useTranslate()
 
   return (
-    <Button
-      component={fromICP ? 'a' : RouterLink}
-      href={paths.dashboard.root}
-      variant='soft'
-      sx={{ mr: 1, ...sx }}
-    >
+    <Button component={RouterLink} href={paths.dashboard.root} variant='soft' sx={{ mr: 1, ...sx }}>
       {t('home.header.sign-in')}
     </Button>
   )
