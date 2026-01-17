@@ -43,8 +43,6 @@
     "@mui/system": "^5.14.20",
     "@mui/x-data-grid": "^6.18.4",
     "@mui/x-date-pickers": "^6.18.4",
-    "@pushprotocol/restapi": "^1.7.29",
-    "@pushprotocol/uiweb": "1.7.3",
     "apexcharts": "^3.44.2",
     "avvvatars-react": "^0.4.2",
     "axios": "1.7.4",
