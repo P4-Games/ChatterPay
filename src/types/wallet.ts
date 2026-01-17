@@ -25,7 +25,6 @@ export type INFTMetadata = {
   image_url: {
     gcp: string
     ipfs: string
-    icp: string
   }
   geolocation?: {
     latitude?: string
