@@ -254,7 +254,6 @@
     }
   },
   "login": {
-    "hi": "Hola, bienvenido de nuevo",
     "title": "Iniciar sesión en ChatterPay",
     "new-user": "¿Nuevo usuario?",
     "create-account": "Crear una cuenta",
@@ -284,14 +283,27 @@
     "and": "y",
     "wapp-msg": "Hola, quiero registrarme en Chatterpay!"
   },
+  "deposit": {
+    "title": "Depositar",
+    "network": "Red",
+    "network-warning": "Cualquier activo enviado en otra red se perderá",
+    "wallet-address": "Dirección de billetera",
+    "copy-address": "Copiar dirección"
+  },
   "balances": {
-    "title": "Balance Estimado",
+    "title": "Tu dinero",
     "deposit": "Depositar",
     "send": "Enviar",
-    "wapp-msg": "Hola!"
+    "wapp-msg": "Hola!",
+    "address-copied": "¡Dirección copiada!",
+    "assets-title": "Activos",
+    "hide-small-balances": "Ocultar <$1",
+    "no-balance": "Sin balance",
+    "no-balances-above": "No hay balances mayores a $1",
+    "view-on-explorer": "Ver en Explorador"
   },
   "transactions": {
-    "title": "Transacciones Recientes",
+    "title": "Historial",
     "table-transaction": "Transacción",
     "table-amount": "Monto",
     "table-date": "Fecha",

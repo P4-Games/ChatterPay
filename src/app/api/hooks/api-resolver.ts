@@ -91,6 +91,7 @@ export const endpoints = {
   nft: {
     id: (id: string) => getFullUIEndpoint(`nft/${id}`)
   },
+  tokens: getFullUIEndpoint('tokens'),
   dashboard: {
     root: getFullUIEndpoint('app'),
     user: {

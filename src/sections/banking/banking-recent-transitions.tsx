@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react'
+
 import Box from '@mui/material/Box'
 import Table from '@mui/material/Table'
 import Avatar from '@mui/material/Avatar'
@@ -5,6 +7,8 @@ import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
 import MenuItem from '@mui/material/MenuItem'
 import TableRow from '@mui/material/TableRow'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import { Link, Skeleton } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import TableBody from '@mui/material/TableBody'
@@ -38,6 +42,7 @@ import {
 } from 'src/components/table'
 
 import type { ITransaction } from 'src/types/wallet'
+import Avvvatars from 'avvvatars-react'
 
 // ----------------------------------------------------------------------
 
@@ -48,6 +53,8 @@ interface Props extends CardProps {
   tableData: ITransaction[]
   tableLabels: any
   userWallet: string
+  tokenLogos?: Record<string, string>
+  hideValues?: boolean
 }
 
 export default function BankingRecentTransitions({
@@ -57,6 +64,8 @@ export default function BankingRecentTransitions({
   isLoading,
   tableData,
   userWallet,
+  tokenLogos = {},
+  hideValues = false,
   ...other
 }: Props) {
   const mdUp = useResponsive('up', 'md')
@@ -68,13 +77,15 @@ export default function BankingRecentTransitions({
 
   // ----------------------------------------------------------------------
 
-  const renderTitle = <CardHeader title={title} subheader={subheader} sx={{ mb: 2 }} />
+  const renderTitle = (
+    <CardHeader title={title} subheader={subheader} sx={{ mb: 2, px: 3, pt: 3, pb: 0 }} />
+  )
 
   const renderConent = (
     <TableContainer sx={{ overflow: 'unset' }}>
       <Scrollbar>
         <Table sx={{ minWidth: mdUp ? 720 : 300 }}>
-          {mdUp && <TableHeadCustom headLabel={tableLabels} />}
+          {mdUp && <TableHeadCustom headLabel={tableLabels} sx={{ '& th': { px: 3 } }} />}
 
           <TableBody>
             {!notFound &&
@@ -84,6 +95,8 @@ export default function BankingRecentTransitions({
                   userWallet={userWallet}
                   row={row}
                   mdUp={mdUp}
+                  hideValues={hideValues}
+                  tokenLogos={tokenLogos}
                 />
               ))}
 
@@ -171,6 +184,8 @@ type BankingRecentTransitionsRowProps = {
   userWallet: string
   row: ITransaction
   mdUp: boolean
+  hideValues: boolean
+  tokenLogos: Record<string, string>
 }
 
 function getContactData(
@@ -192,7 +207,8 @@ function getContactData(
     // 'transfer' or 'deposit'
     contactName = (trxReceive ? data.contact_from_name : data.contact_to_name) || ''
     contactIdentifier = (trxReceive ? data.contact_from_phone : data.contact_to_phone) || ''
-    calculatedAmount = fNumber(data.amount - (trxReceive ? data.fee || 0 : 0))
+    // Subtract fee when sending, not when receiving
+    calculatedAmount = fNumber(data.amount - (!trxReceive ? data.fee || 0 : 0))
   }
 
   // case: Identifier is a wallet
@@ -208,7 +224,13 @@ function getContactData(
   return { contactName, contactIdentifier, calculatedAmount }
 }
 
-function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTransitionsRowProps) {
+function BankingRecentTransitionsRow({
+  userWallet,
+  row,
+  mdUp,
+  hideValues,
+  tokenLogos
+}: BankingRecentTransitionsRowProps) {
   const theme = useTheme()
   const { t } = useTranslate()
   const lightMode = theme.palette.mode === 'light'
@@ -220,6 +242,9 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
   const trxLink = `${EXPLORER_L2_URL}/tx/${row.trx_hash}`
 
   const popover = usePopover()
+
+  // Mask amount if enabled
+  const displayAmount = hideValues ? '***' : calculatedAmount
 
   const handleDownload = () => {
     popover.onClose()
@@ -235,6 +260,43 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
     popover.onClose()
     console.info('SHARE', row.id)
   }
+
+  const tokenLogo = tokenLogos[row.token]
+
+  const renderTokenIcon = (
+    <Box
+      sx={{
+        width: 24,
+        height: 24,
+        borderRadius: '50%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        mr: 1,
+        flexShrink: 0
+      }}
+    >
+      {tokenLogo ? (
+        <Box
+          component='img'
+          src={tokenLogo}
+          alt={row.token}
+          sx={{
+            width: 24,
+            height: 24,
+            borderRadius: '50%'
+          }}
+        />
+      ) : (
+        <Avvvatars
+          value={row.token}
+          style='character'
+          size={24}
+          displayValue={row.token.substring(0, 2)}
+        />
+      )}
+    </Box>
+  )
 
   const renderAvatar = (
     <Box sx={{ position: 'relative', mr: 2 }}>
@@ -257,75 +319,57 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
           }
         }}
       >
-        <Avatar
-          src={row.contact_to_avatar_url || ''}
-          sx={{
-            width: 48,
-            height: 48,
-            color: 'text.secondary',
-            bgcolor: 'background.neutral'
-          }}
+        <Avvvatars
+          value={contactName || (trxReceive ? row.wallet_from : row.wallet_to || '')}
+          style={contactName ? 'character' : 'shape'}
+          size={48}
         />
       </Badge>
     </Box>
   )
 
   const renderContentDesktop = (
-    <TableRow>
-      <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
+    <TableRow sx={{ opacity: row.status === 'pending' ? 0.6 : 1 }}>
+      <TableCell sx={{ display: 'flex', alignItems: 'center', py: 2, pl: 3 }}>
         {renderAvatar}
-        <Link href={trxLink} target='_blank' rel='noopener' sx={{ mr: 1 }}>
-          <IconButton>
-            <Iconify icon='eva:external-link-outline' />
+        <ListItemText primary={message} secondary={contactIdentifier} sx={{ minWidth: 0 }} />
+      </TableCell>
+
+      <TableCell sx={{ py: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {renderTokenIcon}
+          <Box>
+            {displayAmount} {row.token}
+          </Box>
+        </Box>
+      </TableCell>
+
+      <TableCell sx={{ py: 2, whiteSpace: 'nowrap' }}>
+        <Typography variant='body2'>{fDate(new Date(row.date), 'dd MMM yyyy')}</Typography>
+        <Typography variant='caption' sx={{ color: 'text.secondary', display: 'block', mt: 0.5 }}>
+          {fTime(new Date(row.date))}
+        </Typography>
+      </TableCell>
+
+      <TableCell align='right' sx={{ py: 2, pr: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 0.5 }}>
+          <Link href={trxLink} target='_blank' rel='noopener'>
+            <IconButton size='small'>
+              <Iconify icon='eva:external-link-outline' />
+            </IconButton>
+          </Link>
+          <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+            <Iconify icon='eva:more-vertical-fill' />
           </IconButton>
-        </Link>
-        <ListItemText primary={message} secondary={contactIdentifier} />
-      </TableCell>
-
-      <TableCell>
-        {calculatedAmount} {row.token}
-      </TableCell>
-
-      <TableCell>{row.type}</TableCell>
-
-      <TableCell>
-        <ListItemText
-          primary={fDate(new Date(row.date))}
-          secondary={fTime(new Date(row.date))}
-          primaryTypographyProps={{ typography: 'body2' }}
-          secondaryTypographyProps={{
-            mt: 0.5,
-            component: 'span',
-            typography: 'caption'
-          }}
-        />
-      </TableCell>
-
-      <TableCell>
-        <Label
-          variant={lightMode ? 'soft' : 'filled'}
-          color={
-            (row.status === 'completed' && 'success') ||
-            (row.status === 'progress' && 'warning') ||
-            'error'
-          }
-        >
-          {row.status}
-        </Label>
-      </TableCell>
-
-      <TableCell align='right' sx={{ pr: 1 }}>
-        <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
-          <Iconify icon='eva:more-vertical-fill' />
-        </IconButton>
+        </Box>
       </TableCell>
     </TableRow>
   )
 
   const renderContentMobile = (
-    <TableRow>
-      <TableCell sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
-        <Link href={trxLink} target='_blank' rel='noopener' sx={{ mr: 1 }}>
+    <TableRow sx={{ opacity: row.status === 'pending' ? 0.6 : 1 }}>
+      <TableCell sx={{ display: 'flex', alignItems: 'center', py: 2, pl: 3 }}>
+        <Box sx={{ position: 'relative', mr: 1.5 }}>
           <Badge
             overlap='circular'
             color={trxReceive ? 'success' : 'error'}
@@ -341,15 +385,19 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
               />
             }
             sx={{
-              ml: 0.5,
-              mr: 2,
               [`& .${badgeClasses.badge}`]: {
                 p: 0,
                 width: 20
               }
             }}
-          />
-        </Link>
+          >
+            <Avvvatars
+              value={contactName || (trxReceive ? row.wallet_from : row.wallet_to || '')}
+              style={contactName ? 'character' : 'shape'}
+              size={40}
+            />
+          </Badge>
+        </Box>
         <ListItemText
           primary={message}
           secondary={
@@ -360,41 +408,41 @@ function BankingRecentTransitionsRow({ userWallet, row, mdUp }: BankingRecentTra
               </Box>
             </>
           }
+          primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           secondaryTypographyProps={{
             mt: 0.5,
             component: 'span',
             typography: 'caption'
           }}
+          sx={{ minWidth: 0, flex: 1 }}
         />
       </TableCell>
 
-      <TableCell sx={{ width: '35%', textAlign: 'right' }}>
-        <ListItemText
-          primary={`${calculatedAmount} ${row.token}`}
-          secondary={
-            <Label
-              variant={lightMode ? 'soft' : 'filled'}
-              color={
-                (row.status === 'completed' && 'success') ||
-                (row.status === 'progress' && 'warning') ||
-                'error'
-              }
-            >
-              {row.status}
-            </Label>
-          }
-          secondaryTypographyProps={{
-            mt: 0.5,
-            component: 'span',
-            typography: 'caption'
-          }}
-        />
+      <TableCell sx={{ textAlign: 'right', py: 2, whiteSpace: 'nowrap' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+          {renderTokenIcon}
+          <ListItemText
+            primary={`${displayAmount} ${row.token}`}
+            primaryTypographyProps={{ typography: 'body2', fontWeight: 600 }}
+          />
+        </Box>
       </TableCell>
 
-      <TableCell align='right' sx={{ width: '5%', pr: 1 }}>
-        <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
-          <Iconify icon='eva:more-vertical-fill' />
-        </IconButton>
+      <TableCell align='right' sx={{ py: 2, pr: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 0.5 }}>
+          <Link href={trxLink} target='_blank' rel='noopener'>
+            <IconButton size='small'>
+              <Iconify icon='eva:external-link-outline' />
+            </IconButton>
+          </Link>
+          <IconButton
+            color={popover.open ? 'inherit' : 'default'}
+            onClick={popover.onOpen}
+            size='small'
+          >
+            <Iconify icon='eva:more-vertical-fill' />
+          </IconButton>
+        </Box>
       </TableCell>
     </TableRow>
   )

@@ -254,12 +254,11 @@
     "date": "September 2024"
   },
   "login": {
-    "hi": "Hi, Welcome back",
     "title": "Sign in to ChatterPay",
     "new-user": "New User?",
     "create-account": "Create an account",
     "send-code": "Send Code to Whatsapp",
-    "login": "login",
+    "login": "Login",
     "resend-code": "Resend Code",
     "dont-have-code": "Don't have a code?",
     "msg": {
@@ -277,21 +276,34 @@
     "already-account": "Already have an account?",
     "sign-in": "Sign in",
     "create-account": "Create Account",
-    "create-account-bot": "Create Acoount from WhatsApp",
+    "create-account-bot": "Create Acount from WhatsApp",
     "terms-of-service": "Terms of Service",
     "privacy-policy": "Privacy Policy",
     "by-signing": "By signing up, I agree to",
     "and": "and",
     "wapp-msg": "Hi, i want to register in chatterpay!"
   },
+  "deposit": {
+    "title": "Deposit",
+    "network": "Network",
+    "network-warning": "Any asset sent in other network will be lost",
+    "wallet-address": "Wallet Address",
+    "copy-address": "Copy Address"
+  },
   "balances": {
-    "title": "Estimated Balance",
+    "title": "Your money",
     "deposit": "Deposit",
     "send": "Send",
-    "wapp-msg": "Hi!"
+    "wapp-msg": "Hi!",
+    "address-copied": "Address copied!",
+    "assets-title": "Assets",
+    "hide-small-balances": "Hide <$1",
+    "no-balance": "No balance",
+    "no-balances-above": "No balances above $1",
+    "view-on-explorer": "View on Explorer"
   },
   "transactions": {
-    "title": "Recent Transactions",
+    "title": "History",
     "table-transaction": "Transaction",
     "table-amount": "Amount",
     "table-date": "Date",

@@ -1,13 +1,13 @@
 import { alpha } from '@mui/material/styles'
 
-import { grey, primary } from '../palette'
+import { grey, primaryLight, primaryDark } from '../palette'
 
 // ----------------------------------------------------------------------
 
 type PresetType = 'default' | 'cyan' | 'purple' | 'blue' | 'orange' | 'red'
 
-export function createPresets(preset: PresetType) {
-  const primaryColor = getPrimary(preset)
+export function createPresets(preset: PresetType, mode: 'light' | 'dark' = 'light') {
+  const primaryColor = getPrimary(preset, mode)
 
   const theme = {
     palette: {
@@ -71,7 +71,7 @@ const red = {
 }
 
 export const presetOptions = [
-  { name: 'default', value: primary.main },
+  { name: 'default', value: primaryDark.main }, // Show dark mode color in preset selector
   { name: 'cyan', value: cyan.main },
   { name: 'purple', value: purple.main },
   { name: 'blue', value: blue.main },
@@ -79,13 +79,20 @@ export const presetOptions = [
   { name: 'red', value: red.main }
 ]
 
-export function getPrimary(preset: PresetType) {
-  return {
-    default: primary,
-    cyan,
-    purple,
-    blue,
-    orange,
-    red
-  }[preset]
+export function getPrimary(preset: PresetType, mode: 'light' | 'dark' = 'light') {
+  // For default preset, use mode-specific colors
+  if (preset === 'default') {
+    return mode === 'light' ? primaryLight : primaryDark
+  }
+
+  // For other presets, use their defined colors
+  return (
+    {
+      cyan,
+      purple,
+      blue,
+      orange,
+      red
+    }[preset] || (mode === 'light' ? primaryLight : primaryDark)
+  )
 }
