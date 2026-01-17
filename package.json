@@ -1,8 +1,8 @@
 {
-  "name": "chatterpay",
+  "name": "chatterpay-frontend",
   "license": "MIT",
   "private": false,
-  "author": "P4-games",
+  "author": "chatterpay",
   "version": "1.0.0",
   "description": "Crypto at a message's distance!",
   "scripts": {
