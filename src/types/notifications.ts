@@ -1,4 +1,4 @@
-export interface pushNotification {
+export interface Notification {
   cta: any
   title: any
   message: any
