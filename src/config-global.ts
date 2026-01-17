@@ -1,5 +1,3 @@
-import { ENV } from '@pushprotocol/restapi/src/lib/constants'
-
 import type { Network } from './types/networks'
 import type { IBalance, IBalances } from './types/wallet'
 
@@ -22,8 +20,6 @@ export const API3_ENABLED =
 export const DB_CHATTERPAY_NAME = process.env.DB_CHATTERPAY_NAME || 'chatterpay_dev'
 export const DB_BOT_NAME = process.env.DB_BOT_NAME || 'chatterpay-develop'
 export const RECAPTCHA_API_KEY = process.env.RECAPTCHA_API_KEY || ''
-export const PUSH_NETWORK: string = process.env.PUSH_NETWORK || '11155111'
-export const PUSH_ENVIRONMENT: ENV = (process.env.PUSH_ENVIRONMENT as ENV) || ENV.DEV
 
 // Vercel has a timeout of 10 seconds (only for free plan) in the APIs.
 // The login has certain logic between ChatterPay and the backend of the Chatizalo,
@@ -38,8 +34,6 @@ export const UI_BASE_URL = process.env.NEXT_PUBLIC_UI_URL || 'https://chatterpay
 export const USE_MOCK =
   (process.env.NEXT_PUBLIC_USE_MOCK?.toString().toLowerCase() || 'true') === 'true'
 export const ALLOWED_ORIGINS = process.env.NEXT_PUBLIC_ALLOWED_ORIGINS || '*'
-export const fromICP =
-  (process.env.NEXT_PUBLIC_FROM_ICP?.toString().toLowerCase() || 'true') === 'true'
 export const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''
 export const EXPLORER_L1_URL: string =
   process.env.NEXT_PUBLIC_EXPLORER_L1_URL || 'https://sepolia.etherscan.io'

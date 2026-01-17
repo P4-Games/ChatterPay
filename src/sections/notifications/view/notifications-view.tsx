@@ -9,7 +9,7 @@ import { useTranslate } from 'src/locales'
 import { useSettingsContext } from 'src/components/settings'
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs'
 
-import PushNotifications from '../push-notifications'
+import Notifications from '../notifications'
 
 // ----------------------------------------------------------------------
 
@@ -30,7 +30,7 @@ export default function NotificationsView() {
           mb: { xs: 3, md: 5 }
         }}
       />
-      <PushNotifications />
+      <Notifications />
     </Container>
   )
 }
