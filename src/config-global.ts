@@ -38,8 +38,6 @@ export const UI_BASE_URL = process.env.NEXT_PUBLIC_UI_URL || 'https://chatterpay
 export const USE_MOCK =
   (process.env.NEXT_PUBLIC_USE_MOCK?.toString().toLowerCase() || 'true') === 'true'
 export const ALLOWED_ORIGINS = process.env.NEXT_PUBLIC_ALLOWED_ORIGINS || '*'
-export const fromICP =
-  (process.env.NEXT_PUBLIC_FROM_ICP?.toString().toLowerCase() || 'true') === 'true'
 export const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''
 export const EXPLORER_L1_URL: string =
   process.env.NEXT_PUBLIC_EXPLORER_L1_URL || 'https://sepolia.etherscan.io'
