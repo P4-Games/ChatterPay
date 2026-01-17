@@ -101,7 +101,7 @@ export default function BankingAssetBreakdown({
     >
       <Iconify icon='eva:inbox-outline' width={64} sx={{ mb: 2, opacity: 0.48 }} />
       <Typography variant='body2'>
-        {hideSmallBalances ? 'No balances above $1' : 'No balance'}
+        {hideSmallBalances ? t('balances.no-balances-above') : t('balances.no-balance')}
       </Typography>
     </Box>
   )
@@ -202,7 +202,7 @@ export default function BankingAssetBreakdown({
   return (
     <Card>
       <CardHeader
-        title={t('Assets')}
+        title={t('balances.assets-title')}
         action={
           <FormControlLabel
             control={
@@ -214,7 +214,7 @@ export default function BankingAssetBreakdown({
             }
             label={
               <Typography variant='caption' sx={{ color: 'text.secondary' }}>
-                Hide &lt;$1
+                {t('balances.hide-small-balances')}
               </Typography>
             }
             sx={{ m: 0, gap: 1 }}

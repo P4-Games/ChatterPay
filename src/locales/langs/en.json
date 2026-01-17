@@ -294,7 +294,13 @@
     "title": "Your money",
     "deposit": "Deposit",
     "send": "Send",
-    "wapp-msg": "Hi!"
+    "wapp-msg": "Hi!",
+    "address-copied": "Address copied!",
+    "assets-title": "Assets",
+    "hide-small-balances": "Hide <$1",
+    "no-balance": "No balance",
+    "no-balances-above": "No balances above $1",
+    "view-on-explorer": "View on Explorer"
   },
   "transactions": {
     "title": "History",

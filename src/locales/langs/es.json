@@ -294,7 +294,13 @@
     "title": "Tu dinero",
     "deposit": "Depositar",
     "send": "Enviar",
-    "wapp-msg": "Hola!"
+    "wapp-msg": "Hola!",
+    "address-copied": "¡Dirección copiada!",
+    "assets-title": "Activos",
+    "hide-small-balances": "Ocultar <$1",
+    "no-balance": "Sin balance",
+    "no-balances-above": "No hay balances mayores a $1",
+    "view-on-explorer": "Ver en Explorador"
   },
   "transactions": {
     "title": "Historial",

@@ -75,19 +75,19 @@ export default function BankingBalances({
 
   const handleCopyAddress = () => {
     navigator.clipboard.writeText(tableData?.wallet || '')
-    enqueueSnackbar('Address copied!', { variant: 'success' })
+    enqueueSnackbar(t('balances.address-copied'), { variant: 'success' })
   }
 
   const renderTitle = (
     <Stack direction='row' alignItems='center' spacing={0.5} sx={{ ml: 1 }}>
-      <Typography variant='h6'>{title || 'Your money'} </Typography>
+      <Typography variant='h6'>{title || t('balances.title')} </Typography>
       {onToggleHideValues && (
         <IconButton color='inherit' onClick={onToggleHideValues} sx={{ opacity: 0.48 }}>
           <Iconify icon={hideValues ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
         </IconButton>
       )}
       <IconButton onClick={() => window.open(walletLinkL2, '_blank')}>
-        <Tooltip title='View on Explorer' arrow>
+        <Tooltip title={t('balances.view-on-explorer')} arrow>
           <Iconify icon='eva:external-link-outline' />
         </Tooltip>
       </IconButton>
