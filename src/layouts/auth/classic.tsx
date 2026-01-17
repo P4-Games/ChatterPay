@@ -43,8 +43,22 @@ export default function AuthClassicLayout({ children, image, title }: Props) {
         zIndex: 9,
         position: 'absolute',
         top: 0,
-        right: 0,
-        m: { xs: 2, md: 5 }
+        mt: { xs: 2, md: 5 },
+
+        ...(!mdUp && {
+          right: 0,
+          mx: 4
+        }),
+
+        ...(mdUp && {
+          width: '50%',
+          maxWidth: 600,
+          mx: 'auto',
+          px: 5,
+          display: 'flex',
+          justifyContent: 'flex-end',
+          left: 0
+        })
       }}
     >
       <LanguagePopover />
