@@ -514,7 +514,7 @@
       "now": "Agora",
       "unlockAt": "Desbloqueia em",
       "remaining": "Tempo restante",
-      "tryAgainAfter": "O PIN esta bloqueado. Tente apos o desbloqueio."
+      "tryAgainAfter": "O PIN esta bloqueado."
     },
     "actions": {
       "set-pin": "Definir PIN",
