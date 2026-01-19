@@ -357,6 +357,42 @@ export default function SecurityPinManagement() {
                 ))}
               </Stack>
 
+              <Divider />
+
+              <Stack spacing={1.5}>
+                <Typography variant='body2' color='text.secondary'>
+                  {t('security.pin.new-pin-label')}
+                </Typography>
+                <RHFCode
+                  name='newPin'
+                  autoFocus={false}
+                  length={pinLength}
+                  TextFieldsProps={{
+                    type: 'password',
+                    inputProps: { inputMode: 'numeric', pattern: '[0-9]*' },
+                    placeholder: '',
+                    disabled: isBlocked
+                  }}
+                />
+              </Stack>
+
+              <Stack spacing={1.5}>
+                <Typography variant='body2' color='text.secondary'>
+                  {t('security.pin.confirm-new-label')}
+                </Typography>
+                <RHFCode
+                  name='confirmNewPin'
+                  autoFocus={false}
+                  length={pinLength}
+                  TextFieldsProps={{
+                    type: 'password',
+                    inputProps: { inputMode: 'numeric', pattern: '[0-9]*' },
+                    placeholder: '',
+                    disabled: isBlocked
+                  }}
+                />
+              </Stack>
+
               <Stack spacing={2}>
                 <Typography variant='body2' color='text.secondary'>
                   {t('security.2fa.description')}
@@ -380,45 +416,16 @@ export default function SecurityPinManagement() {
                   <Stack spacing={1.5}>
                     <Alert severity='info'>{t('account.email.code-info')}</Alert>
                     <Typography variant='body2'>{t('security.2fa.codeLabel')}</Typography>
-                    <RHFCode name='twoFactorCode' length={twoFactorLength} autoFocus={false} />
+                    <RHFCode
+                      name='twoFactorCode'
+                      length={twoFactorLength}
+                      autoFocus={false}
+                      TextFieldsProps={{
+                        type: 'password'
+                      }}
+                    />
                   </Stack>
                 )}
-              </Stack>
-
-              <Divider />
-
-              <Stack spacing={1.5}>
-                <Typography variant='body2' color='text.secondary'>
-                  {t('security.pin.new-pin-label')}
-                </Typography>
-                <RHFCode
-                  name='newPin'
-                  autoFocus={false}
-                  length={pinLength}
-                  TextFieldsProps={{
-                    type: 'password',
-                    inputProps: { inputMode: 'numeric', pattern: '[0-9]*' },
-                    placeholder: pinPlaceholder,
-                    disabled: isBlocked
-                  }}
-                />
-              </Stack>
-
-              <Stack spacing={1.5}>
-                <Typography variant='body2' color='text.secondary'>
-                  {t('security.pin.confirm-new-label')}
-                </Typography>
-                <RHFCode
-                  name='confirmNewPin'
-                  autoFocus={false}
-                  length={pinLength}
-                  TextFieldsProps={{
-                    type: 'password',
-                    inputProps: { inputMode: 'numeric', pattern: '[0-9]*' },
-                    placeholder: pinPlaceholder,
-                    disabled: isBlocked
-                  }}
-                />
               </Stack>
 
               <Stack direction='row' justifyContent='flex-end'>
