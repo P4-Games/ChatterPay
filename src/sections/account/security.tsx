@@ -594,25 +594,30 @@ export default function Security() {
                 </Typography>
               </Stack>
 
-            {status.recoveryQuestionsSet && (
-              <Stack spacing={1}>
-                <Typography variant='body2' color='text.secondary'>
-                  {t('security.status.labels.recovery-questions')}
-                </Typography>
-                <Stack direction='row' spacing={1} flexWrap='wrap'>
-                  {(status.recoveryQuestionIds ?? []).length ? (
-                    status.recoveryQuestionIds.map((id) => {
-                      const match = recoveryQuestionsById.get(id)
-                      return (
-                        <Chip key={id} size='small' variant='outlined' label={match?.text ?? id} />
-                      )
-                    })
-                  ) : (
-                    <Typography variant='body2'>{t('common.nodata')}</Typography>
-                  )}
+              {status.recoveryQuestionsSet && (
+                <Stack spacing={1}>
+                  <Typography variant='body2' color='text.secondary'>
+                    {t('security.status.labels.recovery-questions')}
+                  </Typography>
+                  <Stack direction='row' spacing={1} flexWrap='wrap'>
+                    {(status.recoveryQuestionIds ?? []).length ? (
+                      status.recoveryQuestionIds.map((id) => {
+                        const match = recoveryQuestionsById.get(id)
+                        return (
+                          <Chip
+                            key={id}
+                            size='small'
+                            variant='outlined'
+                            label={match?.text ?? id}
+                          />
+                        )
+                      })
+                    ) : (
+                      <Typography variant='body2'>{t('common.nodata')}</Typography>
+                    )}
+                  </Stack>
                 </Stack>
-              </Stack>
-            )}
+              )}
 
               {isBlocked && (
                 <BlockedCountdown
