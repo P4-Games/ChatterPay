@@ -47,6 +47,21 @@ export const NFT_IMAGE_REPOSITORY = (
 export const CHATIZALO_PHONE_NUMBER = process.env.NEXT_PUBLIC_CHATIZALO_PHONE_NUMBER || 0
 
 export const NETWORK_NAME = process.env.NEXT_PUBLIC_NETWORK || 'Scroll'
+const parsedSecurityRecoveryQuestionsCount = parseInt(
+  process.env.NEXT_PUBLIC_SECURITY_RECOVERY_QUESTIONS_COUNT ?? '',
+  10
+)
+export const SECURITY_RECOVERY_QUESTIONS_COUNT =
+  Number.isNaN(parsedSecurityRecoveryQuestionsCount) || parsedSecurityRecoveryQuestionsCount < 1
+    ? 3
+    : parsedSecurityRecoveryQuestionsCount
+const parsedSecurityPinLength = parseInt(process.env.NEXT_PUBLIC_SECURITY_PIN_LENGTH ?? '', 10)
+export const SECURITY_PIN_LENGTH =
+  Number.isNaN(parsedSecurityPinLength) ||
+  parsedSecurityPinLength < 4 ||
+  parsedSecurityPinLength > 12
+    ? 6
+    : parsedSecurityPinLength
 
 // analytics
 export const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || ''
