@@ -485,7 +485,7 @@
       "questions-helper": "Select exactly {COUNT} questions."
     },
     "pin": {
-      "title": "PIN management",
+      "title": "Security PIN",
       "description": "Create or reset your PIN.",
       "copy": {
         "set": "Your PIN is set. You can change it here by answering your security questions.",
