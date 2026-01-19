@@ -82,19 +82,25 @@ function BlockedCountdown({
     <Alert severity='warning'>
       <Stack spacing={1}>
         <Typography variant='subtitle2'>{labelTryAgain}</Typography>
-        <Stack direction='row' justifyContent='space-between'>
+        <Stack
+          sx={{ width: '100%', display: 'grid', gridTemplateColumns: '1fr auto', columnGap: 2 }}
+        >
           <Typography variant='body2' color='text.secondary'>
             {labelNow}
           </Typography>
           <Typography variant='body2'>{fDateTime(now)}</Typography>
         </Stack>
-        <Stack direction='row' justifyContent='space-between'>
+        <Stack
+          sx={{ width: '100%', display: 'grid', gridTemplateColumns: '1fr auto', columnGap: 2 }}
+        >
           <Typography variant='body2' color='text.secondary'>
             {labelUnlockAt}
           </Typography>
           <Typography variant='body2'>{fDateTime(blockedUntil)}</Typography>
         </Stack>
-        <Stack direction='row' justifyContent='space-between'>
+        <Stack
+          sx={{ width: '100%', display: 'grid', gridTemplateColumns: '1fr auto', columnGap: 2 }}
+        >
           <Typography variant='body2' color='text.secondary'>
             {labelRemaining}
           </Typography>
