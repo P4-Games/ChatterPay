@@ -54,15 +54,6 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
     }
 
     const questions = body?.questions ?? []
-    if (!questions.length) {
-      return NextResponse.json(
-        { ok: false, message: 'Missing recovery questions in request' },
-        {
-          status: 400,
-          headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }
-        }
-      )
-    }
 
     const result = await setSecurityPin(phoneNumber, body.pin, questions)
 

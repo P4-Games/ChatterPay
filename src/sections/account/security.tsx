@@ -49,8 +49,6 @@ type RecoveryQuestionsFormValues = {
 type SetPinFormValues = {
   pin: string
   confirmPin: string
-  questions: SelectedSecurityQuestion[]
-  answers: SecurityQuestionAnswerMap
 }
 
 type ResetPinFormValues = {
@@ -275,9 +273,7 @@ export default function Security() {
     pin: Yup.string().matches(pinRegex, pinLengthMessage).required(t('common.required')),
     confirmPin: Yup.string()
       .oneOf([Yup.ref('pin')], t('security.validation.pin-match'))
-      .required(t('common.required')),
-    questions: questionsSchema,
-    answers: Yup.object<SecurityQuestionAnswerMap>().required()
+      .required(t('common.required'))
   })
 
   const resetPinSchema: Yup.ObjectSchema<ResetPinFormValues> = Yup.object({
@@ -304,9 +300,7 @@ export default function Security() {
     resolver: yupResolver(setPinSchema),
     defaultValues: {
       pin: '',
-      confirmPin: '',
-      questions: [],
-      answers: {}
+      confirmPin: ''
     }
   })
 
@@ -321,7 +315,6 @@ export default function Security() {
   })
 
   const selectedRecoveryQuestions = recoveryMethods.watch('questions') ?? []
-  const selectedPinQuestions = setPinMethods.watch('questions') ?? []
   const recoveryTwoFactorCode = recoveryMethods.watch('twoFactorCode') ?? ''
   const resetTwoFactorCode = resetPinMethods.watch('twoFactorCode') ?? ''
   const isRecoverySubmitDisabled =
@@ -475,18 +468,15 @@ export default function Security() {
   const handleSetPinSubmit = setPinMethods.handleSubmit(async (values) => {
     if (!userId) return
 
-    const payload = buildQuestionsPayload(values.questions, values.answers, setPinMethods.setError)
-    if (!payload) return
-
     try {
-      const response = await setPin(userId, values.pin, payload)
+      const response = await setPin(userId, values.pin)
       if (!response.ok) {
         enqueueSnackbar(securityErrorMessage(response.message), { variant: 'error' })
         return
       }
 
       enqueueSnackbar(t('security.messages.pin-set'))
-      setPinMethods.reset({ pin: '', confirmPin: '', questions: [], answers: {} })
+      setPinMethods.reset({ pin: '', confirmPin: '' })
       await mutate(securityStatusSWRKey(userId))
     } catch {
       enqueueSnackbar(t('security.errors.generic'), { variant: 'error' })
@@ -790,51 +780,6 @@ export default function Security() {
                     }}
                   />
                 </Stack>
-
-                <Typography variant='body2' color='text.secondary'>
-                  {t('security.recovery.instructions').replace(
-                    '{COUNT}',
-                    String(recoveryQuestionsCount)
-                  )}
-                </Typography>
-
-                <RHFAutocomplete
-                  multiple
-                  name='questions'
-                  label={t('security.recovery.questions-label')}
-                  placeholder={t('security.recovery.questions-placeholder')}
-                  options={questionOptions}
-                  getOptionLabel={(option) => (option as SecurityQuestionCatalogItem).text}
-                  isOptionEqualToValue={(option, value) =>
-                    (option as SecurityQuestionCatalogItem).questionId ===
-                    (value as SecurityQuestionCatalogItem).questionId
-                  }
-                  getOptionDisabled={(option) =>
-                    selectedPinQuestions.length >= recoveryQuestionsCount &&
-                    !selectedPinQuestions.some(
-                      (selected) =>
-                        selected.questionId === (option as SecurityQuestionCatalogItem).questionId
-                    )
-                  }
-                  disabled={
-                    !questionOptions.length || questionsLoading || !canSetPin || isBlockedActive
-                  }
-                  helperText={questionsHelperText}
-                />
-
-                {selectedPinQuestions.length > 0 && (
-                  <Box display='grid' gap={2}>
-                    {selectedPinQuestions.map((question) => (
-                      <RHFTextField
-                        key={question.questionId}
-                        name={`answers.${question.questionId}`}
-                        label={question.text}
-                        type='password'
-                        disabled={!canSetPin || isBlockedActive}
-                      />
-                    ))}
-                  </Box>
-                )}
 
                 <Stack direction='row' justifyContent='flex-end'>
                   <LoadingButton

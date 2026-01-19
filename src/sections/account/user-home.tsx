@@ -1,15 +1,14 @@
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
-import Grid from '@mui/material/Unstable_Grid2'
-import CardHeader from '@mui/material/CardHeader'
 import CardActionArea from '@mui/material/CardActionArea'
-
-import { paths } from 'src/routes/paths'
-import { useTranslate } from 'src/locales'
-import { useAuthContext } from 'src/auth/hooks'
-import { useSecurityStatus } from 'src/app/api/hooks/use-security'
-import Iconify from 'src/components/iconify'
+import CardHeader from '@mui/material/CardHeader'
 import { useTheme } from '@mui/material/styles'
+import Grid from '@mui/material/Unstable_Grid2'
+import { useSecurityStatus } from 'src/app/api/hooks/use-security'
+import { useAuthContext } from 'src/auth/hooks'
+import Iconify from 'src/components/iconify'
+import { useTranslate } from 'src/locales'
+import { paths } from 'src/routes/paths'
 
 // ----------------------------------------------------------------------
 
@@ -22,16 +21,19 @@ export default function UserHome() {
   const securityStatus = securityResponse?.ok ? securityResponse.data : null
   const pinStatus = securityStatus?.pinStatus
   const emailConfigured = !!(user?.email || '').trim()
-  const securityStatusColor =
-    pinStatus === 'blocked'
-      ? theme.palette.error.main
-      : pinStatus === 'not_set' || pinStatus === 'reset_required'
-        ? theme.palette.warning.main
-        : theme.palette.success.main
+  const recoveryConfigured = !!securityStatus?.recoveryQuestionsSet
+  const hasSecurityError = pinStatus === 'blocked'
+  const hasSecurityWarning =
+    !hasSecurityError &&
+    (pinStatus === 'not_set' || pinStatus === 'reset_required' || !recoveryConfigured)
+
+  const securityStatusColor = hasSecurityError
+    ? theme.palette.error.main
+    : hasSecurityWarning
+      ? theme.palette.warning.main
+      : theme.palette.success.main
   const securityStatusIcon =
-    pinStatus === 'blocked' || pinStatus === 'not_set' || pinStatus === 'reset_required'
-      ? 'eva:alert-circle-fill'
-      : 'eva:checkmark-fill'
+    hasSecurityError || hasSecurityWarning ? 'eva:alert-circle-fill' : 'eva:checkmark-fill'
 
   const showSecurityStatus = !!pinStatus
   const profileStatusColor = emailConfigured

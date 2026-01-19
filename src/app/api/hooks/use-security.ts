@@ -87,16 +87,18 @@ export async function setRecoveryQuestions(
 export async function setPin(
   userId: string,
   pin: string,
-  questions: Array<{ questionId: string; answer: string }>
+  questions?: Array<{ questionId: string; answer: string }>
 ) {
   try {
-    const res = (await post(
-      endpoints.dashboard.user.security.pin(userId),
-      { pin, questions },
-      {
-        headers: getAuthorizationHeader()
-      }
-    )) as SecurityMutationResponse
+    const payload: { pin: string; questions?: Array<{ questionId: string; answer: string }> } = {
+      pin
+    }
+    if (questions?.length) {
+      payload.questions = questions
+    }
+    const res = (await post(endpoints.dashboard.user.security.pin(userId), payload, {
+      headers: getAuthorizationHeader()
+    })) as SecurityMutationResponse
 
     return res
   } catch (error) {
