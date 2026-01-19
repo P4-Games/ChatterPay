@@ -28,6 +28,28 @@ import type { IAccount } from 'src/types/account'
 
 // ----------------------------------------------------------------------
 
+type ApiError = {
+  code?: string
+  error?: string
+}
+
+const getApiError = (ex: unknown): ApiError => {
+  if (typeof ex !== 'object' || ex === null) {
+    return {}
+  }
+
+  if ('response' in ex) {
+    const response = (ex as { response?: { data?: ApiError } }).response
+    return response?.data ?? {}
+  }
+
+  if ('code' in ex || 'error' in ex) {
+    return ex as ApiError
+  }
+
+  return {}
+}
+
 export default function ChangeEmail() {
   const { enqueueSnackbar } = useSnackbar()
   const { t } = useTranslate()
@@ -110,11 +132,17 @@ export default function ChangeEmail() {
       console.error(ex)
       if (typeof ex === 'string') {
         setErrorMsg(ex)
-      } else if (ex.code === 'USER_NOT_FOUND') {
-        setErrorMsg(t('login.msg.invalid-user'))
-      } else {
-        setErrorMsg(ex.error)
+        return
       }
+
+      const apiError = getApiError(ex)
+
+      if (apiError.code === 'USER_NOT_FOUND') {
+        setErrorMsg(t('login.msg.invalid-user'))
+        return
+      }
+
+      setErrorMsg(apiError.error || t('common.msg.unexpected-error'))
     }
   }, [startCountdown, contextUser, generate2faCodeEmail, t, setValue, enqueueSnackbar])
 
@@ -136,13 +164,22 @@ export default function ChangeEmail() {
       console.error(ex)
       if (typeof ex === 'string') {
         setErrorMsg(ex)
-      } else if (ex.code === 'USER_NOT_FOUND') {
-        setErrorMsg(t('login.msg.invalid-user'))
-      } else if (ex.code === 'INVALID_CODE') {
-        setErrorMsg(t('account.email.invalid-code'))
-      } else {
-        setErrorMsg(ex.error)
+        return
       }
+
+      const apiError = getApiError(ex)
+
+      if (apiError.code === 'USER_NOT_FOUND') {
+        setErrorMsg(t('login.msg.invalid-user'))
+        return
+      }
+
+      if (apiError.code === 'INVALID_CODE') {
+        setErrorMsg(t('login.msg.invalid-code'))
+        return
+      }
+
+      setErrorMsg(apiError.error || t('common.msg.unexpected-error'))
     }
   }
 

@@ -149,7 +149,7 @@ export default function SecurityRecoveryQuestions() {
     ) {
       methods.setError('twoFactorCode', {
         type: 'manual',
-        message: t('security.2fa.errors.invalid')
+        message: t('login.msg.invalid-code')
       })
     }
   }

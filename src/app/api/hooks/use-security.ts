@@ -68,15 +68,20 @@ export async function setRecoveryQuestions(
   questions: Array<{ questionId: string; answer: string }>,
   twoFactorCode: string
 ) {
-  const res = (await post(
-    endpoints.dashboard.user.security.recoveryQuestions(userId),
-    { questions, twoFactorCode },
-    {
-      headers: getAuthorizationHeader()
-    }
-  )) as SecurityMutationResponse
+  try {
+    const res = (await post(
+      endpoints.dashboard.user.security.recoveryQuestions(userId),
+      { questions, twoFactorCode },
+      {
+        headers: getAuthorizationHeader()
+      }
+    )) as SecurityMutationResponse
 
-  return res
+    return res
+  } catch (error) {
+    const message = extractErrorMessage(error)
+    return { ok: false, message }
+  }
 }
 
 export async function setPin(
@@ -84,15 +89,20 @@ export async function setPin(
   pin: string,
   questions: Array<{ questionId: string; answer: string }>
 ) {
-  const res = (await post(
-    endpoints.dashboard.user.security.pin(userId),
-    { pin, questions },
-    {
-      headers: getAuthorizationHeader()
-    }
-  )) as SecurityMutationResponse
+  try {
+    const res = (await post(
+      endpoints.dashboard.user.security.pin(userId),
+      { pin, questions },
+      {
+        headers: getAuthorizationHeader()
+      }
+    )) as SecurityMutationResponse
 
-  return res
+    return res
+  } catch (error) {
+    const message = extractErrorMessage(error)
+    return { ok: false, message }
+  }
 }
 
 export async function resetPin(
@@ -101,13 +111,36 @@ export async function resetPin(
   answers: Array<{ questionId: string; answer: string }>,
   twoFactorCode: string
 ) {
-  const res = (await post(
-    endpoints.dashboard.user.security.resetPin(userId),
-    { newPin, answers, twoFactorCode },
-    {
-      headers: getAuthorizationHeader()
-    }
-  )) as SecurityMutationResponse
+  try {
+    const res = (await post(
+      endpoints.dashboard.user.security.resetPin(userId),
+      { newPin, answers, twoFactorCode },
+      {
+        headers: getAuthorizationHeader()
+      }
+    )) as SecurityMutationResponse
 
-  return res
+    return res
+  } catch (error) {
+    const message = extractErrorMessage(error)
+    return { ok: false, message }
+  }
+}
+
+function extractErrorMessage(error: unknown): string {
+  if (typeof error !== 'object' || error === null) {
+    return 'Request failed'
+  }
+
+  if ('response' in error) {
+    const response = (error as { response?: { data?: { message?: string; error?: string } } })
+      .response
+    return response?.data?.message || response?.data?.error || 'Request failed'
+  }
+
+  if ('message' in error && typeof (error as { message?: unknown }).message === 'string') {
+    return (error as { message: string }).message
+  }
+
+  return 'Request failed'
 }

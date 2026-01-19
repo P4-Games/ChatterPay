@@ -207,11 +207,11 @@ export default function Security() {
     if (!normalized) return t('security.errors.generic')
 
     if (normalized.includes('invalid_code') || normalized.includes('invalid code'))
-      return t('security.2fa.errors.invalid')
+      return t('login.msg.invalid-code')
     if (normalized.includes('code_expired') || normalized.includes('expired'))
       return t('security.2fa.errors.expired')
     if (normalized.includes('missing_2fa_code') || normalized.includes('missing 2fa'))
-      return t('security.2fa.errors.invalid')
+      return t('login.msg.invalid-code')
 
     if (normalized.includes('pin already set')) return t('security.errors.pinAlreadySet')
     if (normalized.includes('recovery answers are incorrect'))
@@ -399,7 +399,7 @@ export default function Security() {
     ) {
       setError('twoFactorCode', {
         type: 'manual',
-        message: t('security.2fa.errors.invalid')
+        message: t('login.msg.invalid-code')
       })
     }
   }

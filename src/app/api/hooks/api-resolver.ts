@@ -27,7 +27,8 @@ axiosInstance.interceptors.response.use(
   (res) => res,
   (error) => {
     if (error.response?.status === 401) {
-      if (typeof window !== 'undefined') {
+      const errorCode = error.response?.data?.code
+      if (typeof window !== 'undefined' && errorCode === 'NOT_AUTHORIZED') {
         window.dispatchEvent(new Event('auth:unauthorized'))
       }
       return Promise.reject(error)

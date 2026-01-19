@@ -214,7 +214,7 @@ export default function SecurityPinManagement() {
     ) {
       resetPinMethods.setError('twoFactorCode', {
         type: 'manual',
-        message: t('security.2fa.errors.invalid')
+        message: t('login.msg.invalid-code')
       })
     }
   }
