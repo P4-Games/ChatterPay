@@ -474,7 +474,7 @@
       "questions-helper": "Selecione exatamente {COUNT} perguntas."
     },
     "pin": {
-      "title": "Gestao de PIN",
+      "title": "PIN de segurança",
       "description": "Crie ou redefina seu PIN.",
       "copy": {
         "set": "Seu PIN esta configurado. Voce pode altera-lo aqui respondendo as perguntas de seguranca.",
