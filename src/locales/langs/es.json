@@ -473,7 +473,7 @@
       "questions-helper": "Selecciona exactamente {COUNT} preguntas."
     },
     "pin": {
-      "title": "Gestión de PIN",
+      "title": "PIN de Seguridad",
       "description": "Crea o restablece tu PIN.",
       "copy": {
         "set": "Tu PIN esta configurado. Podes cambiarlo aca respondiendo a tus preguntas de seguridad.",
