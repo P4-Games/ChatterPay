@@ -166,25 +166,26 @@ export async function setSecurityPin(
   pin: string,
   questions: Array<{ questionId: string; answer: string }>
 ): Promise<ServiceResult<SecurityPinResult>> {
+  const questionsPayload = (questions ?? []).map((question) => ({
+    question_id: question.questionId,
+    answer: question.answer
+  }))
+  const payload: Record<string, unknown> = {
+    channel_user_id: phoneNumber,
+    pin,
+    channel: 'frontend'
+  }
+  if (questionsPayload.length) {
+    payload.questions = questionsPayload
+  }
+
   const response = await axios.post<
     BackendResponse<{
       updated?: boolean
       pin_status?: 'active'
       last_set_at?: string
     }>
-  >(
-    `${BACKEND_API_URL}/set_security_pin/`,
-    {
-      channel_user_id: phoneNumber,
-      pin,
-      channel: 'frontend',
-      questions: questions.map((question) => ({
-        question_id: question.questionId,
-        answer: question.answer
-      }))
-    },
-    { headers: backendHeaders }
-  )
+  >(`${BACKEND_API_URL}/set_security_pin/`, payload, { headers: backendHeaders })
 
   if (response.data.status !== 'success') {
     return { ok: false, message: normalizeError(response.data) }
