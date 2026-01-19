@@ -1,58 +1,62 @@
-import * as Yup from 'yup'
-import { useMemo, useEffect, useState, useCallback } from 'react'
-import { useSWRConfig } from 'swr'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useForm } from 'react-hook-form'
-
-import Box from '@mui/material/Box'
-import Card from '@mui/material/Card'
-import Chip from '@mui/material/Chip'
-import Stack from '@mui/material/Stack'
-import Alert from '@mui/material/Alert'
-import Button from '@mui/material/Button'
-import Divider from '@mui/material/Divider'
-import Typography from '@mui/material/Typography'
-import CardHeader from '@mui/material/CardHeader'
-import CardContent from '@mui/material/CardContent'
 import LoadingButton from '@mui/lab/LoadingButton'
-
-import { fDateTime, fToNow } from 'src/utils/format-time'
-import { useAuthContext } from 'src/auth/hooks'
-import { SECURITY_RECOVERY_QUESTIONS_COUNT, SECURITY_PIN_LENGTH } from 'src/config-global'
-import { useTranslate } from 'src/locales'
-import { useCountdownSeconds } from 'src/hooks/use-countdown'
-import { useSnackbar } from 'src/components/snackbar'
-import FormProvider, { RHFCode, RHFAutocomplete, RHFTextField } from 'src/components/hook-form'
-import WhatsappCodeButton from 'src/components/whatsapp-code-button'
+import Alert from '@mui/material/Alert'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
+import CardHeader from '@mui/material/CardHeader'
+import Chip from '@mui/material/Chip'
+import Divider from '@mui/material/Divider'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useForm } from 'react-hook-form'
 import {
-  setPin,
   resetPin,
-  useSecurityStatus,
+  securityStatusSWRKey,
+  setPin,
   setRecoveryQuestions,
   useSecurityQuestionsCatalog,
-  securityStatusSWRKey,
-  type SecurityQuestion
+  useSecurityStatus
 } from 'src/app/api/hooks/use-security'
+import { useAuthContext } from 'src/auth/hooks'
+import FormProvider, { RHFAutocomplete, RHFCode, RHFTextField } from 'src/components/hook-form'
+import { useSnackbar } from 'src/components/snackbar'
+import WhatsappCodeButton from 'src/components/whatsapp-code-button'
+import { SECURITY_PIN_LENGTH, SECURITY_RECOVERY_QUESTIONS_COUNT } from 'src/config-global'
+import { useCountdownSeconds } from 'src/hooks/use-countdown'
+import { useTranslate } from 'src/locales'
+import { fDateTime, fToNow } from 'src/utils/format-time'
+import { useSWRConfig } from 'swr'
+import * as Yup from 'yup'
+
+import type {
+  SelectedSecurityQuestion,
+  SecurityQuestionAnswerInput,
+  SecurityQuestionAnswerMap,
+  SecurityQuestionCatalogItem
+} from './security-types'
 
 // ----------------------------------------------------------------------
 
 type RecoveryQuestionsFormValues = {
-  questions: SecurityQuestion[]
-  answers: Record<string, string>
+  questions: SelectedSecurityQuestion[]
+  answers: SecurityQuestionAnswerMap
   twoFactorCode: string
 }
 
 type SetPinFormValues = {
   pin: string
   confirmPin: string
-  questions: SecurityQuestion[]
-  answers: Record<string, string>
+  questions: SelectedSecurityQuestion[]
+  answers: SecurityQuestionAnswerMap
 }
 
 type ResetPinFormValues = {
   newPin: string
   confirmNewPin: string
-  answers: Record<string, string>
+  answers: SecurityQuestionAnswerMap
   twoFactorCode: string
 }
 
@@ -161,7 +165,9 @@ export default function Security() {
     useSecurityQuestionsCatalog(userId)
 
   const status = statusResponse?.ok ? statusResponse.data : null
-  const questionsCatalog = questionsResponse?.ok ? questionsResponse.data.questions : []
+  const questionsCatalog: SecurityQuestionCatalogItem[] = questionsResponse?.ok
+    ? questionsResponse.data.questions
+    : []
 
   const blockedUntil = status?.blockedUntil ? new Date(status.blockedUntil) : null
   const isBlocked = status?.pinStatus === 'blocked' && blockedUntil
@@ -242,41 +248,44 @@ export default function Security() {
     String(recoveryQuestionsCount)
   )
 
+  const questionSchema = Yup.object({
+    questionId: Yup.string().required(),
+    text: Yup.string().required()
+  })
+
   const questionsSchema = Yup.array()
-    .of(
-      Yup.object({
-        questionId: Yup.string().required(),
-        text: Yup.string().required()
-      })
-    )
+    .of(questionSchema)
     .required(selectExactlyMessage)
     .min(recoveryQuestionsCount, selectExactlyMessage)
     .max(recoveryQuestionsCount, selectExactlyMessage)
     .test('unique-questions', t('security.validation.unique-questions'), (value) => {
-      const ids = value?.map((item) => item.questionId) ?? []
+      const ids = (value ?? []).map((item) => item.questionId)
       return new Set(ids).size === ids.length
     })
 
-  const recoverySchema = Yup.object().shape({
+  const recoverySchema: Yup.ObjectSchema<RecoveryQuestionsFormValues> = Yup.object({
     questions: questionsSchema,
+    answers: Yup.object<SecurityQuestionAnswerMap>().required(),
     twoFactorCode: Yup.string()
       .matches(twoFactorRegex, t('security.2fa.errors.invalid'))
       .required(t('common.required'))
   })
 
-  const setPinSchema = Yup.object().shape({
+  const setPinSchema: Yup.ObjectSchema<SetPinFormValues> = Yup.object({
     pin: Yup.string().matches(pinRegex, pinLengthMessage).required(t('common.required')),
     confirmPin: Yup.string()
       .oneOf([Yup.ref('pin')], t('security.validation.pin-match'))
       .required(t('common.required')),
-    questions: questionsSchema
+    questions: questionsSchema,
+    answers: Yup.object<SecurityQuestionAnswerMap>().required()
   })
 
-  const resetPinSchema = Yup.object().shape({
+  const resetPinSchema: Yup.ObjectSchema<ResetPinFormValues> = Yup.object({
     newPin: Yup.string().matches(pinRegex, pinLengthMessage).required(t('common.required')),
     confirmNewPin: Yup.string()
       .oneOf([Yup.ref('newPin')], t('security.validation.pin-match'))
       .required(t('common.required')),
+    answers: Yup.object<SecurityQuestionAnswerMap>().required(),
     twoFactorCode: Yup.string()
       .matches(twoFactorRegex, t('security.2fa.errors.invalid'))
       .required(t('common.required'))
@@ -331,7 +340,7 @@ export default function Security() {
   }, [mutate, userId])
 
   const recoveryQuestionsById = useMemo(() => {
-    const map = new Map<string, SecurityQuestion>()
+    const map = new Map<string, SecurityQuestionCatalogItem>()
     questionOptions.forEach((question) => {
       map.set(question.questionId, question)
     })
@@ -349,10 +358,10 @@ export default function Security() {
   }, [status?.recoveryQuestionIds, recoveryQuestionsById])
 
   const buildQuestionsPayload = (
-    questions: SecurityQuestion[],
-    answers: Record<string, string>,
+    questions: SelectedSecurityQuestion[],
+    answers: SecurityQuestionAnswerMap,
     setError: (name: any, error: any) => void
-  ) => {
+  ): SecurityQuestionAnswerInput[] | null => {
     const missing = questions.filter((question) => !answers?.[question.questionId]?.trim())
     if (missing.length) {
       missing.forEach((question) => {
@@ -665,14 +674,16 @@ export default function Security() {
                 label={t('security.recovery.questions-label')}
                 placeholder={t('security.recovery.questions-placeholder')}
                 options={questionOptions}
-                getOptionLabel={(option) => (option as SecurityQuestion).text}
+                getOptionLabel={(option) => (option as SecurityQuestionCatalogItem).text}
                 isOptionEqualToValue={(option, value) =>
-                  (option as SecurityQuestion).questionId === (value as SecurityQuestion).questionId
+                  (option as SecurityQuestionCatalogItem).questionId ===
+                  (value as SecurityQuestionCatalogItem).questionId
                 }
                 getOptionDisabled={(option) =>
                   selectedRecoveryQuestions.length >= recoveryQuestionsCount &&
                   !selectedRecoveryQuestions.some(
-                    (selected) => selected.questionId === (option as SecurityQuestion).questionId
+                    (selected) =>
+                      selected.questionId === (option as SecurityQuestionCatalogItem).questionId
                   )
                 }
                 disabled={!questionOptions.length || questionsLoading}
@@ -793,15 +804,16 @@ export default function Security() {
                   label={t('security.recovery.questions-label')}
                   placeholder={t('security.recovery.questions-placeholder')}
                   options={questionOptions}
-                  getOptionLabel={(option) => (option as SecurityQuestion).text}
+                  getOptionLabel={(option) => (option as SecurityQuestionCatalogItem).text}
                   isOptionEqualToValue={(option, value) =>
-                    (option as SecurityQuestion).questionId ===
-                    (value as SecurityQuestion).questionId
+                    (option as SecurityQuestionCatalogItem).questionId ===
+                    (value as SecurityQuestionCatalogItem).questionId
                   }
                   getOptionDisabled={(option) =>
                     selectedPinQuestions.length >= recoveryQuestionsCount &&
                     !selectedPinQuestions.some(
-                      (selected) => selected.questionId === (option as SecurityQuestion).questionId
+                      (selected) =>
+                        selected.questionId === (option as SecurityQuestionCatalogItem).questionId
                     )
                   }
                   disabled={
@@ -903,9 +915,9 @@ export default function Security() {
                     TextFieldsProps={{
                       type: 'password',
                       inputProps: { inputMode: 'numeric', pattern: '[0-9]*' },
-                      placeholder: pinPlaceholder
+                      placeholder: pinPlaceholder,
+                      disabled: isBlockedActive
                     }}
-                    disabled={isBlockedActive}
                   />
                 </Stack>
 
@@ -920,9 +932,9 @@ export default function Security() {
                     TextFieldsProps={{
                       type: 'password',
                       inputProps: { inputMode: 'numeric', pattern: '[0-9]*' },
-                      placeholder: pinPlaceholder
+                      placeholder: pinPlaceholder,
+                      disabled: isBlockedActive
                     }}
-                    disabled={isBlockedActive}
                   />
                 </Stack>
 

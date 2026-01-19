@@ -100,7 +100,7 @@ export default function ReferralsReferredCode() {
         {isAlreadySet && <Alert severity='info'>{t('referrals.errors.already-set')}</Alert>}
 
         {!isAlreadySet && (
-          <FormProvider methods={methods} onSubmit={(event) => event.preventDefault()}>
+          <FormProvider methods={methods} onSubmit={() => {}}>
             <Stack spacing={2} direction={{ xs: 'column', sm: 'row' }} alignItems='center'>
               <RHFTextField
                 name='referralByCode'

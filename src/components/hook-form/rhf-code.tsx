@@ -2,6 +2,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { MuiOtpInput, type MuiOtpInputProps } from 'mui-one-time-password-input'
 
 import FormHelperText from '@mui/material/FormHelperText'
+import type { TextFieldProps } from '@mui/material/TextField'
 
 // ----------------------------------------------------------------------
 
@@ -18,18 +19,37 @@ export default function RHFCode({ name, ...other }: RHFCodesProps) {
       control={control}
       render={({ field, fieldState: { error } }) => {
         const { TextFieldsProps, length, ...rest } = other
-        const mergedInputProps = {
+        const isTextFieldsPropsFn = typeof TextFieldsProps === 'function'
+        const baseInputProps: TextFieldProps['inputProps'] = {
           inputMode: 'numeric',
-          pattern: '[0-9]*',
-          ...(TextFieldsProps?.inputProps ?? {})
+          pattern: '[0-9]*'
         }
-        const mergedTextFieldsProps = {
-          type: TextFieldsProps?.type ?? 'number',
-          placeholder: TextFieldsProps?.placeholder ?? '',
-          ...TextFieldsProps,
-          inputProps: mergedInputProps,
-          error: TextFieldsProps?.error ?? !!error
-        }
+
+        const mergedTextFieldsProps: MuiOtpInputProps['TextFieldsProps'] = isTextFieldsPropsFn
+          ? (index: number) => {
+              const resolvedProps = TextFieldsProps(index)
+              const mergedInputProps = {
+                ...baseInputProps,
+                ...(resolvedProps?.inputProps ?? {})
+              }
+              return {
+                type: resolvedProps?.type ?? 'number',
+                placeholder: resolvedProps?.placeholder ?? '',
+                ...resolvedProps,
+                inputProps: mergedInputProps,
+                error: resolvedProps?.error ?? !!error
+              }
+            }
+          : {
+              type: TextFieldsProps?.type ?? 'number',
+              placeholder: TextFieldsProps?.placeholder ?? '',
+              ...TextFieldsProps,
+              inputProps: {
+                ...baseInputProps,
+                ...(TextFieldsProps?.inputProps ?? {})
+              },
+              error: TextFieldsProps?.error ?? !!error
+            }
 
         return (
           <div>
