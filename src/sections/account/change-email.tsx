@@ -9,6 +9,7 @@ import Stack from '@mui/material/Stack'
 import Alert from '@mui/material/Alert'
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Unstable_Grid2'
+import Typography from '@mui/material/Typography'
 import LoadingButton from '@mui/lab/LoadingButton'
 
 import { paths } from 'src/routes/paths'
@@ -21,16 +22,38 @@ import { useAuthContext } from 'src/auth/hooks'
 
 import { useSnackbar } from 'src/components/snackbar'
 import FormProvider, { RHFCode, RHFTextField } from 'src/components/hook-form'
+import WhatsappCodeButton from 'src/components/whatsapp-code-button'
 
 import type { IAccount } from 'src/types/account'
 
 // ----------------------------------------------------------------------
 
+type ApiError = {
+  code?: string
+  error?: string
+}
+
+const getApiError = (ex: unknown): ApiError => {
+  if (typeof ex !== 'object' || ex === null) {
+    return {}
+  }
+
+  if ('response' in ex) {
+    const response = (ex as { response?: { data?: ApiError } }).response
+    return response?.data ?? {}
+  }
+
+  if ('code' in ex || 'error' in ex) {
+    return ex as ApiError
+  }
+
+  return {}
+}
+
 export default function ChangeEmail() {
   const { enqueueSnackbar } = useSnackbar()
   const { t } = useTranslate()
-  const { generate2faCodeEmail, updateEmail } = useAuthContext()
-  const { user } = useAuthContext()
+  const { generate2faCodeEmail, updateEmail, updateUser, user } = useAuthContext()
   const router = useRouter()
 
   const [codeSent, setCodeSent] = useState(false)
@@ -109,11 +132,17 @@ export default function ChangeEmail() {
       console.error(ex)
       if (typeof ex === 'string') {
         setErrorMsg(ex)
-      } else if (ex.code === 'USER_NOT_FOUND') {
-        setErrorMsg(t('login.msg.invalid-user'))
-      } else {
-        setErrorMsg(ex.error)
+        return
       }
+
+      const apiError = getApiError(ex)
+
+      if (apiError.code === 'USER_NOT_FOUND') {
+        setErrorMsg(t('login.msg.invalid-user'))
+        return
+      }
+
+      setErrorMsg(apiError.error || t('common.msg.unexpected-error'))
     }
   }, [startCountdown, contextUser, generate2faCodeEmail, t, setValue, enqueueSnackbar])
 
@@ -125,20 +154,32 @@ export default function ChangeEmail() {
     try {
       // @ts-expect-error "error-expected"
       await updateEmail?.(contextUser!.phoneNumber, data.code || '', confirmEmail, contextUser!.id)
-      router.push(paths.dashboard.user.root)
+      if (user) {
+        updateUser({ ...user, email: confirmEmail })
+      }
+      router.push(paths.dashboard.user.profile)
       setErrorMsg('')
       enqueueSnackbar(t('common.msg.update-success'))
     } catch (ex) {
       console.error(ex)
       if (typeof ex === 'string') {
         setErrorMsg(ex)
-      } else if (ex.code === 'USER_NOT_FOUND') {
-        setErrorMsg(t('login.msg.invalid-user'))
-      } else if (ex.code === 'INVALID_CODE') {
-        setErrorMsg(t('account.email.invalid-code'))
-      } else {
-        setErrorMsg(ex.error)
+        return
       }
+
+      const apiError = getApiError(ex)
+
+      if (apiError.code === 'USER_NOT_FOUND') {
+        setErrorMsg(t('login.msg.invalid-user'))
+        return
+      }
+
+      if (apiError.code === 'INVALID_CODE') {
+        setErrorMsg(t('login.msg.invalid-code'))
+        return
+      }
+
+      setErrorMsg(apiError.error || t('common.msg.unexpected-error'))
     }
   }
 
@@ -173,17 +214,20 @@ export default function ChangeEmail() {
 
             {errorMsg && <Alert severity='error'>{errorMsg}</Alert>}
 
+            <Typography variant='body2' color='text.secondary'>
+              {t('security.2fa.description')}
+            </Typography>
+
             <Stack direction='row' spacing={2} alignItems='center'>
-              <LoadingButton
-                variant='contained'
+              <WhatsappCodeButton
+                counting={counting}
+                countdown={countdown}
                 color='primary'
                 disabled={isSendCodeDisabled}
                 onClick={handleSendCode}
-              >
-                {counting
-                  ? `${t('account.email.resend-code')} (${countdown}s)`
-                  : t('account.email.send-code')}
-              </LoadingButton>
+                sendLabel={t('account.email.send-code')}
+                resendLabel={t('account.email.resend-code')}
+              />
             </Stack>
           </Box>
 

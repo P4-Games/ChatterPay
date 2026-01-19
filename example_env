@@ -35,6 +35,8 @@ NEXT_PUBLIC_EXPLORER_L2_URL='https://sepolia.arbiscan.io/'
 NEXT_PUBLIC_EXPLORER_NFT_URL='https://sepolia.arbiscan.io'
 NEXT_PUBLIC_CHATIZALO_PHONE_NUMBER={chatizalo phone number}
 NEXT_PUBLIC_NETWORK='scroll sepolia'
+NEXT_PUBLIC_SECURITY_RECOVERY_QUESTIONS_COUNT=3
+NEXT_PUBLIC_SECURITY_PIN_LENGTH=6
 
 # analytics
 NEXT_PUBLIC_GA_MEASUREMENT_ID={google analytics measurement id}

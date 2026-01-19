@@ -3,6 +3,7 @@
 import { useMemo, useEffect, useReducer, useCallback } from 'react'
 
 import { post, fetcher, endpoints } from 'src/app/api/hooks/api-resolver'
+import { setSession } from 'src/auth/context/jwt/utils'
 
 import { AuthContext } from './auth-context'
 import type { AuthUserType, ActionMapType, AuthStateType, AuthUserCodeType } from '../../types'
@@ -91,6 +92,18 @@ export function AuthProvider({ children }: Props) {
     initialize()
   }, [initialize])
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const handleUnauthorized = () => {
+      setSession(null)
+      dispatch({ type: Types.LOGOUT })
+    }
+
+    window.addEventListener('auth:unauthorized', handleUnauthorized)
+    return () => window.removeEventListener('auth:unauthorized', handleUnauthorized)
+  }, [])
+
   const generate2faCodeLogin = useCallback(
     async (phone: string, codeMsg: string, recaptchaToken: string) => {
       await post(endpoints.auth.code(), { phone, codeMsg, recaptchaToken })
@@ -116,8 +129,9 @@ export function AuthProvider({ children }: Props) {
 
   const updateEmail = useCallback(
     async (phone: string, code: string, email: string, id: string) => {
-      await post(endpoints.dashboard.user.updateEmail(id), { phone, code, email })
-      const updatedUser = { ...state.user, email }
+      const res = await post(endpoints.dashboard.user.updateEmail(id), { phone, code, email })
+      const baseUser = state.user ?? {}
+      const updatedUser = res?.user ? res.user : { ...baseUser, email }
       dispatch({ type: Types.UPDATE_EMAIL, payload: { user: updatedUser } })
     },
     [state]

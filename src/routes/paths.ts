@@ -43,9 +43,18 @@ export const paths = {
       all: `${ROOTS.DASHBOARD}/transfer/all`
     },
     user: {
-      root: `${ROOTS.DASHBOARD}/user/account`,
+      root: `${ROOTS.DASHBOARD}/user`,
+      account: `${ROOTS.DASHBOARD}/user/account`,
+      profile: `${ROOTS.DASHBOARD}/user/profile`,
+      profileName: `${ROOTS.DASHBOARD}/user/profile/name`,
+      referrals: `${ROOTS.DASHBOARD}/user/referrals`,
+      referralsReferredCode: `${ROOTS.DASHBOARD}/user/referrals/referred-code`,
       email: `${ROOTS.DASHBOARD}/user/account/email`,
-      notifications: `${ROOTS.DASHBOARD}/user/notifications`
+      notifications: `${ROOTS.DASHBOARD}/user/notifications`,
+      security: `${ROOTS.DASHBOARD}/user/security`,
+      securityStatus: `${ROOTS.DASHBOARD}/user/security/status`,
+      securityRecovery: `${ROOTS.DASHBOARD}/user/security/recovery-questions`,
+      securityPin: `${ROOTS.DASHBOARD}/user/security/pin`
     }
   }
 }
