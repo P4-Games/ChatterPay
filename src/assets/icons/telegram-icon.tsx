@@ -3,6 +3,8 @@ import { memo } from 'react'
 import { useTheme } from '@mui/material/styles'
 import Box, { type BoxProps } from '@mui/material/Box'
 
+import { useTranslate } from 'src/locales'
+
 type Mode = 'brand' | 'light' | 'dark'
 
 interface TelegramIconProps extends BoxProps {
@@ -16,6 +18,7 @@ interface TelegramIconProps extends BoxProps {
  * - mode='dark'   -> circle black, plane white
  */
 function TelegramIcon({ mode = 'brand', ...other }: TelegramIconProps) {
+  const { t } = useTranslate()
   const theme = useTheme()
 
   const bg =
@@ -36,7 +39,7 @@ function TelegramIcon({ mode = 'brand', ...other }: TelegramIconProps) {
     <Box
       component='svg'
       role='img'
-      aria-label='Telegram'
+      aria-label={t('common.accessibility.telegram-icon')}
       width='100%'
       height='100%'
       viewBox='0 0 96 96'
