@@ -1,7 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import LoadingButton from '@mui/lab/LoadingButton'
 import Alert from '@mui/material/Alert'
-import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Divider from '@mui/material/Divider'
@@ -17,10 +16,10 @@ import {
   useSecurityStatus
 } from 'src/app/api/hooks/use-security'
 import { useAuthContext } from 'src/auth/hooks'
-import FormProvider, { RHFAutocomplete, RHFCode, RHFTextField } from 'src/components/hook-form'
+import FormProvider, { RHFCode, RHFTextField } from 'src/components/hook-form'
 import { useSnackbar } from 'src/components/snackbar'
 import WhatsappCodeButton from 'src/components/whatsapp-code-button'
-import { SECURITY_PIN_LENGTH, SECURITY_RECOVERY_QUESTIONS_COUNT } from 'src/config-global'
+import { SECURITY_PIN_LENGTH } from 'src/config-global'
 import { useCountdownSeconds } from 'src/hooks/use-countdown'
 import { useTranslate } from 'src/locales'
 import { useRouter } from 'src/routes/hooks'
@@ -40,8 +39,6 @@ import type {
 type SetPinFormValues = {
   pin: string
   confirmPin: string
-  questions: SelectedSecurityQuestion[]
-  answers: SecurityQuestionAnswerMap
 }
 
 type ResetPinFormValues = {
@@ -59,7 +56,6 @@ export default function SecurityPinManagement() {
   const { user, generate2faCodeEmail } = useAuthContext()
 
   const pinLength = SECURITY_PIN_LENGTH
-  const recoveryQuestionsCount = SECURITY_RECOVERY_QUESTIONS_COUNT
   const pinRegex = new RegExp(`^\\d{${pinLength}}$`)
   const pinLengthMessage = t('security.pin.validation.exactLength').replace(
     '{length}',
@@ -70,9 +66,7 @@ export default function SecurityPinManagement() {
   const twoFactorRegex = new RegExp(`^\\d{${twoFactorLength}}$`)
 
   const { data: statusResponse } = useSecurityStatus(user?.id)
-  const { data: questionsResponse, isLoading: questionsLoading } = useSecurityQuestionsCatalog(
-    user?.id
-  )
+  const { data: questionsResponse } = useSecurityQuestionsCatalog(user?.id)
 
   const status = statusResponse?.ok ? statusResponse.data : null
   const canSetPin = status?.pinStatus === 'not_set'
@@ -82,39 +76,11 @@ export default function SecurityPinManagement() {
   const questionsCatalog: SecurityQuestionCatalogItem[] = questionsResponse?.ok
     ? questionsResponse.data.questions
     : []
-  const questionOptions = useMemo(() => questionsCatalog ?? [], [questionsCatalog])
-
-  const questionsHelperText = t('security.recovery.questions-helper').replace(
-    '{COUNT}',
-    String(recoveryQuestionsCount)
-  )
-  const selectExactlyMessage = t('security.validation.select-exactly').replace(
-    '{COUNT}',
-    String(recoveryQuestionsCount)
-  )
-
-  const questionSchema = Yup.object({
-    questionId: Yup.string().required(),
-    text: Yup.string().required()
-  })
-
-  const questionsSchema = Yup.array()
-    .of(questionSchema)
-    .required(selectExactlyMessage)
-    .min(recoveryQuestionsCount, selectExactlyMessage)
-    .max(recoveryQuestionsCount, selectExactlyMessage)
-    .test('unique-questions', t('security.validation.unique-questions'), (value) => {
-      const ids = (value ?? []).map((item) => item.questionId)
-      return new Set(ids).size === ids.length
-    })
-
   const setPinSchema: Yup.ObjectSchema<SetPinFormValues> = Yup.object({
     pin: Yup.string().matches(pinRegex, pinLengthMessage).required(t('common.required')),
     confirmPin: Yup.string()
       .oneOf([Yup.ref('pin')], t('security.validation.pin-match'))
-      .required(t('common.required')),
-    questions: questionsSchema,
-    answers: Yup.object<SecurityQuestionAnswerMap>().required()
+      .required(t('common.required'))
   })
 
   const resetPinSchema: Yup.ObjectSchema<ResetPinFormValues> = Yup.object({
@@ -132,9 +98,7 @@ export default function SecurityPinManagement() {
     resolver: yupResolver(setPinSchema),
     defaultValues: {
       pin: '',
-      confirmPin: '',
-      questions: [],
-      answers: {}
+      confirmPin: ''
     }
   })
 
@@ -148,7 +112,6 @@ export default function SecurityPinManagement() {
     }
   })
 
-  const selectedPinQuestions = setPinMethods.watch('questions') ?? []
   const resetAnswers = resetPinMethods.watch('answers') ?? {}
   const resetTwoFactorCode = resetPinMethods.watch('twoFactorCode') ?? ''
 
@@ -174,6 +137,17 @@ export default function SecurityPinManagement() {
       }
     })
   }, [status?.recoveryQuestionIds, recoveryQuestionsById])
+
+  const securityErrorMessage = (message?: string) => {
+    const normalized = (message ?? '').toLowerCase().trim()
+    if (!normalized) return t('security.errors.generic')
+
+    if (normalized.includes('recovery answers are incorrect')) {
+      return t('security.errors.incorrectRecoveryAnswers')
+    }
+
+    return t('security.errors.generic')
+  }
 
   const buildQuestionsPayload = (
     questions: SelectedSecurityQuestion[],
@@ -236,18 +210,15 @@ export default function SecurityPinManagement() {
   const handleSetPinSubmit = setPinMethods.handleSubmit(async (values) => {
     if (!user?.id) return
 
-    const payload = buildQuestionsPayload(values.questions, values.answers, setPinMethods.setError)
-    if (!payload) return
-
     try {
-      const response = await setPin(user.id, values.pin, payload)
+      const response = await setPin(user.id, values.pin)
       if (!response.ok) {
         enqueueSnackbar(t('security.errors.generic'), { variant: 'error' })
         return
       }
 
       enqueueSnackbar(t('security.messages.pin-set'))
-      setPinMethods.reset({ pin: '', confirmPin: '', questions: [], answers: {} })
+      setPinMethods.reset({ pin: '', confirmPin: '' })
       await mutate(securityStatusSWRKey(user.id))
       router.push(paths.dashboard.user.security)
     } catch {
@@ -279,7 +250,7 @@ export default function SecurityPinManagement() {
       const response = await resetPin(user.id, values.newPin, payload, values.twoFactorCode)
       if (!response.ok) {
         applyTwoFactorError(response.message)
-        enqueueSnackbar(t('security.errors.generic'), { variant: 'error' })
+        enqueueSnackbar(securityErrorMessage(response.message), { variant: 'error' })
         return
       }
 
@@ -356,49 +327,6 @@ export default function SecurityPinManagement() {
                   }}
                 />
               </Stack>
-
-              <Typography variant='body2' color='text.secondary'>
-                {t('security.recovery.instructions').replace(
-                  '{COUNT}',
-                  String(recoveryQuestionsCount)
-                )}
-              </Typography>
-
-              <RHFAutocomplete
-                multiple
-                name='questions'
-                label={t('security.recovery.questions-label')}
-                placeholder={t('security.recovery.questions-placeholder')}
-                options={questionOptions}
-                getOptionLabel={(option) => (option as SecurityQuestionCatalogItem).text}
-                isOptionEqualToValue={(option, value) =>
-                  (option as SecurityQuestionCatalogItem).questionId ===
-                  (value as SecurityQuestionCatalogItem).questionId
-                }
-                getOptionDisabled={(option) =>
-                  selectedPinQuestions.length >= recoveryQuestionsCount &&
-                  !selectedPinQuestions.some(
-                    (selected) =>
-                      selected.questionId === (option as SecurityQuestionCatalogItem).questionId
-                  )
-                }
-                disabled={!questionOptions.length || questionsLoading || isBlocked}
-                helperText={questionsHelperText}
-              />
-
-              {selectedPinQuestions.length > 0 && (
-                <Box display='grid' gap={2}>
-                  {selectedPinQuestions.map((question) => (
-                    <RHFTextField
-                      key={question.questionId}
-                      name={`answers.${question.questionId}`}
-                      label={question.text}
-                      type='password'
-                      disabled={isBlocked}
-                    />
-                  ))}
-                </Box>
-              )}
 
               <Stack direction='row' justifyContent='flex-end'>
                 <LoadingButton
