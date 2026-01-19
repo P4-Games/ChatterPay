@@ -17,10 +17,20 @@
     "close": "Cerrar",
     "save": "Guardar Cambios",
     "cancel": "Cancelar",
+    "yes": "Sí",
+    "no": "No",
+    "back": "Volver",
     "view": "Ver",
     "share": "Compartir",
     "metadata": "Ver Metadata",
     "copied": "Copiado",
+    "accessibility": {
+      "copy-referral-code": "Copiar codigo de referido",
+      "copy-referred-by-code": "Copiar codigo de referido por",
+      "copy-wallet": "Copiar billetera",
+      "open-settings": "Abrir configuracion",
+      "telegram-icon": "Telegram"
+    },
     "msg": {
       "update-success": "¡Actualización exitosa!",
       "update-error": "Error de actualización",
@@ -38,10 +48,66 @@
     "account": "Cuenta",
     "logout": "Cerrar Sesión",
     "email": "Cambiar Correo",
-    "notifications": "Notificaciones"
+    "notifications": "Notificaciones",
+    "security": "Seguridad"
+  },
+  "user": {
+    "account": {
+      "title": "Cuenta",
+      "description": "Administra tu perfil, seguridad y referidos."
+    },
+    "cards": {
+      "profile": {
+        "title": "Informacion de perfil",
+        "description": "Tus datos personales, correo, wallet."
+      },
+      "security": {
+        "title": "Seguridad",
+        "description": "PIN, preguntas de recuperacion y estado."
+      },
+      "referrals": {
+        "title": "Referidos",
+        "description": "Comparte tu codigo y revisa el uso."
+      }
+    },
+    "profile": {
+      "title": "Perfil",
+      "description": "Revisa y actualiza tus datos personales.",
+      "name": {
+        "title": "Nombre",
+        "description": "Actualiza tu nombre de perfil."
+      },
+      "rows": {
+        "name": "Nombre",
+        "phone": "Telefono",
+        "wallet": "Billetera",
+        "email": "Correo"
+      }
+    },
+    "referrals": {
+      "title": "Referidos",
+      "description": "Tus codigos y uso de referidos.",
+      "referredCode": {
+        "title": "Codigo referido",
+        "description": "Ingresa el codigo de referido con el que te invitaron."
+      }
+    },
+    "security": {
+      "title": "Seguridad",
+      "description": "Revisa el estado y administra tu PIN.",
+      "sections": {
+        "status": "Estado de seguridad",
+        "statusDescription": "Ver información del PIN, intentos fallidos y estado de bloqueo.",
+        "recoveryQuestions": "Preguntas de recuperacion",
+        "recoveryQuestionsDescription": "Actualizar tus preguntas y respuestas de seguridad.",
+        "pinManagement": "PIN de seguridad",
+        "pinManagementDescription": "Configurar o restablecer tu PIN de seguridad."
+      }
+    }
   },
   "referrals": {
     "title": "Referidos",
+    "description": "Comparte tu cA3digo y vincula a un referente.",
     "my-code": "Tu código de referido",
     "usage-count": "Usado {COUNT} veces",
     "referred-by": "Código de quien te refirió",
@@ -347,11 +413,17 @@
   "account": {
     "title": "Cuenta",
     "change-email": "Cambiar",
+    "profile": {
+      "title": "Perfil",
+      "description": "Revisa los datos bA!sicos de tu cuenta."
+    },
     "email": {
+      "title": "Correo",
+      "description": "Gestiona el correo vinculado a tu cuenta.",
       "old": "Dirección de Correo Electrónico Antiguo",
       "new": "Nueva Dirección de Correo Electrónico",
       "new2": "Repetir Nueva Dirección de Correo Electrónico",
-      "send-code": "Enviar código a whatsapp para validar",
+      "send-code": "Enviar código a WhatsApp para validar",
       "resend-code": "Reenviar código",
       "code-sent": "Enviamos un código de 6 dígitos al teléfono",
       "code-info": "Por favor, ingresa el código de 6 dígitos que enviamos a tu WhatsApp (puede demorarse alrededor de 2 minutos en llegar).",
@@ -364,6 +436,111 @@
         "no-notifications": "No tienes nuevas notificaciones",
         "error": "Hubo un error al intentar obtener las notificaciones. Intenta más tarde."
       }
+    }
+  },
+  "security": {
+    "summary": {
+      "title": "Resumen de seguridad",
+      "description": "Revisa tu PIN y las preguntas de recuperación."
+    },
+    "status": {
+      "title": "Estado de seguridad",
+      "description": "Estado actual del PIN y la recuperación.",
+      "loading": "Cargando estado...",
+      "try-again-after": "Intenta nuevamente {TIME}",
+      "labels": {
+        "pin-status": "Estado del PIN",
+        "failed-attempts": "Intentos fallidos",
+        "blocked-until": "Bloqueado hasta",
+        "last-set": "Última configuración",
+        "reset-required": "Requiere restablecimiento",
+        "recovery-set": "Preguntas de recuperación configuradas",
+        "recovery-questions": "Preguntas de recuperación"
+      },
+      "statuses": {
+        "active": "Activo",
+        "blocked": "Bloqueado",
+        "not_set": "No configurado",
+        "reset_required": "Requiere restablecimiento"
+      }
+    },
+    "recovery": {
+      "title": "Preguntas de recuperación",
+      "description": "Configura o actualiza tus preguntas y respuestas.",
+      "instructions": "Selecciona {COUNT} preguntas de seguridad que quieras configurar y completa sus respuestas abajo.",
+      "questions-label": "Selecciona preguntas",
+      "questions-placeholder": "Elige preguntas",
+      "questions-helper": "Selecciona exactamente {COUNT} preguntas."
+    },
+    "pin": {
+      "title": "Gestión de PIN",
+      "description": "Crea o restablece tu PIN.",
+      "copy": {
+        "set": "Tu PIN esta configurado. Podes cambiarlo aca respondiendo a tus preguntas de seguridad.",
+        "unset": "Tu PIN no esta configurado. Se solicitara para algunas operaciones. Podes configurarlo aqui."
+      },
+      "label": "PIN",
+      "placeholder": "{length} digitos",
+      "set-title": "Configurar PIN",
+      "set-description": "Requiere preguntas y respuestas de recuperación.",
+      "set-disabled": "El PIN ya está configurado. Usa el restablecimiento.",
+      "reset-title": "Restablecer PIN",
+      "reset-description": "Responde tus preguntas y elige un nuevo PIN.",
+      "reset-disabled": "Configura preguntas de recuperación antes de restablecer el PIN.",
+      "pin-label": "PIN",
+      "confirm-label": "Confirmar PIN",
+      "new-pin-label": "Nuevo PIN",
+      "confirm-new-label": "Confirmar nuevo PIN",
+      "validation": {
+        "exactLength": "El PIN debe tener exactamente {length} digitos."
+      }
+    },
+    "2fa": {
+      "title": "Verificacion WhatsApp",
+      "description": "Verifica con un codigo enviado a tu WhatsApp antes de continuar.",
+      "sendCode": "Enviar codigo a WhatsApp para validar",
+      "verifyCode": "Verificar codigo",
+      "codeLabel": "Codigo de verificacion",
+      "code-message": "Ingresa este codigo {2FA_CODE} para validar tu accion de seguridad en Chatterpay. No compartas este codigo con nadie. Si no lo solicitaste, ignora este mensaje y contactanos.",
+      "code-sent": "Codigo de verificacion enviado",
+      "errors": {
+        "invalid": "Codigo de verificacion invalido.",
+        "expired": "El codigo expiro. Solicita uno nuevo.",
+        "generic": "No se pudo verificar el codigo. Intenta nuevamente."
+      }
+    },
+    "blocked": {
+      "now": "Ahora",
+      "unlockAt": "Desbloquea en",
+      "remaining": "Tiempo restante",
+      "tryAgainAfter": "El PIN esta bloqueado. Intenta luego del desbloqueo."
+    },
+    "actions": {
+      "set-pin": "Configurar PIN",
+      "reset-pin": "Restablecer PIN",
+      "save-questions": "Guardar preguntas",
+      "manage-security": "Administrar seguridad"
+    },
+    "messages": {
+      "recovery-updated": "Preguntas de recuperación actualizadas",
+      "pin-set": "PIN configurado correctamente",
+      "pin-reset": "PIN restablecido correctamente"
+    },
+    "errors": {
+      "pinAlreadySet": "El PIN ya está configurado. Usa el restablecimiento para cambiarlo.",
+      "exactlyNQuestionsRequired": "Selecciona exactamente {COUNT} preguntas.",
+      "incorrectRecoveryAnswers": "Las respuestas de recuperación son incorrectas.",
+      "questionsMustBeUnique": "Las preguntas deben ser únicas.",
+      "recoveryQuestionsNotSet": "Las preguntas de recuperación no están configuradas.",
+      "pinFormat": "El PIN debe tener exactamente {COUNT} dígitos.",
+      "generic": "Ocurrió un error. Intenta nuevamente."
+    },
+    "validation": {
+      "select-exactly": "Selecciona exactamente {COUNT} preguntas.",
+      "unique-questions": "Las preguntas deben ser únicas.",
+      "pin-format": "El PIN debe tener exactamente 6 dígitos.",
+      "pin-match": "Los PIN deben coincidir.",
+      "answers-required": "Las respuestas son obligatorias."
     }
   },
   "aboutUs": {
