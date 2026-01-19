@@ -18,19 +18,51 @@ export default function RHFCode({ name, ...other }: RHFCodesProps) {
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => {
-        const { TextFieldsProps, length, ...rest } = other
+        const { TextFieldsProps, length, onPaste, ...rest } = other
         const isTextFieldsPropsFn = typeof TextFieldsProps === 'function'
+
         const baseInputProps: TextFieldProps['inputProps'] = {
           inputMode: 'numeric',
           pattern: '[0-9]*'
         }
 
+        const otpLength = length ?? 6
+
+        const handlePaste: NonNullable<MuiOtpInputProps['onPaste']> = (event) => {
+          const pasted = event.clipboardData.getData('text').trim()
+          const isValid = new RegExp(`^\\d{${otpLength}}$`).test(pasted)
+
+          if (!isValid) {
+            event.preventDefault()
+            onPaste?.(event)
+            return
+          }
+
+          event.preventDefault()
+          field.onChange(pasted)
+          onPaste?.(event)
+        }
+
         const mergedTextFieldsProps: MuiOtpInputProps['TextFieldsProps'] = isTextFieldsPropsFn
           ? (index: number) => {
               const resolvedProps = TextFieldsProps(index)
+              const resolvedInputProps = resolvedProps?.inputProps ?? {}
               const mergedInputProps = {
                 ...baseInputProps,
-                ...(resolvedProps?.inputProps ?? {})
+                ...resolvedInputProps,
+                onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => {
+                  if (event.ctrlKey || event.metaKey) {
+                    resolvedInputProps.onKeyDown?.(event)
+                    return
+                  }
+                  const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab']
+                  if (!/[0-9]/.test(event.key) && !allowedKeys.includes(event.key)) {
+                    event.preventDefault()
+                    return
+                  }
+                  resolvedInputProps.onKeyDown?.(event)
+                },
+                onPaste: resolvedInputProps.onPaste
               }
               return {
                 type: resolvedProps?.type ?? 'number',
@@ -46,7 +78,20 @@ export default function RHFCode({ name, ...other }: RHFCodesProps) {
               ...TextFieldsProps,
               inputProps: {
                 ...baseInputProps,
-                ...(TextFieldsProps?.inputProps ?? {})
+                ...(TextFieldsProps?.inputProps ?? {}),
+                onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => {
+                  if (event.ctrlKey || event.metaKey) {
+                    TextFieldsProps?.inputProps?.onKeyDown?.(event)
+                    return
+                  }
+                  const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab']
+                  if (!/[0-9]/.test(event.key) && !allowedKeys.includes(event.key)) {
+                    event.preventDefault()
+                    return
+                  }
+                  TextFieldsProps?.inputProps?.onKeyDown?.(event)
+                },
+                onPaste: TextFieldsProps?.inputProps?.onPaste
               },
               error: TextFieldsProps?.error ?? !!error
             }
@@ -59,6 +104,7 @@ export default function RHFCode({ name, ...other }: RHFCodesProps) {
               gap={1.5}
               length={length ?? 6}
               TextFieldsProps={mergedTextFieldsProps}
+              onPaste={handlePaste}
               {...rest}
             />
 

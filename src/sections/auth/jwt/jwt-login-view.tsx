@@ -327,6 +327,7 @@ export default function JwtLoginView() {
           </Alert>
           <RHFCode
             name='code'
+            TextFieldsProps={{ type: 'password' }}
             onComplete={() => {
               // Auto-submit when code is complete (6 digits)
               if (!isSubmitting) {

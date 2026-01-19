@@ -280,7 +280,12 @@ export default function SecurityRecoveryQuestions() {
                 <Stack spacing={1.5}>
                   <Alert severity='info'>{t('account.email.code-info')}</Alert>
                   <Typography variant='body2'>{t('security.2fa.codeLabel')}</Typography>
-                  <RHFCode name='twoFactorCode' length={twoFactorLength} autoFocus={false} />
+                  <RHFCode
+                    name='twoFactorCode'
+                    length={twoFactorLength}
+                    autoFocus={false}
+                    TextFieldsProps={{ type: 'password' }}
+                  />
                 </Stack>
               )}
             </Stack>

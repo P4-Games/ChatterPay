@@ -208,7 +208,7 @@ export default function ChangeEmail() {
             {codeSent && (
               <>
                 <Alert severity='info'>{t('account.email.code-info')}</Alert>
-                <RHFCode name='code' />
+                <RHFCode name='code' TextFieldsProps={{ type: 'password' }} />
               </>
             )}
 

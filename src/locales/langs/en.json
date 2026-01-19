@@ -525,7 +525,7 @@
       "now": "Now",
       "unlockAt": "Unlock at",
       "remaining": "Time remaining",
-      "tryAgainAfter": "PIN is blocked. Try again after unlock."
+      "tryAgainAfter": "PIN is blocked."
     },
     "actions": {
       "set-pin": "Set PIN",

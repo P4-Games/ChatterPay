@@ -122,19 +122,25 @@ function BlockedCountdown({
     <Alert severity='warning'>
       <Stack spacing={1}>
         <Typography variant='subtitle2'>{labelTryAgain}</Typography>
-        <Stack direction='row' justifyContent='space-between'>
+        <Stack
+          sx={{ width: '100%', display: 'grid', gridTemplateColumns: '1fr auto', columnGap: 2 }}
+        >
           <Typography variant='body2' color='text.secondary'>
             {labelNow}
           </Typography>
           <Typography variant='body2'>{fDateTime(now)}</Typography>
         </Stack>
-        <Stack direction='row' justifyContent='space-between'>
+        <Stack
+          sx={{ width: '100%', display: 'grid', gridTemplateColumns: '1fr auto', columnGap: 2 }}
+        >
           <Typography variant='body2' color='text.secondary'>
             {labelUnlockAt}
           </Typography>
           <Typography variant='body2'>{fDateTime(blockedUntil)}</Typography>
         </Stack>
-        <Stack direction='row' justifyContent='space-between'>
+        <Stack
+          sx={{ width: '100%', display: 'grid', gridTemplateColumns: '1fr auto', columnGap: 2 }}
+        >
           <Typography variant='body2' color='text.secondary'>
             {labelRemaining}
           </Typography>
@@ -715,7 +721,12 @@ export default function Security() {
                 {recoveryCodeSent && (
                   <Stack spacing={1.5}>
                     <Typography variant='body2'>{t('security.2fa.codeLabel')}</Typography>
-                    <RHFCode name='twoFactorCode' length={twoFactorLength} autoFocus={false} />
+                    <RHFCode
+                      name='twoFactorCode'
+                      length={twoFactorLength}
+                      autoFocus={false}
+                      TextFieldsProps={{ type: 'password' }}
+                    />
                   </Stack>
                 )}
               </Stack>
@@ -844,7 +855,12 @@ export default function Security() {
                   {resetCodeSent && (
                     <Stack spacing={1.5}>
                       <Typography variant='body2'>{t('security.2fa.codeLabel')}</Typography>
-                      <RHFCode name='twoFactorCode' length={twoFactorLength} autoFocus={false} />
+                      <RHFCode
+                        name='twoFactorCode'
+                        length={twoFactorLength}
+                        autoFocus={false}
+                        TextFieldsProps={{ type: 'password' }}
+                      />
                     </Stack>
                   )}
                 </Stack>
