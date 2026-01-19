@@ -16,32 +16,40 @@ export default function RHFCode({ name, ...other }: RHFCodesProps) {
     <Controller
       name={name}
       control={control}
-      render={({ field, fieldState: { error } }) => (
-        <div>
-          <MuiOtpInput
-            {...field}
-            autoFocus
-            gap={1.5}
-            length={6}
-            TextFieldsProps={{
-              type: 'number',
-              inputProps: {
-                inputMode: 'numeric',
-                pattern: '[0-9]*'
-              },
-              error: !!error,
-              placeholder: ''
-            }}
-            {...other}
-          />
+      render={({ field, fieldState: { error } }) => {
+        const { TextFieldsProps, length, ...rest } = other
+        const mergedInputProps = {
+          inputMode: 'numeric',
+          pattern: '[0-9]*',
+          ...(TextFieldsProps?.inputProps ?? {})
+        }
+        const mergedTextFieldsProps = {
+          type: TextFieldsProps?.type ?? 'number',
+          placeholder: TextFieldsProps?.placeholder ?? '',
+          ...TextFieldsProps,
+          inputProps: mergedInputProps,
+          error: TextFieldsProps?.error ?? !!error
+        }
 
-          {error && (
-            <FormHelperText sx={{ px: 2 }} error>
-              {error.message}
-            </FormHelperText>
-          )}
-        </div>
-      )}
+        return (
+          <div>
+            <MuiOtpInput
+              {...field}
+              autoFocus
+              gap={1.5}
+              length={length ?? 6}
+              TextFieldsProps={mergedTextFieldsProps}
+              {...rest}
+            />
+
+            {error && (
+              <FormHelperText sx={{ px: 2 }} error>
+                {error.message}
+              </FormHelperText>
+            )}
+          </div>
+        )
+      }}
     />
   )
 }
