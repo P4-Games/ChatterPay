@@ -113,6 +113,7 @@ export const endpoints = {
         questions: (id: string) => getFullUIEndpoint(`user/${id}/security/questions`),
         recoveryQuestions: (id: string) =>
           getFullUIEndpoint(`user/${id}/security/recovery-questions`),
+        events: (id: string) => getFullUIEndpoint(`user/${id}/security/events`),
         pin: (id: string) => getFullUIEndpoint(`user/${id}/security/pin`),
         resetPin: (id: string) => getFullUIEndpoint(`user/${id}/security/pin/reset`)
       },
