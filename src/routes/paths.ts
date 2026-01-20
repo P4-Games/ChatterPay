@@ -54,6 +54,7 @@ export const paths = {
       security: `${ROOTS.DASHBOARD}/user/security`,
       securityStatus: `${ROOTS.DASHBOARD}/user/security/status`,
       securityRecovery: `${ROOTS.DASHBOARD}/user/security/recovery-questions`,
+      securityEvents: `${ROOTS.DASHBOARD}/user/security/events`,
       securityPin: `${ROOTS.DASHBOARD}/user/security/pin`
     }
   }

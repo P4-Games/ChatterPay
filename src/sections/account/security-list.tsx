@@ -39,6 +39,8 @@ export default function SecurityList() {
     ? { color: 'success.main', icon: 'eva:checkmark-fill' }
     : { color: 'warning.main', icon: 'eva:alert-circle-fill' }
 
+  const eventsBadge = { color: 'info.main', icon: 'eva:info-fill' }
+
   return (
     <Card>
       <CardContent>
@@ -127,6 +129,37 @@ export default function SecurityList() {
                 }}
               >
                 <Iconify icon={pinBadge.icon} width={14} />
+              </Box>
+              <Iconify icon='eva:arrow-ios-forward-fill' width={18} />
+            </Box>
+          </ListItemButton>
+
+          <ListItemButton
+            sx={rowSx}
+            component={RouterLink}
+            href={paths.dashboard.user.securityEvents}
+          >
+            <ListItemIcon sx={{ minWidth: 36 }}>
+              <Iconify icon='eva:list-fill' width={20} />
+            </ListItemIcon>
+            <ListItemText
+              primary={t('user.security.sections.events')}
+              secondary={t('user.security.sections.eventsDescription')}
+            />
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Box
+                sx={{
+                  width: 22,
+                  height: 22,
+                  borderRadius: '50%',
+                  bgcolor: eventsBadge.color,
+                  color: 'common.white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <Iconify icon={eventsBadge.icon} width={14} />
               </Box>
               <Iconify icon='eva:arrow-ios-forward-fill' width={18} />
             </Box>

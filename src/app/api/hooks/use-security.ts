@@ -32,6 +32,31 @@ export type SecurityMutationResponse =
   | { ok: true; data: Record<string, unknown> }
   | { ok: false; message: string }
 
+export type SecurityEventChannel = 'frontend' | 'bot' | string
+
+export type SecurityEvent = {
+  id?: string
+  userId?: string
+  channelUserId?: string
+  channel: SecurityEventChannel
+  eventType: string
+  message?: string
+  details?: Record<string, unknown> | null
+  createdAt: string
+}
+
+export type SecurityEventsResponse =
+  | { ok: true; data: { events: SecurityEvent[] } }
+  | { ok: false; message: string }
+
+export type SecurityEventsParams = {
+  channel?: SecurityEventChannel
+  eventTypes?: string[]
+  search?: string
+  page?: number
+  pageSize?: number
+}
+
 // ----------------------------------------------------------------------
 
 export function useSecurityStatus(userId?: string) {
@@ -56,6 +81,20 @@ export function useSecurityQuestionsCatalog(userId?: string) {
     userId ? { headers: getAuthorizationHeader() } : {}
   ) as {
     data?: SecurityQuestionsResponse
+    isLoading: boolean
+    error: unknown
+    isValidating: boolean
+    empty: boolean
+  }
+}
+
+export function useSecurityEvents(userId?: string, params?: SecurityEventsParams) {
+  const query = buildSecurityEventsQuery(params)
+  const endpoint = userId
+    ? `${endpoints.dashboard.user.security.events(userId)}${query ? `?${query}` : ''}`
+    : null
+  return useGetCommon(endpoint, userId ? { headers: getAuthorizationHeader() } : {}) as {
+    data?: SecurityEventsResponse
     isLoading: boolean
     error: unknown
     isValidating: boolean
@@ -127,6 +166,17 @@ export async function resetPin(
     const message = extractErrorMessage(error)
     return { ok: false, message }
   }
+}
+
+function buildSecurityEventsQuery(params?: SecurityEventsParams) {
+  if (!params) return ''
+  const query = new URLSearchParams()
+  if (params.channel) query.set('channel', params.channel)
+  if (params.search) query.set('search', params.search)
+  if (params.eventTypes?.length) query.set('eventTypes', params.eventTypes.join(','))
+  if (typeof params.page === 'number') query.set('page', String(params.page))
+  if (typeof params.pageSize === 'number') query.set('pageSize', String(params.pageSize))
+  return query.toString()
 }
 
 function extractErrorMessage(error: unknown): string {
