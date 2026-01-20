@@ -63,7 +63,7 @@
       },
       "security": {
         "title": "Seguranca",
-        "description": "PIN, perguntas de recuperacao e status."
+        "description": "Status, PIN, perguntas de recuperacao e eventos."
       },
       "referrals": {
         "title": "Indicacoes",
@@ -101,7 +101,9 @@
         "recoveryQuestions": "Perguntas de recuperacao",
         "recoveryQuestionsDescription": "Atualizar suas perguntas e respostas de seguranca.",
         "pinManagement": "PIN de seguranca",
-        "pinManagementDescription": "Configurar ou redefinir seu PIN de seguranca."
+        "pinManagementDescription": "Configurar ou redefinir seu PIN de seguranca.",
+        "events": "Eventos de seguranca",
+        "eventsDescription": "Veja a atividade e as mudancas de seguranca."
       }
     }
   },
@@ -463,6 +465,47 @@
         "blocked": "Bloqueado",
         "not_set": "Nao configurado",
         "reset_required": "Requer redefinicao"
+      }
+    },
+    "events": {
+      "title": "Eventos de seguranca",
+      "description": "Acompanhe a atividade de seguranca da sua conta.",
+      "contextTitle": "Historico de eventos",
+      "contextDescription": "Eventos de seguranca: mudancas de PIN, bloqueios, atualizacoes de perguntas de seguranca e atividades relacionadas.",
+      "total": "Total de eventos: {COUNT}",
+      "filters": {
+        "channel": "Canal",
+        "eventType": "Tipo de evento",
+        "search": "Buscar",
+        "clear": "Limpar filtros"
+      },
+      "channels": {
+        "all": "Todos os canais",
+        "frontend": "Frontend",
+        "bot": "Bot"
+      },
+      "table": {
+        "date": "Data",
+        "type": "Tipo",
+        "channel": "Canal",
+        "message": "Mensagem",
+        "details": "Detalhes"
+      },
+      "empty": {
+        "title": "Sem eventos",
+        "description": "Nao ha eventos de seguranca com os filtros atuais."
+      },
+      "errors": {
+        "generic": "Nao foi possivel carregar os eventos de seguranca. Tente novamente."
+      },
+      "types": {
+        "QUESTIONS_UPDATED": "Perguntas atualizadas",
+        "PIN_RESET": "PIN redefinido",
+        "PIN_BLOCKED": "PIN bloqueado",
+        "PIN_VERIFY_FAILED": "Falha na verificacao do PIN",
+        "PIN_RESET_FAILED": "Falha ao redefinir PIN",
+        "QUESTIONS_SET": "Perguntas configuradas",
+        "PIN_SET": "PIN configurado"
       }
     },
     "recovery": {
