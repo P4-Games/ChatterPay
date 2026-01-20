@@ -40,6 +40,17 @@ export type SecurityQuestion = {
   text: string
 }
 
+export type SecurityEvent = {
+  id?: string
+  userId?: string
+  channelUserId?: string
+  channel: string
+  eventType: string
+  message?: string
+  details?: Record<string, unknown> | null
+  createdAt: string
+}
+
 export type SecurityRecoveryQuestionsResult = {
   recoveryQuestionsSet: boolean
   recoveryQuestionIds: string[]
@@ -49,6 +60,14 @@ export type SecurityPinResult = {
   updated?: boolean
   pinStatus?: 'active'
   lastSetAt?: string
+}
+
+export type SecurityEventsFilters = {
+  channel?: string
+  eventTypes?: string[]
+  search?: string
+  page?: number
+  pageSize?: number
 }
 
 // ----------------------------------------------------------------------
@@ -122,6 +141,53 @@ export async function getSecurityQuestionsCatalog(
         questionId: question.question_id,
         text: question.text
       }))
+    }
+  }
+}
+
+export async function getSecurityEvents(
+  phoneNumber: string,
+  _filters?: SecurityEventsFilters
+): Promise<ServiceResult<{ events: SecurityEvent[] }>> {
+  const response = await axios.post<
+    BackendResponse<{
+      events: Array<{
+        _id?: string
+        user_id?: string
+        channel_user_id?: string
+        channel?: string
+        event_type?: string
+        message?: string
+        details?: Record<string, unknown> | null
+        metadata?: Record<string, unknown> | null
+        created_at?: string
+      }>
+    }>
+  >(
+    `${BACKEND_API_URL}/get_security_events/`,
+    { channel_user_id: phoneNumber },
+    { headers: backendHeaders }
+  )
+
+  if (response.data.status !== 'success') {
+    return { ok: false, message: normalizeError(response.data) }
+  }
+
+  const events = (response.data.data.events ?? []).map((event) => ({
+    id: event._id,
+    userId: event.user_id,
+    channelUserId: event.channel_user_id,
+    channel: event.channel ?? 'unknown',
+    eventType: event.event_type ?? 'unknown',
+    message: event.message,
+    details: event.details ?? event.metadata ?? null,
+    createdAt: event.created_at ?? ''
+  }))
+
+  return {
+    ok: true,
+    data: {
+      events
     }
   }
 }
