@@ -65,7 +65,7 @@
       },
       "security": {
         "title": "Security",
-        "description": "PIN, recovery questions, and status.",
+        "description": "Status, PIN, recovery questions, and events.",
         "cta": "Manage security",
         "badge": {
           "configured": "Configured",
@@ -113,7 +113,9 @@
         "recoveryQuestions": "Recovery questions",
         "recoveryQuestionsDescription": "Update your security questions and answers.",
         "pinManagement": "Security PIN",
-        "pinManagementDescription": "Set or reset your security PIN."
+        "pinManagementDescription": "Set or reset your security PIN.",
+        "events": "Security events",
+        "eventsDescription": "Review security activity and changes."
       }
     }
   },
@@ -474,6 +476,46 @@
         "blocked": "Blocked",
         "not_set": "Not set",
         "reset_required": "Reset required"
+      }
+    },
+    "events": {
+      "title": "Security events",
+      "description": "Track security-related activity on your account.",
+      "contextTitle": "Event history",
+      "contextDescription": "Security events: PIN changes, blocks, security questions updates, and related activity.",
+      "total": "Total events: {COUNT}",
+      "filters": {
+        "channel": "Channel",
+        "eventType": "Event type",
+        "search": "Search",
+        "clear": "Clear filters"
+      },
+      "channels": {
+        "all": "All channels",
+        "frontend": "Frontend",
+        "bot": "Bot"
+      },
+      "table": {
+        "date": "Date",
+        "type": "Type",
+        "channel": "Channel",
+        "details": "Details"
+      },
+      "empty": {
+        "title": "No events",
+        "description": "No security events match the current filters."
+      },
+      "errors": {
+        "generic": "Unable to load security events. Try again later."
+      },
+      "types": {
+        "QUESTIONS_UPDATED": "Questions updated",
+        "PIN_RESET": "PIN reset",
+        "PIN_BLOCKED": "PIN blocked",
+        "PIN_VERIFY_FAILED": "PIN verification failed",
+        "PIN_RESET_FAILED": "PIN reset failed",
+        "QUESTIONS_SET": "Questions set",
+        "PIN_SET": "PIN set"
       }
     },
     "recovery": {
