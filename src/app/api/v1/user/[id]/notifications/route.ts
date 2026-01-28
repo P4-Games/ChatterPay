@@ -63,7 +63,10 @@ export async function GET(
 
     if (!data) {
       return new NextResponse(
-        JSON.stringify({ code: 'BACKEND_ERROR', error: 'Error fetching notifications from backend' }),
+        JSON.stringify({
+          code: 'BACKEND_ERROR',
+          error: 'Error fetching notifications from backend'
+        }),
         { status: 500, headers: { 'Content-Type': 'application/json' } }
       )
     }

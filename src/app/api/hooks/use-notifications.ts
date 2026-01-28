@@ -42,21 +42,15 @@ export function useGetNotifications(userId: string) {
     ]
   }
 
-  const { data, error, size, setSize, isLoading, isValidating, mutate } = useSWRInfinite<INotificationResponse>(
-    getKey,
-    fetcher,
-    {
+  const { data, error, size, setSize, isLoading, isValidating, mutate } =
+    useSWRInfinite<INotificationResponse>(getKey, fetcher, {
       refreshInterval: notificationsRefreshInterval,
       revalidateFirstPage: true,
       revalidateAll: false
-    }
-  )
+    })
 
   // Flatten all notifications from all pages
-  const allNotifications = useMemo(
-    () => data?.flatMap((page) => page.notifications) ?? [],
-    [data]
-  )
+  const allNotifications = useMemo(() => data?.flatMap((page) => page.notifications) ?? [], [data])
 
   // Check if we are loading the first page or subsequent pages
   const isLoadingMore = isLoading || (size > 0 && data && typeof data[size - 1] === 'undefined')
@@ -89,7 +83,17 @@ export function useGetNotifications(userId: string) {
       loadMore,
       mutate
     }),
-    [allNotifications, unreadCount, hasMore, isLoading, isLoadingMore, error, isValidating, loadMore, mutate]
+    [
+      allNotifications,
+      unreadCount,
+      hasMore,
+      isLoading,
+      isLoadingMore,
+      error,
+      isValidating,
+      loadMore,
+      mutate
+    ]
   )
 
   return memoizedValue

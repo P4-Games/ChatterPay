@@ -30,7 +30,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
     // Extract user ID from JWT
     const userId = req.headers.get('x-user-id')
-    
+
     if (!userId) {
       return new NextResponse(
         JSON.stringify({ code: 'UNAUTHORIZED', error: 'User ID not found' }),

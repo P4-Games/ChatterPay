@@ -259,7 +259,10 @@ export default function NotificationsModal({ open, onClose }: Props) {
 
                       <Stack spacing={0.5} flexGrow={1}>
                         <Stack direction='row' alignItems='center' spacing={1}>
-                          <Typography variant='caption' sx={{ color: 'text.disabled', opacity: 0.8 }}>
+                          <Typography
+                            variant='caption'
+                            sx={{ color: 'text.disabled', opacity: 0.8 }}
+                          >
                             {fDateTime(notification.sent_date)}
                           </Typography>
                           {!notification.read_date && !isDeleting && (

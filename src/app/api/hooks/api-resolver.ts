@@ -125,7 +125,9 @@ export const endpoints = {
           if (cursor !== undefined && cursor !== null) params.append('cursor', cursor)
           if (limit) params.append('limit', String(limit))
           const queryString = params.toString()
-          return getFullUIEndpoint(`user/${id}/notifications${queryString ? `?${queryString}` : ''}`)
+          return getFullUIEndpoint(
+            `user/${id}/notifications${queryString ? `?${queryString}` : ''}`
+          )
         },
         markRead: (id: string) => getFullUIEndpoint(`user/${id}/notifications/mark-read`),
         delete: (id: string, notificationId: string) =>

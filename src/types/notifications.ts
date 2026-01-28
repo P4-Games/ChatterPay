@@ -29,4 +29,3 @@ export interface Notification {
   url: any
   blockchain: any
 }
-
