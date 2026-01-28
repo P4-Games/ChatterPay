@@ -41,8 +41,9 @@ export async function getBalancesWithTotalsFromBackend(walletAddress: string): P
     responseBalances = defaultBalances
   }
 
-  // Convert keys to lowercase
+  // Convert keys to lowercase for both totals and balance_conv
   try {
+    // Normalize totals
     const normalizedTotals = Object.keys(responseBalances.totals).reduce(
       (acc, key) => {
         const lowerKey = key.toLowerCase() as CurrencyKey
@@ -54,8 +55,28 @@ export async function getBalancesWithTotalsFromBackend(walletAddress: string): P
       {} as Record<CurrencyKey, number>
     )
 
+    // Normalize balance_conv in each balance
+    const normalizedBalances = responseBalances.balances.map((balance: any) => {
+      const normalizedBalanceConv = Object.keys(balance.balance_conv || {}).reduce(
+        (acc, key) => {
+          const lowerKey = key.toLowerCase() as CurrencyKey
+          if (['usd', 'ars', 'brl', 'uyu'].includes(lowerKey)) {
+            acc[lowerKey] = balance.balance_conv[key]
+          }
+          return acc
+        },
+        {} as Record<CurrencyKey, number>
+      )
+
+      return {
+        ...balance,
+        balance_conv: normalizedBalanceConv
+      }
+    })
+
     const balances: IBalances = {
       ...responseBalances,
+      balances: normalizedBalances,
       totals: normalizedTotals
     }
 

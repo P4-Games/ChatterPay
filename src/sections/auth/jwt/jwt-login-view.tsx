@@ -202,11 +202,16 @@ export default function JwtLoginView() {
   // ----------------------------------------------------------------------
 
   const renderHead = (
-    <Stack spacing={2} sx={{ mb: 5 }}>
+    <Stack spacing={1.5} sx={{ mb: 5, px: 4 }}>
       <Typography variant='h4'>{t('login.title')}</Typography>
       <Stack direction='row' spacing={0.5}>
         <Typography variant='body2'>{t('login.new-user')}</Typography>
-        <Link component={RouterLink} href={paths.auth.jwt.register} variant='subtitle2'>
+        <Link
+          component={RouterLink}
+          href={paths.auth.jwt.register}
+          variant='subtitle2'
+          color='primary'
+        >
           {t('login.create-account')}
         </Link>
       </Stack>
@@ -214,7 +219,7 @@ export default function JwtLoginView() {
   )
 
   const renderForm = (
-    <Stack spacing={2.5}>
+    <Stack spacing={2} sx={{ px: 4 }}>
       {!codeSent ? (
         <>
           <FormControl fullWidth>
@@ -241,6 +246,14 @@ export default function JwtLoginView() {
               pattern: '[0-9]*',
               maxLength: 12,
               onKeyDown: (e) => {
+                // Handle Enter key to submit
+                if (e.key === 'Enter' && !isSubmitting && selectedCountry && phone) {
+                  e.preventDefault()
+                  handleSubmit(handleSendCode)()
+                  return
+                }
+
+                // Filter non-numeric keys
                 if (
                   !/[0-9]/.test(e.key) &&
                   e.key !== 'Backspace' &&
@@ -254,13 +267,23 @@ export default function JwtLoginView() {
               }
             }}
           />
-          <Alert severity='info' sx={{ mb: 3 }}>
+          <Alert
+            severity='info'
+            sx={{
+              mb: 3,
+              bgcolor: '#B8F6C9',
+              color: 'text.primary',
+              '& .MuiAlert-icon': {
+                color: 'primary.main'
+              }
+            }}
+          >
             {t('login.msg.enter-phone')}
           </Alert>
           {errorKey && <Alert severity='error'>{t(errorKey)}</Alert>}
           <LoadingButton
             fullWidth
-            color='inherit'
+            color='primary'
             size='large'
             type='button'
             variant='contained'
@@ -289,13 +312,34 @@ export default function JwtLoginView() {
             </Select>
           </FormControl>
           <RHFTextField disabled name='phone' label='Phone Number' type='number' value={phone} />
-          <Alert severity='info'>{t('login.msg.code-info')}</Alert>
-          <RHFCode name='code' />
+          <Alert
+            severity='info'
+            sx={{
+              mb: 3,
+              bgcolor: '#B8F6C9',
+              color: 'text.primary',
+              '& .MuiAlert-icon': {
+                color: 'primary.main'
+              }
+            }}
+          >
+            {t('login.msg.code-info')}
+          </Alert>
+          <RHFCode
+            name='code'
+            TextFieldsProps={{ type: 'password' }}
+            onComplete={() => {
+              // Auto-submit when code is complete (6 digits)
+              if (!isSubmitting) {
+                onSubmit()
+              }
+            }}
+          />
 
           {errorKey && <Alert severity='error'>{t(errorKey)}</Alert>}
           <LoadingButton
             fullWidth
-            color='inherit'
+            color='primary'
             size='large'
             type='submit'
             variant='contained'

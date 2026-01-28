@@ -1,0 +1,668 @@
+{
+    "status": "success",
+    "data": {
+        "message": "Security events fetched successfully",
+        "events": [
+            {
+                "_id": "696ea672bc520bd3ff57aa6e",
+                "user_id": "5491153475204",
+                "event_type": "QUESTIONS_UPDATED",
+                "channel": "frontend",
+                "created_at": "2026-01-19T21:47:30.107Z",
+                "__v": 0
+            },
+            {
+                "_id": "696ea2d4bc520bd3ff57aa07",
+                "user_id": "5491153475204",
+                "event_type": "QUESTIONS_UPDATED",
+                "channel": "frontend",
+                "created_at": "2026-01-19T21:32:04.191Z",
+                "__v": 0
+            },
+            {
+                "_id": "696ea2c4bc520bd3ff57a9bd",
+                "user_id": "5491153475204",
+                "event_type": "PIN_RESET",
+                "channel": "frontend",
+                "created_at": "2026-01-19T21:31:48.743Z",
+                "__v": 0
+            },
+            {
+                "_id": "696ea2aebc520bd3ff57a983",
+                "user_id": "5491153475204",
+                "event_type": "QUESTIONS_UPDATED",
+                "channel": "frontend",
+                "created_at": "2026-01-19T21:31:26.935Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e98b934d1b467f717192e",
+                "user_id": "5491153475204",
+                "event_type": "PIN_BLOCKED",
+                "channel": "frontend",
+                "metadata": {
+                    "blocked_until": "2026-01-19T20:49:57.151Z"
+                },
+                "created_at": "2026-01-19T20:48:57.441Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e98b934d1b467f717192b",
+                "user_id": "5491153475204",
+                "event_type": "PIN_VERIFY_FAILED",
+                "channel": "frontend",
+                "metadata": {
+                    "failed_attempts": 7
+                },
+                "created_at": "2026-01-19T20:48:57.299Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e987934d1b467f717190d",
+                "user_id": "5491153475204",
+                "event_type": "PIN_BLOCKED",
+                "channel": "frontend",
+                "metadata": {
+                    "blocked_until": "2026-01-19T20:48:53.976Z"
+                },
+                "created_at": "2026-01-19T20:47:53.994Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e987934d1b467f717190a",
+                "user_id": "5491153475204",
+                "event_type": "PIN_VERIFY_FAILED",
+                "channel": "frontend",
+                "metadata": {
+                    "failed_attempts": 6
+                },
+                "created_at": "2026-01-19T20:47:53.986Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e982e34d1b467f71718e6",
+                "user_id": "5491153475204",
+                "event_type": "PIN_BLOCKED",
+                "channel": "frontend",
+                "metadata": {
+                    "blocked_until": "2026-01-19T20:47:38.548Z"
+                },
+                "created_at": "2026-01-19T20:46:38.616Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e982e34d1b467f71718e3",
+                "user_id": "5491153475204",
+                "event_type": "PIN_VERIFY_FAILED",
+                "channel": "frontend",
+                "metadata": {
+                    "failed_attempts": 5
+                },
+                "created_at": "2026-01-19T20:46:38.579Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e979b34d1b467f71718bb",
+                "user_id": "5491153475204",
+                "event_type": "PIN_BLOCKED",
+                "channel": "frontend",
+                "metadata": {
+                    "blocked_until": "2026-01-19T20:45:11.166Z"
+                },
+                "created_at": "2026-01-19T20:44:11.246Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e979b34d1b467f71718b8",
+                "user_id": "5491153475204",
+                "event_type": "PIN_VERIFY_FAILED",
+                "channel": "frontend",
+                "metadata": {
+                    "failed_attempts": 4
+                },
+                "created_at": "2026-01-19T20:44:11.208Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e95f434d1b467f717187d",
+                "user_id": "5491153475204",
+                "event_type": "PIN_BLOCKED",
+                "channel": "frontend",
+                "metadata": {
+                    "blocked_until": "2026-01-19T20:38:08.592Z"
+                },
+                "created_at": "2026-01-19T20:37:08.613Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e95f434d1b467f717187a",
+                "user_id": "5491153475204",
+                "event_type": "PIN_VERIFY_FAILED",
+                "channel": "frontend",
+                "metadata": {
+                    "failed_attempts": 3
+                },
+                "created_at": "2026-01-19T20:37:08.600Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e95f334d1b467f7171875",
+                "user_id": "5491153475204",
+                "event_type": "PIN_VERIFY_FAILED",
+                "channel": "frontend",
+                "metadata": {
+                    "failed_attempts": 2
+                },
+                "created_at": "2026-01-19T20:37:07.769Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e95f234d1b467f7171870",
+                "user_id": "5491153475204",
+                "event_type": "PIN_VERIFY_FAILED",
+                "channel": "frontend",
+                "metadata": {
+                    "failed_attempts": 1
+                },
+                "created_at": "2026-01-19T20:37:06.927Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e95e334d1b467f7171850",
+                "user_id": "5491153475204",
+                "event_type": "PIN_RESET",
+                "channel": "frontend",
+                "created_at": "2026-01-19T20:36:51.132Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e958834d1b467f71717cb",
+                "user_id": "5491153475204",
+                "event_type": "PIN_RESET_FAILED",
+                "channel": "frontend",
+                "created_at": "2026-01-19T20:35:20.241Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e953d34d1b467f71717a2",
+                "user_id": "5491153475204",
+                "event_type": "PIN_BLOCKED",
+                "channel": "frontend",
+                "metadata": {
+                    "blocked_until": "2026-01-19T20:35:05.287Z"
+                },
+                "created_at": "2026-01-19T20:34:05.306Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e953d34d1b467f717179f",
+                "user_id": "5491153475204",
+                "event_type": "PIN_VERIFY_FAILED",
+                "channel": "frontend",
+                "metadata": {
+                    "failed_attempts": 5
+                },
+                "created_at": "2026-01-19T20:34:05.293Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e94b634d1b467f7171790",
+                "user_id": "5491153475204",
+                "event_type": "PIN_BLOCKED",
+                "channel": "frontend",
+                "metadata": {
+                    "blocked_until": "2026-01-19T20:32:50.598Z"
+                },
+                "created_at": "2026-01-19T20:31:50.639Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e94b634d1b467f717178d",
+                "user_id": "5491153475204",
+                "event_type": "PIN_VERIFY_FAILED",
+                "channel": "frontend",
+                "metadata": {
+                    "failed_attempts": 4
+                },
+                "created_at": "2026-01-19T20:31:50.615Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e942034d1b467f7171767",
+                "user_id": "5491153475204",
+                "event_type": "PIN_BLOCKED",
+                "channel": "frontend",
+                "metadata": {
+                    "blocked_until": "2026-01-19T20:30:20.083Z"
+                },
+                "created_at": "2026-01-19T20:29:20.109Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e942034d1b467f7171764",
+                "user_id": "5491153475204",
+                "event_type": "PIN_VERIFY_FAILED",
+                "channel": "frontend",
+                "metadata": {
+                    "failed_attempts": 3
+                },
+                "created_at": "2026-01-19T20:29:20.090Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e941f34d1b467f717175f",
+                "user_id": "5491153475204",
+                "event_type": "PIN_VERIFY_FAILED",
+                "channel": "frontend",
+                "metadata": {
+                    "failed_attempts": 2
+                },
+                "created_at": "2026-01-19T20:29:19.019Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e941434d1b467f7171741",
+                "user_id": "5491153475204",
+                "event_type": "PIN_VERIFY_FAILED",
+                "channel": "frontend",
+                "metadata": {
+                    "failed_attempts": 1
+                },
+                "created_at": "2026-01-19T20:29:08.235Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e6296366c24741bea64f1",
+                "user_id": "5491153475204",
+                "event_type": "PIN_RESET_FAILED",
+                "channel": "frontend",
+                "created_at": "2026-01-19T16:57:58.154Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e5ed9366c24741bea641f",
+                "user_id": "5491153475204",
+                "event_type": "PIN_RESET_FAILED",
+                "channel": "frontend",
+                "created_at": "2026-01-19T16:42:01.426Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e5ea9366c24741bea6419",
+                "user_id": "5491153475204",
+                "event_type": "PIN_RESET",
+                "channel": "frontend",
+                "created_at": "2026-01-19T16:41:13.140Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e5e78366c24741bea63fa",
+                "user_id": "5491153475204",
+                "event_type": "PIN_RESET_FAILED",
+                "channel": "frontend",
+                "created_at": "2026-01-19T16:40:24.052Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e5dc7366c24741bea638e",
+                "user_id": "5491153475204",
+                "event_type": "QUESTIONS_SET",
+                "channel": "frontend",
+                "created_at": "2026-01-19T16:37:27.993Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e5d36366c24741bea6326",
+                "user_id": "5491153475204",
+                "event_type": "PIN_SET",
+                "channel": "frontend",
+                "created_at": "2026-01-19T16:35:02.774Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e5b51366c24741bea6245",
+                "user_id": "5491153475204",
+                "event_type": "QUESTIONS_SET",
+                "channel": "frontend",
+                "created_at": "2026-01-19T16:26:57.587Z",
+                "__v": 0
+            },
+            {
+                "_id": "696e57dd366c24741bea6109",
+                "user_id": "5491153475204",
+                "event_type": "PIN_SET",
+                "channel": "frontend",
+                "created_at": "2026-01-19T16:12:13.248Z",
+                "__v": 0
+            },
+            {
+                "_id": "696dc22b994b20baed51de66",
+                "user_id": "5491153475204",
+                "event_type": "PIN_SET",
+                "channel": "frontend",
+                "created_at": "2026-01-19T05:33:31.808Z",
+                "__v": 0
+            },
+            {
+                "_id": "696dc1c2994b20baed51de11",
+                "user_id": "5491153475204",
+                "event_type": "PIN_SET",
+                "channel": "frontend",
+                "created_at": "2026-01-19T05:31:46.581Z",
+                "__v": 0
+            },
+            {
+                "_id": "696dc0ae994b20baed51dd99",
+                "user_id": "5491153475204",
+                "event_type": "PIN_SET",
+                "channel": "frontend",
+                "created_at": "2026-01-19T05:27:10.542Z",
+                "__v": 0
+            },
+            {
+                "_id": "696dbc8e994b20baed51dc2d",
+                "user_id": "5491153475204",
+                "event_type": "PIN_SET",
+                "channel": "frontend",
+                "created_at": "2026-01-19T05:09:34.211Z",
+                "__v": 0
+            },
+            {
+                "_id": "696dbc28994b20baed51dbd7",
+                "user_id": "5491153475204",
+                "event_type": "QUESTIONS_UPDATED",
+                "channel": "frontend",
+                "created_at": "2026-01-19T05:07:52.389Z",
+                "__v": 0
+            },
+            {
+                "_id": "696dbbf4994b20baed51db74",
+                "user_id": "5491153475204",
+                "event_type": "PIN_RESET",
+                "channel": "frontend",
+                "created_at": "2026-01-19T05:07:00.965Z",
+                "__v": 0
+            },
+            {
+                "_id": "696dbb9c994b20baed51db3c",
+                "user_id": "5491153475204",
+                "event_type": "PIN_RESET_FAILED",
+                "channel": "frontend",
+                "created_at": "2026-01-19T05:05:32.362Z",
+                "__v": 0
+            },
+            {
+                "_id": "696dbb26994b20baed51dad4",
+                "user_id": "5491153475204",
+                "event_type": "QUESTIONS_UPDATED",
+                "channel": "frontend",
+                "created_at": "2026-01-19T05:03:34.313Z",
+                "__v": 0
+            },
+            {
+                "_id": "696d0d8785a0dc2f1872a4bf",
+                "user_id": "5491153475204",
+                "event_type": "QUESTIONS_UPDATED",
+                "channel": "frontend",
+                "created_at": "2026-01-18T16:42:47.700Z",
+                "__v": 0
+            },
+            {
+                "_id": "696d08b185a0dc2f1872a334",
+                "user_id": "5491153475204",
+                "event_type": "PIN_VERIFY_FAILED",
+                "channel": "frontend",
+                "metadata": {
+                    "failed_attempts": 1
+                },
+                "created_at": "2026-01-18T16:22:09.783Z",
+                "__v": 0
+            },
+            {
+                "_id": "696d08ad85a0dc2f1872a32f",
+                "user_id": "5491153475204",
+                "event_type": "PIN_RESET",
+                "channel": "frontend",
+                "created_at": "2026-01-18T16:22:05.750Z",
+                "__v": 0
+            },
+            {
+                "_id": "696d089a85a0dc2f1872a329",
+                "user_id": "5491153475204",
+                "event_type": "PIN_BLOCKED",
+                "channel": "frontend",
+                "metadata": {
+                    "blocked_until": "2026-01-18T16:22:46.791Z"
+                },
+                "created_at": "2026-01-18T16:21:46.844Z",
+                "__v": 0
+            },
+            {
+                "_id": "696d089a85a0dc2f1872a326",
+                "user_id": "5491153475204",
+                "event_type": "PIN_VERIFY_FAILED",
+                "channel": "frontend",
+                "metadata": {
+                    "failed_attempts": 7
+                },
+                "created_at": "2026-01-18T16:21:46.816Z",
+                "__v": 0
+            },
+            {
+                "_id": "696d07f285a0dc2f1872a2e5",
+                "user_id": "5491153475204",
+                "event_type": "PIN_BLOCKED",
+                "channel": "frontend",
+                "metadata": {
+                    "blocked_until": "2026-01-18T16:19:58.599Z"
+                },
+                "created_at": "2026-01-18T16:18:58.638Z",
+                "__v": 0
+            },
+            {
+                "_id": "696d07f285a0dc2f1872a2e2",
+                "user_id": "5491153475204",
+                "event_type": "PIN_VERIFY_FAILED",
+                "channel": "frontend",
+                "metadata": {
+                    "failed_attempts": 6
+                },
+                "created_at": "2026-01-18T16:18:58.618Z",
+                "__v": 0
+            },
+            {
+                "_id": "696d070e85a0dc2f1872a2cb",
+                "user_id": "5491153475204",
+                "event_type": "PIN_BLOCKED",
+                "channel": "frontend",
+                "metadata": {
+                    "blocked_until": "2026-01-18T16:16:10.160Z"
+                },
+                "created_at": "2026-01-18T16:15:10.188Z",
+                "__v": 0
+            },
+            {
+                "_id": "696d070e85a0dc2f1872a2c8",
+                "user_id": "5491153475204",
+                "event_type": "PIN_VERIFY_FAILED",
+                "channel": "frontend",
+                "metadata": {
+                    "failed_attempts": 5
+                },
+                "created_at": "2026-01-18T16:15:10.170Z",
+                "__v": 0
+            },
+            {
+                "_id": "696d065085a0dc2f1872a257",
+                "user_id": "5491153475204",
+                "event_type": "PIN_BLOCKED",
+                "channel": "frontend",
+                "metadata": {
+                    "blocked_until": "2026-01-18T16:13:00.617Z"
+                },
+                "created_at": "2026-01-18T16:12:00.650Z",
+                "__v": 0
+            },
+            {
+                "_id": "696d065085a0dc2f1872a254",
+                "user_id": "5491153475204",
+                "event_type": "PIN_VERIFY_FAILED",
+                "channel": "frontend",
+                "metadata": {
+                    "failed_attempts": 4
+                },
+                "created_at": "2026-01-18T16:12:00.633Z",
+                "__v": 0
+            },
+            {
+                "_id": "696d045c85a0dc2f1872a21d",
+                "user_id": "5491153475204",
+                "event_type": "PIN_BLOCKED",
+                "channel": "frontend",
+                "metadata": {
+                    "blocked_until": "2026-01-18T16:04:40.280Z"
+                },
+                "created_at": "2026-01-18T16:03:40.309Z",
+                "__v": 0
+            },
+            {
+                "_id": "696d045c85a0dc2f1872a21a",
+                "user_id": "5491153475204",
+                "event_type": "PIN_VERIFY_FAILED",
+                "channel": "frontend",
+                "metadata": {
+                    "failed_attempts": 3
+                },
+                "created_at": "2026-01-18T16:03:40.294Z",
+                "__v": 0
+            },
+            {
+                "_id": "696d045b85a0dc2f1872a215",
+                "user_id": "5491153475204",
+                "event_type": "PIN_VERIFY_FAILED",
+                "channel": "frontend",
+                "metadata": {
+                    "failed_attempts": 2
+                },
+                "created_at": "2026-01-18T16:03:39.300Z",
+                "__v": 0
+            },
+            {
+                "_id": "696d044e85a0dc2f1872a1de",
+                "user_id": "5491153475204",
+                "event_type": "PIN_VERIFY_FAILED",
+                "channel": "frontend",
+                "metadata": {
+                    "failed_attempts": 1
+                },
+                "created_at": "2026-01-18T16:03:26.083Z",
+                "__v": 0
+            },
+            {
+                "_id": "696d03fa85a0dc2f1872a18c",
+                "user_id": "5491153475204",
+                "event_type": "PIN_RESET",
+                "channel": "frontend",
+                "created_at": "2026-01-18T16:02:02.501Z",
+                "__v": 0
+            },
+            {
+                "_id": "696d03cf85a0dc2f1872a13b",
+                "user_id": "5491153475204",
+                "event_type": "QUESTIONS_UPDATED",
+                "channel": "frontend",
+                "created_at": "2026-01-18T16:01:19.559Z",
+                "__v": 0
+            },
+            {
+                "_id": "696d035d85a0dc2f1872a0aa",
+                "user_id": "5491153475204",
+                "event_type": "QUESTIONS_UPDATED",
+                "channel": "frontend",
+                "created_at": "2026-01-18T15:59:25.364Z",
+                "__v": 0
+            },
+            {
+                "_id": "696c96c085a0dc2f18729dad",
+                "user_id": "5491153475204",
+                "event_type": "PIN_RESET_FAILED",
+                "channel": "frontend",
+                "created_at": "2026-01-18T08:16:00.148Z",
+                "__v": 0
+            },
+            {
+                "_id": "696c963c85a0dc2f18729d75",
+                "user_id": "5491153475204",
+                "event_type": "QUESTIONS_UPDATED",
+                "channel": "frontend",
+                "created_at": "2026-01-18T08:13:48.728Z",
+                "__v": 0
+            },
+            {
+                "_id": "696c8e3185a0dc2f18729cdd",
+                "user_id": "5491153475204",
+                "event_type": "PIN_RESET_FAILED",
+                "channel": "frontend",
+                "created_at": "2026-01-18T07:39:29.331Z",
+                "__v": 0
+            },
+            {
+                "_id": "696c800685a0dc2f18729c64",
+                "user_id": "5491153475204",
+                "event_type": "PIN_RESET",
+                "channel": "frontend",
+                "created_at": "2026-01-18T06:39:02.725Z",
+                "__v": 0
+            },
+            {
+                "_id": "696c7ffa85a0dc2f18729c5e",
+                "user_id": "5491153475204",
+                "event_type": "QUESTIONS_UPDATED",
+                "channel": "frontend",
+                "created_at": "2026-01-18T06:38:50.780Z",
+                "__v": 0
+            },
+            {
+                "_id": "696c7fe985a0dc2f18729c44",
+                "user_id": "5491153475204",
+                "event_type": "PIN_RESET_FAILED",
+                "channel": "frontend",
+                "created_at": "2026-01-18T06:38:33.646Z",
+                "__v": 0
+            },
+            {
+                "_id": "696c7fe485a0dc2f18729c40",
+                "user_id": "5491153475204",
+                "event_type": "PIN_RESET_FAILED",
+                "channel": "frontend",
+                "created_at": "2026-01-18T06:38:28.538Z",
+                "__v": 0
+            },
+            {
+                "_id": "696c7fe085a0dc2f18729c3c",
+                "user_id": "5491153475204",
+                "event_type": "PIN_RESET_FAILED",
+                "channel": "frontend",
+                "created_at": "2026-01-18T06:38:24.892Z",
+                "__v": 0
+            },
+            {
+                "_id": "696c7fd785a0dc2f18729c38",
+                "user_id": "5491153475204",
+                "event_type": "PIN_RESET_FAILED",
+                "channel": "frontend",
+                "created_at": "2026-01-18T06:38:15.406Z",
+                "__v": 0
+            },
+            {
+                "_id": "696c7f9b85a0dc2f18729c33",
+                "user_id": "5491153475204",
+                "event_type": "QUESTIONS_UPDATED",
+                "channel": "frontend",
+                "created_at": "2026-01-18T06:37:15.951Z",
+                "__v": 0
+            }
+        ]
+    },
+    "timestamp": "2026-01-19T22:09:58.156Z"
+}

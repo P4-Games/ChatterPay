@@ -33,14 +33,28 @@ export const grey = {
   900: '#161C24'
 }
 
-export const primary = {
-  lighter: '#C8FAD6',
-  light: '#5BE49B',
-  main: '#00A76F',
-  dark: '#007867',
-  darker: '#004B50',
+// Light mode primary (dark green)
+export const primaryLight = {
+  lighter: '#E8F5E9',
+  light: '#81C784',
+  main: '#173F35',
+  dark: '#0F2B24',
+  darker: '#081A15',
   contrastText: '#FFFFFF'
 }
+
+// Dark mode primary (vibrant green)
+export const primaryDark = {
+  lighter: '#B8F6C9',
+  light: '#5FED9A',
+  main: '#00D856',
+  dark: '#00A043',
+  darker: '#007030',
+  contrastText: '#FFFFFF'
+}
+
+// Default primary for presets (using dark mode green)
+export const primary = primaryDark
 
 export const secondary = {
   lighter: '#EFD6FF',
@@ -120,6 +134,7 @@ const base = {
 export function palette(mode: 'light' | 'dark') {
   const light = {
     ...base,
+    primary: primaryLight, // Use dark green for light mode
     mode: 'light',
     text: {
       primary: grey[800],
@@ -139,6 +154,7 @@ export function palette(mode: 'light' | 'dark') {
 
   const dark = {
     ...base,
+    primary: primaryDark, // Use vibrant green for dark mode
     mode: 'dark',
     text: {
       primary: '#FFFFFF',

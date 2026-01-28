@@ -17,10 +17,20 @@
     "save": "Save Changes",
     "close": "Close",
     "cancel": "Cancel",
+    "yes": "Yes",
+    "no": "No",
+    "back": "Back",
     "view": "View",
     "share": "Share",
     "metadata": "View Metadata",
     "copied": "Copied",
+    "accessibility": {
+      "copy-referral-code": "Copy referral code",
+      "copy-referred-by-code": "Copy referred by code",
+      "copy-wallet": "Copy wallet",
+      "open-settings": "Open settings",
+      "telegram-icon": "Telegram"
+    },
     "msg": {
       "update-success": "Update Success!",
       "update-error": "Update error",
@@ -38,10 +48,80 @@
     "account": "Account",
     "logout": "Logout",
     "email": "Email Change",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "security": "Security"
+  },
+  "user": {
+    "account": {
+      "title": "Account",
+      "description": "Manage your profile, security, and referrals."
+    },
+    "cards": {
+      "profile": {
+        "title": "Profile information",
+        "description": "Your personal details, email, and wallet.",
+        "cta": "View details",
+        "badge": "View"
+      },
+      "security": {
+        "title": "Security",
+        "description": "Status, PIN, recovery questions, and events.",
+        "cta": "Manage security",
+        "badge": {
+          "configured": "Configured",
+          "actionRequired": "Action required"
+        }
+      },
+      "referrals": {
+        "title": "Referrals",
+        "description": "Share your code and track usage.",
+        "cta": "View referrals",
+        "badge": {
+          "configured": "Configured",
+          "addCode": "Add code"
+        }
+      }
+    },
+    "profile": {
+      "title": "Profile",
+      "description": "Review and update your personal details.",
+      "name": {
+        "title": "Name",
+        "description": "Update your profile name."
+      },
+      "rows": {
+        "name": "Name",
+        "phone": "Phone",
+        "wallet": "Wallet",
+        "email": "Email"
+      }
+    },
+    "referrals": {
+      "title": "Referrals",
+      "description": "Your codes and referral usage.",
+      "referredCode": {
+        "title": "Referred by code",
+        "description": "Enter the referral code used to invite you."
+      }
+    },
+    "security": {
+      "title": "Security",
+      "description": "Check status and manage recovery or PIN.",
+      "sections": {
+        "status": "Security status",
+        "statusDescription": "See PIN info, failed attempts, and lock status.",
+        "recoveryQuestions": "Recovery questions",
+        "recoveryQuestionsDescription": "Update your security questions and answers.",
+        "pinManagement": "Security PIN",
+        "pinManagementDescription": "Set or reset your security PIN.",
+        "events": "Security events",
+        "eventsDescription": "Review security activity and changes."
+      }
+    }
   },
   "referrals": {
     "title": "Referrals",
+    "description": "Share your code and link a referrer.",
     "my-code": "Your referral code",
     "usage-count": "Used {COUNT} times",
     "referred-by": "Referred by code",
@@ -254,12 +334,11 @@
     "date": "September 2024"
   },
   "login": {
-    "hi": "Hi, Welcome back",
     "title": "Sign in to ChatterPay",
     "new-user": "New User?",
     "create-account": "Create an account",
     "send-code": "Send Code to Whatsapp",
-    "login": "login",
+    "login": "Login",
     "resend-code": "Resend Code",
     "dont-have-code": "Don't have a code?",
     "msg": {
@@ -277,21 +356,34 @@
     "already-account": "Already have an account?",
     "sign-in": "Sign in",
     "create-account": "Create Account",
-    "create-account-bot": "Create Acoount from WhatsApp",
+    "create-account-bot": "Create Acount from WhatsApp",
     "terms-of-service": "Terms of Service",
     "privacy-policy": "Privacy Policy",
     "by-signing": "By signing up, I agree to",
     "and": "and",
     "wapp-msg": "Hi, i want to register in chatterpay!"
   },
+  "deposit": {
+    "title": "Deposit",
+    "network": "Network",
+    "network-warning": "Any asset sent in other network will be lost",
+    "wallet-address": "Wallet Address",
+    "copy-address": "Copy Address"
+  },
   "balances": {
-    "title": "Estimated Balance",
+    "title": "Your money",
     "deposit": "Deposit",
     "send": "Send",
-    "wapp-msg": "Hi!"
+    "wapp-msg": "Hi!",
+    "address-copied": "Address copied!",
+    "assets-title": "Assets",
+    "hide-small-balances": "Hide <$1",
+    "no-balance": "No balance",
+    "no-balances-above": "No balances above $1",
+    "view-on-explorer": "View on Explorer"
   },
   "transactions": {
-    "title": "Recent Transactions",
+    "title": "History",
     "table-transaction": "Transaction",
     "table-amount": "Amount",
     "table-date": "Date",
@@ -335,11 +427,17 @@
   "account": {
     "title": "Account",
     "change-email": "Change",
+    "profile": {
+      "title": "Profile",
+      "description": "Review your basic account details."
+    },
     "email": {
+      "title": "Email",
+      "description": "Manage the email linked to your account.",
       "old": "Old Email Address",
       "new": "New Email Address",
       "new2": "Repeat New Email Address",
-      "send-code": "Send Code to Whatsapp to valiate",
+      "send-code": "Send code to WhatsApp to validate",
       "resend-code": "Resend Code",
       "code-sent": "We sent a 6-digit code to the phone number",
       "code-info": "Please enter the 6-digit code we sent to your WhatsApp (it may take around 2 minutes to arrive).",
@@ -352,6 +450,150 @@
         "no-notifications": "You have no new notifications.",
         "error": "There was an error while trying to fetch the notifications. Please try again later."
       }
+    }
+  },
+  "security": {
+    "summary": {
+      "title": "Security overview",
+      "description": "Check your PIN and recovery setup."
+    },
+    "status": {
+      "title": "Security status",
+      "description": "Current PIN and recovery state.",
+      "loading": "Loading status...",
+      "try-again-after": "Try again {TIME}",
+      "labels": {
+        "pin-status": "PIN status",
+        "failed-attempts": "Failed attempts",
+        "blocked-until": "Blocked until",
+        "last-set": "Last set",
+        "reset-required": "Reset required",
+        "recovery-set": "Recovery questions set",
+        "recovery-questions": "Recovery questions"
+      },
+      "statuses": {
+        "active": "Active",
+        "blocked": "Blocked",
+        "not_set": "Not set",
+        "reset_required": "Reset required"
+      }
+    },
+    "events": {
+      "title": "Security events",
+      "description": "Track security-related activity on your account.",
+      "contextTitle": "Event history",
+      "contextDescription": "Security events: PIN changes, blocks, security questions updates, and related activity.",
+      "total": "Total events: {COUNT}",
+      "filters": {
+        "channel": "Channel",
+        "eventType": "Event type",
+        "search": "Search",
+        "clear": "Clear filters"
+      },
+      "channels": {
+        "all": "All channels",
+        "frontend": "Frontend",
+        "bot": "Bot"
+      },
+      "table": {
+        "date": "Date",
+        "type": "Type",
+        "channel": "Channel",
+        "details": "Details"
+      },
+      "empty": {
+        "title": "No events",
+        "description": "No security events match the current filters."
+      },
+      "errors": {
+        "generic": "Unable to load security events. Try again later."
+      },
+      "types": {
+        "QUESTIONS_UPDATED": "Questions updated",
+        "PIN_RESET": "PIN reset",
+        "PIN_BLOCKED": "PIN blocked",
+        "PIN_VERIFY_FAILED": "PIN verification failed",
+        "PIN_RESET_FAILED": "PIN reset failed",
+        "QUESTIONS_SET": "Questions set",
+        "PIN_SET": "PIN set"
+      }
+    },
+    "recovery": {
+      "title": "Recovery questions",
+      "description": "Set or update your recovery questions and answers.",
+      "instructions": "Select {COUNT} security questions you want to configure and fill in the answers below.",
+      "questions-label": "Select questions",
+      "questions-placeholder": "Choose questions",
+      "questions-helper": "Select exactly {COUNT} questions."
+    },
+    "pin": {
+      "title": "Security PIN",
+      "description": "Create or reset your PIN.",
+      "copy": {
+        "set": "Your PIN is set. You can change it here by answering your security questions.",
+        "unset": "Your PIN is not set. It will be requested for some operations. You can set it here."
+      },
+      "label": "PIN",
+      "placeholder": "{length} digits",
+      "set-title": "Set PIN",
+      "set-description": "Requires recovery questions and answers.",
+      "set-disabled": "PIN is already set. Use reset instead.",
+      "reset-title": "Reset PIN",
+      "reset-description": "Answer your recovery questions and choose a new PIN.",
+      "reset-disabled": "Set recovery questions before resetting your PIN.",
+      "pin-label": "PIN",
+      "confirm-label": "Confirm PIN",
+      "new-pin-label": "New PIN",
+      "confirm-new-label": "Confirm new PIN",
+      "validation": {
+        "exactLength": "PIN must be exactly {length} digits."
+      }
+    },
+    "2fa": {
+      "title": "WhatsApp verification",
+      "description": "Verify with a code sent to your WhatsApp before continuing.",
+      "sendCode": "Send code to WhatsApp to validate",
+      "verifyCode": "Verify code",
+      "codeLabel": "Verification code",
+      "code-message": "Enter this code {2FA_CODE} to verify your security action in Chatterpay. Do not share this code with anyone. If you did not request it, ignore this message and contact us.",
+      "code-sent": "Verification code sent",
+      "errors": {
+        "invalid": "Invalid verification code.",
+        "expired": "Verification code expired. Request a new one.",
+        "generic": "Unable to verify the code. Try again."
+      }
+    },
+    "blocked": {
+      "now": "Now",
+      "unlockAt": "Unlock at",
+      "remaining": "Time remaining",
+      "tryAgainAfter": "PIN is blocked."
+    },
+    "actions": {
+      "set-pin": "Set PIN",
+      "reset-pin": "Reset PIN",
+      "save-questions": "Save questions",
+      "manage-security": "Manage security"
+    },
+    "messages": {
+      "recovery-updated": "Recovery questions updated",
+      "pin-set": "PIN set successfully",
+      "pin-reset": "PIN reset successfully"
+    },
+    "errors": {
+      "pinAlreadySet": "PIN already set. Use reset to change it.",
+      "exactlyNQuestionsRequired": "Select exactly {COUNT} questions.",
+      "incorrectRecoveryAnswers": "Recovery answers are incorrect.",
+      "questionsMustBeUnique": "Questions must be unique.",
+      "recoveryQuestionsNotSet": "Recovery questions are not set.",
+      "pinFormat": "PIN must be exactly {COUNT} digits.",
+      "generic": "Something went wrong. Please try again."
+    },
+    "validation": {
+      "select-exactly": "Select exactly {COUNT} questions.",
+      "unique-questions": "Questions must be unique.",
+      "pin-match": "PINs must match.",
+      "answers-required": "Answers are required."
     }
   },
   "aboutUs": {

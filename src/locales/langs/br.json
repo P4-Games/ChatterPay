@@ -17,10 +17,20 @@
     "save": "Salvar Alterações",
     "cancel": "Cancelar",
     "close": "Fechar",
+    "yes": "Sim",
+    "no": "Não",
+    "back": "Voltar",
     "view": "Ver",
     "share": "Compartilhar",
     "metadata": "Ver Metadata",
     "copied": "Copiado",
+    "accessibility": {
+      "copy-referral-code": "Copiar codigo de indicacao",
+      "copy-referred-by-code": "Copiar codigo de quem indicou",
+      "copy-wallet": "Copiar carteira",
+      "open-settings": "Abrir configuracoes",
+      "telegram-icon": "Telegram"
+    },
     "msg": {
       "update-success": "Atualização bem-sucedida!",
       "update-error": "Erro de atualização",
@@ -38,10 +48,68 @@
     "account": "Conta",
     "logout": "Sair",
     "email": "Alterar Email",
-    "notifications": "Notificações"
+    "notifications": "Notificações",
+    "security": "Seguranca"
+  },
+  "user": {
+    "account": {
+      "title": "Conta",
+      "description": "Gerencie seu perfil, seguranca e indicacoes."
+    },
+    "cards": {
+      "profile": {
+        "title": "Informacoes do perfil",
+        "description": "Seus dados pessoais, email e wallet."
+      },
+      "security": {
+        "title": "Seguranca",
+        "description": "Status, PIN, perguntas de recuperacao e eventos."
+      },
+      "referrals": {
+        "title": "Indicacoes",
+        "description": "Compartilhe seu codigo e acompanhe o uso."
+      }
+    },
+    "profile": {
+      "title": "Perfil",
+      "description": "Revise e atualize seus dados pessoais.",
+      "name": {
+        "title": "Nome",
+        "description": "Atualize seu nome de perfil."
+      },
+      "rows": {
+        "name": "Nome",
+        "phone": "Telefone",
+        "wallet": "Carteira",
+        "email": "Email"
+      }
+    },
+    "referrals": {
+      "title": "Indicacoes",
+      "description": "Seus codigos e uso de indicacoes.",
+      "referredCode": {
+        "title": "Codigo indicado",
+        "description": "Informe o codigo de indicacao que voce recebeu."
+      }
+    },
+    "security": {
+      "title": "Seguranca",
+      "description": "Revise o status e gerencie seu PIN.",
+      "sections": {
+        "status": "Status de seguranca",
+        "statusDescription": "Ver informacoes do PIN, tentativas falhas e bloqueio.",
+        "recoveryQuestions": "Perguntas de recuperacao",
+        "recoveryQuestionsDescription": "Atualizar suas perguntas e respostas de seguranca.",
+        "pinManagement": "PIN de seguranca",
+        "pinManagementDescription": "Configurar ou redefinir seu PIN de seguranca.",
+        "events": "Eventos de seguranca",
+        "eventsDescription": "Veja a atividade e as mudancas de seguranca."
+      }
+    }
   },
   "referrals": {
     "title": "Indicações",
+    "description": "Compartilhe seu codigo e vincule um referente.",
     "my-code": "Seu código de indicação",
     "usage-count": "Usado {COUNT} vezes",
     "referred-by": "Código de quem te indicou",
@@ -254,7 +322,6 @@
     }
   },
   "login": {
-    "hi": "Oi, bem-vindo de volta",
     "title": "Entrar no ChatterPay",
     "new-user": "Novo usuário?",
     "create-account": "Criar uma conta",
@@ -285,14 +352,27 @@
     "and": "e",
     "wapp-msg": "Oi, quero me registrar no Chatterpay!"
   },
+  "deposit": {
+    "title": "Depositar",
+    "network": "Rede",
+    "network-warning": "Qualquer ativo enviado em outra rede será perdido",
+    "wallet-address": "Endereço da carteira",
+    "copy-address": "Copiar endereço"
+  },
   "balances": {
-    "title": "Saldo Estimado",
+    "title": "Seu dinheiro",
     "deposit": "Depositar",
     "send": "Enviar",
-    "wapp-msg": "Olá!"
+    "wapp-msg": "Olá!",
+    "address-copied": "Endereço copiado!",
+    "assets-title": "Ativos",
+    "hide-small-balances": "Ocultar <$1",
+    "no-balance": "Sem saldo",
+    "no-balances-above": "Nenhum saldo acima de $1",
+    "view-on-explorer": "Ver no Explorer"
   },
   "transactions": {
-    "title": "Transações Recentes",
+    "title": "Histórico",
     "table-transaction": "Transação",
     "table-amount": "Montante",
     "table-date": "Data",
@@ -336,7 +416,13 @@
   "account": {
     "title": "Conta",
     "change-email": "Alterar",
+    "profile": {
+      "title": "Perfil",
+      "description": "Revise seus dados basicos da conta."
+    },
     "email": {
+      "title": "Email",
+      "description": "Gerencie o email vinculado a sua conta.",
       "old": "Endereço de Email Antigo",
       "new": "Novo Endereço de Email",
       "new2": "Repita o Novo Endereço de Email",
@@ -353,6 +439,152 @@
         "no-notifications": "Você não tem novas notificações",
         "error": "Ocorreu um erro ao tentar obter as notificações. Tente novamente mais tarde."
       }
+    }
+  },
+  "security": {
+    "summary": {
+      "title": "Resumo de seguranca",
+      "description": "Confira seu PIN e perguntas de recuperacao."
+    },
+    "status": {
+      "title": "Status de seguranca",
+      "description": "Estado atual do PIN e da recuperacao.",
+      "loading": "Carregando status...",
+      "try-again-after": "Tente novamente {TIME}",
+      "labels": {
+        "pin-status": "Status do PIN",
+        "failed-attempts": "Tentativas falhas",
+        "blocked-until": "Bloqueado ate",
+        "last-set": "Ultima configuracao",
+        "reset-required": "Requer redefinicao",
+        "recovery-set": "Perguntas de recuperacao configuradas",
+        "recovery-questions": "Perguntas de recuperacao"
+      },
+      "statuses": {
+        "active": "Ativo",
+        "blocked": "Bloqueado",
+        "not_set": "Nao configurado",
+        "reset_required": "Requer redefinicao"
+      }
+    },
+    "events": {
+      "title": "Eventos de seguranca",
+      "description": "Acompanhe a atividade de seguranca da sua conta.",
+      "contextTitle": "Historico de eventos",
+      "contextDescription": "Eventos de seguranca: mudancas de PIN, bloqueios, atualizacoes de perguntas de seguranca e atividades relacionadas.",
+      "total": "Total de eventos: {COUNT}",
+      "filters": {
+        "channel": "Canal",
+        "eventType": "Tipo de evento",
+        "search": "Buscar",
+        "clear": "Limpar filtros"
+      },
+      "channels": {
+        "all": "Todos os canais",
+        "frontend": "Frontend",
+        "bot": "Bot"
+      },
+      "table": {
+        "date": "Data",
+        "type": "Tipo",
+        "channel": "Canal",
+        "message": "Mensagem",
+        "details": "Detalhes"
+      },
+      "empty": {
+        "title": "Sem eventos",
+        "description": "Nao ha eventos de seguranca com os filtros atuais."
+      },
+      "errors": {
+        "generic": "Nao foi possivel carregar os eventos de seguranca. Tente novamente."
+      },
+      "types": {
+        "QUESTIONS_UPDATED": "Perguntas atualizadas",
+        "PIN_RESET": "PIN redefinido",
+        "PIN_BLOCKED": "PIN bloqueado",
+        "PIN_VERIFY_FAILED": "Falha na verificacao do PIN",
+        "PIN_RESET_FAILED": "Falha ao redefinir PIN",
+        "QUESTIONS_SET": "Perguntas configuradas",
+        "PIN_SET": "PIN configurado"
+      }
+    },
+    "recovery": {
+      "title": "Perguntas de recuperacao",
+      "description": "Configure ou atualize suas perguntas e respostas.",
+      "instructions": "Selecione {COUNT} perguntas de seguranca que deseja configurar e preencha as respostas abaixo.",
+      "questions-label": "Selecione perguntas",
+      "questions-placeholder": "Escolha perguntas",
+      "questions-helper": "Selecione exatamente {COUNT} perguntas."
+    },
+    "pin": {
+      "title": "PIN de segurança",
+      "description": "Crie ou redefina seu PIN.",
+      "copy": {
+        "set": "Seu PIN esta configurado. Voce pode altera-lo aqui respondendo as perguntas de seguranca.",
+        "unset": "Seu PIN nao esta configurado. Ele sera solicitado em algumas operacoes. Voce pode configura-lo aqui."
+      },
+      "label": "PIN",
+      "placeholder": "{length} digitos",
+      "set-title": "Definir PIN",
+      "set-description": "Requer perguntas e respostas de recuperacao.",
+      "set-disabled": "O PIN ja esta definido. Use a redefinicao.",
+      "reset-title": "Redefinir PIN",
+      "reset-description": "Responda as perguntas e escolha um novo PIN.",
+      "reset-disabled": "Defina perguntas de recuperacao antes de redefinir o PIN.",
+      "pin-label": "PIN",
+      "confirm-label": "Confirmar PIN",
+      "new-pin-label": "Novo PIN",
+      "confirm-new-label": "Confirmar novo PIN",
+      "validation": {
+        "exactLength": "O PIN deve ter exatamente {length} digitos."
+      }
+    },
+    "2fa": {
+      "title": "Verificacao WhatsApp",
+      "description": "Verifique com um codigo enviado ao WhatsApp antes de continuar.",
+      "sendCode": "Enviar codigo para o WhatsApp para validar",
+      "verifyCode": "Verificar codigo",
+      "codeLabel": "Codigo de verificacao",
+      "code-message": "Digite este codigo {2FA_CODE} para validar sua acao de seguranca no Chatterpay. Nao compartilhe este codigo com ninguem. Se voce nao solicitou, ignore esta mensagem e entre em contato.",
+      "code-sent": "Codigo de verificacao enviado",
+      "errors": {
+        "invalid": "Codigo de verificacao invalido.",
+        "expired": "Codigo expirado. Solicite um novo.",
+        "generic": "Nao foi possivel verificar o codigo. Tente novamente."
+      }
+    },
+    "blocked": {
+      "now": "Agora",
+      "unlockAt": "Desbloqueia em",
+      "remaining": "Tempo restante",
+      "tryAgainAfter": "O PIN esta bloqueado."
+    },
+    "actions": {
+      "set-pin": "Definir PIN",
+      "reset-pin": "Redefinir PIN",
+      "save-questions": "Salvar perguntas",
+      "manage-security": "Gerenciar seguranca"
+    },
+    "messages": {
+      "recovery-updated": "Perguntas de recuperacao atualizadas",
+      "pin-set": "PIN definido com sucesso",
+      "pin-reset": "PIN redefinido com sucesso"
+    },
+    "errors": {
+      "pinAlreadySet": "O PIN ja esta definido. Use a redefinicao para alterar.",
+      "exactlyNQuestionsRequired": "Selecione exatamente {COUNT} perguntas.",
+      "incorrectRecoveryAnswers": "As respostas de recuperacao estao incorretas.",
+      "questionsMustBeUnique": "As perguntas devem ser unicas.",
+      "recoveryQuestionsNotSet": "As perguntas de recuperacao nao estao configuradas.",
+      "pinFormat": "O PIN deve ter exatamente {COUNT} digitos.",
+      "generic": "Algo deu errado. Tente novamente."
+    },
+    "validation": {
+      "select-exactly": "Selecione exatamente {COUNT} perguntas.",
+      "unique-questions": "As perguntas devem ser unicas.",
+      "pin-format": "O PIN deve ter exatamente 6 digitos.",
+      "pin-match": "Os PIN devem coincidir.",
+      "answers-required": "As respostas sao obrigatorias."
     }
   },
   "aboutUs": {

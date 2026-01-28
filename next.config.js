@@ -17,7 +17,6 @@ module.exports = {
   images: {
     domains: [
       'storage.googleapis.com',
-      'cilxj-yiaaa-aaaag-alkxq-cai.icp0.io',
       'gateway.pinata.cloud',
       'w.wallhaven.cc',
       'img.freepik.com',
@@ -28,12 +27,6 @@ module.exports = {
       {
         protocol: 'https',
         hostname: 'storage.googleapis.com',
-        port: '',
-        pathname: '/**'
-      },
-      {
-        protocol: 'https',
-        hostname: 'cilxj-yiaaa-aaaag-alkxq-cai.icp0.io',
         port: '',
         pathname: '/**'
       },
