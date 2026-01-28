@@ -17,6 +17,7 @@ import { NAV, HEADER } from '../config-layout'
 import AccountPopover from '../common/account-popover'
 import SettingsButton from '../common/settings-button'
 import LanguagePopover from '../common/language-popover'
+import NotificationsButton from '../common/notifications-button'
 
 // ----------------------------------------------------------------------
 
@@ -59,6 +60,8 @@ export default function Header({ onOpenNav }: Props) {
         <LanguagePopover />
 
         <SettingsButton />
+
+        <NotificationsButton />
 
         <AccountPopover />
       </Stack>

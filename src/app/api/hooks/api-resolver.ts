@@ -118,7 +118,19 @@ export const endpoints = {
         resetPin: (id: string) => getFullUIEndpoint(`user/${id}/security/pin/reset`)
       },
       updateEmail: (id: string) => getFullUIEndpoint(`user/${id}/email`),
-      logout: (id: string) => getFullUIEndpoint(`user/${id}/logout`)
+      logout: (id: string) => getFullUIEndpoint(`user/${id}/logout`),
+      notifications: {
+        root: (id: string, cursor?: string, limit?: number) => {
+          const params = new URLSearchParams()
+          if (cursor !== undefined && cursor !== null) params.append('cursor', cursor)
+          if (limit) params.append('limit', String(limit))
+          const queryString = params.toString()
+          return getFullUIEndpoint(`user/${id}/notifications${queryString ? `?${queryString}` : ''}`)
+        },
+        markRead: (id: string) => getFullUIEndpoint(`user/${id}/notifications/mark-read`),
+        delete: (id: string, notificationId: string) =>
+          getFullUIEndpoint(`user/${id}/notifications/${notificationId}`)
+      }
     },
     wallet: {
       balance: (id: string) => getFullUIEndpoint(`wallet/${id}/balance`),
