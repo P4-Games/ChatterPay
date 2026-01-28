@@ -1,6 +1,8 @@
 'use client'
 
 import Container from '@mui/material/Container'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 
 import { paths } from 'src/routes/paths'
 
@@ -20,7 +22,6 @@ export default function EmailEditView() {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
-        heading={t('menu.email')}
         links={[
           { name: t('menu._dashboard'), href: paths.dashboard.root },
           { name: t('menu.user'), href: paths.dashboard.user.root },
@@ -28,9 +29,16 @@ export default function EmailEditView() {
           { name: t('menu.email') }
         ]}
         sx={{
-          mb: { xs: 3, md: 5 }
+          mb: { xs: 2, md: 3 }
         }}
       />
+
+      <Stack spacing={1} sx={{ mb: { xs: 3, md: 5 } }}>
+        <Typography variant='h4'>{t('account.email.title')}</Typography>
+        <Typography variant='body2' color='text.secondary'>
+          {t('account.email.description')}
+        </Typography>
+      </Stack>
 
       <ChangeEmail />
     </Container>

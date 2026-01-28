@@ -55,7 +55,6 @@ This repository contains the source code for the landing page and user dashboard
 
 **deploy with**:
 
-- Landing Page (static): [ICP](https://internetcomputer.org/)
 - User Dashboard: [Google Cloud](https://cloud.google.com/)
 
 # Getting Started
@@ -105,12 +104,6 @@ npm run dev / yarn dev
 ```
 
 Then, open brower in: `http://localhost:3000`.
-
-**6. Deploy to ICP**:
-
-To deploy the landing (static code) to the [Internet Computer (ICP)](https://internetcomputer.org/), you can follow the steps described in the [Deployment Guidelines](./.doc/deployment/deploy-guidelines).
-
-URL of the deployed app on ICP: https://cilxj-yiaaa-aaaag-alkxq-cai.icp0.io/
 
 # Additional Info
 

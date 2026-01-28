@@ -31,7 +31,8 @@ export default function AuthClassicLayout({ children, image, title }: Props) {
       sx={{
         zIndex: 9,
         position: 'absolute',
-        m: { xs: 2, md: 5 }
+        mx: { xs: 4, md: 8 },
+        mt: { xs: 2, md: 5 }
       }}
     />
   )
@@ -42,8 +43,22 @@ export default function AuthClassicLayout({ children, image, title }: Props) {
         zIndex: 9,
         position: 'absolute',
         top: 0,
-        right: 0,
-        m: { xs: 2, md: 5 }
+        mt: { xs: 2, md: 5 },
+
+        ...(!mdUp && {
+          right: 0,
+          mx: 4
+        }),
+
+        ...(mdUp && {
+          width: '50%',
+          maxWidth: 600,
+          mx: 'auto',
+          px: 5,
+          display: 'flex',
+          justifyContent: 'flex-end',
+          left: 0
+        })
       }}
     >
       <LanguagePopover />
@@ -55,8 +70,8 @@ export default function AuthClassicLayout({ children, image, title }: Props) {
       sx={{
         width: 1,
         mx: 'auto',
-        maxWidth: 480,
-        px: { xs: 2, md: 8 },
+        maxWidth: 600,
+        px: { xs: 2, md: 5 },
         pt: { xs: 15, md: 20 },
         pb: { xs: 15, md: 0 }
       }}
@@ -72,29 +87,23 @@ export default function AuthClassicLayout({ children, image, title }: Props) {
       alignItems='center'
       justifyContent='center'
       sx={{
-        ...bgGradient({
-          color: alpha(
-            theme.palette.background.default,
-            theme.palette.mode === 'light' ? 0.88 : 0.94
-          ),
-          imgUrl: '/assets/images/background/overlay_2.jpg'
-        })
+        bgcolor: 'background.default',
+        height: '100vh',
+        overflow: 'hidden'
       }}
     >
-      <Typography variant='h3' sx={{ maxWidth: 480, textAlign: 'center' }}>
-        {title || t('login.hi')}
-      </Typography>
-
       <Box
         component='img'
         alt='auth'
-        src={image || '/assets/images/illustrations/dashboard.png'}
+        src={
+          image ||
+          'https://storage.googleapis.com/chatbot-multimedia/chatterpay/images/login_graphic.webp'
+        }
         sx={{
-          maxWidth: {
-            xs: 480,
-            lg: 560,
-            xl: 720
-          }
+          width: '100%',
+          height: '100vh',
+          maxHeight: '100vh',
+          objectFit: 'cover'
         }}
       />
     </Stack>
@@ -111,9 +120,9 @@ export default function AuthClassicLayout({ children, image, title }: Props) {
       >
         {renderLogo}
 
-        {mdUp && renderSection}
-
         {renderContent}
+
+        {mdUp && renderSection}
 
         {renderLanguagePopover}
       </Stack>

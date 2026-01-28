@@ -1,6 +1,5 @@
 import type React from 'react'
 import { useState, useEffect } from 'react'
-import { NotificationItem } from '@pushprotocol/uiweb'
 
 import { Box, Card, Stack, Tooltip, Typography, IconButton, CircularProgress } from '@mui/material'
 
@@ -12,28 +11,27 @@ import { notificationsRefreshInterval } from 'src/config-global'
 
 import Iconify from 'src/components/iconify'
 
-import type { pushNotification } from 'src/types/notifications'
+import type { Notification } from 'src/types/notifications'
 
 // ----------------------------------------------------------------------
 
-const PushNotifications: React.FC = () => {
+const Notifications: React.FC = () => {
   const { t } = useTranslate()
   const { user }: { user: AuthUserType } = useAuthContext()
   const [walletAddress, setWalletAddress] = useState<string | null>(null)
 
   useEffect(() => {
-    // User is subscribed to the Push channel using his EOA wallet!"
     if (user && user.walletEOA) {
       setWalletAddress(user.walletEOA)
     }
   }, [user])
 
   const { data, isLoading }: { data: any; isLoading: boolean } = useGetWalletNotifications(
-    walletAddress || user?.walletEAO,
+    walletAddress || user?.walletEOA,
     5,
     notificationsRefreshInterval
   )
-  const notifications = data ? data.flatMap((page: pushNotification) => page) : []
+  const notifications = data ? data.flatMap((page: Notification) => page) : []
 
   const renderTitle = (
     <Stack
@@ -73,25 +71,10 @@ const PushNotifications: React.FC = () => {
     <Stack spacing={2} sx={{ mt: 0 }}>
       {!notifications || notifications.length === 0
         ? renderNoNotifications
-        : notifications.map(
-            (notification: pushNotification, index: React.Key | null | undefined) => {
-              const { cta, title, message, app, icon, image, url, blockchain } = notification
-              return (
-                <NotificationItem
-                  key={index}
-                  notificationTitle={title}
-                  notificationBody={message}
-                  cta={cta}
-                  app={app}
-                  icon={icon}
-                  image={image}
-                  url={url}
-                  theme='light'
-                  chainName={blockchain}
-                />
-              )
-            }
-          )}
+        : notifications.map((notification: Notification, index: React.Key | null | undefined) => {
+            const { cta, title, message, app, icon, image, url, blockchain } = notification
+            return <></>
+          })}
     </Stack>
   )
 
@@ -109,4 +92,4 @@ const PushNotifications: React.FC = () => {
   )
 }
 
-export default PushNotifications
+export default Notifications

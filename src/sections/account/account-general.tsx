@@ -6,6 +6,8 @@ import { yupResolver } from '@hookform/resolvers/yup'
 
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
+import CardHeader from '@mui/material/CardHeader'
+import CardContent from '@mui/material/CardContent'
 import Stack from '@mui/material/Stack'
 import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
@@ -26,6 +28,7 @@ import {
   submitReferralByCode,
   useReferralCodeWithUsageCount
 } from 'src/app/api/hooks/use-referral'
+import { useSecurityStatus } from 'src/app/api/hooks/use-security'
 
 import Iconify from 'src/components/iconify/iconify'
 import { useSnackbar } from 'src/components/snackbar'
@@ -57,6 +60,9 @@ export default function AccountGeneral() {
     user?.id
   )
   const { data: referralByCodeData, isLoading: referralByCodeLoading } = useReferralByCode(user?.id)
+  const { data: securityStatusResponse, isLoading: securityStatusLoading } = useSecurityStatus(
+    user?.id
+  )
 
   const saveChangesButtonSx = {
     minHeight: 40,
@@ -196,132 +202,199 @@ export default function AccountGeneral() {
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
         <Grid xs={12} md={8}>
-          <Card sx={{ p: 3 }}>
-            <Box
-              rowGap={3}
-              columnGap={2}
-              display='grid'
-              gridTemplateColumns={{
-                xs: 'repeat(1, 1fr)',
-                sm: 'repeat(1, 1fr)'
-              }}
-            >
-              <RHFTextField name='displayName' label={t('common.name')} />
-              <RHFTextField disabled name='phoneNumber' label={t('common.phone-number')} />
-              <RHFTextField disabled name='wallet' label={t('common.wallet')} />
+          <Stack spacing={3}>
+            <Card>
+              <CardHeader
+                title={t('account.profile.title')}
+                subheader={t('account.profile.description')}
+              />
+              <CardContent>
+                <Box
+                  rowGap={3}
+                  columnGap={2}
+                  display='grid'
+                  gridTemplateColumns={{
+                    xs: 'repeat(1, 1fr)',
+                    sm: 'repeat(1, 1fr)'
+                  }}
+                >
+                  <RHFTextField name='displayName' label={t('common.name')} />
+                  <RHFTextField disabled name='phoneNumber' label={t('common.phone-number')} />
+                  <RHFTextField disabled name='wallet' label={t('common.wallet')} />
+                </Box>
 
-              <Stack direction='row' spacing={2} alignItems='center'>
-                <RHFTextField disabled name='email' label={t('common.email-address')} />
-                <Button variant='outlined' color='inherit' onClick={handleChangeEmail}>
-                  {t('account.change-email')}
-                </Button>
-              </Stack>
-            </Box>
-
-            <Stack spacing={3} alignItems='flex-end' sx={{ mt: 3 }}>
-              <LoadingButton
-                type='submit'
-                variant='contained'
-                loading={isSubmitting}
-                sx={saveChangesButtonSx}
-              >
-                {t('common.save')}
-              </LoadingButton>
-            </Stack>
-
-            <Divider sx={{ my: 3 }} />
-
-            <Stack spacing={1.5}>
-              <Typography variant='h6'>{t('referrals.title')}</Typography>
-
-              <Stack
-                direction={{ xs: 'column', sm: 'row' }}
-                spacing={{ xs: 0.5, sm: 2 }}
-                alignItems={{ sm: 'center' }}
-                justifyContent='space-between'
-              >
-                <Typography variant='body2' color='text.secondary'>
-                  {t('referrals.my-code')}
-                </Typography>
-
-                <Stack direction='row' spacing={1} alignItems='center' sx={{ minWidth: 0 }}>
-                  <Typography variant='body1' sx={{ wordBreak: 'break-all' }}>
-                    {referralStatsLoading
-                      ? '...'
-                      : referralStats?.referralCode || t('common.nodata')}
-                  </Typography>
-
-                  {!!(referralStats?.referralCode || '').trim() && (
-                    <IconButton
-                      size='small'
-                      onClick={() => handleCopy(referralStats!.referralCode)}
-                      aria-label='Copy referral code'
-                    >
-                      <Iconify icon='eva:copy-fill' width={18} />
-                    </IconButton>
-                  )}
-                </Stack>
-              </Stack>
-
-              <Typography variant='body2' color='text.secondary'>
-                {t('referrals.usage-count').replace(
-                  '{COUNT}',
-                  String(referralStats?.referredUsersCount ?? 0)
-                )}
-              </Typography>
-
-              <Stack
-                direction={{ xs: 'column', sm: 'row' }}
-                spacing={{ xs: 0.5, sm: 2 }}
-                alignItems={{ sm: 'center' }}
-                justifyContent='space-between'
-              >
-                <Typography variant='body2' color='text.secondary'>
-                  {t('referrals.referred-by')}
-                </Typography>
-
-                <Stack direction='row' spacing={1} alignItems='center' sx={{ minWidth: 0 }}>
-                  <Typography variant='body1' sx={{ wordBreak: 'break-all' }}>
-                    {referralByCodeLoading
-                      ? '...'
-                      : referralByCodeData?.referralByCode || t('referrals.not-set')}
-                  </Typography>
-
-                  {!!(referralByCodeData?.referralByCode || '').trim() && (
-                    <IconButton
-                      size='small'
-                      onClick={() => handleCopy(referralByCodeData!.referralByCode)}
-                      aria-label='Copy referred by code'
-                    >
-                      <Iconify icon='eva:copy-fill' width={18} />
-                    </IconButton>
-                  )}
-                </Stack>
-              </Stack>
-
-              {!referralByCodeLoading && !(referralByCodeData?.referralByCode || '').trim() && (
-                <Stack direction='row' spacing={2} alignItems='center'>
-                  <RHFTextField
-                    name='referralByCode'
-                    label={t('referrals.input-label')}
-                    placeholder={t('referrals.input-placeholder')}
-                    size='small'
-                    inputProps={{ maxLength: 10 }}
-                    sx={{ flex: 1, minWidth: 0 }}
-                  />
+                <Stack spacing={3} alignItems='flex-end' sx={{ mt: 3 }}>
                   <LoadingButton
-                    type='button'
+                    type='submit'
                     variant='contained'
-                    loading={isSubmittingReferral}
-                    onClick={handleSubmitReferralByCode}
+                    loading={isSubmitting}
                     sx={saveChangesButtonSx}
                   >
                     {t('common.save')}
                   </LoadingButton>
                 </Stack>
-              )}
-            </Stack>
-          </Card>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader
+                title={t('account.email.title')}
+                subheader={t('account.email.description')}
+              />
+              <CardContent>
+                <Stack
+                  direction={{ xs: 'column', sm: 'row' }}
+                  spacing={2}
+                  alignItems={{ sm: 'center' }}
+                  justifyContent='space-between'
+                >
+                  <RHFTextField disabled name='email' label={t('common.email-address')} />
+                  <Button variant='contained' color='primary' onClick={handleChangeEmail}>
+                    {t('account.change-email')}
+                  </Button>
+                </Stack>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader title={t('referrals.title')} subheader={t('referrals.description')} />
+              <CardContent>
+                <Stack spacing={1.5}>
+                  <Stack
+                    direction={{ xs: 'column', sm: 'row' }}
+                    spacing={{ xs: 0.5, sm: 2 }}
+                    alignItems={{ sm: 'center' }}
+                    justifyContent='space-between'
+                  >
+                    <Typography variant='body2' color='text.secondary'>
+                      {t('referrals.my-code')}
+                    </Typography>
+
+                    <Stack direction='row' spacing={1} alignItems='center' sx={{ minWidth: 0 }}>
+                      <Typography variant='body1' sx={{ wordBreak: 'break-all' }}>
+                        {referralStatsLoading
+                          ? '...'
+                          : referralStats?.referralCode || t('common.nodata')}
+                      </Typography>
+
+                      {!!(referralStats?.referralCode || '').trim() && (
+                        <IconButton
+                          size='small'
+                          onClick={() => handleCopy(referralStats!.referralCode)}
+                          aria-label={t('common.accessibility.copy-referral-code')}
+                        >
+                          <Iconify icon='eva:copy-fill' width={18} />
+                        </IconButton>
+                      )}
+                    </Stack>
+                  </Stack>
+
+                  <Typography variant='body2' color='text.secondary'>
+                    {t('referrals.usage-count').replace(
+                      '{COUNT}',
+                      String(referralStats?.referredUsersCount ?? 0)
+                    )}
+                  </Typography>
+
+                  <Stack
+                    direction={{ xs: 'column', sm: 'row' }}
+                    spacing={{ xs: 0.5, sm: 2 }}
+                    alignItems={{ sm: 'center' }}
+                    justifyContent='space-between'
+                  >
+                    <Typography variant='body2' color='text.secondary'>
+                      {t('referrals.referred-by')}
+                    </Typography>
+
+                    <Stack direction='row' spacing={1} alignItems='center' sx={{ minWidth: 0 }}>
+                      <Typography variant='body1' sx={{ wordBreak: 'break-all' }}>
+                        {referralByCodeLoading
+                          ? '...'
+                          : referralByCodeData?.referralByCode || t('referrals.not-set')}
+                      </Typography>
+
+                      {!!(referralByCodeData?.referralByCode || '').trim() && (
+                        <IconButton
+                          size='small'
+                          onClick={() => handleCopy(referralByCodeData!.referralByCode)}
+                          aria-label={t('common.accessibility.copy-referred-by-code')}
+                        >
+                          <Iconify icon='eva:copy-fill' width={18} />
+                        </IconButton>
+                      )}
+                    </Stack>
+                  </Stack>
+
+                  {!referralByCodeLoading && !(referralByCodeData?.referralByCode || '').trim() && (
+                    <Stack direction='row' spacing={2} alignItems='center'>
+                      <RHFTextField
+                        name='referralByCode'
+                        label={t('referrals.input-label')}
+                        placeholder={t('referrals.input-placeholder')}
+                        size='small'
+                        inputProps={{ maxLength: 10 }}
+                        sx={{ flex: 1, minWidth: 0 }}
+                      />
+                      <LoadingButton
+                        type='button'
+                        variant='contained'
+                        loading={isSubmittingReferral}
+                        onClick={handleSubmitReferralByCode}
+                        sx={saveChangesButtonSx}
+                      >
+                        {t('referrals.save-button')}
+                      </LoadingButton>
+                    </Stack>
+                  )}
+                </Stack>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader
+                title={t('security.summary.title')}
+                subheader={t('security.summary.description')}
+              />
+              <CardContent>
+                <Stack spacing={2}>
+                  <Stack direction='row' justifyContent='space-between'>
+                    <Typography variant='body2' color='text.secondary'>
+                      {t('security.status.labels.pin-status')}
+                    </Typography>
+                    <Typography variant='body2'>
+                      {securityStatusLoading || !securityStatusResponse?.ok
+                        ? '...'
+                        : t(`security.status.statuses.${securityStatusResponse.data.pinStatus}`)}
+                    </Typography>
+                  </Stack>
+
+                  <Stack direction='row' justifyContent='space-between'>
+                    <Typography variant='body2' color='text.secondary'>
+                      {t('security.status.labels.recovery-set')}
+                    </Typography>
+                    <Typography variant='body2'>
+                      {securityStatusLoading || !securityStatusResponse?.ok
+                        ? '...'
+                        : securityStatusResponse.data.recoveryQuestionsSet
+                          ? t('common.yes')
+                          : t('common.no')}
+                    </Typography>
+                  </Stack>
+
+                  <Divider />
+
+                  <Stack direction='row' justifyContent='flex-end'>
+                    <Button
+                      variant='contained'
+                      onClick={() => router.push(paths.dashboard.user.security)}
+                    >
+                      {t('security.actions.manage-security')}
+                    </Button>
+                  </Stack>
+                </Stack>
+              </CardContent>
+            </Card>
+          </Stack>
         </Grid>
       </Grid>
     </FormProvider>

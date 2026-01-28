@@ -8,6 +8,7 @@ import Badge, { badgeClasses } from '@mui/material/Badge'
 import Iconify from 'src/components/iconify'
 import { varHover } from 'src/components/animate'
 import { useSettingsContext } from 'src/components/settings'
+import { useTranslate } from 'src/locales'
 
 // ----------------------------------------------------------------------
 
@@ -16,6 +17,7 @@ type Props = {
 }
 
 export default function SettingsButton({ sx }: Props) {
+  const { t } = useTranslate()
   const settings = useSettingsContext()
 
   return (
@@ -47,7 +49,7 @@ export default function SettingsButton({ sx }: Props) {
           whileTap='tap'
           whileHover='hover'
           variants={varHover(1.05)}
-          aria-label='settings'
+          aria-label={t('common.accessibility.open-settings')}
           onClick={settings.onToggle}
           sx={{
             width: 40,

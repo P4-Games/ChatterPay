@@ -1,6 +1,7 @@
 export type IBalance = {
   network: string
   token: string
+  tokenAddress?: string
   balance: number
   balance_conv: {
     usd: number
@@ -24,7 +25,6 @@ export type INFTMetadata = {
   image_url: {
     gcp: string
     ipfs: string
-    icp: string
   }
   geolocation?: {
     latitude?: string
@@ -70,4 +70,28 @@ export type ITransaction = {
   fee: number
   type: string
   status: string
+}
+
+export type IToken = {
+  _id: string
+  name: string
+  chain_id: number
+  decimals: number
+  address: string
+  symbol: string
+  logo: string
+  type: string
+  ramp_enabled: boolean
+  display_decimals: number
+  display_symbol: string
+  operations_limits?: {
+    transfer?: {
+      L1?: { min: number; max: number }
+      L2?: { min: number; max: number }
+    }
+    swap?: {
+      L1?: { min: number; max: number }
+      L2?: { min: number; max: number }
+    }
+  }
 }

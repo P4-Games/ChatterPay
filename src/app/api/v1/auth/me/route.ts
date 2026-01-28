@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 
 import { CHP_DSH_NAME } from 'src/config-global'
 import { verifyJwtToken } from 'src/app/api/middleware/utils/jwt-utils'
+import { getUserById } from 'src/app/api/services/db/chatterpay-db-service'
 
 import type { jwtPayloadUser } from 'src/types/jwt'
 
@@ -26,6 +27,26 @@ export async function GET() {
 
   try {
     const payload = verifyJwtToken(token)
+    const userId = payload.user?.id
+    if (userId) {
+      const user = await getUserById(userId)
+      if (user) {
+        return NextResponse.json(
+          {
+            user: {
+              id: user.id,
+              displayName: user.name,
+              wallet: user.wallet,
+              walletEOA: user.walletEOA || '',
+              email: user.email || '',
+              photoURL: user.photo,
+              phoneNumber: user.phone_number
+            }
+          },
+          { status: 200 }
+        )
+      }
+    }
     return NextResponse.json({ user: payload.user }, { status: 200 })
   } catch (err) {
     console.error('verifyJwtToken failed', err)

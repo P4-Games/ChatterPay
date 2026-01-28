@@ -6,6 +6,8 @@ import { validateUserCommonsInputs } from 'src/app/api/middleware/validators/use
 
 // ----------------------------------------------------------------------
 
+export const dynamic = 'force-dynamic'
+
 type IParams = {
   id: string
 }

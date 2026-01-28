@@ -27,6 +27,10 @@ axiosInstance.interceptors.response.use(
   (res) => res,
   (error) => {
     if (error.response?.status === 401) {
+      const errorCode = error.response?.data?.code
+      if (typeof window !== 'undefined' && errorCode === 'NOT_AUTHORIZED') {
+        window.dispatchEvent(new Event('auth:unauthorized'))
+      }
       return Promise.reject(error)
     }
     console.error('[API Error]', error.message)
@@ -91,6 +95,7 @@ export const endpoints = {
   nft: {
     id: (id: string) => getFullUIEndpoint(`nft/${id}`)
   },
+  tokens: getFullUIEndpoint('tokens'),
   dashboard: {
     root: getFullUIEndpoint('app'),
     user: {
@@ -102,6 +107,15 @@ export const endpoints = {
           getFullUIEndpoint(`user/${id}/referral/code-with-usage-count`),
         byCode: (id: string) => getFullUIEndpoint(`user/${id}/referral/by-code`),
         submitByCode: (id: string) => getFullUIEndpoint(`user/${id}/referral/submit-by-code`)
+      },
+      security: {
+        status: (id: string) => getFullUIEndpoint(`user/${id}/security/status`),
+        questions: (id: string) => getFullUIEndpoint(`user/${id}/security/questions`),
+        recoveryQuestions: (id: string) =>
+          getFullUIEndpoint(`user/${id}/security/recovery-questions`),
+        events: (id: string) => getFullUIEndpoint(`user/${id}/security/events`),
+        pin: (id: string) => getFullUIEndpoint(`user/${id}/security/pin`),
+        resetPin: (id: string) => getFullUIEndpoint(`user/${id}/security/pin/reset`)
       },
       updateEmail: (id: string) => getFullUIEndpoint(`user/${id}/email`),
       logout: (id: string) => getFullUIEndpoint(`user/${id}/logout`)
