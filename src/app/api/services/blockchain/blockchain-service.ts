@@ -44,7 +44,11 @@ export async function getBalancesWithTotalsFromBackend(walletAddress: string): P
   // Convert keys to lowercase for both totals and balance_conv
   try {
     // Ensure responseBalances has the expected structure
-    if (!responseBalances || !responseBalances.balances || !Array.isArray(responseBalances.balances)) {
+    if (
+      !responseBalances ||
+      !responseBalances.balances ||
+      !Array.isArray(responseBalances.balances)
+    ) {
       console.error('Invalid responseBalances structure:', responseBalances)
       return defaultBalances
     }
