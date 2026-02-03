@@ -66,11 +66,6 @@ export function useNavData() {
                 title: t('menu.account'),
                 icon: ICONS.account,
                 path: paths.dashboard.user.root
-              },
-              {
-                title: t('menu.notifications'),
-                icon: ICONS.notification,
-                path: paths.dashboard.user.notifications
               }
             ]
           }
