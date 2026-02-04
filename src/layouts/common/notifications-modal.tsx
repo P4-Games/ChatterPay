@@ -257,7 +257,7 @@ export default function NotificationsModal({ open, onClose }: Props) {
                         <Iconify icon={iconProps.icon} width={iconProps.size} />
                       </Box>
 
-                      <Stack spacing={0.5} flexGrow={1}>
+                      <Stack spacing={0.5} sx={{ flexGrow: 1, minWidth: 0 }}>
                         <Stack direction='row' alignItems='center' spacing={1}>
                           <Typography
                             variant='caption'
@@ -281,6 +281,8 @@ export default function NotificationsModal({ open, onClose }: Props) {
                           variant='body2'
                           sx={{
                             whiteSpace: 'pre-line',
+                            overflowWrap: 'anywhere',
+                            wordBreak: 'break-word',
                             color: notification.read_date ? 'text.secondary' : 'text.primary',
                             fontWeight: notification.read_date ? 'normal' : 'medium'
                           }}
