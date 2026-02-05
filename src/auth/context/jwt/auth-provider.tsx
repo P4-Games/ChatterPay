@@ -3,7 +3,7 @@
 import { useMemo, useEffect, useReducer, useCallback } from 'react'
 
 import { post, fetcher, endpoints } from 'src/app/api/hooks/api-resolver'
-import { useLocales } from 'src/locales'
+import { useTranslate } from 'src/locales'
 import { setSession } from 'src/auth/context/jwt/utils'
 
 import { AuthContext } from './auth-context'
@@ -70,7 +70,7 @@ type Props = { children: React.ReactNode }
 
 export function AuthProvider({ children }: Props) {
   const [state, dispatch] = useReducer(reducer, initialState)
-  const { currentLang } = useLocales()
+  const { i18n } = useTranslate()
 
   const initialize = useCallback(async () => {
     try {
@@ -112,11 +112,11 @@ export function AuthProvider({ children }: Props) {
         phone,
         codeMsg,
         recaptchaToken,
-        preferred_language: normalizePreferredLanguage(currentLang?.value)
+        preferred_language: normalizePreferredLanguage(i18n?.language)
       })
       dispatch({ type: Types.GENERATE_CODE_LOGIN, payload: { user: null } })
     },
-    [currentLang?.value]
+    [i18n?.language]
   )
 
   const generate2faCodeEmail = useCallback(
