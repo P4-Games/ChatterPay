@@ -3,6 +3,7 @@
 import { useMemo, useEffect, useReducer, useCallback } from 'react'
 
 import { post, fetcher, endpoints } from 'src/app/api/hooks/api-resolver'
+import { useLocales } from 'src/locales'
 import { setSession } from 'src/auth/context/jwt/utils'
 
 import { AuthContext } from './auth-context'
@@ -69,6 +70,7 @@ type Props = { children: React.ReactNode }
 
 export function AuthProvider({ children }: Props) {
   const [state, dispatch] = useReducer(reducer, initialState)
+  const { currentLang } = useLocales()
 
   const initialize = useCallback(async () => {
     try {
@@ -106,10 +108,15 @@ export function AuthProvider({ children }: Props) {
 
   const generate2faCodeLogin = useCallback(
     async (phone: string, codeMsg: string, recaptchaToken: string) => {
-      await post(endpoints.auth.code(), { phone, codeMsg, recaptchaToken })
+      await post(endpoints.auth.code(), {
+        phone,
+        codeMsg,
+        recaptchaToken,
+        preferred_language: normalizePreferredLanguage(currentLang?.value)
+      })
       dispatch({ type: Types.GENERATE_CODE_LOGIN, payload: { user: null } })
     },
-    []
+    [currentLang?.value]
   )
 
   const generate2faCodeEmail = useCallback(
@@ -193,4 +200,14 @@ export function AuthProvider({ children }: Props) {
   )
 
   return <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>
+}
+
+function normalizePreferredLanguage(langValue?: string): 'es' | 'pt' | 'en' {
+  const normalized = (langValue || '').trim().toLowerCase()
+
+  if (normalized.startsWith('es')) return 'es'
+  if (normalized.startsWith('pt') || normalized.startsWith('br')) return 'pt'
+  if (normalized.startsWith('en')) return 'en'
+
+  return 'en'
 }
