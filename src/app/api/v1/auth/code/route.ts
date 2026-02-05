@@ -26,8 +26,14 @@ export async function POST(req: NextRequest) {
     const {
       phone,
       codeMsg,
-      recaptchaToken
-    }: { phone: string; codeMsg: string; recaptchaToken: string } = await req.json()
+      recaptchaToken,
+      preferred_language: preferredLanguageInput
+    }: {
+      phone: string
+      codeMsg: string
+      recaptchaToken: string
+      preferred_language?: string
+    } = await req.json()
 
     const ip = getIpFromRequest(req)
 
@@ -77,6 +83,8 @@ export async function POST(req: NextRequest) {
     const code: number = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000
     await updateUserCode(user.id, code)
 
+    const preferredLanguage = normalizePreferredLanguage(preferredLanguageInput)
+
     // Send 2FA code to user'whatsapp
     let botSentCodeResult: boolean = true
     if (botApiWappEnabled) {
@@ -86,10 +94,10 @@ export async function POST(req: NextRequest) {
         // which may cause it to take about 10 seconds, so this variable is used to improve that logic.
         // send async
         console.info('/auth/code, calling send2FACode ASYNC', phone, code)
-        send2FACode(phone, code, codeMsg)
+        send2FACode(phone, code, codeMsg, preferredLanguage)
       } else {
         console.info('/auth/code, calling send2FACode SYNC', phone, code)
-        botSentCodeResult = await send2FACode(phone, code, codeMsg)
+        botSentCodeResult = await send2FACode(phone, code, codeMsg, preferredLanguage)
       }
 
       if (!botSentCodeResult) {
@@ -127,4 +135,14 @@ export async function POST(req: NextRequest) {
       headers: { 'Content-Type': 'application/json' }
     })
   }
+}
+
+function normalizePreferredLanguage(preferredLanguage?: string): 'es' | 'pt' | 'en' {
+  const normalized = (preferredLanguage || '').trim().toLowerCase()
+
+  if (normalized.startsWith('es')) return 'es'
+  if (normalized.startsWith('pt') || normalized.startsWith('br')) return 'pt'
+  if (normalized.startsWith('en')) return 'en'
+
+  return 'en'
 }
