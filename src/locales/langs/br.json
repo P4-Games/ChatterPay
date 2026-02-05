@@ -434,7 +434,13 @@
       "code-bot": "Insira este código {2FA_CODE} para validar a alteração do seu e-mail no Chatterpay. É muito importante que você não compartilhe esta informação com ninguém. Se você não solicitou o código, desconsidere esta mensagem e entre em contato conosco para que possamos ajudá-lo!"
     },
     "notifications": {
+      "title": "Notificações",
       "refresh": "Atualizar",
+      "empty-title": "Sem notificações",
+      "empty-description": "Você não tem notificações no momento",
+      "loading-more": "Carregando mais...",
+      "no-more": "Não há mais notificações",
+      "deleted-badge": "Excluído",
       "msgs": {
         "no-notifications": "Você não tem novas notificações",
         "error": "Ocorreu um erro ao tentar obter as notificações. Tente novamente mais tarde."
