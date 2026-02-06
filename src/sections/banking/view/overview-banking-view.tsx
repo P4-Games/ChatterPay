@@ -85,7 +85,7 @@ export default function OverviewBankingView() {
   // Fetch CoinGecko price data for all tokens
   useEffect(() => {
     const fetchPrices = async () => {
-      if (balances?.balances && balances.balances.length > 0) {
+      if (balances?.balances && Array.isArray(balances.balances) && balances.balances.length > 0) {
         const tokenSymbols = balances.balances.map((b) => b.token)
         const prices = await getTokenPricesWithChange(tokenSymbols)
         setPriceData(prices)

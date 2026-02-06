@@ -18,8 +18,11 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
     const userValidationResult = await validateUserCommonsInputs(req, params.id)
     if (userValidationResult instanceof NextResponse) return userValidationResult
 
-    const { phone, codeMsg }: { phone: string; codeMsg: string; recaptchaToken: string } =
-      await req.json()
+    const {
+      phone,
+      codeMsg,
+      preferred_language: preferredLanguageInput
+    }: { phone: string; codeMsg: string; preferred_language?: string } = await req.json()
 
     if (!phone || !codeMsg) {
       return new NextResponse(
@@ -59,11 +62,13 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
     const code: number = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000
     await updateUserCode(user.id, code)
 
+    const preferredLanguage = normalizePreferredLanguage(preferredLanguageInput)
+
     // Send 2FA code to user'whatsapp
     let botSentCodeResult: boolean = true
     if (botApiWappEnabled) {
       console.info('/user/[id]/code, calling send2FACode SYNC', phone, code)
-      botSentCodeResult = await send2FACode(phone, code, codeMsg)
+      botSentCodeResult = await send2FACode(phone, code, codeMsg, preferredLanguage)
 
       if (!botSentCodeResult) {
         return new NextResponse(
@@ -92,4 +97,14 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
       headers: { 'Content-Type': 'application/json' }
     })
   }
+}
+
+function normalizePreferredLanguage(preferredLanguage?: string): 'es' | 'pt' | 'en' {
+  const normalized = (preferredLanguage || '').trim().toLowerCase()
+
+  if (normalized.startsWith('es')) return 'es'
+  if (normalized.startsWith('pt') || normalized.startsWith('br')) return 'pt'
+  if (normalized.startsWith('en')) return 'en'
+
+  return 'en'
 }
