@@ -50,7 +50,6 @@ export const paths = {
       referrals: `${ROOTS.DASHBOARD}/user/referrals`,
       referralsReferredCode: `${ROOTS.DASHBOARD}/user/referrals/referred-code`,
       email: `${ROOTS.DASHBOARD}/user/account/email`,
-      notifications: `${ROOTS.DASHBOARD}/user/notifications`,
       security: `${ROOTS.DASHBOARD}/user/security`,
       securityStatus: `${ROOTS.DASHBOARD}/user/security/status`,
       securityRecovery: `${ROOTS.DASHBOARD}/user/security/recovery-questions`,
