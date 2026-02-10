@@ -14,6 +14,7 @@ module.exports = {
     }
   },
   output: 'standalone',
+
   images: {
     domains: [
       'storage.googleapis.com',
@@ -88,6 +89,8 @@ module.exports = {
         use: ['@svgr/webpack']
       }
     )
+    config.resolve.fallback = { ...config.resolve.fallback, fs: false, net: false, tls: false }
+    config.externals.push('pino-pretty', 'lokijs', 'encoding')
     return config
   },
   // https://nextjs.org/docs/api-reference/next.config.js/headers
@@ -130,7 +133,7 @@ module.exports = {
               
               img-src 'self' data: https:;
               style-src 'self' 'unsafe-inline';
-              frame-src 'self' https://www.google.com https://www.youtube.com;
+              frame-src 'self' https://www.google.com https://www.youtube.com https://layerswap.io https://*.layerswap.io;
               frame-ancestors 'self';
             `
               .replace(/\s+/g, ' ')

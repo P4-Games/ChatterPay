@@ -661,5 +661,19 @@
         "description": "Acesse o ChatterPay diretamente pelo Telegram. Consulte sua carteira e saldo sem sair do chat — rápido, seguro e privado."
       }
     }
+  },
+  "layerswapDeposit": {
+    "title": "Depositar no ChatterPay",
+    "description": "Transfira seus ativos para Scroll e deposite diretamente na sua carteira ChatterPay.",
+    "iframeTitle": "Depósito Layerswap",
+    "returnButton": "Voltar ao ChatterPay",
+    "whatsappReturnText": "Quero ver meu saldo",
+    "actionButton": "Depositar no ChatterPay",
+    "badge": "Powered by Layerswap",
+    "errors": {
+      "title": "Solicitação inválida",
+      "missingAddress": "Um endereço de carteira é necessário. Forneça seu endereço na URL (?address=0x...).",
+      "invalidAddress": "O endereço de carteira fornecido não é um endereço Ethereum válido."
+    }
   }
 }

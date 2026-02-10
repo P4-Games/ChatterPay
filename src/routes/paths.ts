@@ -12,6 +12,7 @@ export const paths = {
   terms: '/terms',
   policy: '/policy',
   aboutUs: '/about-us',
+  deposit: '/deposit',
 
   products: {
     root: '/products',
