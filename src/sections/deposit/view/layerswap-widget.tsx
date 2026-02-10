@@ -55,12 +55,6 @@ export default function LayerswapWidget({ destAddress, embedded = false }: Props
       theme: 'default'
     })
 
-    // Add clientId if available
-    const apiKey = process.env.NEXT_PUBLIC_LAYERSWAP_API_KEY
-    if (apiKey) {
-      params.set('clientId', apiKey)
-    }
-
     return `${LAYERSWAP_BASE_URL}?${params.toString()}`
   }, [destAddress, t])
 
