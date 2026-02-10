@@ -18,7 +18,7 @@ export default function DepositLayout({ children }: { children: ReactNode }) {
           component='main'
           sx={{
             flexGrow: 1,
-            pt: { xs: 8, md: 10 },
+            pt: { xs: 8, md: 10 }
           }}
         >
           {children}

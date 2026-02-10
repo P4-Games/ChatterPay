@@ -42,7 +42,7 @@ export default function DepositView() {
       phone: WHATSAPP_PHONE,
       text: t('layerswapDeposit.whatsappReturnText', 'I want to see my balance'),
       type: 'phone_number',
-      app_absent: '0',
+      app_absent: '0'
     })
     return `${WHATSAPP_BASE_URL}?${params.toString()}`
   }, [t])
@@ -84,7 +84,7 @@ export default function DepositView() {
         alignItems: 'center',
         px: { xs: 2, sm: 3 },
         pt: { xs: 2, md: 4 },
-        pb: { xs: 3, md: 5 },
+        pb: { xs: 3, md: 5 }
       }}
     >
       <Typography variant='h4' sx={{ mb: 1, fontWeight: 700, textAlign: 'center' }}>
@@ -115,8 +115,8 @@ export default function DepositView() {
             color: 'text.secondary',
             '&:hover': {
               color: 'text.primary',
-              bgcolor: alpha(primaryMain, 0.08),
-            },
+              bgcolor: alpha(primaryMain, 0.08)
+            }
           }}
         >
           {t('layerswapDeposit.returnButton', 'Return to ChatterPay')}

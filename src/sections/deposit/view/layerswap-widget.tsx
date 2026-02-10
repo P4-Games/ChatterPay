@@ -50,7 +50,7 @@ export default function LayerswapWidget({ destAddress }: Props) {
       actionButtonText: t('layerswapDeposit.actionButton', 'Deposit to ChatterPay'),
 
       // Always use the dark "default" Layerswap theme for a polished look
-      theme: 'default',
+      theme: 'default'
     })
 
     // Add clientId if available
@@ -73,7 +73,7 @@ export default function LayerswapWidget({ destAddress }: Props) {
         bgcolor: LS_DARK_BG,
         boxShadow: `0 0 0 1px ${alpha(theme.palette.primary.main, 0.24)}, ${theme.customShadows.z16}`,
         // Subtle green glow accent at the top
-        borderTop: `3px solid ${theme.palette.primary.main}`,
+        borderTop: `3px solid ${theme.palette.primary.main}`
       }}
     >
       <Box
@@ -85,7 +85,7 @@ export default function LayerswapWidget({ destAddress }: Props) {
           width: '100%',
           height: { xs: 580, sm: 620 },
           border: 'none',
-          display: 'block',
+          display: 'block'
         }}
       />
     </Box>

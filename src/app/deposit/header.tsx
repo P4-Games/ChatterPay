@@ -16,10 +16,7 @@ import SettingsModeButton from 'src/layouts/common/settings-mode-button'
 export default function DepositHeader() {
   return (
     <AppBar>
-      <Toolbar
-        disableGutters
-        sx={{ height: { xs: HEADER.H_MOBILE, md: HEADER.H_DESKTOP } }}
-      >
+      <Toolbar disableGutters sx={{ height: { xs: HEADER.H_MOBILE, md: HEADER.H_DESKTOP } }}>
         <Box
           sx={{
             pl: 2,
@@ -27,7 +24,7 @@ export default function DepositHeader() {
             width: '100%',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
+            justifyContent: 'space-between'
           }}
         >
           <LogoWithName sx={{ height: { xs: 28, md: 40 } }} />
