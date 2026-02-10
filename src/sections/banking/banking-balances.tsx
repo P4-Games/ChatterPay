@@ -28,7 +28,7 @@ import { useResponsive } from 'src/hooks/use-responsive'
 import { fNumber } from 'src/utils/format-number'
 
 import { useTranslate } from 'src/locales'
-import { BOT_WAPP_URL, EXPLORER_L2_URL } from 'src/config-global'
+import { BOT_WAPP_URL, LAYERSWAP_BG, EXPLORER_L2_URL } from 'src/config-global'
 
 import Iconify from 'src/components/iconify'
 
@@ -190,7 +190,6 @@ export default function BankingBalances({
   )
 
   // Layerswap's app background — must match exactly so dialog blends with the iframe
-  const LS_BG = '#0c1526'
 
   const renderDepositModal = (
     <Dialog
@@ -200,7 +199,7 @@ export default function BankingBalances({
       fullWidth
       PaperProps={{
         sx: {
-          bgcolor: LS_BG,
+          bgcolor: LAYERSWAP_BG,
           backgroundImage: 'none'
         }
       }}

@@ -6,6 +6,7 @@ import Box from '@mui/material/Box'
 import { alpha, useTheme } from '@mui/material/styles'
 
 import { useTranslate } from 'src/locales'
+import { LAYERSWAP_BG, LAYERSWAP_BASE_URL } from 'src/config-global'
 
 // ----------------------------------------------------------------------
 
@@ -24,10 +25,6 @@ type Props = {
 //
 // The iframe loads layerswap.io directly
 // ----------------------------------------------------------------------
-
-const LS_DARK_BG = '#0c1526'
-
-const LAYERSWAP_BASE_URL = 'https://layerswap.io/app'
 
 export default function LayerswapWidget({ destAddress, embedded = false }: Props) {
   const { t } = useTranslate()
@@ -65,7 +62,7 @@ export default function LayerswapWidget({ destAddress, embedded = false }: Props
         ...(!embedded && { maxWidth: 500 }),
         mx: 'auto',
         overflow: 'hidden',
-        bgcolor: LS_DARK_BG,
+        bgcolor: LAYERSWAP_BG,
         ...(embedded
           ? { borderRadius: 0 }
           : {
@@ -80,6 +77,7 @@ export default function LayerswapWidget({ destAddress, embedded = false }: Props
         src={iframeSrc}
         title='Layerswap Deposit'
         allow='clipboard-write'
+        sandbox='allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox'
         sx={{
           width: '100%',
           height: { xs: 580, sm: 620 },

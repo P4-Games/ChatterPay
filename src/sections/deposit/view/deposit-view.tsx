@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography'
 import { alpha, useTheme } from '@mui/material/styles'
 
 import { useTranslate } from 'src/locales'
+import { CHATIZALO_PHONE_NUMBER } from 'src/config-global'
 
 import Iconify from 'src/components/iconify'
 
@@ -20,7 +21,6 @@ import LayerswapWidget from './layerswap-widget'
 // ----------------------------------------------------------------------
 
 const WHATSAPP_BASE_URL = 'https://api.whatsapp.com/send/'
-const WHATSAPP_PHONE = '5491164629653'
 
 const isValidEthAddress = (address: string): boolean => /^0x[a-fA-F0-9]{40}$/.test(address)
 
@@ -39,7 +39,7 @@ export default function DepositView() {
 
   const whatsappReturnUrl = useMemo(() => {
     const params = new URLSearchParams({
-      phone: WHATSAPP_PHONE,
+      phone: String(CHATIZALO_PHONE_NUMBER),
       text: t('layerswapDeposit.whatsappReturnText', 'I want to see my balance'),
       type: 'phone_number',
       app_absent: '0'
