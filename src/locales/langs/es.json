@@ -356,7 +356,9 @@
     "network": "Red",
     "network-warning": "Cualquier activo enviado en otra red se perderá",
     "wallet-address": "Dirección de billetera",
-    "copy-address": "Copiar dirección"
+    "copy-address": "Copiar dirección",
+    "show-address": "Ver mi dirección en Scroll",
+    "back-to-deposit": "Volver a depositar"
   },
   "balances": {
     "title": "Tu dinero",

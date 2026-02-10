@@ -32,6 +32,8 @@ import { BOT_WAPP_URL, EXPLORER_L2_URL } from 'src/config-global'
 
 import Iconify from 'src/components/iconify'
 
+import LayerswapWidget from 'src/sections/deposit/view/layerswap-widget'
+
 import type { IBalances, CurrencyKey } from 'src/types/wallet'
 
 // ----------------------------------------------------------------------
@@ -63,7 +65,13 @@ export default function BankingBalances({
 
   const mdUp = useResponsive('up', 'md')
   const depositModal = useBoolean()
+  const [showAddress, setShowAddress] = useState(false)
   const router = useRouter()
+
+  const handleCloseDeposit = () => {
+    depositModal.onFalse()
+    setShowAddress(false)
+  }
 
   const sendReciveUrl = BOT_WAPP_URL.replaceAll('MESSAGE', t('balances.wapp-msg'))
 
@@ -181,82 +189,141 @@ export default function BankingBalances({
     </Card>
   )
 
+  // Layerswap's app background — must match exactly so dialog blends with the iframe
+  const LS_BG = '#0c1526'
+
   const renderDepositModal = (
-    <Dialog open={depositModal.value} onClose={depositModal.onFalse} maxWidth='xs' fullWidth>
-      <DialogTitle sx={{ pb: 2 }}>
+    <Dialog
+      open={depositModal.value}
+      onClose={handleCloseDeposit}
+      maxWidth='xs'
+      fullWidth
+      PaperProps={{
+        sx: {
+          bgcolor: LS_BG,
+          backgroundImage: 'none'
+        }
+      }}
+    >
+      <DialogTitle sx={{ pb: 1 }}>
         <Stack direction='row' alignItems='center' justifyContent='space-between'>
-          <Typography variant='h6'>{t('deposit.title')}</Typography>
-          <IconButton onClick={depositModal.onFalse} size='small'>
+          <Typography variant='h6' sx={{ color: '#fff' }}>
+            {t('deposit.title')}
+          </Typography>
+          <IconButton onClick={handleCloseDeposit} size='small' sx={{ color: alpha('#fff', 0.6) }}>
             <Iconify icon='mingcute:close-line' />
           </IconButton>
         </Stack>
       </DialogTitle>
 
-      <DialogContent>
-        <Stack spacing={3} alignItems='center' sx={{ py: 2 }}>
-          {/* QR Code */}
-          <Box
-            sx={{
-              p: 2,
-              bgcolor: 'background.paper',
-              borderRadius: 2,
-              border: `2px solid ${alpha(theme.palette.primary.main, 0.2)}`
-            }}
-          >
-            <QRCode value={tableData?.wallet || ''} size={200} />
-          </Box>
+      <DialogContent sx={{ px: 0, pb: 0 }}>
+        {!showAddress ? (
+          <Stack spacing={0} alignItems='center'>
+            <LayerswapWidget destAddress={tableData?.wallet || ''} embedded />
 
-          <Stack spacing={1} sx={{ width: 1 }}>
-            <Typography variant='caption' color='text.secondary'>
-              {t('deposit.wallet-address')}
-            </Typography>
-            <Typography variant='body2' sx={{ wordBreak: 'break-all', fontFamily: 'monospace' }}>
-              {tableData?.wallet}
-            </Typography>
-          </Stack>
-
-          {/* Network Info */}
-          <Stack
-            direction='row'
-            spacing={1.5}
-            alignItems='center'
-            sx={{
-              width: '100%',
-              p: 2,
-              bgcolor: alpha(theme.palette.primary.main, 0.08),
-              borderRadius: 1.5
-            }}
-          >
-            <Box
-              component='img'
-              src='https://storage.googleapis.com/chatbot-multimedia/chatterpay/images/tokens/scr.svg'
-              alt='Scroll Network'
+            <Button
+              variant='text'
+              size='small'
+              onClick={() => setShowAddress(true)}
               sx={{
-                width: 32,
-                height: 32,
-                borderRadius: '50%'
+                mt: 1.5,
+                mb: 2,
+                color: alpha('#fff', 0.45),
+                '&:hover': {
+                  color: alpha('#fff', 0.7),
+                  bgcolor: alpha('#fff', 0.06)
+                }
               }}
-            />
-            <Stack spacing={0.25}>
-              <Typography variant='subtitle2'>{t('deposit.network')}: Scroll</Typography>
-            </Stack>
+            >
+              {t('deposit.show-address', 'See my address on Scroll')}
+            </Button>
           </Stack>
+        ) : (
+          <Stack spacing={3} alignItems='center' sx={{ py: 2, px: 3 }}>
+            {/* QR Code */}
+            <Box
+              sx={{
+                p: 2,
+                bgcolor: '#fff',
+                borderRadius: 2
+              }}
+            >
+              <QRCode value={tableData?.wallet || ''} size={200} />
+            </Box>
 
-          {/* Warning Alert */}
-          <Alert severity='warning' sx={{ width: '100%' }}>
-            {t('deposit.network-warning')}
-          </Alert>
+            <Stack spacing={1} sx={{ width: 1 }}>
+              <Typography variant='caption' sx={{ color: alpha('#fff', 0.5) }}>
+                {t('deposit.wallet-address')}
+              </Typography>
+              <Typography
+                variant='body2'
+                sx={{ wordBreak: 'break-all', fontFamily: 'monospace', color: '#fff' }}
+              >
+                {tableData?.wallet}
+              </Typography>
+            </Stack>
 
-          <Button
-            fullWidth
-            variant='contained'
-            color='primary'
-            startIcon={<Iconify icon='eva:copy-fill' />}
-            onClick={handleCopyAddress}
-          >
-            {t('deposit.copy-address')}
-          </Button>
-        </Stack>
+            {/* Network Info */}
+            <Stack
+              direction='row'
+              spacing={1.5}
+              alignItems='center'
+              sx={{
+                width: '100%',
+                p: 2,
+                bgcolor: alpha('#fff', 0.06),
+                borderRadius: 1.5
+              }}
+            >
+              <Box
+                component='img'
+                src='https://storage.googleapis.com/chatbot-multimedia/chatterpay/images/tokens/scr.svg'
+                alt='Scroll Network'
+                sx={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: '50%'
+                }}
+              />
+              <Stack spacing={0.25}>
+                <Typography variant='subtitle2' sx={{ color: '#fff' }}>
+                  {t('deposit.network')}: Scroll
+                </Typography>
+              </Stack>
+            </Stack>
+
+            {/* Warning Alert */}
+            <Alert severity='warning' sx={{ width: '100%' }}>
+              {t('deposit.network-warning')}
+            </Alert>
+
+            <Button
+              fullWidth
+              variant='contained'
+              color='primary'
+              startIcon={<Iconify icon='eva:copy-fill' />}
+              onClick={handleCopyAddress}
+            >
+              {t('deposit.copy-address')}
+            </Button>
+
+            <Button
+              variant='text'
+              size='small'
+              startIcon={<Iconify icon='eva:arrow-back-fill' width={16} />}
+              onClick={() => setShowAddress(false)}
+              sx={{
+                color: alpha('#fff', 0.45),
+                '&:hover': {
+                  color: alpha('#fff', 0.7),
+                  bgcolor: alpha('#fff', 0.06)
+                }
+              }}
+            >
+              {t('deposit.back-to-deposit', 'Back to deposit')}
+            </Button>
+          </Stack>
+        )}
       </DialogContent>
     </Dialog>
   )

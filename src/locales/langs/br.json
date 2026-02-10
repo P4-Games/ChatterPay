@@ -357,7 +357,9 @@
     "network": "Rede",
     "network-warning": "Qualquer ativo enviado em outra rede será perdido",
     "wallet-address": "Endereço da carteira",
-    "copy-address": "Copiar endereço"
+    "copy-address": "Copiar endereço",
+    "show-address": "Ver meu endereço na Scroll",
+    "back-to-deposit": "Voltar ao depósito"
   },
   "balances": {
     "title": "Seu dinheiro",

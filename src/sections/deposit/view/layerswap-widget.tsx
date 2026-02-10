@@ -11,6 +11,8 @@ import { useTranslate } from 'src/locales'
 
 type Props = {
   destAddress: string
+  /** When true, strips card styling (shadow, border, radius) so the widget blends into a parent container */
+  embedded?: boolean
 }
 
 // ----------------------------------------------------------------------
@@ -23,11 +25,11 @@ type Props = {
 // The iframe loads layerswap.io directly
 // ----------------------------------------------------------------------
 
-const LS_DARK_BG = '#070C17'
+const LS_DARK_BG = '#0c1526'
 
 const LAYERSWAP_BASE_URL = 'https://layerswap.io/app'
 
-export default function LayerswapWidget({ destAddress }: Props) {
+export default function LayerswapWidget({ destAddress, embedded = false }: Props) {
   const { t } = useTranslate()
   const theme = useTheme()
 
@@ -66,14 +68,17 @@ export default function LayerswapWidget({ destAddress }: Props) {
     <Box
       sx={{
         width: '100%',
-        maxWidth: 500,
+        ...(!embedded && { maxWidth: 500 }),
         mx: 'auto',
-        borderRadius: 3,
         overflow: 'hidden',
         bgcolor: LS_DARK_BG,
-        boxShadow: `0 0 0 1px ${alpha(theme.palette.primary.main, 0.24)}, ${theme.customShadows.z16}`,
-        // Subtle green glow accent at the top
-        borderTop: `3px solid ${theme.palette.primary.main}`
+        ...(embedded
+          ? { borderRadius: 0 }
+          : {
+              borderRadius: 3,
+              boxShadow: `0 0 0 1px ${alpha(theme.palette.primary.main, 0.24)}, ${theme.customShadows.z16}`,
+              borderTop: `3px solid ${theme.palette.primary.main}`
+            })
       }}
     >
       <Box
