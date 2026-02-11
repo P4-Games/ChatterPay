@@ -75,7 +75,7 @@ export default function LayerswapWidget({ destAddress, embedded = false }: Props
       <Box
         component='iframe'
         src={iframeSrc}
-        title='Layerswap Deposit'
+        title={t('layerswapDeposit.iframeTitle', 'Layerswap Deposit')}
         allow='clipboard-write'
         sandbox='allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox'
         sx={{
