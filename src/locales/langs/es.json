@@ -672,9 +672,9 @@
     "actionButton": "Depositar en ChatterPay",
     "badge": "Impulsado por Layerswap",
     "errors": {
-    "title": "Solicitud inválida",
-    "missingAddress": "Se requiere una dirección de billetera. Proporciónala en la URL (?address=0x...).",
-    "invalidAddress": "La dirección de billetera proporcionada no es una dirección Ethereum válida."
+      "title": "Solicitud inválida",
+      "missingAddress": "Se requiere una dirección de billetera. Proporciónala en la URL (?address=0x...).",
+      "invalidAddress": "La dirección de billetera proporcionada no es una dirección Ethereum válida."
     }
   }
 }
