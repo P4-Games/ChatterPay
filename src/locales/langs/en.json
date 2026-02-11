@@ -368,7 +368,9 @@
     "network": "Network",
     "network-warning": "Any asset sent in other network will be lost",
     "wallet-address": "Wallet Address",
-    "copy-address": "Copy Address"
+    "copy-address": "Copy Address",
+    "show-address": "See my address on Scroll",
+    "back-to-deposit": "Back to deposit"
   },
   "balances": {
     "title": "Your money",
@@ -669,6 +671,20 @@
         "title": "Telegram",
         "description": "Access ChatterPay directly from Telegram. Check your wallet and balance without leaving the chat — fast, secure, and private."
       }
+    }
+  },
+  "layerswapDeposit": {
+    "title": "Deposit to ChatterPay",
+    "description": "Bridge your assets to Scroll and deposit directly into your ChatterPay wallet.",
+    "iframeTitle": "Layerswap Deposit",
+    "returnButton": "Return to ChatterPay",
+    "whatsappReturnText": "I want to see my balance",
+    "actionButton": "Deposit to ChatterPay",
+    "badge": "Powered by Layerswap",
+    "errors": {
+      "title": "Invalid Request",
+      "missingAddress": "A wallet address is required. Please provide your address in the URL (?address=0x...).",
+      "invalidAddress": "The wallet address provided is not a valid Ethereum address."
     }
   }
 }
