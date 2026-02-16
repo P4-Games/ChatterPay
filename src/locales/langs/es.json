@@ -335,6 +335,8 @@
       "code-info": "Por favor, ingresa el código de 6 dígitos que enviamos a tu WhatsApp (puede demorarse alrededor de 2 minutos en llegar).",
       "invalid-user": "Usuario no encontrado con ese número de teléfono",
       "invalid-code": "Código inválido",
+      "invalid-session": "La sesión expiró o tu IP cambió. Por favor, pedí un nuevo código.",
+      "invalid-recaptcha": "Error de seguridad (reCAPTCHA). Por favor revisá tu conexión o desactivá bloqueadores.",
       "code-bot": "Ingresá este código *{2FA_CODE}* en la app de Chatterpay para iniciar sesión. Es muy importante que no compartas esta información con nadie. Si no solicitaste el código, desestimá este mensaje y contactate con nosotros para que podamos ayudarte!"
     }
   },

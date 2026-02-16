@@ -144,6 +144,11 @@ export default function JwtLoginView() {
           return
         }
 
+        if (apiError.code === 'RECAPTACHA_INVALID') {
+          setErrorKey('login.msg.invalid-recaptcha')
+          return
+        }
+
         setErrorKey('common.msg.unexpected-error')
       }
     },
@@ -172,6 +177,16 @@ export default function JwtLoginView() {
 
       if (apiError.code === 'AUTH_INVALID_CODE') {
         setErrorKey('login.msg.invalid-code')
+        return
+      }
+
+      if (apiError.code === 'AUTH_INVALID_SESSION') {
+        setErrorKey('login.msg.invalid-session')
+        return
+      }
+
+      if (apiError.code === 'RECAPTACHA_INVALID') {
+        setErrorKey('login.msg.invalid-recaptcha')
         return
       }
 
