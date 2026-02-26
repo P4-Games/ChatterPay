@@ -347,6 +347,8 @@
       "code-info": "Please enter the 6-digit code we sent to your WhatsApp (it may take around 2 minutes to arrive).",
       "invalid-user": "User not found with that phone number",
       "invalid-code": "Invalid code",
+      "invalid-session": "Session expired or your IP changed. Please request a new code.",
+      "invalid-recaptcha": "Security error (reCAPTCHA). Please check your connection or disable adblockers.",
       "code-bot": "Enter this code *{2FA_CODE}* in the Chatterpay app to log in. It is very important that you do not share this information with anyone. If you did not request the code, disregard this message and contact us so we can help you!"
     }
   },
