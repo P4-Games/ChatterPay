@@ -337,6 +337,7 @@
       "invalid-code": "Código inválido",
       "invalid-session": "La sesión expiró o tu IP cambió. Por favor, pedí un nuevo código.",
       "invalid-recaptcha": "Error de seguridad (reCAPTCHA). Por favor revisá tu conexión o desactivá bloqueadores.",
+      "code-send-failed": "No pudimos enviar el código por WhatsApp. Reintentá en unos segundos.",
       "code-bot": "Ingresá este código *{2FA_CODE}* en la app de Chatterpay para iniciar sesión. Es muy importante que no compartas esta información con nadie. Si no solicitaste el código, desestimá este mensaje y contactate con nosotros para que podamos ayudarte!"
     }
   },
