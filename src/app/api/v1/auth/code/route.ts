@@ -58,6 +58,7 @@ export async function POST(req: NextRequest) {
     }
 
     const recaptchaResult = await validateRecaptcha(recaptchaToken, ip)
+
     if (!recaptchaResult.success) {
       return new NextResponse(
         JSON.stringify({ code: 'RECAPTACHA_INVALID', error: 'Invalid reCAPTCHA token' }),
@@ -69,6 +70,7 @@ export async function POST(req: NextRequest) {
     }
 
     const user: IAccount | undefined = await getUserByPhone(phone)
+
     if (!user) {
       return new NextResponse(
         JSON.stringify({ code: 'USER_NOT_FOUND', error: 'user not found with that phone number' }),
@@ -80,7 +82,9 @@ export async function POST(req: NextRequest) {
     }
 
     // Generate and store 2FA code
+
     const code: number = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000
+
     await updateUserCode(user.id, code)
 
     const preferredLanguage = normalizePreferredLanguage(preferredLanguageInput)
@@ -88,26 +92,41 @@ export async function POST(req: NextRequest) {
     // Send 2FA code to user'whatsapp
     let botSentCodeResult: boolean = true
     if (botApiWappEnabled) {
-      if (handleVercelFreePlanTimeOut) {
-        // Vercel has a timeout of 10 seconds (only for free plan) in the APIs.
-        // The login has certain logic between ChatterPay and the backend of the Chatizalo,
-        // which may cause it to take about 10 seconds, so this variable is used to improve that logic.
-        // send async
-        console.info('/auth/code, calling send2FACode ASYNC', phone, code)
-        send2FACode(phone, code, codeMsg, preferredLanguage)
-      } else {
-        console.info('/auth/code, calling send2FACode SYNC', phone, code)
-        botSentCodeResult = await send2FACode(phone, code, codeMsg, preferredLanguage)
+      try {
+        if (handleVercelFreePlanTimeOut) {
+          // Vercel has a timeout of 10 seconds (only for free plan) in the APIs.
+          // The login has certain logic between ChatterPay and the backend of the Chatizalo,
+          // which may cause it to take about 10 seconds, so this variable is used to improve that logic.
+          // send async
+          console.info('/auth/code, calling send2FACode ASYNC', phone, code)
+          void send2FACode(phone, code, codeMsg, preferredLanguage)
+          botSentCodeResult = true
+        } else {
+          console.info('/auth/code, calling send2FACode SYNC', phone, code)
+          botSentCodeResult = await send2FACode(phone, code, codeMsg, preferredLanguage)
+        }
+      } catch (err) {
+        console.error('/auth/code, send2FACode failed', err)
+        return new NextResponse(
+          JSON.stringify({
+            code: 'BOT_SEND_FAILED',
+            error: 'Failed to deliver 2FA code via WhatsApp'
+          }),
+          {
+            status: 502,
+            headers: { 'Content-Type': 'application/json' }
+          }
+        )
       }
 
       if (!botSentCodeResult) {
         return new NextResponse(
           JSON.stringify({
-            code: 'USER_NOT_FOUND',
-            error: 'user not found with that phone number'
+            code: 'BOT_SEND_FAILED',
+            error: 'Failed to deliver 2FA code via WhatsApp'
           }),
           {
-            status: 404,
+            status: 502,
             headers: { 'Content-Type': 'application/json' }
           }
         )
@@ -115,7 +134,9 @@ export async function POST(req: NextRequest) {
     }
 
     // user-session-token
+
     const userSessionToken: string = `${phone}_${code.toString()}_${ip}_${recaptchaToken}`
+
     const userSessionTokenHashed: string = createHash('sha256')
       .update(userSessionToken)
       .digest('hex')
@@ -126,7 +147,6 @@ export async function POST(req: NextRequest) {
       phone,
       sent: botSentCodeResult
     }
-
     return NextResponse.json(finalResult)
   } catch (ex) {
     console.error(ex)
