@@ -80,7 +80,7 @@ export default function JwtLoginView() {
   const [language, setLanguage] = useState(getRecaptchaLng(currentLang.value))
   const [recaptchaKey, setRecaptchaKey] = useState(0)
   const theme = useTheme()
- 
+
   const LoginSchema = Yup.object().shape({
     phone: Yup.string()
       .max(12, t('common.must-be-max').replace('{MAX_DIGITS}', '12'))
@@ -289,12 +289,7 @@ export default function JwtLoginView() {
               }
             }}
           />
-          <Alert
-            severity='info'
-
-          >
-            {t('login.msg.enter-phone')}
-          </Alert>
+          <Alert severity='info'>{t('login.msg.enter-phone')}</Alert>
           {errorKey && <Alert severity='error'>{t(errorKey)}</Alert>}
           <LoadingButton
             fullWidth
@@ -327,11 +322,7 @@ export default function JwtLoginView() {
             </Select>
           </FormControl>
           <RHFTextField disabled name='phone' label='Phone Number' type='number' value={phone} />
-          <Alert
-            severity='info'
-          >
-            {t('login.msg.code-info')}
-          </Alert>
+          <Alert severity='info'>{t('login.msg.code-info')}</Alert>
           <RHFCode
             name='code'
             TextFieldsProps={{ type: 'password' }}
