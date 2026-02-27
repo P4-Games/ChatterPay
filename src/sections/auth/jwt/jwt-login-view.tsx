@@ -8,7 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import React, { useRef, useState, useEffect, useCallback } from 'react'
 
 import Link from '@mui/material/Link'
-import { Alert } from '@mui/material'
+import { Alert, useTheme } from '@mui/material'
 import Stack from '@mui/material/Stack'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
@@ -79,6 +79,7 @@ export default function JwtLoginView() {
   const { currentLang } = useLocales()
   const [language, setLanguage] = useState(getRecaptchaLng(currentLang.value))
   const [recaptchaKey, setRecaptchaKey] = useState(0)
+  const theme = useTheme()
 
   const LoginSchema = Yup.object().shape({
     phone: Yup.string()
@@ -146,6 +147,12 @@ export default function JwtLoginView() {
 
         if (apiError.code === 'RECAPTACHA_INVALID') {
           setErrorKey('login.msg.invalid-recaptcha')
+          return
+        }
+
+        if (apiError.code === 'BOT_SEND_FAILED') {
+          setErrorKey('login.msg.code-send-failed')
+          setCodeSent(false)
           return
         }
 
@@ -282,19 +289,7 @@ export default function JwtLoginView() {
               }
             }}
           />
-          <Alert
-            severity='info'
-            sx={{
-              mb: 3,
-              bgcolor: '#B8F6C9',
-              color: 'text.primary',
-              '& .MuiAlert-icon': {
-                color: 'primary.main'
-              }
-            }}
-          >
-            {t('login.msg.enter-phone')}
-          </Alert>
+          <Alert severity='info'>{t('login.msg.enter-phone')}</Alert>
           {errorKey && <Alert severity='error'>{t(errorKey)}</Alert>}
           <LoadingButton
             fullWidth
@@ -327,19 +322,7 @@ export default function JwtLoginView() {
             </Select>
           </FormControl>
           <RHFTextField disabled name='phone' label='Phone Number' type='number' value={phone} />
-          <Alert
-            severity='info'
-            sx={{
-              mb: 3,
-              bgcolor: '#B8F6C9',
-              color: 'text.primary',
-              '& .MuiAlert-icon': {
-                color: 'primary.main'
-              }
-            }}
-          >
-            {t('login.msg.code-info')}
-          </Alert>
+          <Alert severity='info'>{t('login.msg.code-info')}</Alert>
           <RHFCode
             name='code'
             TextFieldsProps={{ type: 'password' }}

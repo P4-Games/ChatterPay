@@ -349,6 +349,7 @@
       "invalid-code": "Invalid code",
       "invalid-session": "Session expired or your IP changed. Please request a new code.",
       "invalid-recaptcha": "Security error (reCAPTCHA). Please check your connection or disable adblockers.",
+      "code-send-failed": "We couldn't send the code via WhatsApp. Please try again in a few seconds.",
       "code-bot": "Enter this code *{2FA_CODE}* in the Chatterpay app to log in. It is very important that you do not share this information with anyone. If you did not request the code, disregard this message and contact us so we can help you!"
     }
   },
