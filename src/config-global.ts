@@ -86,6 +86,13 @@ export const NFT_SHARE = 'https://api.whatsapp.com/send/?text=MESSAGE'
 export const STORAGE_KEY_TOKEN = `chatterpay_${APP_ENV}_jwtToken`
 export const STORAGE_KEY_SETTINGS = `chatterpay_${APP_ENV}_settings`
 export const CONTACT_EMAIL = 'contacto@chatterpay.com.ar'
+export const LAYERSWAP_BG = '#0c1526'
+const LAYERSWAP_PROD_URL = 'https://layerswap.io/app'
+const LAYERSWAP_SANDBOX_URL = 'https://testnet.layerswap.io/app'
+export const LAYERSWAP_BASE_URL =
+  APP_ENV.toLowerCase() === 'development' || APP_ENV.toLowerCase() === 'testing'
+    ? LAYERSWAP_SANDBOX_URL
+    : LAYERSWAP_PROD_URL
 export const GET_BALANCES_FROM_BACKEND = true
 export const NOTIFICATIONS_PAGE_SIZE: number = Number.isNaN(
   parseInt(process.env.NEXT_PUBLIC_NOTIFICATIONS_PAGE_SIZE ?? '', 10)
