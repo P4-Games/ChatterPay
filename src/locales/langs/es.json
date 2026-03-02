@@ -666,7 +666,6 @@
   "layerswapDeposit": {
     "title": "Depositar en ChatterPay",
     "description": "Transfiere tus activos a Scroll y deposita directamente en tu billetera ChatterPay.",
-    "iframeTitle": "Depósito Layerswap",
     "returnButton": "Volver a ChatterPay",
     "whatsappReturnText": "Quiero ver mi balance",
     "actionButton": "Depositar en ChatterPay",

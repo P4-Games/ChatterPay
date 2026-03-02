@@ -87,18 +87,8 @@ export default function DepositView() {
         pb: { xs: 3, md: 5 }
       }}
     >
-      <Typography variant='h4' sx={{ mb: 1, fontWeight: 700, textAlign: 'center' }}>
+      <Typography variant='h4' sx={{ mb: 3, fontWeight: 700, textAlign: 'center' }}>
         {t('layerswapDeposit.title', 'Deposit to ChatterPay')}
-      </Typography>
-
-      <Typography
-        variant='body2'
-        sx={{ mb: 3, color: 'text.secondary', textAlign: 'center', maxWidth: 420 }}
-      >
-        {t(
-          'layerswapDeposit.description',
-          'Bridge your assets to Scroll and deposit directly into your ChatterPay wallet.'
-        )}
       </Typography>
 
       {isValid ? <LayerswapWidget destAddress={address} /> : renderError()}

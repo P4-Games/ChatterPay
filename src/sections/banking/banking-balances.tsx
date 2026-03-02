@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { enqueueSnackbar } from 'notistack'
 import QRCode from 'react-qr-code'
 
@@ -18,9 +18,6 @@ import {
   DialogContent,
   type SelectChangeEvent
 } from '@mui/material'
-import { alpha, useTheme } from '@mui/material/styles'
-
-import { useRouter } from 'src/routes/hooks'
 
 import { useBoolean } from 'src/hooks/use-boolean'
 import { useResponsive } from 'src/hooks/use-responsive'
@@ -28,7 +25,7 @@ import { useResponsive } from 'src/hooks/use-responsive'
 import { fNumber } from 'src/utils/format-number'
 
 import { useTranslate } from 'src/locales'
-import { BOT_WAPP_URL, LAYERSWAP_BG, EXPLORER_L2_URL } from 'src/config-global'
+import { BOT_WAPP_URL, EXPLORER_L2_URL } from 'src/config-global'
 
 import Iconify from 'src/components/iconify'
 
@@ -61,12 +58,10 @@ export default function BankingBalances({
   const walletLinkL2 = `${EXPLORER_L2_URL}/address/${tableData?.wallet || ''}`
 
   const { t } = useTranslate()
-  const theme = useTheme()
 
   const mdUp = useResponsive('up', 'md')
   const depositModal = useBoolean()
   const [showAddress, setShowAddress] = useState(false)
-  const router = useRouter()
 
   const handleCloseDeposit = () => {
     depositModal.onFalse()
@@ -189,27 +184,14 @@ export default function BankingBalances({
     </Card>
   )
 
-  // Layerswap's app background — must match exactly so dialog blends with the iframe
+  // Deposit modal — uses theme palette so it respects dark/light mode
 
   const renderDepositModal = (
-    <Dialog
-      open={depositModal.value}
-      onClose={handleCloseDeposit}
-      maxWidth='xs'
-      fullWidth
-      PaperProps={{
-        sx: {
-          bgcolor: LAYERSWAP_BG,
-          backgroundImage: 'none'
-        }
-      }}
-    >
+    <Dialog open={depositModal.value} onClose={handleCloseDeposit} maxWidth='xs' fullWidth>
       <DialogTitle sx={{ pb: 1 }}>
         <Stack direction='row' alignItems='center' justifyContent='space-between'>
-          <Typography variant='h6' sx={{ color: '#fff' }}>
-            {t('deposit.title')}
-          </Typography>
-          <IconButton onClick={handleCloseDeposit} size='small' sx={{ color: alpha('#fff', 0.6) }}>
+          <Typography variant='h6'>{t('deposit.title')}</Typography>
+          <IconButton onClick={handleCloseDeposit} size='small'>
             <Iconify icon='mingcute:close-line' />
           </IconButton>
         </Stack>
@@ -218,7 +200,7 @@ export default function BankingBalances({
       <DialogContent sx={{ px: 0, pb: 0 }}>
         {!showAddress ? (
           <Stack spacing={0} alignItems='center'>
-            <LayerswapWidget destAddress={tableData?.wallet || ''} embedded />
+            <LayerswapWidget destAddress={tableData?.wallet || ''} />
 
             <Button
               variant='text'
@@ -227,10 +209,9 @@ export default function BankingBalances({
               sx={{
                 mt: 1.5,
                 mb: 2,
-                color: alpha('#fff', 0.45),
+                color: 'text.secondary',
                 '&:hover': {
-                  color: alpha('#fff', 0.7),
-                  bgcolor: alpha('#fff', 0.06)
+                  color: 'text.primary'
                 }
               }}
             >
@@ -251,13 +232,10 @@ export default function BankingBalances({
             </Box>
 
             <Stack spacing={1} sx={{ width: 1 }}>
-              <Typography variant='caption' sx={{ color: alpha('#fff', 0.5) }}>
+              <Typography variant='caption' sx={{ color: 'text.secondary' }}>
                 {t('deposit.wallet-address')}
               </Typography>
-              <Typography
-                variant='body2'
-                sx={{ wordBreak: 'break-all', fontFamily: 'monospace', color: '#fff' }}
-              >
+              <Typography variant='body2' sx={{ wordBreak: 'break-all', fontFamily: 'monospace' }}>
                 {tableData?.wallet}
               </Typography>
             </Stack>
@@ -270,7 +248,7 @@ export default function BankingBalances({
               sx={{
                 width: '100%',
                 p: 2,
-                bgcolor: alpha('#fff', 0.06),
+                bgcolor: 'action.selected',
                 borderRadius: 1.5
               }}
             >
@@ -285,9 +263,7 @@ export default function BankingBalances({
                 }}
               />
               <Stack spacing={0.25}>
-                <Typography variant='subtitle2' sx={{ color: '#fff' }}>
-                  {t('deposit.network')}: Scroll
-                </Typography>
+                <Typography variant='subtitle2'>{t('deposit.network')}: Scroll</Typography>
               </Stack>
             </Stack>
 
@@ -312,10 +288,9 @@ export default function BankingBalances({
               startIcon={<Iconify icon='eva:arrow-back-fill' width={16} />}
               onClick={() => setShowAddress(false)}
               sx={{
-                color: alpha('#fff', 0.45),
+                color: 'text.secondary',
                 '&:hover': {
-                  color: alpha('#fff', 0.7),
-                  bgcolor: alpha('#fff', 0.06)
+                  color: 'text.primary'
                 }
               }}
             >

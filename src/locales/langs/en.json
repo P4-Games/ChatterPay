@@ -676,7 +676,6 @@
   "layerswapDeposit": {
     "title": "Deposit to ChatterPay",
     "description": "Bridge your assets to Scroll and deposit directly into your ChatterPay wallet.",
-    "iframeTitle": "Layerswap Deposit",
     "returnButton": "Return to ChatterPay",
     "whatsappReturnText": "I want to see my balance",
     "actionButton": "Deposit to ChatterPay",
