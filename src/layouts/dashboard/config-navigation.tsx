@@ -22,7 +22,8 @@ const ICONS = {
   chatterpoints: icon('ic_chatterpoints'),
   account: icon('ic_account'),
   notification: icon('ic_mail'),
-  banking: icon('ic_banking')
+  banking: icon('ic_banking'),
+  polymarket: icon('ic_analytics')
 }
 
 // ----------------------------------------------------------------------
@@ -50,6 +51,11 @@ export function useNavData() {
             title: t('menu.nfts'),
             path: paths.dashboard.nfts.root,
             icon: ICONS.nft
+          },
+          {
+            title: t('menu.polymarket'),
+            path: paths.dashboard.polymarket.root,
+            icon: ICONS.polymarket
           }
         ]
       },

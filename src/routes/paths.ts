@@ -42,6 +42,11 @@ export const paths = {
     transfer: {
       all: `${ROOTS.DASHBOARD}/transfer/all`
     },
+    polymarket: {
+      root: `${ROOTS.DASHBOARD}/polymarket`,
+      detail: (slug: string) => `${ROOTS.DASHBOARD}/polymarket/${slug}`,
+      portfolio: `${ROOTS.DASHBOARD}/polymarket/portfolio`
+    },
     user: {
       root: `${ROOTS.DASHBOARD}/user`,
       account: `${ROOTS.DASHBOARD}/user/account`,
