@@ -585,8 +585,8 @@ export default function PolymarketDetailView({ slug }: Props) {
         minHeight: '100vh',
         bgcolor: '#B8F6C9',
         backgroundImage: `linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 600px)`,
-        pb: { xs: 5, md: 7.5 },
-        mb: { xs: -5, md: -7.5 }, // Buffer to prevent any clipping from parent layout
+        pb: { xs: 10, md: 15 },
+        mb: { xs: -10, md: -15 }, // Buffer to prevent any clipping from parent layout
       }}
     >
       <Container
