@@ -79,7 +79,7 @@ export default function PolymarketMarketList({ markets, isLoading }: Props) {
             py: 1,
             fontWeight: 600,
             fontSize: '0.85rem',
-            fontFamily: "'SF Pro', sans-serif", // SF Pro matching Figma
+            fontFamily: "'Satoshi Variable', sans-serif",
             textTransform: 'none',
             borderRadius: 50, // Pill inner shape
             color: 'text.primary',

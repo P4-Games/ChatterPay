@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography'
 import LinearProgress from '@mui/material/LinearProgress'
 import { alpha, useTheme } from '@mui/material/styles'
 
+import { m } from 'framer-motion'
 import { useRouter } from 'src/routes/hooks'
 import { paths } from 'src/routes/paths'
 
@@ -43,15 +44,15 @@ export default function PolymarketMarketCard({ market, compact = false }: Props)
   if (compact) {
     return (
       <Card
+        component={m.div}
+        whileHover={{ y: -4 }}
+        transition={{ duration: 0.1 }}
         onClick={handleClick}
         sx={{
           p: 2.5,
           cursor: 'pointer',
           border: `1px solid ${alpha(theme.palette.grey[500], 0.16)}`,
-          transition: 'all 0.2s ease-in-out',
           '&:hover': {
-            borderColor: theme.palette.primary.main,
-            transform: 'translateY(-2px)',
             boxShadow: theme.shadows[8]
           }
         }}
@@ -97,16 +98,16 @@ export default function PolymarketMarketCard({ market, compact = false }: Props)
 
   return (
     <Card
+      component={m.div}
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.1 }}
       onClick={handleClick}
       sx={{
         p: 0,
         cursor: 'pointer',
         border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}`,
-        transition: 'all 0.2s ease-in-out',
         overflow: 'hidden',
         '&:hover': {
-          borderColor: theme.palette.primary.main,
-          transform: 'translateY(-2px)',
           boxShadow: theme.shadows[12]
         }
       }}

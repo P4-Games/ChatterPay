@@ -35,15 +35,18 @@ export default function PolymarketHubView() {
     : []
 
   return (
-    <Box sx={{ mt: -13, mx: { xs: -2, md: -5 } }}>
-      <Box
-        sx={{
-          position: 'relative',
-          overflow: 'hidden',
-          background: `linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 100%)`,
-          pb: { xs: 5, md: 7.5 }
-        }}
-      >
+    <Box
+      sx={{
+        mt: -13,
+        mx: { xs: 0, lg: -2 },
+        minHeight: '100vh',
+        bgcolor: '#B8F6C9',
+        backgroundImage: `linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 600px)`,
+        pb: 10,
+        mb: -10, // Extend below to avoid any margin artifacts from layout
+      }}
+    >
+      <Box sx={{ position: 'relative' }}>
         <Container maxWidth={settings.themeStretch ? false : 'xl'} sx={{ pt: { xs: 15, md: 20 } }}>
           <Stack spacing={3}>
             <Stack
@@ -97,7 +100,7 @@ export default function PolymarketHubView() {
                   Trending Markets Today:
                 </Typography>
 
-                <Box sx={{ mx: { xs: -3, md: -7.5 } }}>
+                <Box sx={{ py: 1.5 }}>
                   <Marquee speed={30} pauseOnHover>
                     {trendingEvents.map((event) => {
                       const topMarket = event.markets?.[0]
@@ -121,7 +124,7 @@ export default function PolymarketHubView() {
 
       {/* Market List */}
       <Container maxWidth={settings.themeStretch ? false : 'xl'} sx={{ mt: 5 }}>
-        <Typography variant='h5' sx={{ mb: 3, fontWeight: 700 }}>
+        <Typography variant='h5' sx={{ mb: 3, fontWeight: 700, color: '#173f35' }}>
           {t('polymarket.all-markets')}
         </Typography>
 

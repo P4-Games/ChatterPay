@@ -108,7 +108,7 @@ export default function OverviewBankingView() {
   const safeBalances: IBalances =
     !walletAddress || isLoadingBalances
       ? { wallet: '', balances: [], totals: { usd: 0, ars: 0, brl: 0, uyu: 0 } }
-      : balances
+      : balances || { wallet: '', balances: [], totals: { usd: 0, ars: 0, brl: 0, uyu: 0 } }
 
   const safeTransactions: ITransaction[] = !walletAddress || isLoadingTrxs ? [] : transactions
 
