@@ -13,3 +13,18 @@ export {
   useGetWalletTransactions,
   useGetWalletNotifications
 } from './use-wallet'
+
+export {
+  useGetPolymarketEvents,
+  useGetPolymarketMarkets,
+  useGetPolymarketMarket,
+  useSearchPolymarkets,
+  polymarketAccountStatus,
+  polymarketCreateAccount,
+  polymarketAcceptTerms,
+  polymarketPlaceOrder,
+  polymarketCancelOrder,
+  polymarketGetPositions,
+  polymarketGetOrders,
+  polymarketGetPortfolio
+} from './use-polymarket'
