@@ -46,3 +46,9 @@ export async function validateRequestSecurity(
 
   return { userId, ip, jwtToken: jwtTokenDecoded }
 }
+
+export function getUserIdFromRequest(req: NextRequest): string | null {
+  const cookie = req.cookies.get(CHP_DSH_NAME)?.value
+  const jwtTokenDecoded: JwtPayload | null = cookie ? extractJwtTokenFromCookie(cookie) : null
+  return jwtTokenDecoded?.user?.id || null
+}
