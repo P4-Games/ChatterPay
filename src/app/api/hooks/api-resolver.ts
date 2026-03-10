@@ -152,6 +152,7 @@ export const endpoints = {
     }
   },
   polymarket: {
+    categories: () => getFullUIEndpoint('polymarket/categories'),
     events: (params?: string) =>
       getFullUIEndpoint(`polymarket/events${params ? `?${params}` : ''}`),
     markets: (params?: string) =>

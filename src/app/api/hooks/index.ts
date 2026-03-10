@@ -16,6 +16,7 @@ export {
 
 export {
   useGetPolymarketEvents,
+  useGetPolymarketEventsInfinite,
   useGetPolymarketMarkets,
   useGetPolymarketMarket,
   useSearchPolymarkets,

@@ -43,7 +43,7 @@ export default function PolymarketAccountSetup({ accountStatus, onAccountUpdated
   const [error, setError] = useState<string | null>(null)
 
   // Already set up
-  if (accountStatus?.has_account && accountStatus?.terms_accepted) {
+  if (accountStatus?.account?.has_account && accountStatus?.account?.terms_accepted) {
     return null
   }
 
@@ -68,7 +68,8 @@ export default function PolymarketAccountSetup({ accountStatus, onAccountUpdated
     setIsAccepting(true)
     setError(null)
     try {
-      const result = await polymarketAcceptTerms()
+      const version = accountStatus?.terms?.version ?? 1
+      const result = await polymarketAcceptTerms(version)
       if (result.ok) {
         termsDialog.onFalse()
         onAccountUpdated()
@@ -83,7 +84,7 @@ export default function PolymarketAccountSetup({ accountStatus, onAccountUpdated
   }
 
   // No account yet
-  if (!accountStatus?.has_account) {
+  if (!accountStatus?.account?.has_account) {
     return (
       <Card
         sx={{

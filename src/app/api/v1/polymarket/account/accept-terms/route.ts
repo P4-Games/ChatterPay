@@ -23,7 +23,16 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const result = await acceptTerms(phoneNumber)
+    const body = await req.json().catch(() => ({}))
+    const termsVersion = body.terms_version
+    if (!termsVersion) {
+      return NextResponse.json(
+        { ok: false, message: 'Missing terms_version' },
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      )
+    }
+
+    const result = await acceptTerms(phoneNumber, termsVersion)
 
     return NextResponse.json(result, {
       headers: { 'Content-Type': 'application/json' }

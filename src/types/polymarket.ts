@@ -37,10 +37,22 @@ export type IPolymarketEvent = {
   markets: IPolymarketMarket[]
 }
 
-export type IPolymarketAccountStatus = {
+export type IPolymarketAccountInfo = {
   has_account: boolean
   terms_accepted: boolean
-  proxy_wallet: string | null
+  terms_current_version: number
+  terms_accepted_version: number
+}
+
+export type IPolymarketTerms = {
+  version: number
+  content: string
+  effective_date: string
+}
+
+export type IPolymarketAccountStatus = {
+  account: IPolymarketAccountInfo
+  terms: IPolymarketTerms
 }
 
 export type IPolymarketPosition = {
@@ -75,6 +87,13 @@ export type IPolymarketOrderPayload = {
   side: 'BUY' | 'SELL'
   size: number
   price: number
+}
+
+export type IPolymarketCategory = {
+  id: string
+  label: string
+  parentCategory?: string
+  slug: string
 }
 
 // ----------------------------------------------------------------------

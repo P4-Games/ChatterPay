@@ -47,7 +47,7 @@ export default function PolymarketTradeModule({ market, accountStatus }: Props) 
   const estimatedReturn = estimatedShares * 1 // Each share pays $1 if correct
   const estimatedProfit = estimatedReturn - amountNum
 
-  const canTrade = accountStatus?.has_account && accountStatus?.terms_accepted
+  const canTrade = accountStatus?.account?.has_account && accountStatus?.account?.terms_accepted
   const tokenId = market.tokens?.[selectedOutcome]?.token_id || ''
 
   const handleSubmit = async () => {

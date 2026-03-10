@@ -1,22 +1,30 @@
 'use client'
 
+import { useState, useEffect, useCallback } from 'react'
+
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
-import { alpha, useTheme } from '@mui/material/styles'
+import { useTheme } from '@mui/material/styles'
 
 import { useTranslate } from 'src/locales'
-import { useGetPolymarketMarkets, useGetPolymarketEvents } from 'src/app/api/hooks'
+import { useAuthContext } from 'src/auth/hooks'
+import {
+  useGetPolymarketEvents,
+  useGetPolymarketEventsInfinite,
+  polymarketAccountStatus
+} from 'src/app/api/hooks'
 
 import { useSettingsContext } from 'src/components/settings'
 
-import type { IPolymarketMarket, IPolymarketEvent } from 'src/types/polymarket'
+import type { IPolymarketMarket, IPolymarketEvent, IPolymarketAccountStatus } from 'src/types/polymarket'
 
 import PolymarketSearch from '../polymarket-search'
 import PolymarketMarketList from '../polymarket-market-list'
 import PolymarketMarketCard from '../polymarket-market-card'
 import PolymarketPNLWidget from '../polymarket-pnl-widget'
+import PolymarketTermsOverlay from '../polymarket-terms-overlay'
 import Marquee from 'src/components/marquee'
 
 // ----------------------------------------------------------------------
@@ -25,16 +33,68 @@ export default function PolymarketHubView() {
   const { t } = useTranslate()
   const theme = useTheme()
   const settings = useSettingsContext()
+  const { user } = useAuthContext()
 
-  const { data, isLoading } = useGetPolymarketMarkets()
-  const markets: IPolymarketMarket[] = Array.isArray(data?.data) ? data.data : []
+  const [category, setCategory] = useState('All')
+  const [sortBy, setSortBy] = useState('volume')
 
-  const { data: eventsData } = useGetPolymarketEvents()
-  const trendingEvents: IPolymarketEvent[] = Array.isArray(eventsData?.data) 
-    ? eventsData.data.slice(0, 4) 
+  // Account status for terms check
+  const [accountStatus, setAccountStatus] = useState<IPolymarketAccountStatus | null>(null)
+  const [statusLoading, setStatusLoading] = useState(true)
+
+  const checkAccountStatus = useCallback(async () => {
+    try {
+      const result = await polymarketAccountStatus()
+      if (result.ok && result.data) {
+        setAccountStatus(result.data)
+      }
+    } catch {
+      // Silently fail — don't block the hub
+    } finally {
+      setStatusLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (user?.id) {
+      checkAccountStatus()
+    } else {
+      setStatusLoading(false)
+    }
+  }, [user?.id, checkAccountStatus])
+
+  // Events with infinite scroll
+  const {
+    events,
+    isLoading,
+    isLoadingMore,
+    hasMore,
+    loadMore
+  } = useGetPolymarketEventsInfinite(category)
+
+  // Flatten events → markets for the grid
+  const markets: IPolymarketMarket[] = events.flatMap((e) => e.markets || [])
+
+  // Trending: separate fetch without category filter (first 4)
+  const { data: trendingData } = useGetPolymarketEvents()
+  const trendingEvents: IPolymarketEvent[] = Array.isArray(trendingData?.data)
+    ? trendingData.data.slice(0, 4)
     : []
 
+  // Show terms overlay if logged in + terms not accepted
+  const showTermsOverlay = !statusLoading &&
+    !!user?.id &&
+    accountStatus &&
+    !accountStatus.account?.terms_accepted
+
   return (
+    <>
+      {showTermsOverlay && accountStatus?.terms && (
+        <PolymarketTermsOverlay
+          terms={accountStatus.terms}
+          onAccepted={checkAccountStatus}
+        />
+      )}
     <Box
       sx={{
         mt: -13,
@@ -43,7 +103,7 @@ export default function PolymarketHubView() {
         bgcolor: '#B8F6C9',
         backgroundImage: `linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 600px)`,
         pb: { xs: 10, md: 15 },
-        mb: { xs: -10, md: -15 }, // Extend below to fully cover any dashboard layout padding
+        mb: { xs: -10, md: -15 },
       }}
     >
       <Box sx={{ position: 'relative' }}>
@@ -70,15 +130,18 @@ export default function PolymarketHubView() {
                 </Typography>
                 <Typography
                   variant='body1'
-                  sx={{ 
-                    color: '#173f35', 
-                    fontSize: 16, 
+                  sx={{
+                    color: '#173f35',
+                    fontSize: 16,
                     letterSpacing: '-0.16px',
-                    lineHeight: 1.5
+                    lineHeight: 1.5,
+                    mb: 3
                   }}
                 >
                   Make your predictions on Polymarket<br />just with WhatsApp!
                 </Typography>
+
+                <PolymarketSearch />
               </Box>
 
               <PolymarketPNLWidget />
@@ -89,10 +152,10 @@ export default function PolymarketHubView() {
               <Box sx={{ pt: 4 }}>
                 <Typography
                   variant='body1'
-                  sx={{ 
-                    mb: 3, 
-                    color: '#173f35', 
-                    fontSize: 16, 
+                  sx={{
+                    mb: 3,
+                    color: '#173f35',
+                    fontSize: 16,
                     letterSpacing: '-0.16px',
                     fontFamily: "'Satoshi Variable', sans-serif"
                   }}
@@ -128,8 +191,19 @@ export default function PolymarketHubView() {
           {t('polymarket.all-markets')}
         </Typography>
 
-        <PolymarketMarketList markets={markets} isLoading={isLoading} />
+        <PolymarketMarketList
+          markets={markets}
+          isLoading={isLoading}
+          category={category}
+          onChangeCategory={setCategory}
+          sortBy={sortBy}
+          onChangeSortBy={setSortBy}
+          hasMore={hasMore}
+          isLoadingMore={!!isLoadingMore}
+          onLoadMore={loadMore}
+        />
       </Container>
     </Box>
+    </>
   )
 }

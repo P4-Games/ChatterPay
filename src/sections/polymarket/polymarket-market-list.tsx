@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useEffect } from 'react'
 
 import Box from '@mui/material/Box'
 import Tab from '@mui/material/Tab'
@@ -11,17 +11,17 @@ import MenuItem from '@mui/material/MenuItem'
 import Skeleton from '@mui/material/Skeleton'
 import Typography from '@mui/material/Typography'
 import Grid from '@mui/material/Unstable_Grid2'
-import { alpha, useTheme } from '@mui/material/styles'
+import CircularProgress from '@mui/material/CircularProgress'
+import { useTheme } from '@mui/material/styles'
 
 import { useTranslate } from 'src/locales'
+import { useGetPolymarketCategories } from 'src/app/api/hooks/use-polymarket'
 
 import PolymarketMarketCard from './polymarket-market-card'
 
-import type { IPolymarketMarket } from 'src/types/polymarket'
+import type { IPolymarketMarket, IPolymarketCategory } from 'src/types/polymarket'
 
 // ----------------------------------------------------------------------
-
-const CATEGORIES = ['All', 'Politics', 'Crypto', 'Sports', 'Science', 'Culture']
 const SORT_OPTIONS = [
   { value: 'volume', label: 'Volume' },
   { value: 'newest', label: 'Newest' },
@@ -31,20 +31,36 @@ const SORT_OPTIONS = [
 type Props = {
   markets: IPolymarketMarket[]
   isLoading: boolean
+  category: string
+  onChangeCategory: (category: string) => void
+  sortBy: string
+  onChangeSortBy: (sortBy: string) => void
+  hasMore: boolean
+  isLoadingMore: boolean
+  onLoadMore: () => void
 }
 
-export default function PolymarketMarketList({ markets, isLoading }: Props) {
+export default function PolymarketMarketList({
+  markets,
+  isLoading,
+  category,
+  onChangeCategory,
+  sortBy,
+  onChangeSortBy,
+  hasMore,
+  isLoadingMore,
+  onLoadMore
+}: Props) {
   const { t } = useTranslate()
   const theme = useTheme()
-  const [category, setCategory] = useState('All')
-  const [sortBy, setSortBy] = useState('volume')
+  const sentinelRef = useRef<HTMLDivElement>(null)
 
-  const filteredMarkets = (markets || []).filter((market) => {
-    if (category === 'All') return true
-    return market.category?.toLowerCase() === category.toLowerCase()
-  })
+  const { data: categoriesData } = useGetPolymarketCategories()
+  const allCategories: IPolymarketCategory[] = categoriesData?.data ?? []
+  const topCategories = allCategories.filter((c) => !c.parentCategory)
 
-  const sortedMarkets = [...filteredMarkets].sort((a, b) => {
+  // Client-side sort only (category filtering is server-side now)
+  const sortedMarkets = [...(markets || [])].sort((a, b) => {
     if (sortBy === 'volume') return (b.volume || 0) - (a.volume || 0)
     if (sortBy === 'ending') {
       const dateA = a.end_date_iso ? new Date(a.end_date_iso).getTime() : Number.MAX_SAFE_INTEGER
@@ -53,6 +69,36 @@ export default function PolymarketMarketList({ markets, isLoading }: Props) {
     }
     return 0
   })
+
+  // Infinite scroll via IntersectionObserver
+  useEffect(() => {
+    if (!hasMore || isLoadingMore || isLoading) return
+
+    let observer: IntersectionObserver | null = null
+
+    const timeoutId = setTimeout(() => {
+      observer = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting && hasMore && !isLoadingMore && !isLoading) {
+            onLoadMore()
+          }
+        },
+        { threshold: 0, rootMargin: '200px' }
+      )
+
+      const currentTarget = sentinelRef.current
+      if (currentTarget) {
+        observer.observe(currentTarget)
+      }
+    }, 100)
+
+    return () => {
+      clearTimeout(timeoutId)
+      if (observer) {
+        observer.disconnect()
+      }
+    }
+  }, [hasMore, isLoadingMore, isLoading, onLoadMore, sortedMarkets.length])
 
   const renderFilters = (
     <Stack
@@ -64,11 +110,11 @@ export default function PolymarketMarketList({ markets, isLoading }: Props) {
     >
       <Tabs
         value={category}
-        onChange={(_, newValue) => setCategory(newValue)}
+        onChange={(_, newValue) => onChangeCategory(newValue)}
         variant='scrollable'
         scrollButtons='auto'
         sx={{
-          bgcolor: '#ebebeb', // Light grey pill wrapper from Figma
+          bgcolor: '#ebebeb',
           borderRadius: 50,
           p: 0.5,
           minHeight: 'auto',
@@ -81,7 +127,7 @@ export default function PolymarketMarketList({ markets, isLoading }: Props) {
             fontSize: '0.85rem',
             fontFamily: "'Satoshi Variable', sans-serif",
             textTransform: 'none',
-            borderRadius: 50, // Pill inner shape
+            borderRadius: 50,
             color: 'text.primary',
             '&.Mui-selected': {
               color: 'text.primary',
@@ -94,15 +140,16 @@ export default function PolymarketMarketList({ markets, isLoading }: Props) {
           }
         }}
       >
-        {CATEGORIES.map((cat) => (
-          <Tab key={cat} label={cat} value={cat} />
+        <Tab label="All" value="All" />
+        {topCategories.map((cat) => (
+          <Tab key={cat.id} label={cat.label} value={cat.label} />
         ))}
       </Tabs>
 
       <Select
         size='small'
         value={sortBy}
-        onChange={(e) => setSortBy(e.target.value)}
+        onChange={(e) => onChangeSortBy(e.target.value)}
         sx={{
           minWidth: 140,
           '& .MuiSelect-select': {
@@ -157,6 +204,13 @@ export default function PolymarketMarketList({ markets, isLoading }: Props) {
       {isLoading && renderLoading}
       {!isLoading && sortedMarkets.length === 0 && renderEmpty}
       {!isLoading && sortedMarkets.length > 0 && renderList}
+
+      {/* Infinite scroll sentinel */}
+      {!isLoading && hasMore && (
+        <Stack ref={sentinelRef} alignItems='center' sx={{ py: 4 }}>
+          {isLoadingMore && <CircularProgress size={32} color='primary' />}
+        </Stack>
+      )}
     </Box>
   )
 }

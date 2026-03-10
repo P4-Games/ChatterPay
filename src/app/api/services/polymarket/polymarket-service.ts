@@ -9,7 +9,8 @@ import type {
   IPolymarketPosition,
   IPolymarketPortfolio,
   IPolymarketAccountStatus,
-  IPolymarketOrderPayload
+  IPolymarketOrderPayload,
+  IPolymarketCategory
 } from 'src/types/polymarket'
 
 // ----------------------------------------------------------------------
@@ -165,6 +166,24 @@ export async function getMarketBySlug(
   }
 }
 
+export async function getCategories(): Promise<ServiceResult<IPolymarketCategory[]>> {
+  try {
+    const response = await axios.get<BackendResponse<IPolymarketCategory[]>>(
+      `${BACKEND_API_URL}/polymarket/categories`,
+      { headers: backendHeaders }
+    )
+
+    if (response.data.status !== 'success') {
+      return { ok: false, message: normalizeError(response.data) }
+    }
+
+    const raw = extractArray<IPolymarketCategory>(response.data.data, 'categories')
+    return { ok: true, data: raw }
+  } catch (error) {
+    return { ok: false, message: extractError(error) }
+  }
+}
+
 export async function searchMarkets(
   query: string
 ): Promise<ServiceResult<IPolymarketMarket[]>> {
@@ -230,12 +249,13 @@ export async function createAccount(
 }
 
 export async function acceptTerms(
-  channelUserId: string
+  channelUserId: string,
+  termsVersion: number
 ): Promise<ServiceResult<{ terms_accepted: boolean }>> {
   try {
     const response = await axios.post<BackendResponse<{ terms_accepted: boolean }>>(
       `${BACKEND_API_URL}/polymarket/account/accept_terms`,
-      { channel_user_id: channelUserId },
+      { channel_user_id: channelUserId, terms_version: termsVersion },
       { headers: backendHeaders }
     )
 
