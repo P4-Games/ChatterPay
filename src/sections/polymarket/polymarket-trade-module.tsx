@@ -51,23 +51,35 @@ export default function PolymarketTradeModule({ market, accountStatus }: Props) 
   const tokenId = market.tokens?.[selectedOutcome]?.token_id || ''
 
   const handleSubmit = async () => {
-    if (!canTrade || amountNum <= 0 || !tokenId) return
+    if (!canTrade || amountNum <= 0 || !tokenId || selectedPrice <= 0) return
 
     setIsSubmitting(true)
     setError(null)
     setSuccess(null)
 
     try {
+      // `size` = number of prediction tokens, not USD.
+      // User enters $10 at price $0.50/token → buy 20 tokens (10 / 0.50).
+      const tokenQuantity = Math.floor((amountNum / selectedPrice) * 100) / 100
+
       const result = await polymarketPlaceOrder({
         token_id: tokenId,
         side: 'BUY',
-        size: amountNum,
+        size: tokenQuantity,
         price: selectedPrice
       })
 
       if (result.ok) {
-        setSuccess(t('polymarket.order-placed'))
-        setAmount('')
+        // Check for nested backend errors: { ok: true, data: { order: { error: '...' } } }
+        const orderError = (result as any)?.data?.order?.error
+          || (result as any)?.data?.error
+
+        if (orderError) {
+          setError(orderError)
+        } else {
+          setSuccess(t('polymarket.order-placed'))
+          setAmount('')
+        }
       } else {
         setError(result.message || t('polymarket.order-error'))
       }
