@@ -15,8 +15,10 @@ import CircularProgress from '@mui/material/CircularProgress'
 import InputAdornment from '@mui/material/InputAdornment'
 import { alpha, useTheme } from '@mui/material/styles'
 
+import { useSnackbar } from 'src/components/snackbar'
+import { useSWRConfig } from 'swr'
 import { useTranslate } from 'src/locales'
-import { polymarketPlaceOrder } from 'src/app/api/hooks'
+import { polymarketPurchase, polymarketPurchaseStatus } from 'src/app/api/hooks'
 
 import Iconify from 'src/components/iconify'
 
@@ -30,6 +32,8 @@ type Props = {
 }
 
 export default function PolymarketTradeModule({ market, accountStatus }: Props) {
+  const { enqueueSnackbar } = useSnackbar()
+  const { mutate } = useSWRConfig()
   const { t } = useTranslate()
   const theme = useTheme()
 
@@ -59,26 +63,61 @@ export default function PolymarketTradeModule({ market, accountStatus }: Props) 
 
     try {
       // `size` = number of prediction tokens, not USD.
-      // User enters $10 at price $0.50/token → buy 20 tokens (10 / 0.50).
       const tokenQuantity = Math.floor((amountNum / selectedPrice) * 100) / 100
+      const bridgeAmountWei = Math.floor(amountNum * 1e6).toString()
 
-      const result = await polymarketPlaceOrder({
+      const result = await polymarketPurchase({
         token_id: tokenId,
         side: 'BUY',
         size: tokenQuantity,
-        price: selectedPrice
+        price: selectedPrice,
+        bridge_amount: bridgeAmountWei
       })
 
       if (result.ok) {
-        // Check for nested backend errors: { ok: true, data: { order: { error: '...' } } }
-        const orderError = (result as any)?.data?.order?.error
-          || (result as any)?.data?.error
+        setAmount('')
+        enqueueSnackbar('Transaction in Progress: Bridging & Placing Order...', { variant: 'info' })
+        
+        // Optimistically deduct visual balance
+        mutate(
+          (key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'),
+          (currentData: any) => {
+            if (!currentData || !currentData.data) return currentData;
+            // Best effort optimistic deduction, assume USDC is primary
+            const newBal = { ...currentData };
+            if (newBal.data.balance) {
+               newBal.data.balance = Math.max(0, newBal.data.balance - amountNum);
+            }
+            return newBal;
+          },
+          { revalidate: false }
+        )
 
-        if (orderError) {
-          setError(orderError)
-        } else {
-          setSuccess(t('polymarket.order-placed'))
-          setAmount('')
+        const purchaseId = result.data?.purchase_id
+        if (purchaseId) {
+          const pollInterval = setInterval(async () => {
+            try {
+              const statusRes = await polymarketPurchaseStatus(purchaseId)
+              if (statusRes.ok && statusRes.data) {
+                const st = statusRes.data.status
+                if (st === 'completed') {
+                  clearInterval(pollInterval)
+                  enqueueSnackbar(t('polymarket.order-placed'), { variant: 'success' })
+                  // Hard invalidate balance
+                  mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'))
+                  mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/positions'))
+                  mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders'))
+                  mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/portfolio'))
+                } else if (st === 'failed') {
+                  clearInterval(pollInterval)
+                  enqueueSnackbar(statusRes.data.error || 'Transaction failed', { variant: 'error' })
+                  mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'))
+                }
+              }
+            } catch (e) {
+              console.error(e)
+            }
+          }, 4000)
         }
       } else {
         setError(result.message || t('polymarket.order-error'))

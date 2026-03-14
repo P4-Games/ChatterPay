@@ -16,6 +16,11 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Alert from '@mui/material/Alert'
 import Grid from '@mui/material/Unstable_Grid2'
 import LinearProgress from '@mui/material/LinearProgress'
+import Table from '@mui/material/Table'
+import TableRow from '@mui/material/TableRow'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableHead from '@mui/material/TableHead'
 import { alpha, useTheme } from '@mui/material/styles'
 
 import { HugeiconsIcon } from '@hugeicons/react'
@@ -26,7 +31,9 @@ import { paths } from 'src/routes/paths'
 
 import { useTranslate } from 'src/locales'
 import { useResponsive } from 'src/hooks/use-responsive'
-import { useGetPolymarketMarket, polymarketPlaceOrder, useGetWalletBalance } from 'src/app/api/hooks'
+import { useGetPolymarketMarket, polymarketPurchase, useGetWalletBalance, polymarketPurchaseStatus, useGetPolymarketPositionsSWR, useGetPolymarketOrdersSWR, polymarketCancelOrder } from 'src/app/api/hooks'
+import { useSnackbar } from 'src/components/snackbar'
+import { useSWRConfig } from 'swr'
 import { useAuthContext } from 'src/auth/hooks'
 
 import { useSettingsContext } from 'src/components/settings'
@@ -84,6 +91,25 @@ function generateMockPriceHistory(outcomes: string[], prices: number[]) {
   return { categories, series, yMax }
 }
 
+// ── Active purchase tracking ──
+type ActivePurchase = {
+  purchase_id: string
+  side: 'BUY' | 'SELL'
+  outcome: string
+  size: number
+  price: number
+  current_step: string
+  status: string
+}
+
+const STEP_LABELS: Record<string, string> = {
+  submitting: 'Submitting',
+  account_creation: 'Creating account',
+  bridge: 'Bridging funds',
+  order_placement: 'Placing order',
+  done: 'Complete',
+}
+
 // ── Framer Motion variants ──
 const fadeInUp = {
   initial: { opacity: 0, y: 24 },
@@ -109,6 +135,9 @@ export default function PolymarketDetailView({ slug }: Props) {
   const { user }: { user: AuthUserType } = useAuthContext()
   const mdUp = useResponsive('up', 'md')
 
+  const { enqueueSnackbar } = useSnackbar()
+  const { mutate } = useSWRConfig()
+
   const { data, isLoading } = useGetPolymarketMarket(slug)
   const market: IPolymarketMarket | null = data?.data || null
 
@@ -127,10 +156,24 @@ export default function PolymarketDetailView({ slug }: Props) {
   // Trade state
   const [selectedOutcome, setSelectedOutcome] = useState<number>(0)
   const [amount, setAmount] = useState<number>(10)
+  const { data: positions = [] } = useGetPolymarketPositionsSWR(10000)
+  const { data: orders = [] } = useGetPolymarketOrdersSWR(10000)
+
+  const marketPositions = positions.filter((p) => {
+    if (p.conditionId !== market?.condition_id && p.market?.condition_id !== market?.condition_id) return false
+    return !soldPositionKeys.has((p.market?.condition_id || p.conditionId) + p.outcome)
+  })
+  const marketOrders = orders.filter((o) => o.market?.condition_id === market?.condition_id)
+
+  const [cancellingId, setCancellingId] = useState<string | null>(null)
+  const [sellingPos, setSellingPos] = useState<string | null>(null)
   const [customAmount, setCustomAmount] = useState<string>('10')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const [isClaiming, setIsClaiming] = useState(false)
+  const [activePurchases, setActivePurchases] = useState<ActivePurchase[]>([])
+  const [soldPositionKeys, setSoldPositionKeys] = useState<Set<string>>(new Set())
 
   const outcomes = market?.outcomes || ['Yes', 'No']
   const prices = (market?.outcome_prices || []).map(Number)
@@ -211,25 +254,79 @@ export default function PolymarketDetailView({ slug }: Props) {
     setError(null)
     setSuccess(null)
     try {
-      // `size` = number of prediction tokens, not USD.
-      // User enters $10 at price $0.50/token → buy 20 tokens (10 / 0.50).
       const tokenQuantity = Math.floor((amount / selectedPrice) * 100) / 100
+      const bridgeAmountWei = Math.floor(amount * 1e6).toString()
 
-      const result = await polymarketPlaceOrder({
+      const result = await polymarketPurchase({
         token_id: tokenId,
         side: 'BUY',
         size: tokenQuantity,
         price: selectedPrice,
+        bridge_amount: bridgeAmountWei,
       })
 
-      // Check for nested backend errors: { ok: true, data: { order: { error: '...' } } }
-      const orderError = (result as any)?.data?.order?.error
-        || (result as any)?.data?.error
+      if (result.ok) {
+        enqueueSnackbar('Transaction in Progress: Bridging & Placing Order...', { variant: 'info' })
 
-      if (orderError) {
-        setError(orderError)
-      } else if (result.ok) {
-        setSuccess(t('polymarket.order-placed'))
+        mutate(
+          (key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'),
+          (currentData: any) => {
+            if (!currentData || !currentData.data) return currentData;
+            const newBal = { ...currentData };
+            if (newBal.data.balance) newBal.data.balance = Math.max(0, newBal.data.balance - amount);
+            return newBal;
+          },
+          { revalidate: false }
+        )
+
+        const purchaseId = result.data?.purchase_id
+        if (purchaseId) {
+          // Track active purchase in UI
+          const newPurchase: ActivePurchase = {
+            purchase_id: purchaseId,
+            side: 'BUY',
+            outcome: outcomes[selectedOutcome],
+            size: tokenQuantity,
+            price: selectedPrice,
+            current_step: 'bridge',
+            status: 'processing',
+          }
+          setActivePurchases((prev) => [...prev, newPurchase])
+
+          const pollInterval = setInterval(async () => {
+            try {
+              const statusRes = await polymarketPurchaseStatus(purchaseId)
+              if (statusRes.ok && statusRes.data) {
+                const st = statusRes.data.status
+                const step = statusRes.data.current_step || ''
+
+                // Update active purchase step
+                setActivePurchases((prev) =>
+                  prev.map((p) =>
+                    p.purchase_id === purchaseId ? { ...p, current_step: step, status: st } : p
+                  )
+                )
+
+                if (st === 'completed') {
+                  clearInterval(pollInterval)
+                  setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
+                  enqueueSnackbar(t('polymarket.order-placed'), { variant: 'success' })
+                  mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'))
+                  mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/positions'))
+                  mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders'))
+                  mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/portfolio'))
+                } else if (st === 'failed') {
+                  clearInterval(pollInterval)
+                  setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
+                  enqueueSnackbar(statusRes.data.error || 'Transaction failed', { variant: 'error' })
+                  mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'))
+                }
+              }
+            } catch (e) {
+              console.error(e)
+            }
+          }, 4000)
+        }
       } else {
         setError(result.message || t('polymarket.order-error'))
       }
@@ -424,8 +521,24 @@ export default function PolymarketDetailView({ slug }: Props) {
             />
           </Box>
 
-          <Typography variant="caption" color="text.secondary" sx={{ mt: 1.5, display: 'block' }}>
-            Available: ${fNumber(availableBalance)} ({balanceTokenSymbol})
+          <Typography variant="caption" color="text.secondary" sx={{ mt: 1.5, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            Available: ${fNumber(availableBalance)}
+            <Box
+              component="span"
+              sx={{
+                display: 'inline-flex',
+                px: 0.75,
+                py: 0.125,
+                borderRadius: 0.5,
+                bgcolor: alpha(theme.palette.primary.main, 0.08),
+                color: theme.palette.primary.main,
+                fontWeight: 700,
+                fontSize: '0.65rem',
+                letterSpacing: 0.5,
+              }}
+            >
+              {balanceTokenSymbol}
+            </Box>
           </Typography>
         </Box>
 
@@ -722,6 +835,302 @@ export default function PolymarketDetailView({ slug }: Props) {
                 {renderMarketDetails}
               </Box>
             )}
+
+            {/* ── POSITIONS & ORDERS ── */}
+            <Box component={m.div} variants={fadeInUp} transition={{ duration: 0.4 }}>
+              <Typography variant="h5" sx={{ mb: 3, fontWeight: 700, mt: mdUp ? 5 : 0 }}>
+                My Activity
+              </Typography>
+              
+              <Stack spacing={3}>
+                {/* Active Positions */}
+                <Card sx={{ border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}` }}>
+                  <Stack direction='row' alignItems='center' justifyContent='space-between' sx={{ px: 3, py: 2.5 }}>
+                    <Typography variant='subtitle1' fontWeight={700}>Open Positions</Typography>
+                    <Chip label={marketPositions.length} size='small' sx={{ fontWeight: 700, bgcolor: alpha(theme.palette.primary.main, 0.08) }} />
+                  </Stack>
+                  {marketPositions.length === 0 ? (
+                    <Stack alignItems='center' sx={{ py: 4 }}>
+                      <Typography variant='body2' color='text.secondary'>No active positions for this market.</Typography>
+                    </Stack>
+                  ) : (
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Outcome</TableCell>
+                          <TableCell align='right'>Size</TableCell>
+                          <TableCell align='right'>Avg Price</TableCell>
+                          <TableCell align='right'>Current</TableCell>
+                          <TableCell align='right'>PnL</TableCell>
+                          <TableCell align='right'>Actions</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {marketPositions.map((pos, idx) => (
+                          <TableRow key={idx} hover>
+                            <TableCell>
+                              <Chip
+                                label={pos.outcome}
+                                size='small'
+                                sx={{
+                                  fontWeight: 600,
+                                  bgcolor: alpha(pos.outcome?.toLowerCase() === 'yes' ? theme.palette.success.main : theme.palette.error.main, 0.1),
+                                  color: pos.outcome?.toLowerCase() === 'yes' ? theme.palette.success.dark : theme.palette.error.dark
+                                }}
+                              />
+                            </TableCell>
+                            <TableCell align='right'>
+                              <Typography variant='body2' fontWeight={600}>{fNumber(pos.size)}</Typography>
+                            </TableCell>
+                            <TableCell align='right'>
+                              <Typography variant='body2'>{Math.round((pos.avg_price ?? pos.avgPrice ?? 0) * 100)}¢</Typography>
+                            </TableCell>
+                            <TableCell align='right'>
+                              <Typography variant='body2'>{Math.round((pos.current_price ?? pos.curPrice ?? 0) * 100)}¢</Typography>
+                            </TableCell>
+                            <TableCell align='right'>
+                              {(() => {
+                                const pnlVal = pos.pnl ?? pos.cashPnl ?? 0;
+                                const pnlRounded = Math.floor(Math.abs(pnlVal) * 1e2) / 1e2 * (pnlVal < 0 ? -1 : 1);
+                                return (
+                                  <Typography variant='body2' fontWeight={700} color={pnlVal >= 0 ? 'success.main' : 'error.main'}>
+                                    {pnlRounded === 0 ? '$0.00' : `${pnlVal > 0 ? '+' : ''}$${fNumber(pnlRounded)}`}
+                                  </Typography>
+                                );
+                              })()}
+                            </TableCell>
+                            <TableCell align='right'>
+                              <Button
+                                size='small'
+                                color='error'
+                                variant='contained'
+                                disabled={sellingPos === (pos.market?.condition_id || pos.conditionId) + pos.outcome}
+                                onClick={async () => {
+                                  const posKey = (pos.market?.condition_id || pos.conditionId) + pos.outcome
+                                  setSellingPos(posKey)
+
+                                  const token = market.tokens?.find((t) => t.outcome === pos.outcome)
+                                  if (!token?.token_id) {
+                                    enqueueSnackbar('Token ID not found', { variant: 'error' })
+                                    setSellingPos(null)
+                                    return
+                                  }
+
+                                  const sellSize = Math.floor(pos.size * 1e6) / 1e6
+                                  const sellPrice = pos.current_price ?? pos.curPrice ?? 0
+                                  const tempId = `temp-${Date.now()}`
+
+                                  // Instantly show in Open Orders
+                                  setActivePurchases((prev) => [...prev, {
+                                    purchase_id: tempId,
+                                    side: 'SELL',
+                                    outcome: pos.outcome,
+                                    size: sellSize,
+                                    price: sellPrice,
+                                    current_step: 'submitting',
+                                    status: 'processing',
+                                  }])
+
+                                  try {
+                                    const res = await polymarketPurchase({
+                                      token_id: token.token_id,
+                                      side: 'SELL',
+                                      size: sellSize,
+                                      price: sellPrice,
+                                      bridge_amount: "0"
+                                    })
+                                    if (res.ok) {
+                                      const purchaseId = res.data?.purchase_id || tempId
+                                      // Hide the sold position immediately
+                                      setSoldPositionKeys((prev) => new Set(prev).add(posKey))
+                                      // Update temp row with real purchase ID + step
+                                      setActivePurchases((prev) =>
+                                        prev.map((p) =>
+                                          p.purchase_id === tempId
+                                            ? { ...p, purchase_id: purchaseId, current_step: 'order_placement' }
+                                            : p
+                                        )
+                                      )
+
+                                      const poll = async () => {
+                                        try {
+                                          const statusRes = await polymarketPurchaseStatus(purchaseId)
+                                          if (statusRes.ok && statusRes.data) {
+                                            const st = statusRes.data.status
+                                            const step = statusRes.data.current_step || ''
+                                            setActivePurchases((prev) =>
+                                              prev.map((p) =>
+                                                p.purchase_id === purchaseId ? { ...p, current_step: step, status: st } : p
+                                              )
+                                            )
+                                            if (st === 'completed') {
+                                              clearInterval(pollInterval)
+                                              setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
+                                              enqueueSnackbar('Sell order completed', { variant: 'success' })
+                                              mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/positions'))
+                                              mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders'))
+                                              mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/portfolio'))
+                                              mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'))
+                                              setSoldPositionKeys((prev) => { const n = new Set(prev); n.delete(posKey); return n })
+                                            } else if (st === 'failed') {
+                                              clearInterval(pollInterval)
+                                              setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
+                                              enqueueSnackbar(statusRes.data.error || 'Sell failed', { variant: 'error' })
+                                              setSoldPositionKeys((prev) => { const n = new Set(prev); n.delete(posKey); return n })
+                                            }
+                                          }
+                                        } catch (e) { console.error(e) }
+                                      }
+                                      poll() // immediate first check
+                                      const pollInterval = setInterval(poll, 4000)
+                                    } else {
+                                      // Remove temp row on failure
+                                      setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== tempId))
+                                      enqueueSnackbar(res.message || 'Error executing sell', { variant: 'error' })
+                                    }
+                                  } catch {
+                                    setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== tempId))
+                                    enqueueSnackbar('Error executing sell', { variant: 'error' })
+                                  } finally {
+                                    setSellingPos(null)
+                                  }
+                                }}
+                              >
+                                {sellingPos === (pos.market?.condition_id || pos.conditionId) + pos.outcome ? <CircularProgress size={14} color="inherit" /> : 'Sell'}
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )}
+                </Card>
+
+                {/* Open Orders */}
+                <Card sx={{ border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}` }}>
+                  <Stack direction='row' alignItems='center' justifyContent='space-between' sx={{ px: 3, py: 2.5 }}>
+                    <Typography variant='subtitle1' fontWeight={700}>Open Orders</Typography>
+                    <Chip label={activePurchases.length + marketOrders.length} size='small' sx={{ fontWeight: 700, bgcolor: alpha(theme.palette.warning.main, 0.08) }} />
+                  </Stack>
+                  {activePurchases.length === 0 && marketOrders.length === 0 ? (
+                    <Stack alignItems='center' sx={{ py: 4 }}>
+                      <Typography variant='body2' color='text.secondary'>No active orders.</Typography>
+                    </Stack>
+                  ) : (
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Side</TableCell>
+                          <TableCell>Outcome</TableCell>
+                          <TableCell align='right'>Size</TableCell>
+                          <TableCell align='right'>Price</TableCell>
+                          <TableCell align='right'>Actions</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {activePurchases.map((ap) => (
+                          <TableRow
+                            key={ap.purchase_id}
+                            sx={{
+                              '@keyframes softPulse': {
+                                '0%, 100%': { opacity: 1 },
+                                '50%': { opacity: 0.5 },
+                              },
+                              animation: 'softPulse 2s ease-in-out infinite',
+                            }}
+                          >
+                            <TableCell>
+                              <Chip
+                                label={ap.side}
+                                size='small'
+                                sx={{
+                                  fontWeight: 600,
+                                  bgcolor: alpha(ap.side === 'BUY' ? theme.palette.success.main : theme.palette.error.main, 0.1),
+                                  color: ap.side === 'BUY' ? theme.palette.success.dark : theme.palette.error.dark
+                                }}
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Typography variant='body2'>{ap.outcome}</Typography>
+                            </TableCell>
+                            <TableCell align='right'>
+                              <Typography variant='body2' fontWeight={600}>{fNumber(ap.size)}</Typography>
+                            </TableCell>
+                            <TableCell align='right'>
+                              <Typography variant='body2'>{fNumber(ap.price)}</Typography>
+                            </TableCell>
+                            <TableCell align='right'>
+                              <Chip
+                                icon={<CircularProgress size={12} sx={{ color: 'inherit !important' }} />}
+                                label={STEP_LABELS[ap.current_step] || ap.current_step}
+                                size='small'
+                                sx={{
+                                  fontWeight: 600,
+                                  bgcolor: theme.palette.text.primary,
+                                  color: theme.palette.background.paper,
+                                  '& .MuiChip-icon': { color: 'inherit' },
+                                  pointerEvents: 'none',
+                                }}
+                              />
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                        {marketOrders.map((order) => (
+                          <TableRow key={order.id} hover>
+                            <TableCell>
+                              <Chip
+                                label={order.side}
+                                size='small'
+                                sx={{
+                                  fontWeight: 600,
+                                  bgcolor: alpha(order.side === 'BUY' ? theme.palette.success.main : theme.palette.error.main, 0.1),
+                                  color: order.side === 'BUY' ? theme.palette.success.dark : theme.palette.error.dark
+                                }}
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Typography variant='body2'>{order.outcome}</Typography>
+                            </TableCell>
+                            <TableCell align='right'>
+                              <Typography variant='body2' fontWeight={600}>{fNumber(order.size)}</Typography>
+                            </TableCell>
+                            <TableCell align='right'>
+                              <Typography variant='body2'>{fNumber(order.price)}</Typography>
+                            </TableCell>
+                            <TableCell align='right'>
+                              {order.status !== 'cancelled' && order.status !== 'filled' && (
+                                <Button
+                                  size='small'
+                                  variant='outlined'
+                                  color='inherit'
+                                  disabled={cancellingId === order.id}
+                                  onClick={async () => {
+                                    setCancellingId(order.id)
+                                    try {
+                                      const result = await polymarketCancelOrder(order.id)
+                                      if (result.ok) {
+                                        enqueueSnackbar('Order Cancelled', { variant: 'success' })
+                                        mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders'))
+                                      }
+                                    } catch {
+                                    } finally {
+                                      setCancellingId(null)
+                                    }
+                                  }}
+                                >
+                                  {cancellingId === order.id ? <CircularProgress size={14} color="inherit" /> : 'Cancel'}
+                                </Button>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )}
+                </Card>
+              </Stack>
+            </Box>
+
           </Stack>
         </Container>
     </Box>
