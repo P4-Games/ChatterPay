@@ -27,5 +27,11 @@ export {
   polymarketCancelOrder,
   polymarketGetPositions,
   polymarketGetOrders,
-  polymarketGetPortfolio
+  polymarketGetPortfolio,
+  polymarketPurchase,
+  polymarketPurchaseStatus,
+  polymarketBridgeWithdraw,
+  useGetPolymarketPositionsSWR,
+  useGetPolymarketOrdersSWR,
+  useGetPolymarketPortfolioSWR
 } from './use-polymarket'

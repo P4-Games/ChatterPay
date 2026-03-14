@@ -57,12 +57,23 @@ export type IPolymarketAccountStatus = {
 
 export type IPolymarketPosition = {
   market: IPolymarketMarket
+  market_title?: string
+  market_slug?: string
   outcome: string
   size: number
   avg_price: number
   current_price: number
   pnl: number
   pnl_percent: number
+  
+  // Backend polymorphic response bindings
+  title?: string
+  slug?: string
+  avgPrice?: number
+  curPrice?: number
+  cashPnl?: number
+  percentPnl?: number
+  conditionId?: string
 }
 
 export type IPolymarketOrder = {
@@ -80,6 +91,13 @@ export type IPolymarketPortfolio = {
   total_value: number
   total_pnl: number
   positions_count: number
+  cash_balance?: number
+
+  // Backend polymorphic response bindings
+  totalValue?: number
+  totalPnl?: number
+  positionsCount?: number
+  cashBalance?: number
 }
 
 export type IPolymarketOrderPayload = {
@@ -87,6 +105,18 @@ export type IPolymarketOrderPayload = {
   side: 'BUY' | 'SELL'
   size: number
   price: number
+  bridge_amount?: string
+}
+
+export type IPolymarketPurchaseResponse = {
+  purchase_id: string
+}
+
+export type IPolymarketPurchaseStatus = {
+  purchase_id: string
+  status: 'pending' | 'completed' | 'failed'
+  current_step: 'account_creation' | 'bridge' | 'order_placement' | 'done' | string
+  error?: string
 }
 
 export type IPolymarketCategory = {

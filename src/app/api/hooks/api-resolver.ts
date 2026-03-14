@@ -169,6 +169,13 @@ export const endpoints = {
       place: () => getFullUIEndpoint('polymarket/order/place'),
       cancel: () => getFullUIEndpoint('polymarket/order/cancel')
     },
+    purchase: {
+      root: () => getFullUIEndpoint('polymarket/purchase'),
+      status: () => getFullUIEndpoint('polymarket/purchase/status')
+    },
+    bridge: {
+      withdraw: () => getFullUIEndpoint('polymarket/bridge/withdraw')
+    },
     positions: () => getFullUIEndpoint('polymarket/positions'),
     orders: () => getFullUIEndpoint('polymarket/orders'),
     portfolio: () => getFullUIEndpoint('polymarket/portfolio')

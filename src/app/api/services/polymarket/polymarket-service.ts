@@ -10,6 +10,8 @@ import type {
   IPolymarketPortfolio,
   IPolymarketAccountStatus,
   IPolymarketOrderPayload,
+  IPolymarketPurchaseResponse,
+  IPolymarketPurchaseStatus,
   IPolymarketCategory
 } from 'src/types/polymarket'
 
@@ -302,6 +304,69 @@ export async function cancelOrder(
     const response = await axios.post<BackendResponse<{ cancelled: boolean }>>(
       `${BACKEND_API_URL}/polymarket/order/cancel`,
       { channel_user_id: channelUserId, order_id: orderId },
+      { headers: backendHeaders }
+    )
+
+    if (response.data.status !== 'success') {
+      return { ok: false, message: normalizeError(response.data) }
+    }
+
+    return { ok: true, data: response.data.data }
+  } catch (error) {
+    return { ok: false, message: extractError(error) }
+  }
+}
+
+export async function purchase(
+  channelUserId: string,
+  payload: IPolymarketOrderPayload
+): Promise<ServiceResult<IPolymarketPurchaseResponse>> {
+  try {
+    const response = await axios.post<BackendResponse<IPolymarketPurchaseResponse>>(
+      `${BACKEND_API_URL}/polymarket/purchase`,
+      { channel_user_id: channelUserId, ...payload },
+      { headers: backendHeaders }
+    )
+
+    if (response.data.status !== 'success') {
+      return { ok: false, message: normalizeError(response.data) }
+    }
+
+    return { ok: true, data: response.data.data }
+  } catch (error) {
+    return { ok: false, message: extractError(error) }
+  }
+}
+
+export async function purchaseStatus(
+  channelUserId: string,
+  purchaseId: string
+): Promise<ServiceResult<IPolymarketPurchaseStatus>> {
+  try {
+    const response = await axios.post<BackendResponse<IPolymarketPurchaseStatus>>(
+      `${BACKEND_API_URL}/polymarket/purchase/status`,
+      { channel_user_id: channelUserId, purchase_id: purchaseId },
+      { headers: backendHeaders }
+    )
+
+    if (response.data.status !== 'success') {
+      return { ok: false, message: normalizeError(response.data) }
+    }
+
+    return { ok: true, data: response.data.data }
+  } catch (error) {
+    return { ok: false, message: extractError(error) }
+  }
+}
+
+export async function bridgeWithdraw(
+  channelUserId: string,
+  amount: string
+): Promise<ServiceResult<{ success: boolean; hash?: string }>> {
+  try {
+    const response = await axios.post<BackendResponse<{ success: boolean; hash?: string }>>(
+      `${BACKEND_API_URL}/polymarket/bridge/withdraw/`,
+      { channel_user_id: channelUserId, amount },
       { headers: backendHeaders }
     )
 

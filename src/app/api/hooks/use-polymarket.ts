@@ -1,4 +1,5 @@
 import { useMemo, useCallback } from 'react'
+import useSWR from 'swr'
 import useSWRInfinite from 'swr/infinite'
 
 import { post, endpoints, fetcher } from 'src/app/api/hooks/api-resolver'
@@ -12,7 +13,9 @@ import type {
   IPolymarketPosition,
   IPolymarketPortfolio,
   IPolymarketAccountStatus,
-  IPolymarketOrderPayload
+  IPolymarketOrderPayload,
+  IPolymarketPurchaseResponse,
+  IPolymarketPurchaseStatus
 } from 'src/types/polymarket'
 
 // ----------------------------------------------------------------------
@@ -117,6 +120,70 @@ export function useSearchPolymarkets(query: string) {
 }
 
 // ----------------------------------------------------------------------
+// Polling SWR Hooks
+// ----------------------------------------------------------------------
+
+const postFetcher = async (args: [string, any, any]) => {
+  const [url, data, config] = args
+  return post(url, data, config)
+}
+
+export function useGetPolymarketPositionsSWR(refreshInterval = 10000) {
+  const { data, error, isLoading, isValidating, mutate } = useSWR(
+    [endpoints.polymarket.positions(), {}, { headers: getAuthorizationHeader() }],
+    postFetcher,
+    { refreshInterval }
+  )
+  return useMemo(
+    () => ({
+      data: (data?.data as any)?.positions as IPolymarketPosition[] | undefined,
+      isLoading,
+      error,
+      isValidating,
+      mutate,
+      empty: !isLoading && !(data?.data as any)?.positions?.length
+    }),
+    [data, error, isLoading, isValidating, mutate]
+  )
+}
+
+export function useGetPolymarketOrdersSWR(refreshInterval = 10000) {
+  const { data, error, isLoading, isValidating, mutate } = useSWR(
+    [endpoints.polymarket.orders(), {}, { headers: getAuthorizationHeader() }],
+    postFetcher,
+    { refreshInterval }
+  )
+  return useMemo(
+    () => ({
+      data: (data?.data as any)?.orders as IPolymarketOrder[] | undefined,
+      isLoading,
+      error,
+      isValidating,
+      mutate,
+      empty: !isLoading && !(data?.data as any)?.orders?.length
+    }),
+    [data, error, isLoading, isValidating, mutate]
+  )
+}
+
+export function useGetPolymarketPortfolioSWR(refreshInterval = 10000) {
+  const { data, error, isLoading, isValidating, mutate } = useSWR(
+    [endpoints.polymarket.portfolio(), {}, { headers: getAuthorizationHeader() }],
+    postFetcher,
+    { refreshInterval }
+  )
+  return useMemo(
+    () => ({
+      data: data?.data as IPolymarketPortfolio | undefined,
+      isLoading,
+      error,
+      isValidating,
+      mutate
+    }),
+    [data, error, isLoading, isValidating, mutate]
+  )
+}
+// ----------------------------------------------------------------------
 // Imperative functions (POST – mutate state, not SWR)
 // ----------------------------------------------------------------------
 
@@ -196,4 +263,40 @@ export async function polymarketGetPortfolio(): Promise<{
   message?: string
 }> {
   return post(endpoints.polymarket.portfolio(), {}, { headers: getAuthorizationHeader() })
+}
+
+export async function polymarketPurchase(
+  orderData: IPolymarketOrderPayload
+): Promise<{
+  ok: boolean
+  data?: IPolymarketPurchaseResponse
+  message?: string
+}> {
+  return post(endpoints.polymarket.purchase.root(), orderData, {
+    headers: getAuthorizationHeader()
+  })
+}
+
+export async function polymarketPurchaseStatus(
+  purchaseId: string
+): Promise<{
+  ok: boolean
+  data?: IPolymarketPurchaseStatus
+  message?: string
+}> {
+  return post(endpoints.polymarket.purchase.status(), { purchase_id: purchaseId }, {
+    headers: getAuthorizationHeader()
+  })
+}
+
+export async function polymarketBridgeWithdraw(
+  amount: string
+): Promise<{
+  ok: boolean
+  data?: { success: boolean; hash?: string }
+  message?: string
+}> {
+  return post(endpoints.polymarket.bridge.withdraw(), { amount }, {
+    headers: getAuthorizationHeader()
+  })
 }
