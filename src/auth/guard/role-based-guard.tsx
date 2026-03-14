@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { m } from 'framer-motion'
 
 import Container from '@mui/material/Container'

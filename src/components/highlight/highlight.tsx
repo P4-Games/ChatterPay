@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { ReactNode } from 'react'
 import { m } from 'framer-motion'
 

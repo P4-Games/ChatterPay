@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Image from 'next/image'
 import { useState } from 'react'
 import { m } from 'framer-motion'

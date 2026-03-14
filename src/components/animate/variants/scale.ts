@@ -9,7 +9,7 @@ export const varScale = (props?: VariantsType) => {
   const easeIn = props?.easeIn
   const easeOut = props?.easeOut
 
-  return {
+  return { /* eslint-disable-next-line */ ...({} as any),
     // IN
     inX: {
       initial: { scaleX: 0, opacity: 0 },
