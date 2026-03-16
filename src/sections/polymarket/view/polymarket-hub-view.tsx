@@ -18,7 +18,6 @@ import { useSettingsContext } from 'src/components/settings'
 
 import type { IPolymarketEvent, IPolymarketAccountStatus } from 'src/types/polymarket'
 
-import PolymarketSearch from '../polymarket-search'
 import PolymarketMarketList from '../polymarket-market-list'
 import PolymarketMarketCard from '../polymarket-market-card'
 import PolymarketEventCard from '../polymarket-event-card'
@@ -153,7 +152,7 @@ export default function PolymarketHubView() {
                     fontFamily: "'Satoshi Variable', sans-serif"
                   }}
                 >
-                  Trending Markets Today:
+                  Trending Today:
                 </Typography>
 
                 <Box sx={{ py: 1.5 }}>

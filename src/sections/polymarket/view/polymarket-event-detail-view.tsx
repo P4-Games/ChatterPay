@@ -154,10 +154,10 @@ export default function PolymarketEventDetailView({ eventId }: Props) {
               spacing={2}
             >
               <Stack direction="row" alignItems="center" spacing={2} sx={{ flex: 1, minWidth: 0 }}>
-                {event.markets[0]?.image && (
+                {(event.image || event.icon || event.markets[0]?.image) && (
                   <Box
                     component="img"
-                    src={event.markets[0].image}
+                    src={event.image || event.icon || event.markets[0]?.image}
                     alt={event.title}
                     sx={{
                       width: 56,
@@ -213,7 +213,7 @@ export default function PolymarketEventDetailView({ eventId }: Props) {
               variant="h5"
               sx={{ mb: 3, fontWeight: 700, color: '#173f35' }}
             >
-              Markets ({event.markets.length})
+              Predict on ({event.markets.length})
             </Typography>
 
             <Grid container spacing={3}>

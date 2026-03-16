@@ -77,6 +77,7 @@ function normalizeMarket(raw: any): IPolymarketMarket {
   return {
     condition_id: raw.conditionId ?? raw.condition_id ?? '',
     question: raw.question ?? '',
+    group_item_title: raw.groupItemTitle ?? raw.group_item_title ?? '',
     slug: raw.slug ?? '',
     image: raw.image ?? '',
     icon: raw.icon ?? '',
@@ -104,6 +105,8 @@ function normalizeEvent(raw: any): IPolymarketEvent {
     title: raw.title ?? '',
     slug: raw.slug ?? '',
     description: raw.description ?? '',
+    image: raw.image ?? '',
+    icon: raw.icon ?? '',
     markets: Array.isArray(raw.markets) ? raw.markets.map(normalizeMarket) : []
   }
 }

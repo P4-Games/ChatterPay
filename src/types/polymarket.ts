@@ -9,6 +9,7 @@ export type IPolymarketOutcome = {
 export type IPolymarketMarket = {
   condition_id: string
   question: string
+  group_item_title: string
   slug: string
   image: string
   icon: string
@@ -34,6 +35,8 @@ export type IPolymarketEvent = {
   title: string
   slug: string
   description: string
+  image: string
+  icon: string
   markets: IPolymarketMarket[]
 }
 
