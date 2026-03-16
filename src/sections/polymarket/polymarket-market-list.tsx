@@ -18,8 +18,9 @@ import { useTranslate } from 'src/locales'
 import { useGetPolymarketCategories } from 'src/app/api/hooks/use-polymarket'
 
 import PolymarketMarketCard from './polymarket-market-card'
+import PolymarketEventCard from './polymarket-event-card'
 
-import type { IPolymarketMarket, IPolymarketCategory } from 'src/types/polymarket'
+import type { IPolymarketEvent, IPolymarketCategory } from 'src/types/polymarket'
 
 // ----------------------------------------------------------------------
 const SORT_OPTIONS = [
@@ -29,7 +30,7 @@ const SORT_OPTIONS = [
 ]
 
 type Props = {
-  markets: IPolymarketMarket[]
+  events: IPolymarketEvent[]
   isLoading: boolean
   category: string
   onChangeCategory: (category: string) => void
@@ -41,7 +42,7 @@ type Props = {
 }
 
 export default function PolymarketMarketList({
-  markets,
+  events,
   isLoading,
   category,
   onChangeCategory,
@@ -59,13 +60,23 @@ export default function PolymarketMarketList({
   const allCategories: IPolymarketCategory[] = categoriesData?.data ?? []
   const topCategories = allCategories.filter((c) => !c.parentCategory)
 
-  // Client-side sort only (category filtering is server-side now)
-  const sortedMarkets = [...(markets || [])].sort((a, b) => {
-    if (sortBy === 'volume') return (b.volume || 0) - (a.volume || 0)
+  // Sort at event level
+  const sortedEvents = [...(events || [])].sort((a, b) => {
+    if (sortBy === 'volume') {
+      const volA = a.markets.reduce((sum, m) => sum + (m.volume || 0), 0)
+      const volB = b.markets.reduce((sum, m) => sum + (m.volume || 0), 0)
+      return volB - volA
+    }
     if (sortBy === 'ending') {
-      const dateA = a.end_date_iso ? new Date(a.end_date_iso).getTime() : Number.MAX_SAFE_INTEGER
-      const dateB = b.end_date_iso ? new Date(b.end_date_iso).getTime() : Number.MAX_SAFE_INTEGER
-      return dateA - dateB
+      const endA = a.markets
+        .filter((m) => m.end_date_iso)
+        .map((m) => new Date(m.end_date_iso).getTime())
+        .sort((x, y) => x - y)[0] || Number.MAX_SAFE_INTEGER
+      const endB = b.markets
+        .filter((m) => m.end_date_iso)
+        .map((m) => new Date(m.end_date_iso).getTime())
+        .sort((x, y) => x - y)[0] || Number.MAX_SAFE_INTEGER
+      return endA - endB
     }
     return 0
   })
@@ -98,7 +109,7 @@ export default function PolymarketMarketList({
         observer.disconnect()
       }
     }
-  }, [hasMore, isLoadingMore, isLoading, onLoadMore, sortedMarkets.length])
+  }, [hasMore, isLoadingMore, isLoading, onLoadMore, sortedEvents.length])
 
   const renderFilters = (
     <Stack
@@ -190,11 +201,20 @@ export default function PolymarketMarketList({
 
   const renderList = (
     <Grid container spacing={2}>
-      {sortedMarkets.map((market) => (
-        <Grid xs={12} sm={6} md={4} lg={3} key={market.condition_id || market.slug}>
-          <PolymarketMarketCard market={market} compact />
-        </Grid>
-      ))}
+      {sortedEvents.map((event) => {
+        const isSingleMarket = event.markets.length === 1
+        const key = event.id || event.slug
+
+        return (
+          <Grid xs={12} sm={6} md={4} lg={3} key={key}>
+            {isSingleMarket ? (
+              <PolymarketMarketCard market={event.markets[0]} compact />
+            ) : (
+              <PolymarketEventCard event={event} />
+            )}
+          </Grid>
+        )
+      })}
     </Grid>
   )
 
@@ -202,8 +222,8 @@ export default function PolymarketMarketList({
     <Box>
       {renderFilters}
       {isLoading && renderLoading}
-      {!isLoading && sortedMarkets.length === 0 && renderEmpty}
-      {!isLoading && sortedMarkets.length > 0 && renderList}
+      {!isLoading && sortedEvents.length === 0 && renderEmpty}
+      {!isLoading && sortedEvents.length > 0 && renderList}
 
       {/* Infinite scroll sentinel */}
       {!isLoading && hasMore && (

@@ -6,8 +6,6 @@ import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
-import { useTheme } from '@mui/material/styles'
-
 import { useTranslate } from 'src/locales'
 import { useAuthContext } from 'src/auth/hooks'
 import {
@@ -18,11 +16,12 @@ import {
 
 import { useSettingsContext } from 'src/components/settings'
 
-import type { IPolymarketMarket, IPolymarketEvent, IPolymarketAccountStatus } from 'src/types/polymarket'
+import type { IPolymarketEvent, IPolymarketAccountStatus } from 'src/types/polymarket'
 
 import PolymarketSearch from '../polymarket-search'
 import PolymarketMarketList from '../polymarket-market-list'
 import PolymarketMarketCard from '../polymarket-market-card'
+import PolymarketEventCard from '../polymarket-event-card'
 import PolymarketPNLWidget from '../polymarket-pnl-widget'
 import PolymarketTermsOverlay from '../polymarket-terms-overlay'
 import Marquee from 'src/components/marquee'
@@ -31,7 +30,6 @@ import Marquee from 'src/components/marquee'
 
 export default function PolymarketHubView() {
   const { t } = useTranslate()
-  const theme = useTheme()
   const settings = useSettingsContext()
   const { user } = useAuthContext()
 
@@ -71,9 +69,6 @@ export default function PolymarketHubView() {
     hasMore,
     loadMore
   } = useGetPolymarketEventsInfinite(category)
-
-  // Flatten events → markets for the grid
-  const markets: IPolymarketMarket[] = events.flatMap((e) => e.markets || [])
 
   // Trending: separate fetch without category filter (first 4)
   const { data: trendingData } = useGetPolymarketEvents()
@@ -166,14 +161,17 @@ export default function PolymarketHubView() {
                 <Box sx={{ py: 1.5 }}>
                   <Marquee speed={30} pauseOnHover>
                     {trendingEvents.map((event) => {
+                      const isSingleMarket = !event.markets || event.markets.length <= 1
                       const topMarket = event.markets?.[0]
                       if (!topMarket) return null
+
                       return (
                         <Box key={event.id || event.slug} sx={{ width: 361, flexShrink: 0 }}>
-                          <PolymarketMarketCard
-                            market={topMarket}
-                            compact
-                          />
+                          {isSingleMarket ? (
+                            <PolymarketMarketCard market={topMarket} compact />
+                          ) : (
+                            <PolymarketEventCard event={event} compact />
+                          )}
                         </Box>
                       )
                     })}
@@ -192,7 +190,7 @@ export default function PolymarketHubView() {
         </Typography>
 
         <PolymarketMarketList
-          markets={markets}
+          events={events}
           isLoading={isLoading}
           category={category}
           onChangeCategory={setCategory}

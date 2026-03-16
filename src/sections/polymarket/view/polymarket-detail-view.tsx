@@ -42,7 +42,7 @@ import Chart, { useChart } from 'src/components/chart'
 
 import { fNumber } from 'src/utils/format-number'
 
-import type { IPolymarketMarket } from 'src/types/polymarket'
+import type { IPolymarketMarket, IPolymarketPosition } from 'src/types/polymarket'
 import type { IBalances } from 'src/types/wallet'
 import type { AuthUserType } from 'src/auth/types'
 
@@ -156,15 +156,6 @@ export default function PolymarketDetailView({ slug }: Props) {
   // Trade state
   const [selectedOutcome, setSelectedOutcome] = useState<number>(0)
   const [amount, setAmount] = useState<number>(10)
-  const { data: positions = [] } = useGetPolymarketPositionsSWR(10000)
-  const { data: orders = [] } = useGetPolymarketOrdersSWR(10000)
-
-  const marketPositions = positions.filter((p) => {
-    if (p.conditionId !== market?.condition_id && p.market?.condition_id !== market?.condition_id) return false
-    return !soldPositionKeys.has((p.market?.condition_id || p.conditionId) + p.outcome)
-  })
-  const marketOrders = orders.filter((o) => o.market?.condition_id === market?.condition_id)
-
   const [cancellingId, setCancellingId] = useState<string | null>(null)
   const [sellingPos, setSellingPos] = useState<string | null>(null)
   const [customAmount, setCustomAmount] = useState<string>('10')
@@ -174,6 +165,21 @@ export default function PolymarketDetailView({ slug }: Props) {
   const [isClaiming, setIsClaiming] = useState(false)
   const [activePurchases, setActivePurchases] = useState<ActivePurchase[]>([])
   const [soldPositionKeys, setSoldPositionKeys] = useState<Set<string>>(new Set())
+  const [optimisticPositions, setOptimisticPositions] = useState<IPolymarketPosition[]>([])
+
+  const { data: positions = [] } = useGetPolymarketPositionsSWR(10000)
+  const { data: orders = [] } = useGetPolymarketOrdersSWR(10000)
+
+  const realMarketPositions = positions.filter((p) => {
+    if (p.conditionId !== market?.condition_id && p.market?.condition_id !== market?.condition_id) return false
+    return !soldPositionKeys.has((p.market?.condition_id || p.conditionId) + p.outcome)
+  })
+
+  // Merge optimistic positions, removing any that now exist in real data
+  const realOutcomes = new Set(realMarketPositions.map((p) => p.outcome))
+  const pendingOptimistic = optimisticPositions.filter((op) => !realOutcomes.has(op.outcome))
+  const marketPositions = [...realMarketPositions, ...pendingOptimistic]
+  const marketOrders = orders.filter((o) => o.market?.condition_id === market?.condition_id)
 
   const outcomes = market?.outcomes || ['Yes', 'No']
   const prices = (market?.outcome_prices || []).map(Number)
@@ -271,10 +277,21 @@ export default function PolymarketDetailView({ slug }: Props) {
         mutate(
           (key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'),
           (currentData: any) => {
-            if (!currentData || !currentData.data) return currentData;
-            const newBal = { ...currentData };
-            if (newBal.data.balance) newBal.data.balance = Math.max(0, newBal.data.balance - amount);
-            return newBal;
+            if (!currentData || !Array.isArray(currentData.balances)) return currentData
+            return {
+              ...currentData,
+              balances: currentData.balances.map((b: any) => ({
+                ...b,
+                balance_conv: {
+                  ...b.balance_conv,
+                  usd: Math.max(0, (b.balance_conv?.usd || 0) - amount)
+                }
+              })),
+              totals: {
+                ...currentData.totals,
+                usd: Math.max(0, (currentData.totals?.usd || 0) - amount)
+              }
+            }
           },
           { revalidate: false }
         )
@@ -311,10 +328,38 @@ export default function PolymarketDetailView({ slug }: Props) {
                   clearInterval(pollInterval)
                   setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
                   enqueueSnackbar(t('polymarket.order-placed'), { variant: 'success' })
-                  mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'))
-                  mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/positions'))
-                  mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders'))
-                  mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/portfolio'))
+
+                  // Add optimistic position immediately so the user sees it
+                  if (market) {
+                    const optPos: IPolymarketPosition = {
+                      market,
+                      outcome: outcomes[selectedOutcome],
+                      size: tokenQuantity,
+                      avg_price: selectedPrice,
+                      current_price: selectedPrice,
+                      pnl: 0,
+                      pnl_percent: 0,
+                      conditionId: market.condition_id,
+                    }
+                    setOptimisticPositions((prev) => [...prev, optPos])
+                    // Clear optimistic position after 30s (real data should arrive by then)
+                    setTimeout(() => {
+                      setOptimisticPositions((prev) =>
+                        prev.filter((op) => op !== optPos)
+                      )
+                    }, 30000)
+                  }
+
+                  // Revalidate all related data
+                  const revalidateAll = () => {
+                    mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'), undefined, { revalidate: true })
+                    mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/positions'), undefined, { revalidate: true })
+                    mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders'), undefined, { revalidate: true })
+                    mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/portfolio'), undefined, { revalidate: true })
+                  }
+                  revalidateAll()
+                  // Retry after 3s in case backend hasn't settled yet
+                  setTimeout(revalidateAll, 3000)
                 } else if (st === 'failed') {
                   clearInterval(pollInterval)
                   setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
@@ -967,10 +1012,14 @@ export default function PolymarketDetailView({ slug }: Props) {
                                               clearInterval(pollInterval)
                                               setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
                                               enqueueSnackbar('Sell order completed', { variant: 'success' })
-                                              mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/positions'))
-                                              mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders'))
-                                              mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/portfolio'))
-                                              mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'))
+                                              const revalidateSell = () => {
+                                                mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/positions'), undefined, { revalidate: true })
+                                                mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders'), undefined, { revalidate: true })
+                                                mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/portfolio'), undefined, { revalidate: true })
+                                                mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'), undefined, { revalidate: true })
+                                              }
+                                              revalidateSell()
+                                              setTimeout(revalidateSell, 3000)
                                               setSoldPositionKeys((prev) => { const n = new Set(prev); n.delete(posKey); return n })
                                             } else if (st === 'failed') {
                                               clearInterval(pollInterval)
@@ -1068,7 +1117,10 @@ export default function PolymarketDetailView({ slug }: Props) {
                                   fontWeight: 600,
                                   bgcolor: theme.palette.text.primary,
                                   color: theme.palette.background.paper,
-                                  '& .MuiChip-icon': { color: 'inherit' },
+                                  px: 1,
+                                  gap: 0.5,
+                                  '& .MuiChip-icon': { color: 'inherit', ml: 0 },
+                                  '& .MuiChip-label': { px: 0 },
                                   pointerEvents: 'none',
                                 }}
                               />
