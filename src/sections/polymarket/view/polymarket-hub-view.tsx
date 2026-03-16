@@ -135,8 +135,6 @@ export default function PolymarketHubView() {
                 >
                   Make your predictions on Polymarket<br />just with WhatsApp!
                 </Typography>
-
-                <PolymarketSearch />
               </Box>
 
               <PolymarketPNLWidget />
