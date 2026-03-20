@@ -1,16 +1,23 @@
 'use client'
 
+import { useState } from 'react'
 import { m } from 'framer-motion'
 
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Button from '@mui/material/Button'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from '@mui/material/DialogContent'
+import DialogActions from '@mui/material/DialogActions'
+import IconButton from '@mui/material/IconButton'
 import Skeleton from '@mui/material/Skeleton'
 import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
 import Grid from '@mui/material/Unstable_Grid2'
+import { alpha, useTheme } from '@mui/material/styles'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { ArrowLeft01Icon } from '@hugeicons/core-free-icons'
+import { ArrowLeft01Icon, InformationCircleIcon } from '@hugeicons/core-free-icons'
 
 import { useRouter } from 'src/routes/hooks'
 import { paths } from 'src/routes/paths'
@@ -47,8 +54,10 @@ type Props = { eventId: string }
 
 export default function PolymarketEventDetailView({ eventId }: Props) {
   const { t } = useTranslate()
+  const theme = useTheme()
   const router = useRouter()
   const settings = useSettingsContext()
+  const [aboutOpen, setAboutOpen] = useState(false)
 
   // Find the event from the cached events data
   const { events, isLoading } = useGetPolymarketEventsInfinite()
@@ -177,7 +186,7 @@ export default function PolymarketEventDetailView({ eventId }: Props) {
                 </Typography>
               </Stack>
 
-              <Stack direction="row" alignItems="center" spacing={3} sx={{ flexShrink: 0 }}>
+              <Stack direction="row" alignItems="center" spacing={2} sx={{ flexShrink: 0 }}>
                 <Typography variant="body2" color="text.secondary">
                   Vol: <strong>${fNumber(totalVolume)}</strong>
                 </Typography>
@@ -193,19 +202,53 @@ export default function PolymarketEventDetailView({ eventId }: Props) {
                     </strong>
                   </Typography>
                 )}
+                {event.description && (
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    color="inherit"
+                    startIcon={<HugeiconsIcon icon={InformationCircleIcon} size={16} />}
+                    onClick={(e) => { e.stopPropagation(); setAboutOpen(true) }}
+                    sx={{
+                      textTransform: 'none',
+                      fontWeight: 600,
+                      fontSize: '0.8rem',
+                      borderColor: alpha(theme.palette.grey[500], 0.24),
+                      borderRadius: 50,
+                      px: 2,
+                    }}
+                  >
+                    About
+                  </Button>
+                )}
               </Stack>
             </Stack>
-
-            {event.description && (
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{ maxWidth: 700, lineHeight: 1.7 }}
-              >
-                {event.description}
-              </Typography>
-            )}
           </Stack>
+
+          {/* About dialog */}
+          {event.description && (
+            <Dialog
+              open={aboutOpen}
+              onClose={() => setAboutOpen(false)}
+              maxWidth="sm"
+              fullWidth
+              PaperProps={{ sx: { borderRadius: 3 } }}
+            >
+              <DialogTitle sx={{ fontWeight: 700 }}>
+                About this event
+              </DialogTitle>
+              <DialogContent>
+                <Typography variant="body2" sx={{ lineHeight: 1.8, whiteSpace: 'pre-line' }}>
+                  {event.description}
+                </Typography>
+              </DialogContent>
+              <DialogActions sx={{ px: 3, pb: 2.5 }}>
+                <Button onClick={() => setAboutOpen(false)} variant="contained" color="primary" sx={{ borderRadius: 50, textTransform: 'none', fontWeight: 600 }}>
+                  Got it
+                </Button>
+              </DialogActions>
+            </Dialog>
+          )}
 
           {/* Markets Grid */}
           <Box component={m.div} variants={fadeInUp} transition={{ duration: 0.4 }}>
@@ -219,7 +262,7 @@ export default function PolymarketEventDetailView({ eventId }: Props) {
             <Grid container spacing={3}>
               {event.markets.map((market) => (
                 <Grid xs={12} sm={6} md={4} key={market.condition_id || market.slug}>
-                  <PolymarketMarketCard market={market} />
+                  <PolymarketMarketCard market={market} inlineImage />
                 </Grid>
               ))}
             </Grid>

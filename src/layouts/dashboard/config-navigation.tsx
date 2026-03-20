@@ -51,11 +51,6 @@ export function useNavData() {
             title: t('menu.nfts'),
             path: paths.dashboard.nfts.root,
             icon: ICONS.nft
-          },
-          {
-            title: t('menu.polymarket'),
-            path: paths.dashboard.polymarket.root,
-            icon: ICONS.polymarket
           }
         ]
       },

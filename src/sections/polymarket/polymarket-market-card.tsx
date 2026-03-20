@@ -26,12 +26,14 @@ import type { IPolymarketMarket } from 'src/types/polymarket'
 type Props = {
   market: IPolymarketMarket
   compact?: boolean
+  inlineImage?: boolean
 }
 
-export default function PolymarketMarketCard({ market, compact = false }: Props) {
+export default function PolymarketMarketCard({ market, compact = false, inlineImage = false }: Props) {
   const theme = useTheme()
   const router = useRouter()
 
+  const displayTitle = market.group_item_title || market.question
   const yesPrice = Number(market.outcome_prices?.[0] || 0)
   const noPrice = Number(market.outcome_prices?.[1] || 0)
   const yesPercent = Math.round(yesPrice * 100)
@@ -62,7 +64,7 @@ export default function PolymarketMarketCard({ market, compact = false }: Props)
             <Box
               component='img'
               src={market.image}
-              alt={market.question}
+              alt={displayTitle}
               sx={{
                 width: 63,
                 height: 49,
@@ -87,7 +89,7 @@ export default function PolymarketMarketCard({ market, compact = false }: Props)
                 whiteSpace: 'normal'
               }}
             >
-              {market.question}
+              {displayTitle}
             </Typography>
           </Stack>
           <HugeiconsIcon icon={ArrowRight01Icon} size={20} style={{ color: theme.palette.text.secondary }} />
@@ -112,12 +114,12 @@ export default function PolymarketMarketCard({ market, compact = false }: Props)
         }
       }}
     >
-      {/* Image */}
-      {market.image && (
+      {/* Image — hero banner (default) or hidden (inlineImage mode) */}
+      {!inlineImage && market.image && (
         <Box
           component='img'
           src={market.image}
-          alt={market.question}
+          alt={displayTitle}
           sx={{
             width: '100%',
             height: 160,
@@ -128,8 +130,8 @@ export default function PolymarketMarketCard({ market, compact = false }: Props)
       )}
 
       <Stack spacing={2} sx={{ p: 2.5 }}>
-        {/* Category */}
-        {market.category && (
+        {/* Category — hide in inline mode (redundant on event detail) */}
+        {!inlineImage && market.category && (
           <Chip
             label={market.category}
             size='small'
@@ -144,12 +146,27 @@ export default function PolymarketMarketCard({ market, compact = false }: Props)
           />
         )}
 
-        <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2}>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={inlineImage ? 1.5 : 2}>
+          {inlineImage && market.image && (
+            <Box
+              component='img'
+              src={market.image}
+              alt={displayTitle}
+              sx={{
+                width: 44,
+                height: 44,
+                borderRadius: 1.5,
+                objectFit: 'cover',
+                flexShrink: 0,
+                bgcolor: 'grey.200'
+              }}
+            />
+          )}
           <Typography
             variant='subtitle1'
             sx={{
               fontWeight: 700,
-              minHeight: 48,
+              minHeight: inlineImage ? 'auto' : 48,
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               display: '-webkit-box',
@@ -157,10 +174,11 @@ export default function PolymarketMarketCard({ market, compact = false }: Props)
               WebkitBoxOrient: 'vertical',
               flex: 1,
               minWidth: 0,
-              whiteSpace: 'normal'
+              whiteSpace: 'normal',
+              ...(inlineImage && { lineHeight: 1.3, fontSize: '0.95rem' })
             }}
           >
-            {market.question}
+            {displayTitle}
           </Typography>
           <HugeiconsIcon icon={ArrowRight01Icon} size={18} style={{ color: theme.palette.text.secondary, flexShrink: 0 }} />
         </Stack>

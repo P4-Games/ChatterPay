@@ -174,7 +174,7 @@ export function useGetPolymarketPortfolioSWR(refreshInterval = 10000) {
   )
   return useMemo(
     () => ({
-      data: data?.data as IPolymarketPortfolio | undefined,
+      data: (data?.data as any)?.portfolio as IPolymarketPortfolio | undefined,
       isLoading,
       error,
       isValidating,

@@ -2,7 +2,6 @@
 
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
-import Chip from '@mui/material/Chip'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { alpha, useTheme } from '@mui/material/styles'
@@ -88,35 +87,23 @@ export default function PolymarketEventCard({ event, compact = false }: Props) {
               }}
             />
           )}
-          <Stack flex={1} spacing={0.5} sx={{ minWidth: 0 }}>
-            <Typography
-              variant='subtitle2'
-              sx={{
-                fontWeight: 600,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                display: '-webkit-box',
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: 'vertical',
-                lineHeight: 1.2,
-                whiteSpace: 'normal'
-              }}
-            >
-              {event.title}
-            </Typography>
-            <Chip
-              label={`${optionCount} options`}
-              size='small'
-              sx={{
-                alignSelf: 'flex-start',
-                height: 20,
-                fontSize: '0.65rem',
-                fontWeight: 600,
-                bgcolor: alpha('#1B9C85', 0.12),
-                color: '#1B9C85'
-              }}
-            />
-          </Stack>
+          <Typography
+            variant='subtitle2'
+            sx={{
+              flex: 1,
+              minWidth: 0,
+              fontWeight: 600,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              lineHeight: 1.2,
+              whiteSpace: 'normal'
+            }}
+          >
+            {event.title}
+          </Typography>
           <HugeiconsIcon icon={ArrowRight01Icon} size={20} style={{ color: theme.palette.text.secondary }} />
         </Stack>
       </Card>
@@ -141,7 +128,7 @@ export default function PolymarketEventCard({ event, compact = false }: Props) {
     >
       <Stack spacing={1.5} sx={{ p: 2.5 }}>
         {/* Header: inline image + title + arrow */}
-        <Stack direction='row' alignItems='flex-start' spacing={1.5}>
+        <Stack direction='row' alignItems='center' spacing={1.5}>
           {eventImage && (
             <Box
               component='img'
@@ -153,46 +140,29 @@ export default function PolymarketEventCard({ event, compact = false }: Props) {
                 borderRadius: 1.5,
                 objectFit: 'cover',
                 flexShrink: 0,
-                bgcolor: 'grey.200',
-                mt: 0.25
+                bgcolor: 'grey.200'
               }}
             />
           )}
-          <Stack flex={1} spacing={0.75} sx={{ minWidth: 0 }}>
-            <Chip
-              label={`${optionCount} options`}
-              size='small'
-              sx={{
-                alignSelf: 'flex-start',
-                bgcolor: alpha('#1B9C85', 0.12),
-                color: '#1B9C85',
-                fontWeight: 600,
-                fontSize: '0.65rem',
-                height: 22
-              }}
-            />
-            <Stack direction='row' alignItems='center' justifyContent='space-between' spacing={1}>
-              <Typography
-                variant='subtitle1'
-                sx={{
-                  fontWeight: 700,
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical',
-                  flex: 1,
-                  minWidth: 0,
-                  whiteSpace: 'normal',
-                  lineHeight: 1.3,
-                  fontSize: '0.95rem'
-                }}
-              >
-                {event.title}
-              </Typography>
-              <HugeiconsIcon icon={ArrowRight01Icon} size={18} style={{ color: theme.palette.text.secondary, flexShrink: 0 }} />
-            </Stack>
-          </Stack>
+          <Typography
+            variant='subtitle1'
+            sx={{
+              fontWeight: 700,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              flex: 1,
+              minWidth: 0,
+              whiteSpace: 'normal',
+              lineHeight: 1.3,
+              fontSize: '0.95rem'
+            }}
+          >
+            {event.title}
+          </Typography>
+          <HugeiconsIcon icon={ArrowRight01Icon} size={18} style={{ color: theme.palette.text.secondary, flexShrink: 0 }} />
         </Stack>
 
         {/* Options list */}
