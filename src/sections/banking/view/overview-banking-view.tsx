@@ -17,6 +17,7 @@ import {
   useGetPolymarketPositionsSWR,
   useGetPolymarketOrdersSWR,
   useGetPolymarketPortfolioSWR,
+  useGetPolymarketTradesSWR,
   polymarketBridgeWithdraw
 } from 'src/app/api/hooks'
 import { getTokenPricesWithChange } from 'src/app/api/services/coingecko/coingecko-service'
@@ -27,7 +28,6 @@ import { useBoolean } from 'src/hooks/use-boolean'
 import { useSettingsContext } from 'src/components/settings'
 import { useSnackbar } from 'src/components/snackbar'
 
-import { BOT_WAPP_URL } from 'src/config-global'
 
 import type { IToken, IBalances, ITransaction } from 'src/types/wallet'
 import type { TokenPriceData } from 'src/app/api/services/coingecko/coingecko-service'
@@ -36,6 +36,7 @@ import PolymarketPNLWidget from 'src/sections/polymarket/polymarket-pnl-widget'
 
 import BankingRecentTransitions from '../banking-recent-transitions'
 import DashboardDepositModal from '../dashboard-deposit-modal'
+import DashboardWithdrawModal from '../dashboard-withdraw-modal'
 import DashboardPortfolioBalance from '../dashboard-portfolio-balance'
 import DashboardPositionsTable from '../dashboard-positions-table'
 import DashboardDrawer from '../dashboard-drawer'
@@ -59,6 +60,7 @@ export default function OverviewBankingView() {
   const [cryptoExpanded, setCryptoExpanded] = useState(false)
 
   const depositModal = useBoolean()
+  const withdrawModal = useBoolean()
   const polymarketDrawer = useBoolean()
 
   // Load hide preference from localStorage
@@ -102,6 +104,7 @@ export default function OverviewBankingView() {
   const { data: positions = [], isLoading: isLoadingPositions } = useGetPolymarketPositionsSWR(10000)
   const { data: orders = [], isLoading: isLoadingOrders } = useGetPolymarketOrdersSWR(10000)
   const { data: portfolioData, isLoading: isLoadingPortfolio } = useGetPolymarketPortfolioSWR(10000)
+  const { data: trades = [], isLoading: isLoadingTrades } = useGetPolymarketTradesSWR(30000)
 
   // Fetch CoinGecko price data for crypto dropdown
   useEffect(() => {
@@ -137,9 +140,6 @@ export default function OverviewBankingView() {
 
   const idleUsdc = safeBalances.polymarket?.idle_usdc ?? 0
   const polymarketTotalUsd = safeBalances.polymarket?.total_usd ?? 0
-
-  // WhatsApp send URL
-  const sendReciveUrl = BOT_WAPP_URL.replaceAll('MESSAGE', t('balances.wapp-msg'))
 
   // Claim handler
   const handleClaimSubmit = async () => {
@@ -196,7 +196,7 @@ export default function OverviewBankingView() {
           hideValues={hideValues}
           onToggleHideValues={handleToggleHideValues}
           onDepositClick={depositModal.onTrue}
-          onWithdrawClick={() => window.open(sendReciveUrl, '_blank')}
+          onWithdrawClick={withdrawModal.onTrue}
           onClaimClick={handleClaimSubmit}
           onCryptoClick={() => setCryptoExpanded((prev) => !prev)}
           onPolymarketClick={polymarketDrawer.onTrue}
@@ -239,9 +239,11 @@ export default function OverviewBankingView() {
       >
         <Stack spacing={3}>
           <PolymarketPNLWidget
-            sx={{ width: '50%' }}
+            variant='expanded'
             portfolioData={portfolioData ?? null}
-            isLoadingExternal={isLoadingPortfolio}
+            positions={positions}
+            trades={trades}
+            isLoadingExternal={isLoadingPortfolio || isLoadingTrades}
           />
           <DashboardPositionsTable
             positions={positions}
@@ -257,6 +259,16 @@ export default function OverviewBankingView() {
         open={depositModal.value}
         onClose={depositModal.onFalse}
         walletAddress={walletAddress}
+      />
+
+      {/* Withdraw Modal */}
+      <DashboardWithdrawModal
+        open={withdrawModal.value}
+        onClose={withdrawModal.onFalse}
+        balances={safeBalances.balances}
+        tokenLogos={tokenLogos}
+        transactions={safeTransactions}
+        userWallet={walletAddress}
       />
     </>
   )

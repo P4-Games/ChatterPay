@@ -31,7 +31,7 @@ import { paths } from 'src/routes/paths'
 
 import { useTranslate } from 'src/locales'
 import { useResponsive } from 'src/hooks/use-responsive'
-import { useGetPolymarketMarket, polymarketPurchase, useGetWalletBalance, polymarketPurchaseStatus, useGetPolymarketPositionsSWR, useGetPolymarketOrdersSWR, polymarketCancelOrder } from 'src/app/api/hooks'
+import { useGetPolymarketMarket, polymarketPurchase, useGetWalletBalance, polymarketPurchaseStatus, useGetPolymarketPositionsSWR, useGetPolymarketOrdersSWR, polymarketCancelOrder, useGetPolymarketTradesSWR } from 'src/app/api/hooks'
 import { useSnackbar } from 'src/components/snackbar'
 import { useSWRConfig } from 'swr'
 import { useAuthContext } from 'src/auth/hooks'
@@ -50,7 +50,7 @@ import type { AuthUserType } from 'src/auth/types'
 
 const PRESET_AMOUNTS = [10, 25, 50, 100]
 
-const OUTCOME_COLORS = [
+const OUTCOME_COLORS_LIGHT = [
   '#1B1B1B', // Black
   '#2196F3', // Blue
   '#F44336', // Red
@@ -59,8 +59,18 @@ const OUTCOME_COLORS = [
   '#9E9E9E', // Grey (Other)
 ]
 
-function getOutcomeColor(index: number): string {
-  return OUTCOME_COLORS[index % OUTCOME_COLORS.length]
+const OUTCOME_COLORS_DARK = [
+  '#E0E0E0', // Light grey (replaces black)
+  '#64B5F6', // Blue (brighter)
+  '#EF5350', // Red
+  '#FFB74D', // Orange
+  '#B39DDB', // Purple (brighter)
+  '#BDBDBD', // Grey (Other)
+]
+
+function getOutcomeColor(index: number, dark: boolean): string {
+  const palette = dark ? OUTCOME_COLORS_DARK : OUTCOME_COLORS_LIGHT
+  return palette[index % palette.length]
 }
 
 /** Generate deterministic mock price history based on current prices */
@@ -130,6 +140,7 @@ type Props = { slug: string }
 export default function PolymarketDetailView({ slug }: Props) {
   const { t } = useTranslate()
   const theme = useTheme()
+  const isDark = theme.palette.mode === 'dark'
   const router = useRouter()
   const settings = useSettingsContext()
   const { user }: { user: AuthUserType } = useAuthContext()
@@ -169,6 +180,7 @@ export default function PolymarketDetailView({ slug }: Props) {
 
   const { data: positions = [] } = useGetPolymarketPositionsSWR(10000)
   const { data: orders = [] } = useGetPolymarketOrdersSWR(10000)
+  const { data: marketTrades = [] } = useGetPolymarketTradesSWR(30000, market?.condition_id)
 
   const realMarketPositions = positions.filter((p) => {
     if (p.conditionId !== market?.condition_id && p.market?.condition_id !== market?.condition_id) return false
@@ -198,7 +210,7 @@ export default function PolymarketDetailView({ slug }: Props) {
   const yMax = chartData?.yMax || 35
 
   const chartOptions = useChart({
-    colors: outcomes.map((_, idx) => getOutcomeColor(idx)),
+    colors: outcomes.map((_, idx) => getOutcomeColor(idx, isDark)),
     chart: { toolbar: { show: false }, zoom: { enabled: false } },
     stroke: { width: 2.5, curve: 'smooth' },
     fill: {
@@ -385,7 +397,7 @@ export default function PolymarketDetailView({ slug }: Props) {
   // ── Loading skeleton ──
   if (isLoading) {
     return (
-      <Box sx={{ mt: -13, mx: { xs: 0, lg: -2 }, flex: 1, background: 'linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 100%)', minHeight: '100vh', pb: 10 }}>
+      <Box sx={{ mt: -13, mx: { xs: 0, lg: -2 }, flex: 1, background: isDark ? 'linear-gradient(180deg, #161C24 0%, #0A2E1A 100%)' : 'linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 100%)', minHeight: '100vh', pb: 10 }}>
         <Container maxWidth={settings.themeStretch ? false : 'xl'} sx={{ pt: { xs: 11, md: 12 }, px: { xs: 2, md: 3 } }}>
           <Stack spacing={3}>
             <Skeleton variant="rounded" height={60} />
@@ -402,7 +414,7 @@ export default function PolymarketDetailView({ slug }: Props) {
   // ── Not found ──
   if (!market) {
     return (
-      <Box sx={{ mt: -13, mx: { xs: 0, lg: -2 }, flex: 1, background: 'linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 100%)', minHeight: '100vh' }}>
+      <Box sx={{ mt: -13, mx: { xs: 0, lg: -2 }, flex: 1, background: isDark ? 'linear-gradient(180deg, #161C24 0%, #0A2E1A 100%)' : 'linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 100%)', minHeight: '100vh' }}>
         <Container maxWidth={settings.themeStretch ? false : 'xl'} sx={{ pt: { xs: 11, md: 12 }, px: { xs: 2, md: 3 } }}>
           <Stack alignItems="center" justifyContent="center" sx={{ py: 10 }}>
             <Typography variant="h6" color="text.secondary">
@@ -454,7 +466,7 @@ export default function PolymarketDetailView({ slug }: Props) {
               const price = prices[idx] || 0
               const percent = Math.round(price * 100)
               const isSelected = selectedOutcome === idx
-              const dotColor = getOutcomeColor(idx)
+              const dotColor = getOutcomeColor(idx, isDark)
 
               return (
                 <Box
@@ -520,7 +532,12 @@ export default function PolymarketDetailView({ slug }: Props) {
                     px: 2.5,
                     py: 1,
                     ...(isActive
-                      ? { bgcolor: '#1B1B1B', color: '#fff', boxShadow: 'none', '&:hover': { bgcolor: '#333', boxShadow: 'none' } }
+                      ? {
+                          bgcolor: isDark ? theme.palette.grey[200] : '#1B1B1B',
+                          color: isDark ? theme.palette.grey[900] : '#fff',
+                          boxShadow: 'none',
+                          '&:hover': { bgcolor: isDark ? theme.palette.grey[300] : '#333', boxShadow: 'none' },
+                        }
                       : {
                           borderColor: alpha(theme.palette.grey[500], 0.24),
                           color: 'text.primary',
@@ -591,11 +608,11 @@ export default function PolymarketDetailView({ slug }: Props) {
         {amount > 0 && selectedPrice > 0 && (
           <>
             <Divider />
-            <Box sx={{ p: 3, bgcolor: alpha('#1B9C85', 0.06) }}>
+            <Box sx={{ p: 3, bgcolor: alpha(theme.palette.primary.main, 0.06) }}>
               <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
                 If {outcomes[selectedOutcome]} wins...
               </Typography>
-              <Typography variant="h4" sx={{ fontWeight: 800, color: '#173F35' }}>
+              <Typography variant="h4" sx={{ fontWeight: 800, color: 'text.primary' }}>
                 You get back ${fNumber(estimatedReturn)}
               </Typography>
               <Typography variant="caption" color="text.secondary">
@@ -663,7 +680,7 @@ export default function PolymarketDetailView({ slug }: Props) {
         <Stack direction="row" spacing={2} sx={{ mt: 1.5, flexWrap: 'wrap', gap: 1 }}>
           {outcomes.map((outcome, idx) => (
             <Stack key={outcome} direction="row" alignItems="center" spacing={0.75}>
-              <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: getOutcomeColor(idx), flexShrink: 0 }} />
+              <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: getOutcomeColor(idx, isDark), flexShrink: 0 }} />
               <Typography variant="caption" sx={{ fontSize: '0.7rem', color: 'text.secondary' }}>{outcome}</Typography>
             </Stack>
           ))}
@@ -685,7 +702,7 @@ export default function PolymarketDetailView({ slug }: Props) {
           {outcomes.map((outcome, idx) => {
             const price = prices[idx] || 0
             const percent = Math.round(price * 100)
-            const color = getOutcomeColor(idx)
+            const color = getOutcomeColor(idx, isDark)
 
             return (
               <Stack key={outcome} direction="row" alignItems="center" spacing={2}>
@@ -752,8 +769,10 @@ export default function PolymarketDetailView({ slug }: Props) {
         mx: { xs: 0, lg: -2 },
         flex: 1,
         minHeight: '100vh',
-        bgcolor: '#B8F6C9',
-        backgroundImage: `linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 600px)`,
+        bgcolor: isDark ? '#0A2E1A' : '#B8F6C9',
+        backgroundImage: isDark
+          ? 'linear-gradient(180deg, #161C24 0%, #0A2E1A 600px)'
+          : 'linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 600px)',
         pb: { xs: 10, md: 15 },
         mb: { xs: -10, md: -15 }, // Buffer to prevent any clipping from parent layout
       }}
@@ -815,7 +834,7 @@ export default function PolymarketDetailView({ slug }: Props) {
                   )}
                   <Typography
                     variant="h5"
-                    sx={{ fontWeight: 700, color: '#173f35', fontSize: { xs: 20, md: 24 } }}
+                    sx={{ fontWeight: 700, color: 'text.primary', fontSize: { xs: 20, md: 24 } }}
                   >
                     {market.question}
                   </Typography>
@@ -824,8 +843,8 @@ export default function PolymarketDetailView({ slug }: Props) {
                       label={market.category}
                       size="small"
                       sx={{
-                        bgcolor: alpha('#1B9C85', 0.12),
-                        color: '#1B9C85',
+                        bgcolor: alpha(theme.palette.primary.main, 0.12),
+                        color: theme.palette.primary.main,
                         fontWeight: 600,
                         fontSize: '0.7rem',
                         height: 24,
@@ -892,10 +911,10 @@ export default function PolymarketDetailView({ slug }: Props) {
                 <Card sx={{ border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}` }}>
                   <Stack direction='row' alignItems='center' justifyContent='space-between' sx={{ px: 3, py: 2.5 }}>
                     <Typography variant='subtitle1' fontWeight={700}>Open Positions</Typography>
-                    <Chip label={marketPositions.length} size='small' sx={{ fontWeight: 700, bgcolor: alpha(theme.palette.primary.main, 0.08) }} />
+                    <Chip label={marketPositions.length} size='small' sx={{ fontWeight: 700, bgcolor: alpha(theme.palette.primary.main, 0.16), color: 'primary.main' }} />
                   </Stack>
                   {marketPositions.length === 0 ? (
-                    <Stack alignItems='center' sx={{ py: 4 }}>
+                    <Stack alignItems='center' spacing={1.5} sx={{ py: 4 }}>
                       <Typography variant='body2' color='text.secondary'>No active positions for this market.</Typography>
                     </Stack>
                   ) : (
@@ -1059,10 +1078,10 @@ export default function PolymarketDetailView({ slug }: Props) {
                 <Card sx={{ border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}` }}>
                   <Stack direction='row' alignItems='center' justifyContent='space-between' sx={{ px: 3, py: 2.5 }}>
                     <Typography variant='subtitle1' fontWeight={700}>Open Orders</Typography>
-                    <Chip label={activePurchases.length + marketOrders.length} size='small' sx={{ fontWeight: 700, bgcolor: alpha(theme.palette.warning.main, 0.08) }} />
+                    <Chip label={activePurchases.length + marketOrders.length} size='small' sx={{ fontWeight: 700, bgcolor: alpha(theme.palette.warning.main, 0.16), color: 'warning.main' }} />
                   </Stack>
                   {activePurchases.length === 0 && marketOrders.length === 0 ? (
-                    <Stack alignItems='center' sx={{ py: 4 }}>
+                    <Stack alignItems='center' spacing={1.5} sx={{ py: 4 }}>
                       <Typography variant='body2' color='text.secondary'>No active orders.</Typography>
                     </Stack>
                   ) : (
@@ -1180,6 +1199,67 @@ export default function PolymarketDetailView({ slug }: Props) {
                     </Table>
                   )}
                 </Card>
+
+                {/* Trade History */}
+                {marketTrades.length > 0 && (
+                  <Card sx={{ border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}` }}>
+                    <Stack direction='row' alignItems='center' justifyContent='space-between' sx={{ px: 3, py: 2.5 }}>
+                      <Stack direction='row' alignItems='center' spacing={1}>
+                        <Typography variant='subtitle1' fontWeight={700}>Trade History</Typography>
+                        <Chip label={marketTrades.length} size='small' sx={{ fontWeight: 700, bgcolor: alpha(theme.palette.info.main, 0.16), color: 'info.main' }} />
+                      </Stack>
+                    </Stack>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Side</TableCell>
+                          <TableCell>Outcome</TableCell>
+                          <TableCell align='right'>Size</TableCell>
+                          <TableCell align='right'>Price</TableCell>
+                          <TableCell align='right'>Date</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {marketTrades.map((trade) => {
+                          const date = new Date(trade.timestamp)
+                          const dateStr = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+                          const timeStr = date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
+
+                          return (
+                            <TableRow key={trade.id} hover>
+                              <TableCell>
+                                <Chip
+                                  label={trade.side}
+                                  size='small'
+                                  sx={{
+                                    fontWeight: 600,
+                                    bgcolor: alpha(trade.side === 'BUY' ? theme.palette.success.main : theme.palette.error.main, 0.1),
+                                    color: trade.side === 'BUY' ? theme.palette.success.dark : theme.palette.error.dark
+                                  }}
+                                />
+                              </TableCell>
+                              <TableCell>
+                                <Typography variant='body2'>{trade.outcome}</Typography>
+                              </TableCell>
+                              <TableCell align='right'>
+                                <Typography variant='body2' fontWeight={600}>{fNumber(trade.size)}</Typography>
+                              </TableCell>
+                              <TableCell align='right'>
+                                <Typography variant='body2'>{Math.round(trade.price * 100)}¢</Typography>
+                              </TableCell>
+                              <TableCell align='right'>
+                                <Stack alignItems='flex-end'>
+                                  <Typography variant='caption' fontWeight={600}>{dateStr}</Typography>
+                                  <Typography variant='caption' color='text.secondary'>{timeStr}</Typography>
+                                </Stack>
+                              </TableCell>
+                            </TableRow>
+                          )
+                        })}
+                      </TableBody>
+                    </Table>
+                  </Card>
+                )}
               </Stack>
             </Box>
 

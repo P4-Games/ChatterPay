@@ -6,6 +6,7 @@ import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
+import { useTheme } from '@mui/material/styles'
 import { useTranslate } from 'src/locales'
 import { useAuthContext } from 'src/auth/hooks'
 import {
@@ -29,6 +30,8 @@ import Marquee from 'src/components/marquee'
 
 export default function PolymarketHubView() {
   const { t } = useTranslate()
+  const theme = useTheme()
+  const isDark = theme.palette.mode === 'dark'
   const settings = useSettingsContext()
   const { user } = useAuthContext()
 
@@ -94,8 +97,10 @@ export default function PolymarketHubView() {
         mt: -13,
         mx: { xs: 0, lg: -2 },
         minHeight: '100vh',
-        bgcolor: '#B8F6C9',
-        backgroundImage: `linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 600px)`,
+        bgcolor: isDark ? '#0A2E1A' : '#B8F6C9',
+        backgroundImage: isDark
+          ? 'linear-gradient(180deg, #161C24 0%, #0A2E1A 600px)'
+          : 'linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 600px)',
         pb: { xs: 10, md: 15 },
         mb: { xs: -10, md: -15 },
       }}
@@ -114,7 +119,7 @@ export default function PolymarketHubView() {
                   variant='h1'
                   sx={{
                     fontWeight: 700,
-                    color: '#173f35',
+                    color: 'text.primary',
                     mb: 2,
                     fontSize: { xs: 32, md: 36 },
                     letterSpacing: '-0.36px'
@@ -125,7 +130,7 @@ export default function PolymarketHubView() {
                 <Typography
                   variant='body1'
                   sx={{
-                    color: '#173f35',
+                    color: 'text.primary',
                     fontSize: 16,
                     letterSpacing: '-0.16px',
                     lineHeight: 1.5,
@@ -146,7 +151,7 @@ export default function PolymarketHubView() {
                   variant='body1'
                   sx={{
                     mb: 3,
-                    color: '#173f35',
+                    color: 'text.primary',
                     fontSize: 16,
                     letterSpacing: '-0.16px',
                     fontFamily: "'Satoshi Variable', sans-serif"
@@ -182,7 +187,7 @@ export default function PolymarketHubView() {
 
       {/* Market List */}
       <Container maxWidth={settings.themeStretch ? false : 'xl'} sx={{ mt: 5 }}>
-        <Typography variant='h5' sx={{ mb: 3, fontWeight: 700, color: '#173f35' }}>
+        <Typography variant='h5' sx={{ mb: 3, fontWeight: 700, color: 'text.primary' }}>
           {t('polymarket.all-markets')}
         </Typography>
 

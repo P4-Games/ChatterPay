@@ -15,7 +15,10 @@ import type {
   IPolymarketAccountStatus,
   IPolymarketOrderPayload,
   IPolymarketPurchaseResponse,
-  IPolymarketPurchaseStatus
+  IPolymarketPurchaseStatus,
+  IPolymarketActivePurchase,
+  IPolymarketTrade,
+  IPolymarketPnlPoint
 } from 'src/types/polymarket'
 
 // ----------------------------------------------------------------------
@@ -62,10 +65,16 @@ export function useGetPolymarketEventsInfinite(category?: string) {
       revalidateAll: false
     })
 
-  const allEvents: IPolymarketEvent[] = useMemo(
-    () => data?.flatMap((page: any) => (Array.isArray(page.data) ? page.data : [])) ?? [],
-    [data]
-  )
+  const allEvents: IPolymarketEvent[] = useMemo(() => {
+    const map = new Map<string, IPolymarketEvent>()
+    for (const page of data || []) {
+      for (const event of (Array.isArray(page.data) ? page.data : [])) {
+        const key = event.id || event.slug
+        if (key && !map.has(key)) map.set(key, event)
+      }
+    }
+    return Array.from(map.values())
+  }, [data])
 
   const isLoadingMore = isLoading || (size > 0 && data && typeof data[size - 1] === 'undefined')
 
@@ -137,6 +146,7 @@ export function useGetPolymarketPositionsSWR(refreshInterval = 10000) {
   return useMemo(
     () => ({
       data: (data?.data as any)?.positions as IPolymarketPosition[] | undefined,
+      activePurchases: (data?.data as any)?.active_purchases as IPolymarketActivePurchase[] | undefined,
       isLoading,
       error,
       isValidating,
@@ -299,4 +309,72 @@ export async function polymarketBridgeWithdraw(
   return post(endpoints.polymarket.bridge.withdraw(), { amount }, {
     headers: getAuthorizationHeader()
   })
+}
+
+// ----------------------------------------------------------------------
+// Trade history & PNL
+// ----------------------------------------------------------------------
+
+export async function polymarketGetTrades(
+  filters?: { market?: string; limit?: number; offset?: number; side?: string }
+): Promise<{
+  ok: boolean
+  data?: IPolymarketTrade[]
+  message?: string
+}> {
+  return post(endpoints.polymarket.trades(), filters ?? {}, {
+    headers: getAuthorizationHeader()
+  })
+}
+
+export async function polymarketGetPnlHistory(
+  limit?: number
+): Promise<{
+  ok: boolean
+  data?: IPolymarketPnlPoint[]
+  message?: string
+}> {
+  return post(endpoints.polymarket.pnlHistory(), limit ? { limit } : {}, {
+    headers: getAuthorizationHeader()
+  })
+}
+
+export function useGetPolymarketTradesSWR(refreshInterval = 30000, market?: string) {
+  const { data, error, isLoading, isValidating, mutate } = useSWR(
+    [endpoints.polymarket.trades(), market ? { market } : {}, { headers: getAuthorizationHeader() }],
+    postFetcher,
+    { refreshInterval }
+  )
+  const raw = (data?.data as any)
+  const trades = Array.isArray(raw) ? raw : (raw?.trades ?? [])
+  return useMemo(
+    () => ({
+      data: trades as IPolymarketTrade[],
+      isLoading,
+      error,
+      isValidating,
+      mutate
+    }),
+    [trades, error, isLoading, isValidating, mutate]
+  )
+}
+
+export function useGetPolymarketClosedPositionsSWR(refreshInterval = 30000) {
+  const { data, error, isLoading, isValidating, mutate } = useSWR(
+    [endpoints.polymarket.closedPositions(), {}, { headers: getAuthorizationHeader() }],
+    postFetcher,
+    { refreshInterval }
+  )
+  const raw = (data?.data as any)
+  const positions = Array.isArray(raw) ? raw : (raw?.positions ?? [])
+  return useMemo(
+    () => ({
+      data: positions as IPolymarketPosition[],
+      isLoading,
+      error,
+      isValidating,
+      mutate
+    }),
+    [positions, error, isLoading, isValidating, mutate]
+  )
 }

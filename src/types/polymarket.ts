@@ -68,15 +68,41 @@ export type IPolymarketPosition = {
   current_price: number
   pnl: number
   pnl_percent: number
-  
+
   // Backend polymorphic response bindings
   title?: string
   slug?: string
+  icon?: string
   avgPrice?: number
   curPrice?: number
   cashPnl?: number
   percentPnl?: number
   conditionId?: string
+  initialValue?: number
+  currentValue?: number
+  endDate?: string
+}
+
+export type IPolymarketActivePurchase = {
+  purchase_id: string
+  token_id: string
+  side: 'BUY' | 'SELL'
+  price: number
+  size: number
+  status: string
+  current_step: string
+  steps: Array<{
+    name: string
+    status: string
+    started_at?: string
+    completed_at?: string
+    tx_hash?: string
+  }>
+  created_at: string
+  updated_at: string
+  // Enriched fields (may come from backend or local)
+  market_title?: string
+  outcome?: string
 }
 
 export type IPolymarketOrder = {
@@ -127,6 +153,42 @@ export type IPolymarketCategory = {
   label: string
   parentCategory?: string
   slug: string
+}
+
+export type IPolymarketTrade = {
+  id: string
+  side: 'BUY' | 'SELL'
+  size: number
+  price: number
+  outcome: string
+  timestamp: string | number
+
+  // Actual API field names (from Polymarket)
+  title?: string
+  slug?: string
+  conditionId?: string
+  icon?: string
+  eventSlug?: string
+  outcomeIndex?: number
+  transactionHash?: string
+  asset?: string
+  proxyWallet?: string
+
+  // Normalized aliases (may come from backend normalization)
+  market_title?: string
+  market_slug?: string
+  condition_id?: string
+  tx_hash?: string
+  bridge_tx_hash?: string
+
+  fee?: number
+}
+
+export type IPolymarketPnlPoint = {
+  timestamp: string
+  cumulativePnl: number
+  totalInvested: number
+  totalProceeds: number
 }
 
 // ----------------------------------------------------------------------

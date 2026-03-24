@@ -55,6 +55,7 @@ type Props = { eventId: string }
 export default function PolymarketEventDetailView({ eventId }: Props) {
   const { t } = useTranslate()
   const theme = useTheme()
+  const isDark = theme.palette.mode === 'dark'
   const router = useRouter()
   const settings = useSettingsContext()
   const [aboutOpen, setAboutOpen] = useState(false)
@@ -73,7 +74,7 @@ export default function PolymarketEventDetailView({ eventId }: Props) {
   // Loading skeleton
   if (isLoading) {
     return (
-      <Box sx={{ mt: -13, mx: { xs: 0, lg: -2 }, flex: 1, background: 'linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 100%)', minHeight: '100vh', pb: 10 }}>
+      <Box sx={{ mt: -13, mx: { xs: 0, lg: -2 }, flex: 1, background: isDark ? 'linear-gradient(180deg, #161C24 0%, #0A2E1A 100%)' : 'linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 100%)', minHeight: '100vh', pb: 10 }}>
         <Container maxWidth={settings.themeStretch ? false : 'xl'} sx={{ pt: { xs: 11, md: 12 }, px: { xs: 2, md: 3 } }}>
           <Stack spacing={3}>
             <Skeleton variant="rounded" height={60} />
@@ -94,7 +95,7 @@ export default function PolymarketEventDetailView({ eventId }: Props) {
   // Not found
   if (!event) {
     return (
-      <Box sx={{ mt: -13, mx: { xs: 0, lg: -2 }, flex: 1, background: 'linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 100%)', minHeight: '100vh' }}>
+      <Box sx={{ mt: -13, mx: { xs: 0, lg: -2 }, flex: 1, background: isDark ? 'linear-gradient(180deg, #161C24 0%, #0A2E1A 100%)' : 'linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 100%)', minHeight: '100vh' }}>
         <Container maxWidth={settings.themeStretch ? false : 'xl'} sx={{ pt: { xs: 11, md: 12 }, px: { xs: 2, md: 3 } }}>
           <Stack alignItems="center" justifyContent="center" sx={{ py: 10 }}>
             <Typography variant="h6" color="text.secondary">
@@ -120,8 +121,10 @@ export default function PolymarketEventDetailView({ eventId }: Props) {
         mx: { xs: 0, lg: -2 },
         flex: 1,
         minHeight: '100vh',
-        bgcolor: '#B8F6C9',
-        backgroundImage: 'linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 600px)',
+        bgcolor: isDark ? '#0A2E1A' : '#B8F6C9',
+        backgroundImage: isDark
+          ? 'linear-gradient(180deg, #161C24 0%, #0A2E1A 600px)'
+          : 'linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 600px)',
         pb: { xs: 10, md: 15 },
         mb: { xs: -10, md: -15 },
       }}
@@ -180,7 +183,7 @@ export default function PolymarketEventDetailView({ eventId }: Props) {
                 )}
                 <Typography
                   variant="h4"
-                  sx={{ fontWeight: 700, color: '#173f35', fontSize: { xs: 22, md: 28 } }}
+                  sx={{ fontWeight: 700, color: 'text.primary', fontSize: { xs: 22, md: 28 } }}
                 >
                   {event.title}
                 </Typography>
@@ -252,20 +255,32 @@ export default function PolymarketEventDetailView({ eventId }: Props) {
 
           {/* Markets Grid */}
           <Box component={m.div} variants={fadeInUp} transition={{ duration: 0.4 }}>
-            <Typography
-              variant="h5"
-              sx={{ mb: 3, fontWeight: 700, color: '#173f35' }}
-            >
-              Predict on ({event.markets.length})
-            </Typography>
+            {(() => {
+              const visibleMarkets = event.markets.filter((m) => {
+                const hasVolume = (m.volume || 0) > 0
+                const hasPrices = (m.outcome_prices || []).some((p) => Number(p) > 0)
+                return hasVolume || hasPrices
+              })
 
-            <Grid container spacing={3}>
-              {event.markets.map((market) => (
-                <Grid xs={12} sm={6} md={4} key={market.condition_id || market.slug}>
-                  <PolymarketMarketCard market={market} inlineImage />
-                </Grid>
-              ))}
-            </Grid>
+              return (
+                <>
+                  <Typography
+                    variant="h5"
+                    sx={{ mb: 3, fontWeight: 700, color: 'text.primary' }}
+                  >
+                    Predict on ({visibleMarkets.length})
+                  </Typography>
+
+                  <Grid container spacing={3}>
+                    {visibleMarkets.map((market) => (
+                      <Grid xs={12} sm={6} md={4} key={market.condition_id || market.slug}>
+                        <PolymarketMarketCard market={market} inlineImage />
+                      </Grid>
+                    ))}
+                  </Grid>
+                </>
+              )
+            })()}
           </Box>
         </Stack>
       </Container>

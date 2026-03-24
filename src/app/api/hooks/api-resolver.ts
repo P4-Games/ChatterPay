@@ -177,8 +177,11 @@ export const endpoints = {
       withdraw: () => getFullUIEndpoint('polymarket/bridge/withdraw')
     },
     positions: () => getFullUIEndpoint('polymarket/positions'),
+    closedPositions: () => getFullUIEndpoint('polymarket/positions/closed'),
     orders: () => getFullUIEndpoint('polymarket/orders'),
-    portfolio: () => getFullUIEndpoint('polymarket/portfolio')
+    portfolio: () => getFullUIEndpoint('polymarket/portfolio'),
+    trades: () => getFullUIEndpoint('polymarket/trades'),
+    pnlHistory: () => getFullUIEndpoint('polymarket/pnl/history')
   },
   backend_bot: {
     sendMessage: () => getFullBotEndpoint('chatbot/conversations/send-message')

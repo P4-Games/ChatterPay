@@ -147,7 +147,7 @@ function CryptoAssetRow({
         alignItems: 'center',
         justifyContent: 'space-between',
         py: 1.25,
-        px: 2,
+        px: 3,
         opacity: hasBalance ? 1 : 0.5,
         '&:hover': { bgcolor: alpha(theme.palette.grey[500], 0.04), borderRadius: 1 },
         transition: theme.transitions.create(['background-color', 'opacity'], { duration: 200 })
@@ -240,7 +240,7 @@ export default function DashboardPortfolioBalance({
   const isDark = theme.palette.mode === 'dark'
 
   const headingColor = isDark ? '#B8F6C9' : '#173F35'
-  const btnColor = isDark ? '#B8F6C9' : '#0D352C'
+  const btnColor = isDark ? '#7EDBB8' : '#0D352C'
 
   const combinedTotal = (totals[selectedCurrency] || 0) + polymarketTotalUsd
 
@@ -320,7 +320,7 @@ export default function DashboardPortfolioBalance({
           justifyContent='space-between'
           onClick={onCryptoToggle}
           sx={{
-            px: 2.5,
+            px: 3,
             py: 1.5,
             cursor: 'pointer',
             '&:hover': { bgcolor: alpha(theme.palette.grey[500], 0.04) },
@@ -380,7 +380,7 @@ export default function DashboardPortfolioBalance({
       <Card
         onClick={onPolymarketClick}
         sx={{
-          px: 2.5,
+          px: 3,
           py: 1.5,
           cursor: 'pointer',
           border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}`,
@@ -421,7 +421,15 @@ export default function DashboardPortfolioBalance({
           color='primary'
           startIcon={<Iconify icon='eva:diagonal-arrow-left-down-fill' />}
           onClick={onDepositClick}
-          sx={{ px: 3, py: 1.2 }}
+          sx={{
+            px: 3,
+            py: 1.2,
+            ...(isDark && {
+              bgcolor: '#1B9C85',
+              color: '#fff',
+              '&:hover': { bgcolor: '#22b89a' },
+            }),
+          }}
         >
           {t('balances.deposit')}
         </Button>
@@ -461,12 +469,12 @@ export default function DashboardPortfolioBalance({
             sx={{
               px: 3,
               py: 1.2,
-              color: '#0D352C',
-              borderColor: '#0D352C',
+              color: btnColor,
+              borderColor: btnColor,
               borderWidth: '0.5px',
               '&:hover': {
-                borderColor: '#0D352C',
-                bgcolor: alpha('#0D352C', 0.06),
+                borderColor: btnColor,
+                bgcolor: alpha(btnColor, 0.06),
                 borderWidth: '0.5px',
               }
             }}

@@ -3,17 +3,18 @@
 import { useRef, useEffect } from 'react'
 
 import Box from '@mui/material/Box'
-import Tab from '@mui/material/Tab'
-import Tabs from '@mui/material/Tabs'
+import Chip from '@mui/material/Chip'
 import Stack from '@mui/material/Stack'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import Skeleton from '@mui/material/Skeleton'
 import Typography from '@mui/material/Typography'
 import Grid from '@mui/material/Unstable_Grid2'
+import InputAdornment from '@mui/material/InputAdornment'
 import CircularProgress from '@mui/material/CircularProgress'
-import { useTheme } from '@mui/material/styles'
+import { alpha, useTheme } from '@mui/material/styles'
 
+import Iconify from 'src/components/iconify'
 import { useTranslate } from 'src/locales'
 import { useGetPolymarketCategories } from 'src/app/api/hooks/use-polymarket'
 
@@ -54,6 +55,7 @@ export default function PolymarketMarketList({
 }: Props) {
   const { t } = useTranslate()
   const theme = useTheme()
+  const isDark = theme.palette.mode === 'dark'
   const sentinelRef = useRef<HTMLDivElement>(null)
 
   const { data: categoriesData } = useGetPolymarketCategories()
@@ -113,60 +115,75 @@ export default function PolymarketMarketList({
 
   const renderFilters = (
     <Stack
-      direction={{ xs: 'column', sm: 'row' }}
-      alignItems={{ xs: 'stretch', sm: 'center' }}
+      direction='row'
+      alignItems='center'
       justifyContent='space-between'
       spacing={2}
       sx={{ mb: 3 }}
     >
-      <Tabs
-        value={category}
-        onChange={(_, newValue) => onChangeCategory(newValue)}
-        variant='scrollable'
-        scrollButtons='auto'
+      <Box
         sx={{
-          bgcolor: '#ebebeb',
+          display: 'inline-flex',
+          gap: '2px',
+          bgcolor: isDark ? alpha(theme.palette.grey[500], 0.12) : '#ebebeb',
           borderRadius: 50,
           p: 0.5,
-          minHeight: 'auto',
-          '& .MuiTab-root': {
-            minWidth: 'auto',
-            minHeight: 'auto',
-            px: 2,
-            py: 1,
-            fontWeight: 600,
-            fontSize: '0.85rem',
-            fontFamily: "'Satoshi Variable', sans-serif",
-            textTransform: 'none',
-            borderRadius: 50,
-            color: 'text.primary',
-            '&.Mui-selected': {
-              color: 'text.primary',
-              bgcolor: 'background.paper',
-              boxShadow: theme.customShadows?.z1 || '0px 6px 17px 0px rgba(0,0,0,0.08)',
-            }
-          },
-          '& .MuiTabs-indicator': {
-            display: 'none'
-          }
+          maxWidth: '100%',
+          overflowX: 'auto',
+          scrollbarWidth: 'none',
+          '&::-webkit-scrollbar': { display: 'none' },
         }}
       >
-        <Tab label="All" value="All" />
-        {topCategories.map((cat) => (
-          <Tab key={cat.id} label={cat.label} value={cat.label} />
-        ))}
-      </Tabs>
+        {['All', ...topCategories.map((c) => c.label)].map((label) => {
+          const isActive = category === label
+          return (
+            <Chip
+              key={label}
+              label={label}
+              onClick={() => onChangeCategory(label)}
+              sx={{
+                borderRadius: 50,
+                px: 0.5,
+                height: 32,
+                fontWeight: isActive ? 700 : 600,
+                fontSize: '0.85rem',
+                fontFamily: "'Satoshi Variable', sans-serif",
+                bgcolor: isActive ? 'background.paper' : 'transparent',
+                boxShadow: isActive ? (theme.customShadows?.z1 || '0px 6px 17px 0px rgba(0,0,0,0.08)') : 'none',
+                color: 'text.primary',
+                cursor: 'pointer',
+                '&:hover': {
+                  bgcolor: isActive ? 'background.paper' : alpha(theme.palette.grey[500], 0.08),
+                },
+              }}
+            />
+          )
+        })}
+      </Box>
 
       <Select
         size='small'
         value={sortBy}
         onChange={(e) => onChangeSortBy(e.target.value)}
+        startAdornment={
+          <InputAdornment position='start'>
+            <Iconify icon='solar:sort-vertical-bold' width={18} sx={{ color: 'text.secondary', ml: 0.5 }} />
+          </InputAdornment>
+        }
         sx={{
-          minWidth: 140,
+          minWidth: 150,
+          flexShrink: 0,
+          borderRadius: 50,
+          bgcolor: isDark ? alpha(theme.palette.grey[500], 0.12) : '#ebebeb',
           '& .MuiSelect-select': {
             py: 1,
-            fontSize: '0.85rem'
-          }
+            pl: '0 !important',
+            fontSize: '0.85rem',
+            fontWeight: 600,
+          },
+          '& .MuiOutlinedInput-notchedOutline': {
+            border: 'none',
+          },
         }}
       >
         {SORT_OPTIONS.map((option) => (

@@ -8,7 +8,6 @@ import Card from '@mui/material/Card'
 import Chip from '@mui/material/Chip'
 import Stack from '@mui/material/Stack'
 import Table from '@mui/material/Table'
-import Alert from '@mui/material/Alert'
 import Button from '@mui/material/Button'
 import TableRow from '@mui/material/TableRow'
 import TableBody from '@mui/material/TableBody'
@@ -24,6 +23,7 @@ import {
   useGetPolymarketPositionsSWR,
   useGetPolymarketOrdersSWR,
   useGetPolymarketPortfolioSWR,
+  useGetPolymarketTradesSWR,
   useGetWalletBalance,
   polymarketCancelOrder,
   polymarketPurchase,
@@ -37,12 +37,6 @@ import { useSWRConfig } from 'swr'
 import Iconify from 'src/components/iconify'
 
 import { fNumber } from 'src/utils/format-number'
-
-import type {
-  IPolymarketOrder,
-  IPolymarketPosition,
-  IPolymarketPortfolio
-} from 'src/types/polymarket'
 
 // ----------------------------------------------------------------------
 
@@ -75,12 +69,12 @@ export default function PolymarketPortfolio() {
   const { data: portfolio } = useGetPolymarketPortfolioSWR(10000)
   const { data: positions = [] } = useGetPolymarketPositionsSWR(10000)
   const { data: orders = [], isLoading: isOrdersLoading } = useGetPolymarketOrdersSWR(10000)
+  const { data: trades = [] } = useGetPolymarketTradesSWR(30000)
   const { data: balanceData, isLoading: isBalanceLoading } = useGetWalletBalance(user?.wallet || '')
   
   const polyBalance = balanceData?.polymarket
   const idleUsdc = polyBalance?.idle_usdc ?? 0
   const totalUsd = polyBalance?.total_usd ?? 0
-  const positionsValue = polyBalance?.positions_value ?? 0
 
   const [cancellingId, setCancellingId] = useState<string | null>(null)
   const [sellingPos, setSellingPos] = useState<string | null>(null)
@@ -240,7 +234,7 @@ export default function PolymarketPortfolio() {
           <Chip
             label={positions.length}
             size='small'
-            sx={{ fontWeight: 700, bgcolor: alpha(theme.palette.primary.main, 0.08) }}
+            sx={{ fontWeight: 700, bgcolor: alpha(theme.palette.primary.main, 0.16), color: 'primary.main' }}
           />
         </Stack>
 
@@ -274,7 +268,7 @@ export default function PolymarketPortfolio() {
                   <TableRow key={idx} hover>
                     <TableCell>
                       <Link
-                        href={(pos.market_slug || pos.slug) ? `/markets/${pos.market_slug || pos.slug}` : '#'}
+                        href={(pos.slug || pos.market_slug) ? `/markets/${pos.slug || pos.market_slug}` : '#'}
                         style={{ textDecoration: 'none', color: 'inherit' }}
                       >
                         <Typography
@@ -282,7 +276,7 @@ export default function PolymarketPortfolio() {
                           noWrap
                           sx={{ maxWidth: 200, '&:hover': { textDecoration: 'underline' } }}
                         >
-                          {pos.market_title || pos.title || pos.market?.question || '—'}
+                          {pos.title || pos.market_title || pos.market?.question || '—'}
                         </Typography>
                       </Link>
                     </TableCell>
@@ -353,7 +347,7 @@ export default function PolymarketPortfolio() {
                           const sellSize = Math.floor(pos.size * 1e6) / 1e6
                           const sellPrice = pos.current_price
                           const tempId = `temp-${Date.now()}`
-                          const marketTitle = pos.market_title || pos.title || pos.market?.question || '—'
+                          const marketTitle = pos.title || pos.market_title || pos.market?.question || '—'
 
                           // Instantly show in Open Orders
                           setActivePurchases((prev) => [...prev, {
@@ -457,7 +451,7 @@ export default function PolymarketPortfolio() {
           <Chip
             label={activePurchases.length + orders.length}
             size='small'
-            sx={{ fontWeight: 700, bgcolor: alpha(theme.palette.warning.main, 0.08) }}
+            sx={{ fontWeight: 700, bgcolor: alpha(theme.palette.warning.main, 0.16), color: 'warning.main' }}
           />
         </Stack>
 
@@ -605,6 +599,112 @@ export default function PolymarketPortfolio() {
           </TableContainer>
         )}
       </Card>
+
+      {/* Trade History */}
+      {trades.length > 0 && (
+        <Card sx={{ border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}` }}>
+          <Stack
+            direction='row'
+            alignItems='center'
+            justifyContent='space-between'
+            sx={{ px: 3, py: 2.5 }}
+          >
+            <Typography variant='h6' fontWeight={700}>
+              Trade History
+            </Typography>
+          </Stack>
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>{t('polymarket.side')}</TableCell>
+                  <TableCell>{t('polymarket.market')}</TableCell>
+                  <TableCell align='right'>{t('polymarket.size')}</TableCell>
+                  <TableCell align='right'>{t('polymarket.price')}</TableCell>
+                  <TableCell align='right'>Date</TableCell>
+                  <TableCell align='center' sx={{ width: 48 }}>TX</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {trades.map((trade, idx) => {
+                  const ts = typeof trade.timestamp === 'number'
+                    ? (trade.timestamp > 1e12 ? trade.timestamp : trade.timestamp * 1000)
+                    : new Date(trade.timestamp).getTime()
+                  const date = new Date(ts)
+                  const dateStr = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+                  const timeStr = date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
+                  const marketTitle = trade.title || trade.market_title || '—'
+                  const marketSlug = trade.slug || trade.market_slug || ''
+                  const txHash = trade.transactionHash || trade.tx_hash
+
+                  return (
+                    <TableRow key={trade.transactionHash || trade.id || idx} hover>
+                      <TableCell>
+                        <Chip
+                          label={trade.side}
+                          size='small'
+                          sx={{
+                            fontWeight: 600,
+                            bgcolor: alpha(
+                              trade.side === 'BUY' ? theme.palette.success.main : theme.palette.error.main,
+                              0.1
+                            ),
+                            color: trade.side === 'BUY' ? theme.palette.success.dark : theme.palette.error.dark
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Link
+                          href={marketSlug ? `/markets/${marketSlug}` : '#'}
+                          style={{ textDecoration: 'none', color: 'inherit' }}
+                        >
+                          <Typography
+                            variant='body2'
+                            noWrap
+                            sx={{ maxWidth: 200, '&:hover': { textDecoration: 'underline' } }}
+                          >
+                            {marketTitle}
+                          </Typography>
+                        </Link>
+                      </TableCell>
+                      <TableCell align='right'>
+                        <Typography variant='body2' fontWeight={600}>
+                          {fNumber(trade.size)}
+                        </Typography>
+                      </TableCell>
+                      <TableCell align='right'>
+                        <Typography variant='body2'>
+                          {Math.round(trade.price * 100)}¢
+                        </Typography>
+                      </TableCell>
+                      <TableCell align='right'>
+                        <Stack alignItems='flex-end'>
+                          <Typography variant='caption' fontWeight={600}>{dateStr}</Typography>
+                          <Typography variant='caption' color='text.secondary'>{timeStr}</Typography>
+                        </Stack>
+                      </TableCell>
+                      <TableCell align='center'>
+                        {txHash ? (
+                          <a
+                            href={`https://polygonscan.com/tx/${txHash}`}
+                            target='_blank'
+                            rel='noopener noreferrer'
+                            style={{ color: 'inherit' }}
+                          >
+                            <Iconify icon='solar:link-round-bold' width={18} sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }} />
+                          </a>
+                        ) : (
+                          <Iconify icon='solar:link-broken-bold' width={18} sx={{ color: 'text.disabled' }} />
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Card>
+      )}
     </Stack>
   )
 }

@@ -12,7 +12,9 @@ import type {
   IPolymarketOrderPayload,
   IPolymarketPurchaseResponse,
   IPolymarketPurchaseStatus,
-  IPolymarketCategory
+  IPolymarketCategory,
+  IPolymarketTrade,
+  IPolymarketPnlPoint
 } from 'src/types/polymarket'
 
 // ----------------------------------------------------------------------
@@ -434,6 +436,73 @@ export async function getPortfolio(
     const response = await axios.post<BackendResponse<IPolymarketPortfolio>>(
       `${BACKEND_API_URL}/polymarket/portfolio`,
       { channel_user_id: channelUserId },
+      { headers: backendHeaders }
+    )
+
+    if (response.data.status !== 'success') {
+      return { ok: false, message: normalizeError(response.data) }
+    }
+
+    return { ok: true, data: response.data.data }
+  } catch (error) {
+    return { ok: false, message: extractError(error) }
+  }
+}
+
+// ----------------------------------------------------------------------
+// Trade history & PNL (POST)
+// ----------------------------------------------------------------------
+
+export async function getTradesHistory(
+  channelUserId: string,
+  filters?: { market?: string; limit?: number; offset?: number; side?: string }
+): Promise<ServiceResult<IPolymarketTrade[]>> {
+  try {
+    const response = await axios.post<BackendResponse<IPolymarketTrade[]>>(
+      `${BACKEND_API_URL}/polymarket/trades`,
+      { channel_user_id: channelUserId, ...filters },
+      { headers: backendHeaders }
+    )
+
+    if (response.data.status !== 'success') {
+      return { ok: false, message: normalizeError(response.data) }
+    }
+
+    return { ok: true, data: response.data.data }
+  } catch (error) {
+    return { ok: false, message: extractError(error) }
+  }
+}
+
+export async function getPnlHistory(
+  channelUserId: string,
+  limit?: number
+): Promise<ServiceResult<IPolymarketPnlPoint[]>> {
+  try {
+    const response = await axios.post<BackendResponse<IPolymarketPnlPoint[]>>(
+      `${BACKEND_API_URL}/polymarket/pnl/history`,
+      { channel_user_id: channelUserId, ...(limit ? { limit } : {}) },
+      { headers: backendHeaders }
+    )
+
+    if (response.data.status !== 'success') {
+      return { ok: false, message: normalizeError(response.data) }
+    }
+
+    return { ok: true, data: response.data.data }
+  } catch (error) {
+    return { ok: false, message: extractError(error) }
+  }
+}
+
+export async function getClosedPositions(
+  channelUserId: string,
+  market?: string
+): Promise<ServiceResult<IPolymarketPosition[]>> {
+  try {
+    const response = await axios.post<BackendResponse<IPolymarketPosition[]>>(
+      `${BACKEND_API_URL}/polymarket/positions/closed`,
+      { channel_user_id: channelUserId, ...(market ? { market } : {}) },
       { headers: backendHeaders }
     )
 

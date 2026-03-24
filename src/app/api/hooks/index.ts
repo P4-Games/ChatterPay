@@ -31,7 +31,11 @@ export {
   polymarketPurchase,
   polymarketPurchaseStatus,
   polymarketBridgeWithdraw,
+  polymarketGetTrades,
+  polymarketGetPnlHistory,
   useGetPolymarketPositionsSWR,
   useGetPolymarketOrdersSWR,
-  useGetPolymarketPortfolioSWR
+  useGetPolymarketPortfolioSWR,
+  useGetPolymarketTradesSWR,
+  useGetPolymarketClosedPositionsSWR
 } from './use-polymarket'

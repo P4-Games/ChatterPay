@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import Link from 'next/link'
 
 import Box from '@mui/material/Box'
@@ -14,6 +14,7 @@ import TableRow from '@mui/material/TableRow'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
+import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import TableContainer from '@mui/material/TableContainer'
 import CircularProgress from '@mui/material/CircularProgress'
@@ -23,7 +24,9 @@ import { useTranslate } from 'src/locales'
 import {
   polymarketCancelOrder,
   polymarketPurchase,
-  polymarketPurchaseStatus
+  polymarketPurchaseStatus,
+  useGetPolymarketTradesSWR,
+  useGetPolymarketClosedPositionsSWR
 } from 'src/app/api/hooks'
 import { useSnackbar } from 'src/components/snackbar'
 import { useSWRConfig } from 'swr'
@@ -81,11 +84,14 @@ export default function DashboardPositionsTable({
   const [activePurchases, setActivePurchases] = useState<ActivePurchase[]>([])
   const [soldPositionKeys, setSoldPositionKeys] = useState<Set<string>>(new Set())
 
+  // Fetch trade history and closed positions
+  const { data: trades = [], isLoading: isTradesLoading } = useGetPolymarketTradesSWR(30000)
+  const { data: closedPositions = [], isLoading: isClosedLoading } = useGetPolymarketClosedPositionsSWR(30000)
+
   // Track polling intervals for cleanup on unmount
   const pollIntervalsRef = useRef<Map<string, NodeJS.Timeout>>(new Map())
 
   useEffect(() => () => {
-    // Clear all polling intervals on unmount
     pollIntervalsRef.current.forEach((interval) => clearInterval(interval))
   }, [])
 
@@ -117,7 +123,7 @@ export default function DashboardPositionsTable({
     const sellSize = Math.floor(pos.size * 1e6) / 1e6
     const sellPrice = pos.current_price ?? pos.curPrice ?? 0
     const tempId = `temp-${Date.now()}`
-    const marketTitle = pos.market_title || pos.title || pos.market?.question || '—'
+    const marketTitle = pos.title || pos.market_title || pos.market?.question || '—'
 
     setActivePurchases((prev) => [...prev, {
       purchase_id: tempId,
@@ -169,6 +175,7 @@ export default function DashboardPositionsTable({
                 mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders'))
                 mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/portfolio'))
                 mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'))
+                mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/trades'))
                 setSoldPositionKeys((prev) => { const n = new Set(prev); n.delete(posKey); return n })
               } else if (st === 'failed') {
                 const interval = pollIntervalsRef.current.get(purchaseId)
@@ -198,6 +205,29 @@ export default function DashboardPositionsTable({
   const filteredPositions = positions.filter(
     (p) => !soldPositionKeys.has((p.market?.condition_id || p.conditionId) + p.outcome)
   )
+
+  // Build a lookup map from condition_id to position data for enriching trades
+  const positionByConditionId = useMemo(() => {
+    const map = new Map<string, IPolymarketPosition>()
+    for (const p of [...positions, ...closedPositions]) {
+      const cid = p.market?.condition_id || p.conditionId
+      if (cid && !map.has(cid)) map.set(cid, p)
+    }
+    return map
+  }, [positions, closedPositions])
+
+  // Aggregate BUY trade sizes per conditionId+outcome for computing closed position sizes
+  const tradeSizeByKey = useMemo(() => {
+    const map = new Map<string, number>()
+    for (const t of trades) {
+      if (t.side !== 'BUY') continue
+      const cid = t.conditionId || t.condition_id || ''
+      const outcome = t.outcome || ''
+      const key = `${cid}:${outcome}`
+      map.set(key, (map.get(key) || 0) + (t.size || 0))
+    }
+    return map
+  }, [trades])
 
   if (isLoading) {
     return (
@@ -258,7 +288,7 @@ export default function DashboardPositionsTable({
       {activeTab === 'active' ? (
         <Card sx={{ border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}` }}>
           {filteredPositions.length === 0 ? (
-            <Stack alignItems='center' sx={{ py: 6 }}>
+            <Stack alignItems='center' spacing={1.5} sx={{ py: 6 }}>
               <Iconify
                 icon='solar:graph-up-bold-duotone'
                 width={48}
@@ -291,15 +321,14 @@ export default function DashboardPositionsTable({
 
                     return (
                       <TableRow key={idx} hover>
-                        {/* Market Column: icon + title + outcome chip + shares */}
                         <TableCell>
                           <Stack direction='row' alignItems='center' spacing={2}>
-                            {pos.market?.image ? (
+                            {(pos.icon || pos.market?.image) ? (
                               <Box
                                 component='img'
-                                src={pos.market.image}
+                                src={pos.icon || pos.market?.image}
                                 alt=''
-                                sx={{ width: 40, height: 40, borderRadius: '50%', flexShrink: 0 }}
+                                sx={{ width: 40, height: 40, borderRadius: '50%', flexShrink: 0, objectFit: 'cover' }}
                               />
                             ) : (
                               <Box
@@ -319,14 +348,14 @@ export default function DashboardPositionsTable({
                             )}
                             <Stack spacing={0.5}>
                               <Link
-                                href={(pos.market_slug || pos.slug) ? `/dashboard/polymarket/${pos.market_slug || pos.slug}` : '#'}
+                                href={(pos.slug || pos.market_slug || pos.market?.slug) ? `/dashboard/polymarket/${pos.slug || pos.market_slug || pos.market?.slug}` : '#'}
                                 style={{ textDecoration: 'none', color: 'inherit' }}
                               >
                                 <Typography
                                   variant='subtitle2'
                                   sx={{ '&:hover': { textDecoration: 'underline' }, maxWidth: 400 }}
                                 >
-                                  {pos.market_title || pos.title || pos.market?.question || '—'}
+                                  {pos.title || pos.market_title || pos.market?.question || '—'}
                                 </Typography>
                               </Link>
                               <Stack direction='row' alignItems='center' spacing={1}>
@@ -356,39 +385,44 @@ export default function DashboardPositionsTable({
                           </Stack>
                         </TableCell>
 
-                        {/* Avg Price */}
                         <TableCell align='right'>
                           <Typography variant='body2'>
                             {Math.round(avgPrice * 100)}¢
                           </Typography>
                         </TableCell>
 
-                        {/* Current Price */}
                         <TableCell align='right'>
                           <Typography variant='body2'>
                             {Math.round(currentPrice * 100)}¢
                           </Typography>
                         </TableCell>
 
-                        {/* Value + P&L */}
                         <TableCell align='right'>
                           <Stack alignItems='flex-end'>
                             <Typography variant='subtitle2' fontWeight={700}>
                               ${fNumber(valueUsd)} USD
                             </Typography>
-                            <Typography
-                              variant='caption'
-                              fontWeight={600}
-                              color={pnlVal >= 0 ? 'success.main' : 'error.main'}
-                            >
-                              {pnlRounded === 0
-                                ? '$0.00'
-                                : `${pnlVal > 0 ? '+' : '-'}$${fNumber(Math.abs(pnlRounded))} (${pnlVal > 0 ? '+' : ''}${fNumber((pos.pnl_percent ?? pos.percentPnl ?? 0) * 100)}%)`}
-                            </Typography>
+                            {(() => {
+                              const pctRaw = pos.pnl_percent ?? pos.percentPnl ?? 0
+                              const pctDisplay = Math.abs(pctRaw) > 1
+                                ? pctRaw  // Already a percentage (e.g. -96.71)
+                                : pctRaw * 100  // Decimal, convert (e.g. -0.9671 → -96.71)
+                              const pctRounded = Math.round(pctDisplay * 100) / 100
+                              return (
+                                <Typography
+                                  variant='caption'
+                                  fontWeight={600}
+                                  color={pnlVal >= 0 ? 'success.main' : 'error.main'}
+                                >
+                                  {pnlRounded === 0
+                                    ? '$0.00'
+                                    : `${pnlVal > 0 ? '+' : '-'}$${fNumber(Math.abs(pnlRounded))} (${pctRounded > 0 ? '+' : ''}${fNumber(pctRounded)}%)`}
+                                </Typography>
+                              )
+                            })()}
                           </Stack>
                         </TableCell>
 
-                        {/* Actions */}
                         <TableCell align='right'>
                           <Button
                             size='small'
@@ -420,7 +454,7 @@ export default function DashboardPositionsTable({
                   <Chip
                     label={activePurchases.length + orders.length}
                     size='small'
-                    sx={{ fontWeight: 700, bgcolor: alpha(theme.palette.warning.main, 0.08) }}
+                    sx={{ fontWeight: 700, bgcolor: alpha(theme.palette.warning.main, 0.16), color: 'warning.main' }}
                   />
                 </Stack>
               </Stack>
@@ -549,18 +583,226 @@ export default function DashboardPositionsTable({
           )}
         </Card>
       ) : (
-        /* Closed tab - placeholder */
+        /* Closed positions tab */
         <Card sx={{ border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}` }}>
-          <Stack alignItems='center' sx={{ py: 8 }}>
-            <Iconify
-              icon='solar:archive-bold-duotone'
-              width={48}
-              sx={{ color: 'text.disabled', mb: 2 }}
-            />
-            <Typography variant='body2' color='text.secondary'>
-              No closed positions
+          {isClosedLoading ? (
+            <Stack alignItems='center' sx={{ py: 6 }}>
+              <CircularProgress size={24} />
+            </Stack>
+          ) : closedPositions.length === 0 ? (
+            <Stack alignItems='center' spacing={1.5} sx={{ py: 8 }}>
+              <Iconify
+                icon='solar:archive-bold-duotone'
+                width={48}
+                sx={{ color: 'text.disabled', mb: 2 }}
+              />
+              <Typography variant='body2' color='text.secondary'>
+                No closed positions
+              </Typography>
+            </Stack>
+          ) : (
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Market</TableCell>
+                    <TableCell align='right'>Avg Price</TableCell>
+                    <TableCell align='right'>Size</TableCell>
+                    <TableCell align='right'>P&L</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {closedPositions.map((pos, idx) => {
+                    const avgPrice = pos.avg_price ?? pos.avgPrice ?? 0
+                    const pnlVal = pos.pnl ?? pos.cashPnl ?? 0
+                    // Compute size: use pos.size if non-zero, then initialValue, then derive from trades
+                    const cid = pos.market?.condition_id || pos.conditionId || ''
+                    const tradeKey = `${cid}:${pos.outcome || ''}`
+                    const derivedSize = tradeSizeByKey.get(tradeKey) || 0
+                    const displaySize = pos.size || pos.initialValue || derivedSize
+
+                    return (
+                      <TableRow key={idx} hover>
+                        <TableCell>
+                          <Stack direction='row' alignItems='center' spacing={2}>
+                            {(pos.icon || pos.market?.image) ? (
+                              <Box
+                                component='img'
+                                src={pos.icon || pos.market?.image}
+                                alt=''
+                                sx={{ width: 36, height: 36, borderRadius: '50%', flexShrink: 0, objectFit: 'cover' }}
+                              />
+                            ) : (
+                              <Box
+                                sx={{
+                                  width: 36,
+                                  height: 36,
+                                  borderRadius: '50%',
+                                  bgcolor: alpha(theme.palette.grey[500], 0.08),
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  flexShrink: 0
+                                }}
+                              >
+                                <Iconify icon='solar:chart-bold' width={18} sx={{ color: 'text.disabled' }} />
+                              </Box>
+                            )}
+                            <Stack spacing={0.25}>
+                              <Typography variant='subtitle2' sx={{ maxWidth: 300 }}>
+                                {pos.title || pos.market_title || pos.market?.question || '—'}
+                              </Typography>
+                              <Chip
+                                label={pos.outcome}
+                                size='small'
+                                sx={{
+                                  fontWeight: 600,
+                                  height: 20,
+                                  width: 'fit-content',
+                                  bgcolor: alpha(theme.palette.grey[500], 0.1),
+                                  color: 'text.secondary',
+                                }}
+                              />
+                            </Stack>
+                          </Stack>
+                        </TableCell>
+                        <TableCell align='right'>
+                          <Typography variant='body2'>{Math.round(avgPrice * 100)}¢</Typography>
+                        </TableCell>
+                        <TableCell align='right'>
+                          <Typography variant='body2' fontWeight={600}>
+                            {displaySize ? fNumber(displaySize) : '—'}
+                          </Typography>
+                        </TableCell>
+                        <TableCell align='right'>
+                          <Typography
+                            variant='body2'
+                            fontWeight={700}
+                            color={pnlVal >= 0 ? 'success.main' : 'error.main'}
+                          >
+                            {pnlVal === 0 ? '$0.00' : `${pnlVal > 0 ? '+' : '-'}$${fNumber(Math.abs(pnlVal))}`}
+                          </Typography>
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+        </Card>
+      )}
+
+      {/* Trade History */}
+      {trades.length > 0 && (
+        <Card sx={{ border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}` }}>
+          <Stack
+            direction='row'
+            alignItems='center'
+            justifyContent='space-between'
+            sx={{ px: 3, py: 2.5 }}
+          >
+            <Typography variant='h6' fontWeight={700}>
+              Trade History
             </Typography>
           </Stack>
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Side</TableCell>
+                  <TableCell>Market</TableCell>
+                  <TableCell align='right'>Size</TableCell>
+                  <TableCell align='right'>Price</TableCell>
+                  <TableCell align='right'>Date</TableCell>
+                  <TableCell align='center' sx={{ width: 48 }}>TX</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {trades.map((trade, idx) => {
+                  // Handle both Unix epoch seconds (number) and ISO string timestamps
+                  const ts = typeof trade.timestamp === 'number'
+                    ? (trade.timestamp > 1e12 ? trade.timestamp : trade.timestamp * 1000)
+                    : new Date(trade.timestamp).getTime()
+                  const date = new Date(ts)
+                  const dateStr = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+                  const timeStr = date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
+
+                  // Use actual API fields (title, slug, conditionId) with normalized aliases as fallback
+                  const tradeConditionId = trade.conditionId || trade.condition_id
+                  const matchedPos = tradeConditionId ? positionByConditionId.get(tradeConditionId) : undefined
+                  const marketTitle = trade.title || trade.market_title || matchedPos?.title || matchedPos?.market_title || matchedPos?.market?.question || '—'
+                  const marketSlug = trade.slug || trade.market_slug || matchedPos?.slug || matchedPos?.market_slug || matchedPos?.market?.slug || ''
+                  const txHash = trade.transactionHash || trade.tx_hash || trade.bridge_tx_hash
+
+                  return (
+                    <TableRow key={trade.transactionHash || trade.id || idx} hover>
+                      <TableCell>
+                        <Chip
+                          label={trade.side}
+                          size='small'
+                          sx={{
+                            fontWeight: 600,
+                            bgcolor: alpha(
+                              trade.side === 'BUY' ? theme.palette.success.main : theme.palette.error.main,
+                              0.1
+                            ),
+                            color: trade.side === 'BUY' ? theme.palette.success.dark : theme.palette.error.dark
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Link
+                          href={marketSlug ? `/dashboard/polymarket/${marketSlug}` : '#'}
+                          style={{ textDecoration: 'none', color: 'inherit' }}
+                        >
+                          <Typography
+                            variant='body2'
+                            noWrap
+                            sx={{ maxWidth: 200, '&:hover': { textDecoration: 'underline' } }}
+                          >
+                            {marketTitle}
+                          </Typography>
+                        </Link>
+                      </TableCell>
+                      <TableCell align='right'>
+                        <Typography variant='body2' fontWeight={600}>
+                          {fNumber(trade.size)}
+                        </Typography>
+                      </TableCell>
+                      <TableCell align='right'>
+                        <Typography variant='body2'>
+                          {Math.round(trade.price * 100)}¢
+                        </Typography>
+                      </TableCell>
+                      <TableCell align='right'>
+                        <Stack alignItems='flex-end'>
+                          <Typography variant='caption' fontWeight={600}>{dateStr}</Typography>
+                          <Typography variant='caption' color='text.secondary'>{timeStr}</Typography>
+                        </Stack>
+                      </TableCell>
+                      <TableCell align='center'>
+                        {txHash ? (
+                          <Tooltip title='View transaction'>
+                            <a
+                              href={`https://polygonscan.com/tx/${txHash}`}
+                              target='_blank'
+                              rel='noopener noreferrer'
+                              style={{ color: 'inherit' }}
+                            >
+                              <Iconify icon='solar:link-round-bold' width={18} sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }} />
+                            </a>
+                          </Tooltip>
+                        ) : (
+                          <Iconify icon='solar:link-broken-bold' width={18} sx={{ color: 'text.disabled' }} />
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </Card>
       )}
     </Stack>
