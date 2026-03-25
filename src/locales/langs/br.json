@@ -394,7 +394,11 @@
     "recent-sends": "Recentes",
     "paste": "Colar",
     "resolving-ens": "Resolvendo...",
-    "usd-value": "Valor USD"
+    "usd-value": "Valor USD",
+    "fee": "Taxa de transação",
+    "you-receive": "Você recebe",
+    "you-send": "Você envia",
+    "amount-receive": "Quantia a Receber"
   },
   "balances": {
     "title": "Seu dinheiro",
@@ -420,7 +424,11 @@
     "table-print": "Imprimir",
     "table-share": "Compartilhar",
     "receive-from": "Recebeu de",
-    "sent-to": "Enviou para"
+    "sent-to": "Enviou para",
+    "polymarket-buy": "Polymarket Compra",
+    "polymarket-sell": "Polymarket Venda",
+    "polymarket-transfer-to": "Transferir para Polymarket",
+    "polymarket-transfer-from": "Transferir de Polymarket"
   },
   "nfts": {
     "view-trx": "Ver detalhes da transação",

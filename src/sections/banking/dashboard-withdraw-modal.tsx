@@ -32,9 +32,14 @@ import Iconify from 'src/components/iconify'
 import { fNumber } from 'src/utils/format-number'
 import { BOT_WAPP_URL } from 'src/config-global'
 
-import type { IBalance, ITransaction } from 'src/types/wallet'
+import type { IBalance, ITransaction, IToken } from 'src/types/wallet'
 
 // ----------------------------------------------------------------------
+
+function parseDecimal(val: any): number {
+  if (val && typeof val === 'object' && val.$numberDecimal) return parseFloat(val.$numberDecimal)
+  return typeof val === 'number' ? val : 0
+}
 
 type DestType = 'phone' | 'address'
 
@@ -147,6 +152,8 @@ const STEP_VARIANTS = {
 
 // ----------------------------------------------------------------------
 
+type CurrencyKey = 'usd' | 'ars' | 'brl' | 'uyu'
+
 type Props = {
   open: boolean
   onClose: () => void
@@ -154,10 +161,12 @@ type Props = {
   tokenLogos: Record<string, string>
   transactions?: ITransaction[]
   userWallet?: string
+  tokens?: IToken[]
+  selectedCurrency?: CurrencyKey
 }
 
 export default function DashboardWithdrawModal({
-  open, onClose, balances, tokenLogos, transactions, userWallet,
+  open, onClose, balances, tokenLogos, transactions, userWallet, tokens, selectedCurrency
 }: Props) {
   const { t } = useTranslate()
   const theme = useTheme()
@@ -169,6 +178,7 @@ export default function DashboardWithdrawModal({
   // Step 1
   const [selectedToken, setSelectedToken] = useState('')
   const [amount, setAmount] = useState('')
+  const [isFeeAdded, setIsFeeAdded] = useState(false)
 
   // Step 2
   const [destType, setDestType] = useState<DestType>('phone')
@@ -207,6 +217,27 @@ export default function DashboardWithdrawModal({
     ? (amountFloat / availableAmount) * (selectedBalance?.balance_conv?.usd ?? 0)
     : 0
 
+  const curr = selectedCurrency || 'usd'
+  const currValue = availableAmount > 0
+    ? (amountFloat / availableAmount) * (selectedBalance?.balance_conv?.[curr] ?? 0)
+    : 0
+  const currRate = usdValue > 0 ? currValue / usdValue : 1
+
+  const tokenPrice = availableAmount > 0
+    ? (selectedBalance?.balance_conv?.usd ?? 0) / availableAmount
+    : 0
+
+  const feeInUsd = 0.08
+  const feeInCurr = feeInUsd * currRate
+  const feeInTokens = tokenPrice > 0 ? (feeInUsd / tokenPrice) : 0
+
+  const dbToken = tokens?.find((t) => t.symbol === selectedToken)
+  const isL1 = destType === 'address' && selectedChainId === 1
+  const limits = dbToken?.operations_limits?.transfer?.[isL1 ? 'L1' : 'L2']
+
+  const minLimit = limits ? parseDecimal(limits.min) : 0
+  const maxLimit = limits ? parseDecimal(limits.max) : Infinity
+
   // ----- Effects -----
 
   // Auto-select first token
@@ -223,6 +254,7 @@ export default function DashboardWithdrawModal({
       setDirection(1)
       setSelectedToken('')
       setAmount('')
+      setIsFeeAdded(false)
       setDestType('phone')
       setDestination('')
       setSelectedChainId(534352)
@@ -396,11 +428,32 @@ export default function DashboardWithdrawModal({
   const handleAddressChange = useCallback((value: string) => {
     setDestination(value)
     setError('')
-    const detected = detectChainFromAddress(value.trim())
-    if (detected) setSelectedChainId(detected)
-  }, [])
+    const trimmed = value.trim()
+    const detected = detectChainFromAddress(trimmed)
+    if (detected) {
+      setSelectedChainId(detected)
+    } else if (trimmed.endsWith('.eth')) {
+      // ENS names resolve to EVM addresses — ensure an EVM chain is selected
+      setSelectedChainId((prev) => {
+        const currentChain = chains.find((c) => c.id === prev)
+        if (currentChain?.addressType !== 'evm') return 534352 // default to Scroll
+        return prev
+      })
+    }
+  }, [chains])
 
-  const handleMaxClick = () => { setAmount(String(availableAmount)); setError('') }
+  const handleMaxClick = () => { setAmount(String(availableAmount)); setIsFeeAdded(false); setError('') }
+
+  const handleToggleFee = () => {
+    if (!amountFloat) return
+    if (isFeeAdded) {
+      setAmount(Math.max(0, amountFloat - feeInTokens).toString())
+      setIsFeeAdded(false)
+    } else {
+      setAmount((amountFloat + feeInTokens).toString())
+      setIsFeeAdded(true)
+    }
+  }
 
   const handlePaste = async () => {
     try {
@@ -417,6 +470,8 @@ export default function DashboardWithdrawModal({
     if (step === 0) {
       if (!amountFloat || amountFloat <= 0) { setError(t('withdraw.invalid-amount')); return }
       if (amountFloat > availableAmount) { setError(t('withdraw.exceeds-balance')); return }
+      if (minLimit > 0 && amountFloat < minLimit) { setError(`Min ${minLimit} ${selectedToken}`); return }
+      if (maxLimit < Infinity && amountFloat > maxLimit) { setError(`Max ${maxLimit} ${selectedToken}`); return }
     }
     if (step === 1) {
       // For ENS names, use the resolved address for validation
@@ -585,7 +640,7 @@ export default function DashboardWithdrawModal({
                   </Stack>
                   <TextField
                     value={amount}
-                    onChange={(e) => { setAmount(e.target.value); setError('') }}
+                    onChange={(e) => { setAmount(e.target.value); setIsFeeAdded(false); setError('') }}
                     placeholder='0.00' type='number' size='small' fullWidth
                     InputProps={{
                       endAdornment: (
@@ -604,7 +659,7 @@ export default function DashboardWithdrawModal({
                   />
                 </Stack>
 
-                {/* USD Value — always visible */}
+                {/* Summary */}
                 <Box
                   sx={{
                     p: 2, borderRadius: 1.5,
@@ -612,9 +667,29 @@ export default function DashboardWithdrawModal({
                     border: `1px solid ${alpha(theme.palette.grey[500], 0.08)}`,
                   }}
                 >
-                  <Stack direction='row' justifyContent='space-between'>
-                    <Typography variant='body2' color='text.secondary'>{t('withdraw.usd-value')}</Typography>
-                    <Typography variant='subtitle2' fontWeight={700}>~${fNumber(usdValue)}</Typography>
+                  <Stack direction='row' justifyContent='space-between' alignItems='center'>
+                    <Stack spacing={0.5}>
+                      <Typography variant='body2' color='text.primary' fontWeight={600}>
+                        {t('withdraw.you-receive') || 'You receive'}
+                      </Typography>
+                      <Stack direction="row" alignItems="center" spacing={0.1}>
+                        <Typography variant='caption' color='text.secondary'>
+                          {t('withdraw.fee') || 'Fee'}: ${fNumber(feeInCurr)} {curr.toUpperCase()}
+                        </Typography>
+                        <Tooltip title={isFeeAdded ? "Remove fee from amount" : "Add fee to amount"}>
+                          <IconButton 
+                            size="small" 
+                            onClick={handleToggleFee}
+                            sx={{ p: 0.25, ml: 0.25, color: isFeeAdded ? 'primary.main' : 'text.disabled' }}
+                          >
+                            <Iconify icon={isFeeAdded ? "solar:minus-circle-bold" : "solar:add-circle-bold"} width={14} />
+                          </IconButton>
+                        </Tooltip>
+                      </Stack>
+                    </Stack>
+                    <Typography variant='subtitle1' fontWeight={700}>
+                      ~${fNumber(Math.max(0, currValue - feeInCurr))} {curr.toUpperCase()}
+                    </Typography>
                   </Stack>
                 </Box>
               </Stack>
@@ -976,8 +1051,13 @@ export default function DashboardWithdrawModal({
 
                     <Divider sx={{ borderStyle: 'dashed' }} />
                     <Stack direction='row' justifyContent='space-between' alignItems='center'>
-                      <Typography variant='body2' color='text.secondary'>{t('withdraw.usd-value')}</Typography>
-                      <Typography variant='subtitle2' fontWeight={700}>~${fNumber(usdValue)}</Typography>
+                      <Stack spacing={0.5}>
+                        <Typography variant='body2' color='text.secondary'>
+                          {t('withdraw.you-receive') || 'You receive'}
+                        </Typography>
+                        <Typography variant='caption' color='text.disabled'>{t('withdraw.fee') || 'Fee'}: ${fNumber(feeInCurr)} {curr.toUpperCase()}</Typography>
+                      </Stack>
+                      <Typography variant='subtitle2' fontWeight={700}>~${fNumber(Math.max(0, currValue - feeInCurr))} {curr.toUpperCase()}</Typography>
                     </Stack>
                   </Stack>
                 </Box>

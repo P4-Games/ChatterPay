@@ -75,6 +75,8 @@ export type ITransaction = {
   fee: number
   type: string
   status: string
+  user_notes?: string
+  chain_id?: number
 }
 
 export type IToken = {
