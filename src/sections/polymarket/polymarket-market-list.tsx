@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useCallback, useMemo } from 'react'
 
 import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
@@ -25,6 +25,7 @@ import type { IPolymarketEvent, IPolymarketCategory } from 'src/types/polymarket
 
 // ----------------------------------------------------------------------
 const SORT_OPTIONS = [
+  { value: 'recommended', label: 'Recommended' },
   { value: 'volume', label: 'Volume' },
   { value: 'newest', label: 'Newest' },
   { value: 'ending', label: 'Ending Soon' }
@@ -32,6 +33,7 @@ const SORT_OPTIONS = [
 
 type Props = {
   events: IPolymarketEvent[]
+  trendingEvents?: IPolymarketEvent[]
   isLoading: boolean
   category: string
   onChangeCategory: (category: string) => void
@@ -44,6 +46,7 @@ type Props = {
 
 export default function PolymarketMarketList({
   events,
+  trendingEvents = [],
   isLoading,
   category,
   onChangeCategory,
@@ -56,62 +59,69 @@ export default function PolymarketMarketList({
   const { t } = useTranslate()
   const theme = useTheme()
   const isDark = theme.palette.mode === 'dark'
-  const sentinelRef = useRef<HTMLDivElement>(null)
+  const observerRef = useRef<IntersectionObserver | null>(null)
+  const propsRef = useRef({ hasMore, isLoadingMore, isLoading, onLoadMore })
+  propsRef.current = { hasMore, isLoadingMore, isLoading, onLoadMore }
 
   const { data: categoriesData } = useGetPolymarketCategories()
   const allCategories: IPolymarketCategory[] = categoriesData?.data ?? []
   const topCategories = allCategories.filter((c) => !c.parentCategory)
 
-  // Sort at event level
-  const sortedEvents = [...(events || [])].sort((a, b) => {
-    if (sortBy === 'volume') {
-      const volA = a.markets.reduce((sum, m) => sum + (m.volume || 0), 0)
-      const volB = b.markets.reduce((sum, m) => sum + (m.volume || 0), 0)
-      return volB - volA
+  const sortedEvents = useMemo(() => {
+    if (!events) return [];
+
+    // For 'recommended' or any other unknown sort, return events in their original order
+    if (sortBy === 'recommended' || !['volume', 'ending'].includes(sortBy)) {
+      return events;
     }
-    if (sortBy === 'ending') {
-      const endA = a.markets
-        .filter((m) => m.end_date_iso)
-        .map((m) => new Date(m.end_date_iso).getTime())
-        .sort((x, y) => x - y)[0] || Number.MAX_SAFE_INTEGER
-      const endB = b.markets
-        .filter((m) => m.end_date_iso)
-        .map((m) => new Date(m.end_date_iso).getTime())
-        .sort((x, y) => x - y)[0] || Number.MAX_SAFE_INTEGER
-      return endA - endB
-    }
-    return 0
-  })
 
-  // Infinite scroll via IntersectionObserver
-  useEffect(() => {
-    if (!hasMore || isLoadingMore || isLoading) return
+    return [...events].sort((a, b) => {
+      const volA = a.markets.reduce((sum, m) => sum + (m.volume || 0), 0);
+      const volB = b.markets.reduce((sum, m) => sum + (m.volume || 0), 0);
 
-    let observer: IntersectionObserver | null = null
-
-    const timeoutId = setTimeout(() => {
-      observer = new IntersectionObserver(
-        (entries) => {
-          if (entries[0].isIntersecting && hasMore && !isLoadingMore && !isLoading) {
-            onLoadMore()
-          }
-        },
-        { threshold: 0, rootMargin: '200px' }
-      )
-
-      const currentTarget = sentinelRef.current
-      if (currentTarget) {
-        observer.observe(currentTarget)
+      if (sortBy === 'volume') {
+        return volB - volA;
       }
-    }, 100)
 
-    return () => {
-      clearTimeout(timeoutId)
-      if (observer) {
-        observer.disconnect()
+      if (sortBy === 'ending') {
+        const endA = a.markets
+          .filter((m) => m.end_date_iso)
+          .map((m) => new Date(m.end_date_iso).getTime())
+          .sort((x, y) => x - y)[0] || Number.MAX_SAFE_INTEGER;
+        const endB = b.markets
+          .filter((m) => m.end_date_iso)
+          .map((m) => new Date(m.end_date_iso).getTime())
+          .sort((x, y) => x - y)[0] || Number.MAX_SAFE_INTEGER;
+        return endA - endB;
       }
+
+      return 0;
+    });
+  }, [events, sortBy]);
+
+  // Stable sentinel callback ref — observer is created once and reads current
+  // props via ref so it never needs to be torn down/recreated on prop changes.
+  const sentinelRef = useCallback((node: HTMLDivElement | null) => {
+    if (observerRef.current) {
+      observerRef.current.disconnect()
+      observerRef.current = null
     }
-  }, [hasMore, isLoadingMore, isLoading, onLoadMore, sortedEvents.length])
+    if (!node) return
+
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        const { hasMore: hm, isLoadingMore: ilm, isLoading: il, onLoadMore: olm } = propsRef.current
+        if (entries[0].isIntersecting && hm && !ilm && !il) {
+          olm()
+        }
+      },
+      { threshold: 0, rootMargin: '0px 0px 200px 0px' }
+    )
+    observerRef.current.observe(node)
+  }, [])
+
+  // Disconnect observer on unmount
+  useEffect(() => () => { observerRef.current?.disconnect() }, [])
 
   const renderFilters = (
     <Stack
@@ -223,9 +233,9 @@ export default function PolymarketMarketList({
         const key = event.id || event.slug
 
         return (
-          <Grid xs={12} sm={6} md={4} lg={3} key={key}>
+          <Grid xs={12} sm={6} md={4} lg={3} key={key} sx={{ display: 'flex' }}>
             {isSingleMarket ? (
-              <PolymarketMarketCard market={event.markets[0]} compact />
+              <PolymarketMarketCard market={event.markets[0]} inlineImage />
             ) : (
               <PolymarketEventCard event={event} />
             )}

@@ -81,6 +81,8 @@ export type IPolymarketPosition = {
   initialValue?: number
   currentValue?: number
   endDate?: string
+  asset?: string
+  token_id?: string
 }
 
 export type IPolymarketActivePurchase = {

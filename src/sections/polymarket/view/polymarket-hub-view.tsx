@@ -36,7 +36,7 @@ export default function PolymarketHubView() {
   const { user } = useAuthContext()
 
   const [category, setCategory] = useState('All')
-  const [sortBy, setSortBy] = useState('volume')
+  const [sortBy, setSortBy] = useState('recommended')
 
   // Account status for terms check
   const [accountStatus, setAccountStatus] = useState<IPolymarketAccountStatus | null>(null)
@@ -70,7 +70,7 @@ export default function PolymarketHubView() {
     isLoadingMore,
     hasMore,
     loadMore
-  } = useGetPolymarketEventsInfinite(category)
+  } = useGetPolymarketEventsInfinite(category, user?.id)
 
   // Trending: separate fetch without category filter (first 4)
   const { data: trendingData } = useGetPolymarketEvents()
@@ -193,6 +193,7 @@ export default function PolymarketHubView() {
 
         <PolymarketMarketList
           events={events}
+          trendingEvents={trendingEvents}
           isLoading={isLoading}
           category={category}
           onChangeCategory={setCategory}

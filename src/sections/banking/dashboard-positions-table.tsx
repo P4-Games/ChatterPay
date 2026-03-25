@@ -114,7 +114,9 @@ export default function DashboardPositionsTable({
     setSellingPos(posKey)
 
     const token = pos.market?.tokens?.find((tk: any) => tk.outcome === pos.outcome)
-    if (!token?.token_id) {
+    const tokenId = pos.asset || pos.token_id || token?.token_id
+
+    if (!tokenId) {
       enqueueSnackbar('Token ID not found', { variant: 'error' })
       setSellingPos(null)
       return
@@ -138,7 +140,7 @@ export default function DashboardPositionsTable({
 
     try {
       const res = await polymarketPurchase({
-        token_id: token.token_id,
+        token_id: tokenId,
         side: 'SELL',
         size: sellSize,
         price: sellPrice,

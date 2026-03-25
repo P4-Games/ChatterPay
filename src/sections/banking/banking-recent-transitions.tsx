@@ -9,6 +9,7 @@ import MenuItem from '@mui/material/MenuItem'
 import TableRow from '@mui/material/TableRow'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
+import CircularProgress from '@mui/material/CircularProgress'
 import { Link, Skeleton } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import TableBody from '@mui/material/TableBody'
@@ -28,6 +29,8 @@ import { maskAddress } from 'src/utils/format-address'
 
 import { useTranslate } from 'src/locales'
 import { EXPLORER_L2_URL } from 'src/config-global'
+
+const POLYGON_EXPLORER_URL = 'https://polygonscan.com'
 
 import Label from 'src/components/label'
 import Iconify from 'src/components/iconify'
@@ -120,32 +123,31 @@ export default function BankingRecentTransitions({
     <TableContainer sx={{ overflow: 'unset' }}>
       <Scrollbar>
         <Table sx={{ minWidth: mdUp ? 720 : 300 }}>
-          {mdUp && <TableHeadCustom headLabel={tableLabels} />}
+          {mdUp && <TableHeadCustom headLabel={tableLabels} sx={{ '& th': { px: 3 } }} />}
 
           <TableBody>
             {[...Array(5)].map((_, index) => (
               <TableRow key={index}>
-                <TableCell>
+                <TableCell sx={{ pl: 3, py: 2 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Skeleton variant='circular' width={48} height={48} sx={{ mr: 2 }} />
-                    <Skeleton variant='text' width={120} />
+                    <Skeleton variant='text' width={160} />
                   </Box>
                 </TableCell>
 
-                <TableCell>
-                  <Skeleton variant='text' width={80} />
+                <TableCell sx={{ py: 2 }}>
+                  <Skeleton variant='text' width={100} />
                 </TableCell>
 
-                <TableCell>
-                  <Skeleton variant='text' width={120} />
+                <TableCell sx={{ py: 2 }}>
+                  <Skeleton variant='text' width={140} />
                 </TableCell>
 
-                <TableCell>
-                  <Skeleton variant='rectangular' width={80} height={32} />
-                </TableCell>
-
-                <TableCell align='right'>
-                  <Skeleton variant='circular' width={32} height={32} />
+                <TableCell align='right' sx={{ pr: 3, py: 2 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1 }}>
+                    <Skeleton variant='circular' width={32} height={32} />
+                    <Skeleton variant='circular' width={32} height={32} />
+                  </Box>
                 </TableCell>
               </TableRow>
             ))}
@@ -188,6 +190,19 @@ type BankingRecentTransitionsRowProps = {
   tokenLogos: Record<string, string>
 }
 
+function isPolymarketTrx(type: string): boolean {
+  return type.toLowerCase().startsWith('polymarket')
+}
+
+function getPolymarketSide(data: ITransaction): 'buy' | 'sell' | 'bridge' {
+  if (data.type === 'polymarket_deposit' || data.type === 'polymarket_withdraw' || data.type === 'polymarket_bridge') {
+    return 'bridge'
+  }
+  const notes = (data.user_notes || '').toUpperCase()
+  if (notes.includes('SELL')) return 'sell'
+  return 'buy'
+}
+
 function getContactData(
   userWallet: string,
   data: ITransaction,
@@ -199,7 +214,10 @@ function getContactData(
 
   const trxReceive: boolean = userWallet === data.wallet_to
 
-  if (data.type.toLowerCase() === 'swap') {
+  if (isPolymarketTrx(data.type)) {
+    contactIdentifier = ''
+    calculatedAmount = fNumber(data.amount)
+  } else if (data.type.toLowerCase() === 'swap') {
     contactName = (trxReceive ? data.contact_to_name : data.contact_from_name) || ''
     contactIdentifier = (trxReceive ? data.contact_to_phone : data.contact_from_phone) || ''
     calculatedAmount = fNumber(data.amount)
@@ -235,11 +253,21 @@ function BankingRecentTransitionsRow({
   const { t } = useTranslate()
   const lightMode = theme.palette.mode === 'light'
   const trxReceive: boolean = userWallet === row.wallet_to
+  const isPolymarket = isPolymarketTrx(row.type)
+  const polymarketSide = isPolymarket ? getPolymarketSide(row) : null
   const { contactName, contactIdentifier, calculatedAmount } = getContactData(userWallet, row, mdUp)
-  const message: string = `${
-    trxReceive ? t('transactions.receive-from') : t('transactions.sent-to')
-  } ${contactName}`
-  const trxLink = `${EXPLORER_L2_URL}/tx/${row.trx_hash}`
+
+  let message: string
+  if (isPolymarket) {
+    if (polymarketSide === 'sell') message = t('transactions.polymarket-sell')
+    else if (polymarketSide === 'buy') message = t('transactions.polymarket-buy')
+    else message = trxReceive ? t('transactions.polymarket-transfer-from') : t('transactions.polymarket-transfer-to')
+  } else {
+    message = `${trxReceive ? t('transactions.receive-from') : t('transactions.sent-to')} ${contactName}`
+  }
+
+  const explorerBase = row.chain_id === 137 ? POLYGON_EXPLORER_URL : EXPLORER_L2_URL
+  const trxLink = `${explorerBase}/tx/${row.trx_hash}`
 
   const popover = usePopover()
 
@@ -298,19 +326,36 @@ function BankingRecentTransitionsRow({
     </Box>
   )
 
+  let badgeColor: 'success' | 'error' | 'info' = trxReceive ? 'success' : 'error'
+  let badgeIcon = trxReceive ? 'eva:diagonal-arrow-left-down-fill' : 'eva:diagonal-arrow-right-up-fill'
+
+  if (isPolymarket) {
+    if (polymarketSide === 'bridge') {
+      badgeColor = trxReceive ? 'success' : 'error'
+      badgeIcon = trxReceive ? 'eva:diagonal-arrow-left-down-fill' : 'eva:diagonal-arrow-right-up-fill'
+    } else {
+      badgeColor = 'info'
+      badgeIcon = polymarketSide === 'sell' 
+        ? 'eva:diagonal-arrow-right-up-fill' 
+        : 'eva:diagonal-arrow-left-down-fill'
+    }
+  }
+
   const renderAvatar = (
     <Box sx={{ position: 'relative', mr: 2 }}>
       <Badge
         overlap='circular'
-        color={trxReceive ? 'success' : 'error'}
+        color={badgeColor}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         badgeContent={
-          <Iconify
-            icon={
-              trxReceive ? 'eva:diagonal-arrow-left-down-fill' : 'eva:diagonal-arrow-right-up-fill'
-            }
-            width={16}
-          />
+          row.status === 'pending' ? (
+            <CircularProgress size={12} sx={{ color: 'inherit' }} />
+          ) : (
+            <Iconify
+              icon={badgeIcon}
+              width={16}
+            />
+          )
         }
         sx={{
           [`& .${badgeClasses.badge}`]: {
@@ -319,11 +364,19 @@ function BankingRecentTransitionsRow({
           }
         }}
       >
-        <Avvvatars
-          value={contactName || (trxReceive ? row.wallet_from : row.wallet_to || '')}
-          style={contactName ? 'character' : 'shape'}
-          size={48}
-        />
+        {isPolymarket ? (
+          <Avatar
+            src='/assets/icons/polymarket/logo.svg'
+            alt='Polymarket'
+            sx={{ width: 48, height: 48 }}
+          />
+        ) : (
+          <Avvvatars
+            value={contactName || (trxReceive ? row.wallet_from : row.wallet_to || '')}
+            style={contactName ? 'character' : 'shape'}
+            size={48}
+          />
+        )}
       </Badge>
     </Box>
   )
@@ -372,17 +425,17 @@ function BankingRecentTransitionsRow({
         <Box sx={{ position: 'relative', mr: 1.5 }}>
           <Badge
             overlap='circular'
-            color={trxReceive ? 'success' : 'error'}
+            color={badgeColor}
             anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             badgeContent={
-              <Iconify
-                icon={
-                  trxReceive
-                    ? 'eva:diagonal-arrow-left-down-fill'
-                    : 'eva:diagonal-arrow-right-up-fill'
-                }
-                width={16}
-              />
+              row.status === 'pending' ? (
+                <CircularProgress size={12} sx={{ color: 'inherit' }} />
+              ) : (
+                <Iconify
+                  icon={badgeIcon}
+                  width={16}
+                />
+              )
             }
             sx={{
               [`& .${badgeClasses.badge}`]: {
@@ -391,11 +444,19 @@ function BankingRecentTransitionsRow({
               }
             }}
           >
-            <Avvvatars
-              value={contactName || (trxReceive ? row.wallet_from : row.wallet_to || '')}
-              style={contactName ? 'character' : 'shape'}
-              size={40}
-            />
+            {isPolymarket ? (
+              <Avatar
+                src='/assets/icons/polymarket/logo.svg'
+                alt='Polymarket'
+                sx={{ width: 40, height: 40 }}
+              />
+            ) : (
+              <Avvvatars
+                value={contactName || (trxReceive ? row.wallet_from : row.wallet_to || '')}
+                style={contactName ? 'character' : 'shape'}
+                size={40}
+              />
+            )}
           </Badge>
         </Box>
         <ListItemText

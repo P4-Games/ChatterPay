@@ -242,7 +242,18 @@ export default function DashboardPortfolioBalance({
   const headingColor = isDark ? '#B8F6C9' : '#173F35'
   const btnColor = isDark ? '#7EDBB8' : '#0D352C'
 
-  const combinedTotal = (totals[selectedCurrency] || 0) + polymarketTotalUsd
+  let conversionRate = 1
+  if (selectedCurrency !== 'usd') {
+    if (totals.usd > 0) {
+      conversionRate = (totals[selectedCurrency] || 0) / totals.usd
+    } else {
+      const stable = balances.find((b) => b.balance_conv?.usd > 0)
+      if (stable) conversionRate = stable.balance_conv[selectedCurrency] / stable.balance_conv.usd
+    }
+  }
+
+  const polymarketConverted = polymarketTotalUsd * conversionRate
+  const combinedTotal = (totals[selectedCurrency] || 0) + polymarketConverted
 
   // Sort balances by USD value for dropdown
   const sortedBalances = [...balances].sort(
@@ -407,7 +418,7 @@ export default function DashboardPortfolioBalance({
           </Stack>
           <Stack direction='row' alignItems='center' spacing={1}>
             <Typography variant='subtitle1' fontWeight={600}>
-              {hideValues ? '********' : `$${fNumber(polymarketTotalUsd)} USD`}
+              {hideValues ? '********' : `$${fNumber(polymarketConverted)} ${selectedCurrency.toUpperCase()}`}
             </Typography>
             <Iconify icon='eva:chevron-right-fill' width={20} sx={{ color: 'text.secondary' }} />
           </Stack>
@@ -415,7 +426,7 @@ export default function DashboardPortfolioBalance({
       </Card>
 
       {/* Action Buttons */}
-      <Stack direction='row' spacing={1.5}>
+      <Stack direction='row' spacing={1.5} useFlexGap sx={{ flexWrap: 'wrap' }}>
         <Button
           variant='contained'
           color='primary'
@@ -424,6 +435,7 @@ export default function DashboardPortfolioBalance({
           sx={{
             px: 3,
             py: 1.2,
+            flex: { xs: 1, sm: 'none' },
             ...(isDark && {
               bgcolor: '#1B9C85',
               color: '#fff',
@@ -441,6 +453,7 @@ export default function DashboardPortfolioBalance({
           sx={{
             px: 3,
             py: 1.2,
+            flex: { xs: 1, sm: 'none' },
             color: btnColor,
             borderColor: btnColor,
             borderWidth: '0.5px',
@@ -454,7 +467,7 @@ export default function DashboardPortfolioBalance({
           Withdraw
         </Button>
 
-        {idleUsdc > 0 && (
+        {idleUsdc >= 0.01 && (
           <Button
             variant='outlined'
             startIcon={
@@ -465,10 +478,11 @@ export default function DashboardPortfolioBalance({
               )
             }
             onClick={onClaimClick}
-            disabled={isClaiming || idleUsdc <= 0}
+            disabled={isClaiming}
             sx={{
               px: 3,
               py: 1.2,
+              flex: { xs: '1 1 100%', sm: 'none' },
               color: btnColor,
               borderColor: btnColor,
               borderWidth: '0.5px',

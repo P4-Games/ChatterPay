@@ -121,12 +121,16 @@ export default function PolymarketEventCard({ event, compact = false }: Props) {
         cursor: 'pointer',
         border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}`,
         overflow: 'hidden',
+        height: '100%',
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
         '&:hover': {
           boxShadow: theme.shadows[12]
         }
       }}
     >
-      <Stack spacing={1.5} sx={{ p: 2.5 }}>
+      <Stack spacing={1.5} sx={{ p: 2.5, flex: 1, justifyContent: 'space-between' }}>
         {/* Header: inline image + title + arrow */}
         <Stack direction='row' alignItems='center' spacing={1.5}>
           {eventImage && (

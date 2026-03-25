@@ -111,13 +111,14 @@ export default function PolymarketPortfolio() {
           mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'))
           mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/portfolio'))
           enqueueSnackbar('Scroll Wallet Balance Updated', { variant: 'success' })
+          setIsClaiming(false)
         }, 40000)
       } else {
         enqueueSnackbar(result.message || 'Error claiming funds', { variant: 'error' })
+        setIsClaiming(false)
       }
     } catch {
       enqueueSnackbar('Error claiming funds', { variant: 'error' })
-    } finally {
       setIsClaiming(false)
     }
   }
@@ -138,7 +139,7 @@ export default function PolymarketPortfolio() {
   return (
     <Stack spacing={3}>
       {/* Portfolio Summary */}
-      <Stack direction="row" alignItems="center" justifyContent="space-between">
+      <Stack direction={{ xs: 'column', sm: 'row' }} alignItems={{ xs: 'flex-start', sm: 'center' }} justifyContent="space-between" spacing={2}>
         <Stack spacing={0.5}>
           <Typography variant="h6" fontWeight={700}>Portfolio Overview</Typography>
           {idleUsdc > 0 && (
@@ -148,16 +149,18 @@ export default function PolymarketPortfolio() {
              </Typography>
           )}
         </Stack>
-        <Button 
-          variant="contained" 
-          color="primary"
-          onClick={handleClaimSubmit}
-          disabled={isClaiming || idleUsdc <= 0}
-          startIcon={isClaiming ? <CircularProgress size={16} color="inherit" /> : <Iconify icon="solar:arrow-right-up-bold" />}
-          sx={{ borderRadius: 1.5, px: 2 }}
-        >
-          {isClaiming ? 'Claiming...' : `Claim All to Scroll`}
-        </Button>
+        {idleUsdc >= 0.01 && (
+          <Button 
+            variant="contained" 
+            color="primary"
+            onClick={handleClaimSubmit}
+            disabled={isClaiming}
+            startIcon={isClaiming ? <CircularProgress size={16} color="inherit" /> : <Iconify icon="solar:arrow-right-up-bold" />}
+            sx={{ borderRadius: 1.5, px: 2, width: { xs: '100%', sm: 'auto' } }}
+          >
+            {isClaiming ? 'Claiming...' : `Claim All to Scroll`}
+          </Button>
+        )}
       </Stack>
       <Box
         sx={{
@@ -338,7 +341,9 @@ export default function PolymarketPortfolio() {
                           setSellingPos(posKey)
 
                           const token = pos.market?.tokens?.find((t) => t.outcome === pos.outcome)
-                          if (!token?.token_id) {
+                          const tokenId = pos.asset || pos.token_id || token?.token_id
+
+                          if (!tokenId) {
                             enqueueSnackbar('Token ID not found', { variant: 'error' })
                             setSellingPos(null)
                             return
@@ -363,7 +368,7 @@ export default function PolymarketPortfolio() {
 
                           try {
                             const res = await polymarketPurchase({
-                              token_id: token.token_id,
+                              token_id: tokenId,
                               side: 'SELL',
                               size: sellSize,
                               price: sellPrice,

@@ -109,6 +109,10 @@ export default function PolymarketMarketCard({ market, compact = false, inlineIm
         cursor: 'pointer',
         border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}`,
         overflow: 'hidden',
+        height: '100%',
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
         '&:hover': {
           boxShadow: theme.shadows[12]
         }
@@ -124,12 +128,13 @@ export default function PolymarketMarketCard({ market, compact = false, inlineIm
             width: '100%',
             height: 160,
             objectFit: 'cover',
-            bgcolor: 'grey.200'
+            bgcolor: 'grey.200',
+            flexShrink: 0
           }}
         />
       )}
 
-      <Stack spacing={2} sx={{ p: 2.5 }}>
+      <Stack spacing={2} sx={{ p: 2.5, flex: 1, justifyContent: 'space-between' }}>
         {/* Category — hide in inline mode (redundant on event detail) */}
         {!inlineImage && market.category && (
           <Chip
@@ -251,7 +256,7 @@ export default function PolymarketMarketCard({ market, compact = false, inlineIm
         </Stack>
 
         {/* Volume & End Date */}
-        <Stack direction='row' alignItems='center' justifyContent='space-between' sx={{ pt: 0.5 }}>
+        <Stack direction='row' alignItems='center' justifyContent='space-between' sx={{ pt: 0.5, mt: 'auto' }}>
           <Stack direction='row' alignItems='center' spacing={0.5}>
             <Iconify icon='solar:graph-up-bold' width={14} sx={{ color: 'text.secondary' }} />
             <Typography variant='caption' color='text.secondary'>

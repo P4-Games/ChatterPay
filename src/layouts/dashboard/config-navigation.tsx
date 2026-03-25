@@ -1,5 +1,7 @@
 import { useMemo } from 'react'
 
+import Box from '@mui/material/Box'
+
 import { paths } from 'src/routes/paths'
 
 import { useTranslate } from 'src/locales'
@@ -16,6 +18,19 @@ const icon = (name: string) => (
   // https://www.streamlinehq.com/icons
 )
 
+const polymarketIcon = (
+  <Box
+    component='img'
+    src='/assets/icons/polymarket/logo.svg'
+    sx={{ 
+      width: 22, 
+      height: 22, 
+      filter: 'grayscale(1)', 
+      opacity: 0.8 
+    }}
+  />
+)
+
 const ICONS = {
   user: icon('ic_user'),
   nft: icon('ic_label'),
@@ -23,7 +38,7 @@ const ICONS = {
   account: icon('ic_account'),
   notification: icon('ic_mail'),
   banking: icon('ic_banking'),
-  polymarket: icon('ic_analytics')
+  polymarket: polymarketIcon
 }
 
 // ----------------------------------------------------------------------
@@ -51,6 +66,11 @@ export function useNavData() {
             title: t('menu.nfts'),
             path: paths.dashboard.nfts.root,
             icon: ICONS.nft
+          },
+          {
+            title: 'Polymarket',
+            path: paths.dashboard.polymarket.root,
+            icon: ICONS.polymarket
           }
         ]
       },
@@ -78,3 +98,4 @@ export function useNavData() {
 
   return data
 }
+

@@ -157,13 +157,14 @@ export default function OverviewBankingView() {
           mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'))
           mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/portfolio'))
           enqueueSnackbar('Scroll Wallet Balance Updated', { variant: 'success' })
+          setIsClaiming(false)
         }, 40000)
       } else {
         enqueueSnackbar(result.message || 'Error claiming funds', { variant: 'error' })
+        setIsClaiming(false)
       }
     } catch {
       enqueueSnackbar('Error claiming funds', { variant: 'error' })
-    } finally {
       setIsClaiming(false)
     }
   }
@@ -177,7 +178,7 @@ export default function OverviewBankingView() {
           top: 0,
           left: 0,
           right: 0,
-          height: '50vh',
+          bottom: 0,
           background: isDark
             ? 'linear-gradient(180deg, #161C24 0%, #0A2E1A 100%)'
             : 'linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 100%)',
@@ -269,6 +270,8 @@ export default function OverviewBankingView() {
         tokenLogos={tokenLogos}
         transactions={safeTransactions}
         userWallet={walletAddress}
+        tokens={tokens}
+        selectedCurrency={selectedCurrency}
       />
     </>
   )
