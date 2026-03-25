@@ -534,7 +534,8 @@ export async function getUserTransactions(wallet: string): Promise<ITransaction[
           fee: 1,
           type: 1,
           status: 1,
-          trx_hash: 1
+          trx_hash: 1,
+          user_notes: 1
         }
       },
       {

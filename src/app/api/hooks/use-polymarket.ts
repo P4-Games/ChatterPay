@@ -41,9 +41,8 @@ export function useGetPolymarketEvents(params?: string) {
   )
 }
 
-export function useGetPolymarketEventsInfinite(category?: string) {
+export function useGetPolymarketEventsInfinite(category?: string, userId?: string) {
   const getKey = (pageIndex: number, previousPageData: any) => {
-    // If previous page returned fewer items than page size, we've reached the end
     if (previousPageData && (!previousPageData.ok || !Array.isArray(previousPageData.data) || previousPageData.data.length < EVENTS_PAGE_SIZE)) {
       return null
     }
@@ -55,14 +54,16 @@ export function useGetPolymarketEventsInfinite(category?: string) {
 
     return [
       endpoints.polymarket.events(params.toString()),
-      { headers: getAuthorizationHeader() }
+      { headers: getAuthorizationHeader(), userId }
     ]
   }
 
   const { data, error, size, setSize, isLoading, isValidating } =
     useSWRInfinite(getKey, fetcher, {
       revalidateFirstPage: true,
-      revalidateAll: false
+      revalidateAll: false,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
     })
 
   const allEvents: IPolymarketEvent[] = useMemo(() => {
@@ -76,7 +77,7 @@ export function useGetPolymarketEventsInfinite(category?: string) {
     return Array.from(map.values())
   }, [data])
 
-  const isLoadingMore = isLoading || (size > 0 && data && typeof data[size - 1] === 'undefined')
+  const isLoadingMore = !isLoading && size > 0 && data && typeof data[size - 1] === 'undefined'
 
   const hasMore = useMemo(() => {
     if (!data || data.length === 0) return true
@@ -85,17 +86,16 @@ export function useGetPolymarketEventsInfinite(category?: string) {
     return lastPage.data.length >= EVENTS_PAGE_SIZE
   }, [data])
 
+  // Stable loadMore — use functional setSize so callback identity never changes
   const loadMore = useCallback(() => {
-    if (!isLoadingMore && hasMore) {
-      setSize(size + 1)
-    }
-  }, [hasMore, isLoadingMore, setSize, size])
+    setSize((s) => s + 1)
+  }, [setSize])
 
   const memoizedValue = useMemo(
     () => ({
       events: allEvents,
       isLoading,
-      isLoadingMore,
+      isLoadingMore: !!isLoadingMore,
       error,
       isValidating,
       hasMore,

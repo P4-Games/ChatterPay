@@ -9,7 +9,7 @@ import type { JwtPayload } from 'src/types/jwt'
 
 // ----------------------------------------------------------------------
 
-type AuthContext = {
+export type AuthContext = {
   userId: string
   ip: string
   jwtToken: JwtPayload
