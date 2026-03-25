@@ -40,7 +40,8 @@ export default function NavMini() {
           top: 0,
           left: 0,
           width: NAV.W_MINI,
-          bgcolor: (theme) => (theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[800]),
+          bgcolor: (theme) =>
+            theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[800],
           borderRight: (theme) => `dashed 1px ${theme.palette.divider}`,
           ...hideScroll.x
         }}

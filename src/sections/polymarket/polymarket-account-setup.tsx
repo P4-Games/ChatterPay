@@ -18,10 +18,7 @@ import { alpha, useTheme } from '@mui/material/styles'
 
 import { useTranslate } from 'src/locales'
 import { useBoolean } from 'src/hooks/use-boolean'
-import {
-  polymarketAcceptTerms,
-  polymarketCreateAccount
-} from 'src/app/api/hooks'
+import { polymarketAcceptTerms, polymarketCreateAccount } from 'src/app/api/hooks'
 
 import Iconify from 'src/components/iconify'
 
@@ -217,15 +214,9 @@ export default function PolymarketAccountSetup({ accountStatus, onAccountUpdated
         </DialogTitle>
         <DialogContent dividers>
           <Stack spacing={2}>
-            <Typography variant='body2'>
-              {t('polymarket.terms-content-1')}
-            </Typography>
-            <Typography variant='body2'>
-              {t('polymarket.terms-content-2')}
-            </Typography>
-            <Typography variant='body2'>
-              {t('polymarket.terms-content-3')}
-            </Typography>
+            <Typography variant='body2'>{t('polymarket.terms-content-1')}</Typography>
+            <Typography variant='body2'>{t('polymarket.terms-content-2')}</Typography>
+            <Typography variant='body2'>{t('polymarket.terms-content-3')}</Typography>
           </Stack>
         </DialogContent>
         <DialogActions sx={{ px: 3, py: 2 }}>
@@ -236,9 +227,7 @@ export default function PolymarketAccountSetup({ accountStatus, onAccountUpdated
             variant='contained'
             onClick={handleAcceptTerms}
             disabled={isAccepting}
-            startIcon={
-              isAccepting ? <CircularProgress size={18} color='inherit' /> : null
-            }
+            startIcon={isAccepting ? <CircularProgress size={18} color='inherit' /> : null}
           >
             {isAccepting ? t('polymarket.accepting') : t('polymarket.agree-continue')}
           </Button>

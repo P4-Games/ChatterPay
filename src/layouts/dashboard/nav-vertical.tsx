@@ -85,7 +85,8 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
             top: 0,
             left: 0,
             width: NAV.W_VERTICAL,
-            bgcolor: (theme) => (theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[800]),
+            bgcolor: (theme) =>
+              theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[800],
             borderRight: (theme) => `dashed 1px ${theme.palette.divider}`
           }}
         >
@@ -98,7 +99,8 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
           PaperProps={{
             sx: {
               width: NAV.W_VERTICAL,
-              bgcolor: (theme) => (theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[800])
+              bgcolor: (theme) =>
+                theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[800]
             }
           }}
         >

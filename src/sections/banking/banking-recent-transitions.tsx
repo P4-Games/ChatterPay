@@ -144,7 +144,14 @@ export default function BankingRecentTransitions({
                 </TableCell>
 
                 <TableCell align='right' sx={{ pr: 3, py: 2 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1 }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'flex-end',
+                      gap: 1
+                    }}
+                  >
                     <Skeleton variant='circular' width={32} height={32} />
                     <Skeleton variant='circular' width={32} height={32} />
                   </Box>
@@ -195,7 +202,11 @@ function isPolymarketTrx(type: string): boolean {
 }
 
 function getPolymarketSide(data: ITransaction): 'buy' | 'sell' | 'bridge' {
-  if (data.type === 'polymarket_deposit' || data.type === 'polymarket_withdraw' || data.type === 'polymarket_bridge') {
+  if (
+    data.type === 'polymarket_deposit' ||
+    data.type === 'polymarket_withdraw' ||
+    data.type === 'polymarket_bridge'
+  ) {
     return 'bridge'
   }
   const notes = (data.user_notes || '').toUpperCase()
@@ -261,7 +272,10 @@ function BankingRecentTransitionsRow({
   if (isPolymarket) {
     if (polymarketSide === 'sell') message = t('transactions.polymarket-sell')
     else if (polymarketSide === 'buy') message = t('transactions.polymarket-buy')
-    else message = trxReceive ? t('transactions.polymarket-transfer-from') : t('transactions.polymarket-transfer-to')
+    else
+      message = trxReceive
+        ? t('transactions.polymarket-transfer-from')
+        : t('transactions.polymarket-transfer-to')
   } else {
     message = `${trxReceive ? t('transactions.receive-from') : t('transactions.sent-to')} ${contactName}`
   }
@@ -327,17 +341,22 @@ function BankingRecentTransitionsRow({
   )
 
   let badgeColor: 'success' | 'error' | 'info' = trxReceive ? 'success' : 'error'
-  let badgeIcon = trxReceive ? 'eva:diagonal-arrow-left-down-fill' : 'eva:diagonal-arrow-right-up-fill'
+  let badgeIcon = trxReceive
+    ? 'eva:diagonal-arrow-left-down-fill'
+    : 'eva:diagonal-arrow-right-up-fill'
 
   if (isPolymarket) {
     if (polymarketSide === 'bridge') {
       badgeColor = trxReceive ? 'success' : 'error'
-      badgeIcon = trxReceive ? 'eva:diagonal-arrow-left-down-fill' : 'eva:diagonal-arrow-right-up-fill'
+      badgeIcon = trxReceive
+        ? 'eva:diagonal-arrow-left-down-fill'
+        : 'eva:diagonal-arrow-right-up-fill'
     } else {
       badgeColor = 'info'
-      badgeIcon = polymarketSide === 'sell' 
-        ? 'eva:diagonal-arrow-right-up-fill' 
-        : 'eva:diagonal-arrow-left-down-fill'
+      badgeIcon =
+        polymarketSide === 'sell'
+          ? 'eva:diagonal-arrow-right-up-fill'
+          : 'eva:diagonal-arrow-left-down-fill'
     }
   }
 
@@ -351,10 +370,7 @@ function BankingRecentTransitionsRow({
           row.status === 'pending' ? (
             <CircularProgress size={12} sx={{ color: 'inherit' }} />
           ) : (
-            <Iconify
-              icon={badgeIcon}
-              width={16}
-            />
+            <Iconify icon={badgeIcon} width={16} />
           )
         }
         sx={{
@@ -431,10 +447,7 @@ function BankingRecentTransitionsRow({
               row.status === 'pending' ? (
                 <CircularProgress size={12} sx={{ color: 'inherit' }} />
               ) : (
-                <Iconify
-                  icon={badgeIcon}
-                  width={16}
-                />
+                <Iconify icon={badgeIcon} width={16} />
               )
             }
             sx={{

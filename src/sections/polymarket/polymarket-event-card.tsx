@@ -41,8 +41,9 @@ export default function PolymarketEventCard({ event, compact = false }: Props) {
 
   const earliestEnd = event.markets
     .filter((m) => m.end_date_iso)
-    .sort((a, b) => new Date(a.end_date_iso).getTime() - new Date(b.end_date_iso).getTime())[0]
-    ?.end_date_iso
+    .sort(
+      (a, b) => new Date(a.end_date_iso).getTime() - new Date(b.end_date_iso).getTime()
+    )[0]?.end_date_iso
 
   // Event-level image with fallback to first market image
   const eventImage = event.image || event.icon || firstMarket?.image || ''
@@ -52,8 +53,7 @@ export default function PolymarketEventCard({ event, compact = false }: Props) {
   }
 
   /** Short label for a sub-market option */
-  const getOptionLabel = (market: typeof firstMarket) =>
-    market.group_item_title || market.question
+  const getOptionLabel = (market: typeof firstMarket) => market.group_item_title || market.question
 
   if (compact) {
     return (
@@ -104,7 +104,11 @@ export default function PolymarketEventCard({ event, compact = false }: Props) {
           >
             {event.title}
           </Typography>
-          <HugeiconsIcon icon={ArrowRight01Icon} size={20} style={{ color: theme.palette.text.secondary }} />
+          <HugeiconsIcon
+            icon={ArrowRight01Icon}
+            size={20}
+            style={{ color: theme.palette.text.secondary }}
+          />
         </Stack>
       </Card>
     )
@@ -166,7 +170,11 @@ export default function PolymarketEventCard({ event, compact = false }: Props) {
           >
             {event.title}
           </Typography>
-          <HugeiconsIcon icon={ArrowRight01Icon} size={18} style={{ color: theme.palette.text.secondary, flexShrink: 0 }} />
+          <HugeiconsIcon
+            icon={ArrowRight01Icon}
+            size={18}
+            style={{ color: theme.palette.text.secondary, flexShrink: 0 }}
+          />
         </Stack>
 
         {/* Options list */}

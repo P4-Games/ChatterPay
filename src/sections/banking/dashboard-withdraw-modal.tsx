@@ -23,7 +23,7 @@ import {
   CircularProgress,
   Divider,
   ListSubheader,
-  Tooltip,
+  Tooltip
 } from '@mui/material'
 import { alpha, useTheme } from '@mui/material/styles'
 
@@ -73,29 +73,79 @@ const ENS_LOGO = 'https://cryptofonts.com/img/SVG/ens.svg'
 const LIFI_CHAINS_URL = 'https://li.quest/v1/chains?chainTypes=EVM,SVM'
 
 const CHAIN_PRIORITY: Record<number, number> = {
-  534352: 0, 1: 1, 42161: 2, 8453: 3, 10: 4, 137: 5,
-  56: 6, 43114: 7, 324: 8, 59144: 9, 5000: 10, 100: 11,
+  534352: 0,
+  1: 1,
+  42161: 2,
+  8453: 3,
+  10: 4,
+  137: 5,
+  56: 6,
+  43114: 7,
+  324: 8,
+  59144: 9,
+  5000: 10,
+  100: 11
 }
 
 const BITCOIN_CHAIN: ChainData = {
-  key: 'btc', name: 'Bitcoin', id: 20000000000001, chainType: 'UTXO',
-  logoURI: 'https://raw.githubusercontent.com/lifinance/types/main/src/assets/icons/chains/bitcoin.svg',
-  addressType: 'bitcoin',
+  key: 'btc',
+  name: 'Bitcoin',
+  id: 20000000000001,
+  chainType: 'UTXO',
+  logoURI:
+    'https://raw.githubusercontent.com/lifinance/types/main/src/assets/icons/chains/bitcoin.svg',
+  addressType: 'bitcoin'
 }
 
 const SOLANA_CHAIN: ChainData = {
-  key: 'sol', name: 'Solana', id: 1151111081099710, chainType: 'SVM',
-  logoURI: 'https://raw.githubusercontent.com/lifinance/types/main/src/assets/icons/chains/solana.svg',
-  addressType: 'solana',
+  key: 'sol',
+  name: 'Solana',
+  id: 1151111081099710,
+  chainType: 'SVM',
+  logoURI:
+    'https://raw.githubusercontent.com/lifinance/types/main/src/assets/icons/chains/solana.svg',
+  addressType: 'solana'
 }
 
 const FALLBACK_CHAINS: ChainData[] = [
-  { key: 'scl', name: 'Scroll', id: 534352, chainType: 'EVM', logoURI: 'https://raw.githubusercontent.com/lifinance/types/main/src/assets/icons/chains/scroll.svg', addressType: 'evm' },
-  { key: 'eth', name: 'Ethereum', id: 1, chainType: 'EVM', logoURI: 'https://raw.githubusercontent.com/lifinance/types/main/src/assets/icons/chains/ethereum.svg', addressType: 'evm' },
-  { key: 'arb', name: 'Arbitrum', id: 42161, chainType: 'EVM', logoURI: 'https://raw.githubusercontent.com/lifinance/types/main/src/assets/icons/chains/arbitrum.svg', addressType: 'evm' },
-  { key: 'bas', name: 'Base', id: 8453, chainType: 'EVM', logoURI: 'https://raw.githubusercontent.com/lifinance/types/main/src/assets/icons/chains/base.svg', addressType: 'evm' },
+  {
+    key: 'scl',
+    name: 'Scroll',
+    id: 534352,
+    chainType: 'EVM',
+    logoURI:
+      'https://raw.githubusercontent.com/lifinance/types/main/src/assets/icons/chains/scroll.svg',
+    addressType: 'evm'
+  },
+  {
+    key: 'eth',
+    name: 'Ethereum',
+    id: 1,
+    chainType: 'EVM',
+    logoURI:
+      'https://raw.githubusercontent.com/lifinance/types/main/src/assets/icons/chains/ethereum.svg',
+    addressType: 'evm'
+  },
+  {
+    key: 'arb',
+    name: 'Arbitrum',
+    id: 42161,
+    chainType: 'EVM',
+    logoURI:
+      'https://raw.githubusercontent.com/lifinance/types/main/src/assets/icons/chains/arbitrum.svg',
+    addressType: 'evm'
+  },
+  {
+    key: 'bas',
+    name: 'Base',
+    id: 8453,
+    chainType: 'EVM',
+    logoURI:
+      'https://raw.githubusercontent.com/lifinance/types/main/src/assets/icons/chains/base.svg',
+    addressType: 'evm'
+  },
   SOLANA_CHAIN,
-  BITCOIN_CHAIN,
+  BITCOIN_CHAIN
 ]
 
 function getAddressType(chainType: string): 'evm' | 'solana' | 'bitcoin' {
@@ -147,7 +197,7 @@ function validateAddress(addr: string, addressType: string): boolean {
 const STEP_VARIANTS = {
   enter: (direction: number) => ({ x: direction > 0 ? 80 : -80, opacity: 0 }),
   center: { x: 0, opacity: 1 },
-  exit: (direction: number) => ({ x: direction < 0 ? 80 : -80, opacity: 0 }),
+  exit: (direction: number) => ({ x: direction < 0 ? 80 : -80, opacity: 0 })
 }
 
 // ----------------------------------------------------------------------
@@ -166,7 +216,14 @@ type Props = {
 }
 
 export default function DashboardWithdrawModal({
-  open, onClose, balances, tokenLogos, transactions, userWallet, tokens, selectedCurrency
+  open,
+  onClose,
+  balances,
+  tokenLogos,
+  transactions,
+  userWallet,
+  tokens,
+  selectedCurrency
 }: Props) {
   const { t } = useTranslate()
   const theme = useTheme()
@@ -204,7 +261,10 @@ export default function DashboardWithdrawModal({
 
   // ----- Computed -----
   const sortedBalances = useMemo(
-    () => [...balances].filter((b) => b.balance > 0).sort((a, b) => (b.balance_conv?.usd ?? 0) - (a.balance_conv?.usd ?? 0)),
+    () =>
+      [...balances]
+        .filter((b) => b.balance > 0)
+        .sort((a, b) => (b.balance_conv?.usd ?? 0) - (a.balance_conv?.usd ?? 0)),
     [balances]
   )
 
@@ -213,23 +273,24 @@ export default function DashboardWithdrawModal({
   const selectedChain = chains.find((c) => c.id === selectedChainId)
 
   const amountFloat = parseFloat(amount) || 0
-  const usdValue = availableAmount > 0
-    ? (amountFloat / availableAmount) * (selectedBalance?.balance_conv?.usd ?? 0)
-    : 0
+  const usdValue =
+    availableAmount > 0
+      ? (amountFloat / availableAmount) * (selectedBalance?.balance_conv?.usd ?? 0)
+      : 0
 
   const curr = selectedCurrency || 'usd'
-  const currValue = availableAmount > 0
-    ? (amountFloat / availableAmount) * (selectedBalance?.balance_conv?.[curr] ?? 0)
-    : 0
+  const currValue =
+    availableAmount > 0
+      ? (amountFloat / availableAmount) * (selectedBalance?.balance_conv?.[curr] ?? 0)
+      : 0
   const currRate = usdValue > 0 ? currValue / usdValue : 1
 
-  const tokenPrice = availableAmount > 0
-    ? (selectedBalance?.balance_conv?.usd ?? 0) / availableAmount
-    : 0
+  const tokenPrice =
+    availableAmount > 0 ? (selectedBalance?.balance_conv?.usd ?? 0) / availableAmount : 0
 
   const feeInUsd = 0.08
   const feeInCurr = feeInUsd * currRate
-  const feeInTokens = tokenPrice > 0 ? (feeInUsd / tokenPrice) : 0
+  const feeInTokens = tokenPrice > 0 ? feeInUsd / tokenPrice : 0
 
   const dbToken = tokens?.find((t) => t.symbol === selectedToken)
   const isL1 = destType === 'address' && selectedChainId === 1
@@ -269,7 +330,10 @@ export default function DashboardWithdrawModal({
   // Fetch LI.FI chains
   useEffect(() => {
     if (!open) return
-    if (chainCacheRef.current) { setChains(chainCacheRef.current); return }
+    if (chainCacheRef.current) {
+      setChains(chainCacheRef.current)
+      return
+    }
 
     let cancelled = false
     setIsLoadingChains(true)
@@ -286,7 +350,7 @@ export default function DashboardWithdrawModal({
             id: c.id,
             chainType: c.chainType,
             logoURI: c.logoURI || '',
-            addressType: getAddressType(c.chainType),
+            addressType: getAddressType(c.chainType)
           }))
 
         // Ensure Solana is present
@@ -298,10 +362,16 @@ export default function DashboardWithdrawModal({
         chainCacheRef.current = sorted
         setChains(sorted)
       })
-      .catch(() => { if (!cancelled) setChains(FALLBACK_CHAINS) })
-      .finally(() => { if (!cancelled) setIsLoadingChains(false) })
+      .catch(() => {
+        if (!cancelled) setChains(FALLBACK_CHAINS)
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoadingChains(false)
+      })
 
-    return () => { cancelled = true }
+    return () => {
+      cancelled = true
+    }
   }, [open])
 
   // Fetch LI.FI tokens when chain changes
@@ -326,10 +396,16 @@ export default function DashboardWithdrawModal({
         tokenCacheRef.current[cacheKey] = tokens
         setLifiTokens(tokens)
       })
-      .catch(() => { if (!cancelled) setLifiTokens([]) })
-      .finally(() => { if (!cancelled) setIsLoadingTokens(false) })
+      .catch(() => {
+        if (!cancelled) setLifiTokens([])
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoadingTokens(false)
+      })
 
-    return () => { cancelled = true }
+    return () => {
+      cancelled = true
+    }
   }, [selectedChain, destType])
 
   // Default dest token
@@ -343,9 +419,15 @@ export default function DashboardWithdrawModal({
 
   // ENS resolution
   useEffect(() => {
-    if (destType !== 'address') { setEnsAddress(''); return }
+    if (destType !== 'address') {
+      setEnsAddress('')
+      return
+    }
     const trimmed = destination.trim()
-    if (!trimmed.endsWith('.eth')) { setEnsAddress(''); return }
+    if (!trimmed.endsWith('.eth')) {
+      setEnsAddress('')
+      return
+    }
 
     const timer = setTimeout(() => {
       setIsResolvingEns(true)
@@ -369,9 +451,9 @@ export default function DashboardWithdrawModal({
   const filteredLifiTokens = useMemo(() => {
     if (!tokenSearch.trim()) return lifiTokens.slice(0, 80)
     const q = tokenSearch.toLowerCase()
-    return lifiTokens.filter(
-      (tk) => tk.symbol.toLowerCase().includes(q) || tk.name.toLowerCase().includes(q)
-    ).slice(0, 80)
+    return lifiTokens
+      .filter((tk) => tk.symbol.toLowerCase().includes(q) || tk.name.toLowerCase().includes(q))
+      .slice(0, 80)
   }, [lifiTokens, tokenSearch])
 
   const selectedLifiToken = useMemo(
@@ -391,7 +473,7 @@ export default function DashboardWithdrawModal({
         result.push({
           label: tx.contact_to_name || `${tx.wallet_to.slice(0, 6)}...${tx.wallet_to.slice(-4)}`,
           value: tx.wallet_to,
-          type: 'address',
+          type: 'address'
         })
       }
       if (tx.contact_to_phone && !seen.has(tx.contact_to_phone)) {
@@ -399,7 +481,7 @@ export default function DashboardWithdrawModal({
         result.push({
           label: tx.contact_to_name || tx.contact_to_phone,
           value: tx.contact_to_phone,
-          type: 'phone',
+          type: 'phone'
         })
       }
       if (result.length >= 5) break
@@ -416,7 +498,7 @@ export default function DashboardWithdrawModal({
       if (tx.contact_to_phone && !seen.has(tx.contact_to_phone)) {
         seen.set(tx.contact_to_phone, {
           label: tx.contact_to_name || tx.contact_to_phone,
-          value: tx.contact_to_phone,
+          value: tx.contact_to_phone
         })
       }
     }
@@ -425,24 +507,31 @@ export default function DashboardWithdrawModal({
 
   // ----- Handlers -----
 
-  const handleAddressChange = useCallback((value: string) => {
-    setDestination(value)
-    setError('')
-    const trimmed = value.trim()
-    const detected = detectChainFromAddress(trimmed)
-    if (detected) {
-      setSelectedChainId(detected)
-    } else if (trimmed.endsWith('.eth')) {
-      // ENS names resolve to EVM addresses — ensure an EVM chain is selected
-      setSelectedChainId((prev) => {
-        const currentChain = chains.find((c) => c.id === prev)
-        if (currentChain?.addressType !== 'evm') return 534352 // default to Scroll
-        return prev
-      })
-    }
-  }, [chains])
+  const handleAddressChange = useCallback(
+    (value: string) => {
+      setDestination(value)
+      setError('')
+      const trimmed = value.trim()
+      const detected = detectChainFromAddress(trimmed)
+      if (detected) {
+        setSelectedChainId(detected)
+      } else if (trimmed.endsWith('.eth')) {
+        // ENS names resolve to EVM addresses — ensure an EVM chain is selected
+        setSelectedChainId((prev) => {
+          const currentChain = chains.find((c) => c.id === prev)
+          if (currentChain?.addressType !== 'evm') return 534352 // default to Scroll
+          return prev
+        })
+      }
+    },
+    [chains]
+  )
 
-  const handleMaxClick = () => { setAmount(String(availableAmount)); setIsFeeAdded(false); setError('') }
+  const handleMaxClick = () => {
+    setAmount(String(availableAmount))
+    setIsFeeAdded(false)
+    setError('')
+  }
 
   const handleToggleFee = () => {
     if (!amountFloat) return
@@ -463,23 +552,41 @@ export default function DashboardWithdrawModal({
       } else {
         handleAddressChange(text.trim())
       }
-    } catch { /* clipboard not available */ }
+    } catch {
+      /* clipboard not available */
+    }
   }
 
   const goNext = () => {
     if (step === 0) {
-      if (!amountFloat || amountFloat <= 0) { setError(t('withdraw.invalid-amount')); return }
-      if (amountFloat > availableAmount) { setError(t('withdraw.exceeds-balance')); return }
-      if (minLimit > 0 && amountFloat < minLimit) { setError(`Min ${minLimit} ${selectedToken}`); return }
-      if (maxLimit < Infinity && amountFloat > maxLimit) { setError(`Max ${maxLimit} ${selectedToken}`); return }
+      if (!amountFloat || amountFloat <= 0) {
+        setError(t('withdraw.invalid-amount'))
+        return
+      }
+      if (amountFloat > availableAmount) {
+        setError(t('withdraw.exceeds-balance'))
+        return
+      }
+      if (minLimit > 0 && amountFloat < minLimit) {
+        setError(`Min ${minLimit} ${selectedToken}`)
+        return
+      }
+      if (maxLimit < Infinity && amountFloat > maxLimit) {
+        setError(`Max ${maxLimit} ${selectedToken}`)
+        return
+      }
     }
     if (step === 1) {
       // For ENS names, use the resolved address for validation
       const effectiveAddress = ensAddress || destination.trim()
       if (destType === 'phone') {
-        if (!isValidPhone(destination.trim())) { setError(t('withdraw.invalid-phone')); return }
+        if (!isValidPhone(destination.trim())) {
+          setError(t('withdraw.invalid-phone'))
+          return
+        }
       } else if (!selectedChain || !validateAddress(effectiveAddress, selectedChain.addressType)) {
-        setError(t('withdraw.invalid-address')); return
+        setError(t('withdraw.invalid-address'))
+        return
       }
     }
     setError('')
@@ -487,7 +594,11 @@ export default function DashboardWithdrawModal({
     setStep((s) => Math.min(s + 1, 2))
   }
 
-  const goBack = () => { setError(''); setDirection(-1); setStep((s) => Math.max(s - 1, 0)) }
+  const goBack = () => {
+    setError('')
+    setDirection(-1)
+    setStep((s) => Math.max(s - 1, 0))
+  }
 
   const handleSend = () => {
     const effectiveAddress = ensAddress || destination.trim()
@@ -513,7 +624,7 @@ export default function DashboardWithdrawModal({
   const steps = [
     { label: t('withdraw.step-amount'), icon: 'solar:wallet-money-bold' },
     { label: t('withdraw.step-destination'), icon: 'solar:map-point-bold' },
-    { label: t('withdraw.step-review'), icon: 'solar:check-circle-bold' },
+    { label: t('withdraw.step-review'), icon: 'solar:check-circle-bold' }
   ]
 
   const canProceedStep0 = !!selectedToken && amountFloat > 0
@@ -521,7 +632,12 @@ export default function DashboardWithdrawModal({
 
   // Chain logo helper
   const chainLogo = (chain: ChainData, size = 22) => (
-    <Box component='img' src={chain.logoURI} alt={chain.name} sx={{ width: size, height: size, borderRadius: '50%' }} />
+    <Box
+      component='img'
+      src={chain.logoURI}
+      alt={chain.name}
+      sx={{ width: size, height: size, borderRadius: '50%' }}
+    />
   )
 
   return (
@@ -541,7 +657,9 @@ export default function DashboardWithdrawModal({
                 <Iconify icon='eva:arrow-back-fill' width={20} />
               </IconButton>
             )}
-            <Typography variant='h6' fontWeight={700}>{t('withdraw.title')}</Typography>
+            <Typography variant='h6' fontWeight={700}>
+              {t('withdraw.title')}
+            </Typography>
           </Stack>
           <IconButton onClick={onClose} size='small'>
             <Iconify icon='mingcute:close-line' />
@@ -556,29 +674,57 @@ export default function DashboardWithdrawModal({
             const isActive = i === step
             const isCompleted = i < step
             return (
-              <Stack key={s.label} direction='row' alignItems='center' spacing={0.75} sx={{ flex: 1 }}>
+              <Stack
+                key={s.label}
+                direction='row'
+                alignItems='center'
+                spacing={0.75}
+                sx={{ flex: 1 }}
+              >
                 <Box
                   sx={{
-                    width: 28, height: 28, borderRadius: '50%',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    bgcolor: isActive ? 'primary.main' : isCompleted ? alpha(theme.palette.primary.main, 0.16) : alpha(theme.palette.grey[500], 0.08),
-                    transition: 'all 0.2s',
+                    width: 28,
+                    height: 28,
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    bgcolor: isActive
+                      ? 'primary.main'
+                      : isCompleted
+                        ? alpha(theme.palette.primary.main, 0.16)
+                        : alpha(theme.palette.grey[500], 0.08),
+                    transition: 'all 0.2s'
                   }}
                 >
-                  {isCompleted
-                    ? <Iconify icon='eva:checkmark-fill' width={16} sx={{ color: 'primary.main' }} />
-                    : <Iconify icon={s.icon} width={15} sx={{ color: isActive ? 'primary.contrastText' : 'text.disabled' }} />
-                  }
+                  {isCompleted ? (
+                    <Iconify icon='eva:checkmark-fill' width={16} sx={{ color: 'primary.main' }} />
+                  ) : (
+                    <Iconify
+                      icon={s.icon}
+                      width={15}
+                      sx={{ color: isActive ? 'primary.contrastText' : 'text.disabled' }}
+                    />
+                  )}
                 </Box>
                 <Typography
-                  variant='caption' fontWeight={isActive ? 700 : 500}
+                  variant='caption'
+                  fontWeight={isActive ? 700 : 500}
                   color={isActive ? 'text.primary' : 'text.secondary'}
                   sx={{ display: { xs: 'none', sm: 'block' } }}
                 >
                   {s.label}
                 </Typography>
                 {i < steps.length - 1 && (
-                  <Box sx={{ flex: 1, height: 2, borderRadius: 1, bgcolor: isCompleted ? 'primary.main' : alpha(theme.palette.grey[500], 0.16), ml: 0.5 }} />
+                  <Box
+                    sx={{
+                      flex: 1,
+                      height: 2,
+                      borderRadius: 1,
+                      bgcolor: isCompleted ? 'primary.main' : alpha(theme.palette.grey[500], 0.16),
+                      ml: 0.5
+                    }}
+                  />
                 )}
               </Stack>
             )
@@ -589,41 +735,89 @@ export default function DashboardWithdrawModal({
       <Divider />
 
       {/* Content */}
-      <DialogContent sx={{ px: 3, py: 0, minHeight: 320, position: 'relative', overflow: 'hidden' }}>
+      <DialogContent
+        sx={{ px: 3, py: 0, minHeight: 320, position: 'relative', overflow: 'hidden' }}
+      >
         <AnimatePresence initial={false} custom={direction} mode='wait'>
           {/* ============ STEP 0: Token & Amount ============ */}
           {step === 0 && (
-            <m.div key='step-0' custom={direction} variants={STEP_VARIANTS} initial='enter' animate='center' exit='exit' transition={{ duration: 0.2, ease: 'easeInOut' }}>
+            <m.div
+              key='step-0'
+              custom={direction}
+              variants={STEP_VARIANTS}
+              initial='enter'
+              animate='center'
+              exit='exit'
+              transition={{ duration: 0.2, ease: 'easeInOut' }}
+            >
               <Stack spacing={3} sx={{ py: 3 }}>
                 {/* Token Select */}
                 <Stack spacing={1}>
-                  <Typography variant='caption' color='text.secondary' fontWeight={600}>{t('withdraw.source-token')}</Typography>
+                  <Typography variant='caption' color='text.secondary' fontWeight={600}>
+                    {t('withdraw.source-token')}
+                  </Typography>
                   <Select
                     value={selectedToken}
-                    onChange={(e) => { setSelectedToken(e.target.value); setError('') }}
-                    displayEmpty size='small'
+                    onChange={(e) => {
+                      setSelectedToken(e.target.value)
+                      setError('')
+                    }}
+                    displayEmpty
+                    size='small'
                     renderValue={(val) => {
-                      if (!val) return <Typography color='text.secondary'>{t('withdraw.select-token')}</Typography>
+                      if (!val)
+                        return (
+                          <Typography color='text.secondary'>
+                            {t('withdraw.select-token')}
+                          </Typography>
+                        )
                       const logo = tokenLogos[val]
                       return (
                         <Stack direction='row' alignItems='center' spacing={1.5}>
-                          {logo && <Box component='img' src={logo} alt={val} sx={{ width: 24, height: 24, borderRadius: '50%' }} />}
-                          <Typography variant='subtitle2' fontWeight={600}>{val}</Typography>
+                          {logo && (
+                            <Box
+                              component='img'
+                              src={logo}
+                              alt={val}
+                              sx={{ width: 24, height: 24, borderRadius: '50%' }}
+                            />
+                          )}
+                          <Typography variant='subtitle2' fontWeight={600}>
+                            {val}
+                          </Typography>
                         </Stack>
                       )
                     }}
                   >
                     {sortedBalances.map((b) => (
                       <MenuItem key={b.token} value={b.token}>
-                        <Stack direction='row' alignItems='center' justifyContent='space-between' sx={{ width: '100%' }}>
+                        <Stack
+                          direction='row'
+                          alignItems='center'
+                          justifyContent='space-between'
+                          sx={{ width: '100%' }}
+                        >
                           <Stack direction='row' alignItems='center' spacing={1.5}>
-                            {tokenLogos[b.token] && <Box component='img' src={tokenLogos[b.token]} alt={b.token} sx={{ width: 28, height: 28, borderRadius: '50%' }} />}
+                            {tokenLogos[b.token] && (
+                              <Box
+                                component='img'
+                                src={tokenLogos[b.token]}
+                                alt={b.token}
+                                sx={{ width: 28, height: 28, borderRadius: '50%' }}
+                              />
+                            )}
                             <Box>
-                              <Typography variant='subtitle2' fontWeight={600}>{b.token}</Typography>
-                              <Typography variant='caption' color='text.secondary'>{fNumber(b.balance)}</Typography>
+                              <Typography variant='subtitle2' fontWeight={600}>
+                                {b.token}
+                              </Typography>
+                              <Typography variant='caption' color='text.secondary'>
+                                {fNumber(b.balance)}
+                              </Typography>
                             </Box>
                           </Stack>
-                          <Typography variant='body2' fontWeight={600}>${fNumber(b.balance_conv?.usd ?? 0)}</Typography>
+                          <Typography variant='body2' fontWeight={600}>
+                            ${fNumber(b.balance_conv?.usd ?? 0)}
+                          </Typography>
                         </Stack>
                       </MenuItem>
                     ))}
@@ -633,28 +827,41 @@ export default function DashboardWithdrawModal({
                 {/* Amount */}
                 <Stack spacing={1}>
                   <Stack direction='row' alignItems='center' justifyContent='space-between'>
-                    <Typography variant='caption' color='text.secondary' fontWeight={600}>{t('withdraw.amount')}</Typography>
+                    <Typography variant='caption' color='text.secondary' fontWeight={600}>
+                      {t('withdraw.amount')}
+                    </Typography>
                     <Typography variant='caption' color='text.secondary'>
                       {t('withdraw.available')}: {fNumber(availableAmount)} {selectedToken}
                     </Typography>
                   </Stack>
                   <TextField
                     value={amount}
-                    onChange={(e) => { setAmount(e.target.value); setIsFeeAdded(false); setError('') }}
-                    placeholder='0.00' type='number' size='small' fullWidth
+                    onChange={(e) => {
+                      setAmount(e.target.value)
+                      setIsFeeAdded(false)
+                      setError('')
+                    }}
+                    placeholder='0.00'
+                    type='number'
+                    size='small'
+                    fullWidth
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position='end'>
                           <Chip
-                            label={t('withdraw.max')} size='small' onClick={handleMaxClick}
+                            label={t('withdraw.max')}
+                            size='small'
+                            onClick={handleMaxClick}
                             sx={{
-                              cursor: 'pointer', fontWeight: 700,
-                              bgcolor: alpha(theme.palette.primary.main, 0.08), color: 'primary.main',
-                              '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.16) },
+                              cursor: 'pointer',
+                              fontWeight: 700,
+                              bgcolor: alpha(theme.palette.primary.main, 0.08),
+                              color: 'primary.main',
+                              '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.16) }
                             }}
                           />
                         </InputAdornment>
-                      ),
+                      )
                     }}
                   />
                 </Stack>
@@ -662,9 +869,10 @@ export default function DashboardWithdrawModal({
                 {/* Summary */}
                 <Box
                   sx={{
-                    p: 2, borderRadius: 1.5,
+                    p: 2,
+                    borderRadius: 1.5,
                     bgcolor: alpha(theme.palette.grey[500], 0.06),
-                    border: `1px solid ${alpha(theme.palette.grey[500], 0.08)}`,
+                    border: `1px solid ${alpha(theme.palette.grey[500], 0.08)}`
                   }}
                 >
                   <Stack direction='row' justifyContent='space-between' alignItems='center'>
@@ -672,17 +880,28 @@ export default function DashboardWithdrawModal({
                       <Typography variant='body2' color='text.primary' fontWeight={600}>
                         {t('withdraw.you-receive') || 'You receive'}
                       </Typography>
-                      <Stack direction="row" alignItems="center" spacing={0.1}>
+                      <Stack direction='row' alignItems='center' spacing={0.1}>
                         <Typography variant='caption' color='text.secondary'>
                           {t('withdraw.fee') || 'Fee'}: ${fNumber(feeInCurr)} {curr.toUpperCase()}
                         </Typography>
-                        <Tooltip title={isFeeAdded ? "Remove fee from amount" : "Add fee to amount"}>
-                          <IconButton 
-                            size="small" 
+                        <Tooltip
+                          title={isFeeAdded ? 'Remove fee from amount' : 'Add fee to amount'}
+                        >
+                          <IconButton
+                            size='small'
                             onClick={handleToggleFee}
-                            sx={{ p: 0.25, ml: 0.25, color: isFeeAdded ? 'primary.main' : 'text.disabled' }}
+                            sx={{
+                              p: 0.25,
+                              ml: 0.25,
+                              color: isFeeAdded ? 'primary.main' : 'text.disabled'
+                            }}
                           >
-                            <Iconify icon={isFeeAdded ? "solar:minus-circle-bold" : "solar:add-circle-bold"} width={14} />
+                            <Iconify
+                              icon={
+                                isFeeAdded ? 'solar:minus-circle-bold' : 'solar:add-circle-bold'
+                              }
+                              width={14}
+                            />
                           </IconButton>
                         </Tooltip>
                       </Stack>
@@ -698,21 +917,40 @@ export default function DashboardWithdrawModal({
 
           {/* ============ STEP 1: Destination ============ */}
           {step === 1 && (
-            <m.div key='step-1' custom={direction} variants={STEP_VARIANTS} initial='enter' animate='center' exit='exit' transition={{ duration: 0.2, ease: 'easeInOut' }}>
+            <m.div
+              key='step-1'
+              custom={direction}
+              variants={STEP_VARIANTS}
+              initial='enter'
+              animate='center'
+              exit='exit'
+              transition={{ duration: 0.2, ease: 'easeInOut' }}
+            >
               <Stack spacing={2.5} sx={{ py: 3 }}>
                 {/* Recent Sends */}
                 {recentSends.length > 0 && (
                   <Stack spacing={1}>
-                    <Typography variant='caption' color='text.secondary' fontWeight={600}>{t('withdraw.recent-sends')}</Typography>
+                    <Typography variant='caption' color='text.secondary' fontWeight={600}>
+                      {t('withdraw.recent-sends')}
+                    </Typography>
                     <Stack direction='row' flexWrap='wrap' gap={1}>
                       {recentSends.map((rs) => (
                         <Chip
-                          key={rs.value} label={rs.label} size='small'
-                          onClick={() => { setDestType(rs.type); setDestination(rs.value); if (rs.type === 'address') handleAddressChange(rs.value); setError('') }}
+                          key={rs.value}
+                          label={rs.label}
+                          size='small'
+                          onClick={() => {
+                            setDestType(rs.type)
+                            setDestination(rs.value)
+                            if (rs.type === 'address') handleAddressChange(rs.value)
+                            setError('')
+                          }}
                           sx={{
-                            cursor: 'pointer', fontWeight: 600, maxWidth: 160,
+                            cursor: 'pointer',
+                            fontWeight: 600,
+                            maxWidth: 160,
                             bgcolor: alpha(theme.palette.grey[500], 0.08),
-                            '&:hover': { bgcolor: alpha(theme.palette.grey[500], 0.16) },
+                            '&:hover': { bgcolor: alpha(theme.palette.grey[500], 0.16) }
                           }}
                         />
                       ))}
@@ -722,19 +960,31 @@ export default function DashboardWithdrawModal({
 
                 {/* Destination Type Toggle */}
                 <ToggleButtonGroup
-                  value={destType} exclusive
-                  onChange={(_, val) => { if (val) { setDestType(val); setDestination(''); setEnsAddress(''); setError('') } }}
-                  size='small' fullWidth
+                  value={destType}
+                  exclusive
+                  onChange={(_, val) => {
+                    if (val) {
+                      setDestType(val)
+                      setDestination('')
+                      setEnsAddress('')
+                      setError('')
+                    }
+                  }}
+                  size='small'
+                  fullWidth
                   sx={{
                     '& .MuiToggleButton-root': {
-                      textTransform: 'none', fontWeight: 600, borderRadius: '10px !important',
+                      textTransform: 'none',
+                      fontWeight: 600,
+                      borderRadius: '10px !important',
                       border: `1px solid ${alpha(theme.palette.grey[500], 0.2)}`,
                       '&.Mui-selected': {
-                        bgcolor: alpha(theme.palette.primary.main, 0.08), color: 'primary.main',
+                        bgcolor: alpha(theme.palette.primary.main, 0.08),
+                        color: 'primary.main',
                         borderColor: theme.palette.primary.main,
-                        '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.16) },
-                      },
-                    },
+                        '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.16) }
+                      }
+                    }
                   }}
                 >
                   <ToggleButton value='phone'>
@@ -753,7 +1003,10 @@ export default function DashboardWithdrawModal({
                     freeSolo
                     options={phoneContacts}
                     inputValue={destination}
-                    onInputChange={(_, value) => { setDestination(value); setError('') }}
+                    onInputChange={(_, value) => {
+                      setDestination(value)
+                      setError('')
+                    }}
                     onChange={(_, value) => {
                       if (value && typeof value === 'object' && 'value' in value) {
                         setDestination(value.value)
@@ -766,17 +1019,31 @@ export default function DashboardWithdrawModal({
                     filterOptions={(options, { inputValue }) => {
                       const q = inputValue.toLowerCase()
                       return options.filter(
-                        (o) => o.label.toLowerCase().includes(q) || o.value.toLowerCase().includes(q)
+                        (o) =>
+                          o.label.toLowerCase().includes(q) || o.value.toLowerCase().includes(q)
                       )
                     }}
                     renderOption={(props, option) => (
                       <li {...props} key={option.value}>
-                        <Stack direction='row' alignItems='center' spacing={1.5} sx={{ width: '100%' }}>
-                          <Iconify icon='solar:phone-bold' width={18} sx={{ color: 'text.secondary' }} />
+                        <Stack
+                          direction='row'
+                          alignItems='center'
+                          spacing={1.5}
+                          sx={{ width: '100%' }}
+                        >
+                          <Iconify
+                            icon='solar:phone-bold'
+                            width={18}
+                            sx={{ color: 'text.secondary' }}
+                          />
                           <Stack sx={{ flex: 1, minWidth: 0 }}>
-                            <Typography variant='body2' fontWeight={600} noWrap>{option.label}</Typography>
+                            <Typography variant='body2' fontWeight={600} noWrap>
+                              {option.label}
+                            </Typography>
                             {option.label !== option.value && (
-                              <Typography variant='caption' color='text.secondary' noWrap>{option.value}</Typography>
+                              <Typography variant='caption' color='text.secondary' noWrap>
+                                {option.value}
+                              </Typography>
                             )}
                           </Stack>
                         </Stack>
@@ -792,7 +1059,11 @@ export default function DashboardWithdrawModal({
                           ...params.InputProps,
                           startAdornment: (
                             <InputAdornment position='start'>
-                              <Iconify icon='solar:phone-bold' width={20} sx={{ color: 'text.secondary' }} />
+                              <Iconify
+                                icon='solar:phone-bold'
+                                width={20}
+                                sx={{ color: 'text.secondary' }}
+                              />
                             </InputAdornment>
                           ),
                           endAdornment: (
@@ -801,12 +1072,16 @@ export default function DashboardWithdrawModal({
                               <InputAdornment position='end'>
                                 <Tooltip title={t('withdraw.paste')}>
                                   <IconButton size='small' onClick={handlePaste}>
-                                    <Iconify icon='eva:clipboard-fill' width={18} sx={{ color: 'text.secondary' }} />
+                                    <Iconify
+                                      icon='eva:clipboard-fill'
+                                      width={18}
+                                      sx={{ color: 'text.secondary' }}
+                                    />
                                   </IconButton>
                                 </Tooltip>
                               </InputAdornment>
                             </>
-                          ),
+                          )
                         }}
                       />
                     )}
@@ -816,22 +1091,31 @@ export default function DashboardWithdrawModal({
                     value={destination}
                     onChange={(e) => handleAddressChange(e.target.value)}
                     placeholder='0x... / bc1... / name.eth'
-                    size='small' fullWidth
+                    size='small'
+                    fullWidth
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position='start'>
-                          <Iconify icon='solar:wallet-bold' width={20} sx={{ color: 'text.secondary' }} />
+                          <Iconify
+                            icon='solar:wallet-bold'
+                            width={20}
+                            sx={{ color: 'text.secondary' }}
+                          />
                         </InputAdornment>
                       ),
                       endAdornment: (
                         <InputAdornment position='end'>
                           <Tooltip title={t('withdraw.paste')}>
                             <IconButton size='small' onClick={handlePaste}>
-                              <Iconify icon='eva:clipboard-fill' width={18} sx={{ color: 'text.secondary' }} />
+                              <Iconify
+                                icon='eva:clipboard-fill'
+                                width={18}
+                                sx={{ color: 'text.secondary' }}
+                              />
                             </IconButton>
                           </Tooltip>
                         </InputAdornment>
-                      ),
+                      )
                     }}
                   />
                 )}
@@ -840,23 +1124,36 @@ export default function DashboardWithdrawModal({
                 {isResolvingEns && (
                   <Stack direction='row' alignItems='center' spacing={1}>
                     <CircularProgress size={14} />
-                    <Typography variant='caption' color='text.secondary'>{t('withdraw.resolving-ens')}</Typography>
+                    <Typography variant='caption' color='text.secondary'>
+                      {t('withdraw.resolving-ens')}
+                    </Typography>
                   </Stack>
                 )}
                 {ensAddress && !isResolvingEns && (
                   <Stack
-                    direction='row' alignItems='center' spacing={1.5}
+                    direction='row'
+                    alignItems='center'
+                    spacing={1.5}
                     sx={{
-                      p: 1.5, borderRadius: 1,
+                      p: 1.5,
+                      borderRadius: 1,
                       bgcolor: alpha(theme.palette.success.main, 0.08),
-                      border: `1px solid ${alpha(theme.palette.success.main, 0.16)}`,
+                      border: `1px solid ${alpha(theme.palette.success.main, 0.16)}`
                     }}
                   >
                     <Box component='img' src={ENS_LOGO} alt='ENS' sx={{ width: 20, height: 20 }} />
-                    <Typography variant='caption' sx={{ opacity: 0.7, fontFamily: 'monospace', flex: 1, minWidth: 0 }} noWrap>
+                    <Typography
+                      variant='caption'
+                      sx={{ opacity: 0.7, fontFamily: 'monospace', flex: 1, minWidth: 0 }}
+                      noWrap
+                    >
                       {ensAddress}
                     </Typography>
-                    <Iconify icon='eva:checkmark-circle-2-fill' width={16} sx={{ color: 'success.main', flexShrink: 0 }} />
+                    <Iconify
+                      icon='eva:checkmark-circle-2-fill'
+                      width={16}
+                      sx={{ color: 'success.main', flexShrink: 0 }}
+                    />
                   </Stack>
                 )}
 
@@ -865,61 +1162,102 @@ export default function DashboardWithdrawModal({
                   <>
                     {/* Network */}
                     <Stack spacing={1}>
-                      <Typography variant='caption' color='text.secondary' fontWeight={600}>{t('withdraw.network')}</Typography>
+                      <Typography variant='caption' color='text.secondary' fontWeight={600}>
+                        {t('withdraw.network')}
+                      </Typography>
                       <Select
                         value={selectedChainId}
-                        onChange={(e) => { setSelectedChainId(e.target.value as number); setDestTokenSymbol('USDT'); setTokenSearch(''); setError('') }}
-                        size='small' fullWidth
+                        onChange={(e) => {
+                          setSelectedChainId(e.target.value as number)
+                          setDestTokenSymbol('USDT')
+                          setTokenSearch('')
+                          setError('')
+                        }}
+                        size='small'
+                        fullWidth
                         renderValue={(val) => {
                           const chain = chains.find((c) => c.id === val)
                           if (!chain) return String(val)
                           return (
                             <Stack direction='row' alignItems='center' spacing={1.5}>
                               {chainLogo(chain)}
-                              <Typography variant='subtitle2' fontWeight={600}>{chain.name}</Typography>
+                              <Typography variant='subtitle2' fontWeight={600}>
+                                {chain.name}
+                              </Typography>
                             </Stack>
                           )
                         }}
                         MenuProps={{ PaperProps: { sx: { maxHeight: 320 } } }}
                       >
                         {isLoadingChains ? (
-                          <MenuItem disabled><Stack alignItems='center' sx={{ width: '100%', py: 1 }}><CircularProgress size={20} /></Stack></MenuItem>
-                        ) : chains.map((c) => (
-                          <MenuItem key={c.id} value={c.id}>
-                            <Stack direction='row' alignItems='center' spacing={1.5}>
-                              {chainLogo(c)}
-                              <Typography variant='body2' fontWeight={600}>{c.name}</Typography>
+                          <MenuItem disabled>
+                            <Stack alignItems='center' sx={{ width: '100%', py: 1 }}>
+                              <CircularProgress size={20} />
                             </Stack>
                           </MenuItem>
-                        ))}
+                        ) : (
+                          chains.map((c) => (
+                            <MenuItem key={c.id} value={c.id}>
+                              <Stack direction='row' alignItems='center' spacing={1.5}>
+                                {chainLogo(c)}
+                                <Typography variant='body2' fontWeight={600}>
+                                  {c.name}
+                                </Typography>
+                              </Stack>
+                            </MenuItem>
+                          ))
+                        )}
                       </Select>
                     </Stack>
 
                     {/* Destination Token */}
                     <Stack spacing={1}>
-                      <Typography variant='caption' color='text.secondary' fontWeight={600}>{t('withdraw.dest-token')}</Typography>
+                      <Typography variant='caption' color='text.secondary' fontWeight={600}>
+                        {t('withdraw.dest-token')}
+                      </Typography>
 
                       {selectedChain?.addressType === 'bitcoin' ? (
-                        <Box sx={{ p: 1.5, borderRadius: 1, border: `1px solid ${alpha(theme.palette.grey[500], 0.2)}`, bgcolor: alpha(theme.palette.grey[500], 0.04) }}>
+                        <Box
+                          sx={{
+                            p: 1.5,
+                            borderRadius: 1,
+                            border: `1px solid ${alpha(theme.palette.grey[500], 0.2)}`,
+                            bgcolor: alpha(theme.palette.grey[500], 0.04)
+                          }}
+                        >
                           <Stack direction='row' alignItems='center' spacing={1.5}>
                             {chainLogo(BITCOIN_CHAIN, 24)}
-                            <Typography variant='subtitle2' fontWeight={600}>BTC</Typography>
+                            <Typography variant='subtitle2' fontWeight={600}>
+                              BTC
+                            </Typography>
                           </Stack>
                         </Box>
                       ) : (
                         <Select
                           value={destTokenSymbol}
-                          onChange={(e) => { setDestTokenSymbol(e.target.value as string); setTokenSearch('') }}
-                          size='small' fullWidth displayEmpty
+                          onChange={(e) => {
+                            setDestTokenSymbol(e.target.value as string)
+                            setTokenSearch('')
+                          }}
+                          size='small'
+                          fullWidth
+                          displayEmpty
                           onClose={() => setTokenSearch('')}
                           renderValue={(val) => {
                             const tk = lifiTokens.find((t2) => t2.symbol === val)
                             return (
                               <Stack direction='row' alignItems='center' spacing={1.5}>
                                 {tk?.logoURI ? (
-                                  <Box component='img' src={tk.logoURI} alt={val} sx={{ width: 22, height: 22, borderRadius: '50%' }} />
+                                  <Box
+                                    component='img'
+                                    src={tk.logoURI}
+                                    alt={val}
+                                    sx={{ width: 22, height: 22, borderRadius: '50%' }}
+                                  />
                                 ) : null}
-                                <Typography variant='subtitle2' fontWeight={600}>{val || t('withdraw.select-token')}</Typography>
+                                <Typography variant='subtitle2' fontWeight={600}>
+                                  {val || t('withdraw.select-token')}
+                                </Typography>
                               </Stack>
                             )
                           }}
@@ -931,38 +1269,74 @@ export default function DashboardWithdrawModal({
                               onChange={(e) => setTokenSearch(e.target.value)}
                               onKeyDown={(e) => e.stopPropagation()}
                               placeholder={t('withdraw.search-tokens')}
-                              size='small' fullWidth autoFocus
+                              size='small'
+                              fullWidth
+                              autoFocus
                               InputProps={{
                                 startAdornment: (
                                   <InputAdornment position='start'>
-                                    <Iconify icon='eva:search-fill' width={18} sx={{ color: 'text.disabled' }} />
+                                    <Iconify
+                                      icon='eva:search-fill'
+                                      width={18}
+                                      sx={{ color: 'text.disabled' }}
+                                    />
                                   </InputAdornment>
-                                ),
+                                )
                               }}
                             />
                           </ListSubheader>
                           {isLoadingTokens ? (
                             <MenuItem disabled>
-                              <Stack alignItems='center' sx={{ width: '100%', py: 1 }}><CircularProgress size={20} /></Stack>
+                              <Stack alignItems='center' sx={{ width: '100%', py: 1 }}>
+                                <CircularProgress size={20} />
+                              </Stack>
                             </MenuItem>
                           ) : filteredLifiTokens.length === 0 ? (
                             <MenuItem disabled>
-                              <Typography variant='body2' color='text.secondary'>{t('withdraw.no-tokens')}</Typography>
+                              <Typography variant='body2' color='text.secondary'>
+                                {t('withdraw.no-tokens')}
+                              </Typography>
                             </MenuItem>
                           ) : (
                             filteredLifiTokens.map((tk) => (
                               <MenuItem key={tk.address + tk.symbol} value={tk.symbol}>
-                                <Stack direction='row' alignItems='center' spacing={1.5} sx={{ width: '100%' }}>
+                                <Stack
+                                  direction='row'
+                                  alignItems='center'
+                                  spacing={1.5}
+                                  sx={{ width: '100%' }}
+                                >
                                   {tk.logoURI ? (
-                                    <Box component='img' src={tk.logoURI} alt={tk.symbol} sx={{ width: 24, height: 24, borderRadius: '50%' }} />
+                                    <Box
+                                      component='img'
+                                      src={tk.logoURI}
+                                      alt={tk.symbol}
+                                      sx={{ width: 24, height: 24, borderRadius: '50%' }}
+                                    />
                                   ) : (
-                                    <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: alpha(theme.palette.grey[500], 0.16), display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                      <Typography variant='caption' fontWeight={700}>{tk.symbol[0]}</Typography>
+                                    <Box
+                                      sx={{
+                                        width: 24,
+                                        height: 24,
+                                        borderRadius: '50%',
+                                        bgcolor: alpha(theme.palette.grey[500], 0.16),
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
+                                      }}
+                                    >
+                                      <Typography variant='caption' fontWeight={700}>
+                                        {tk.symbol[0]}
+                                      </Typography>
                                     </Box>
                                   )}
                                   <Stack sx={{ flex: 1, minWidth: 0 }}>
-                                    <Typography variant='body2' fontWeight={600} noWrap>{tk.symbol}</Typography>
-                                    <Typography variant='caption' color='text.secondary' noWrap>{tk.name}</Typography>
+                                    <Typography variant='body2' fontWeight={600} noWrap>
+                                      {tk.symbol}
+                                    </Typography>
+                                    <Typography variant='caption' color='text.secondary' noWrap>
+                                      {tk.name}
+                                    </Typography>
                                   </Stack>
                                 </Stack>
                               </MenuItem>
@@ -979,24 +1353,42 @@ export default function DashboardWithdrawModal({
 
           {/* ============ STEP 2: Review ============ */}
           {step === 2 && (
-            <m.div key='step-2' custom={direction} variants={STEP_VARIANTS} initial='enter' animate='center' exit='exit' transition={{ duration: 0.2, ease: 'easeInOut' }}>
+            <m.div
+              key='step-2'
+              custom={direction}
+              variants={STEP_VARIANTS}
+              initial='enter'
+              animate='center'
+              exit='exit'
+              transition={{ duration: 0.2, ease: 'easeInOut' }}
+            >
               <Stack spacing={2.5} sx={{ py: 3 }}>
                 <Box
                   sx={{
-                    p: 2.5, borderRadius: 2,
+                    p: 2.5,
+                    borderRadius: 2,
                     bgcolor: alpha(theme.palette.primary.main, 0.04),
-                    border: `1px solid ${alpha(theme.palette.primary.main, 0.12)}`,
+                    border: `1px solid ${alpha(theme.palette.primary.main, 0.12)}`
                   }}
                 >
                   <Stack spacing={2}>
                     {/* Sending */}
                     <Stack direction='row' justifyContent='space-between' alignItems='center'>
-                      <Typography variant='body2' color='text.secondary'>{t('withdraw.sending')}</Typography>
+                      <Typography variant='body2' color='text.secondary'>
+                        {t('withdraw.sending')}
+                      </Typography>
                       <Stack direction='row' alignItems='center' spacing={1}>
                         {tokenLogos[selectedToken] && (
-                          <Box component='img' src={tokenLogos[selectedToken]} alt={selectedToken} sx={{ width: 20, height: 20, borderRadius: '50%' }} />
+                          <Box
+                            component='img'
+                            src={tokenLogos[selectedToken]}
+                            alt={selectedToken}
+                            sx={{ width: 20, height: 20, borderRadius: '50%' }}
+                          />
                         )}
-                        <Typography variant='subtitle2' fontWeight={700}>{fNumber(amountFloat)} {selectedToken}</Typography>
+                        <Typography variant='subtitle2' fontWeight={700}>
+                          {fNumber(amountFloat)} {selectedToken}
+                        </Typography>
                       </Stack>
                     </Stack>
 
@@ -1004,20 +1396,42 @@ export default function DashboardWithdrawModal({
 
                     {/* To */}
                     <Stack direction='row' justifyContent='space-between' alignItems='center'>
-                      <Typography variant='body2' color='text.secondary'>{t('withdraw.to')}</Typography>
+                      <Typography variant='body2' color='text.secondary'>
+                        {t('withdraw.to')}
+                      </Typography>
                       <Stack alignItems='flex-end' spacing={0.25}>
                         {ensAddress ? (
                           <>
                             <Stack direction='row' alignItems='center' spacing={0.75}>
-                              <Box component='img' src={ENS_LOGO} alt='ENS' sx={{ width: 14, height: 14 }} />
-                              <Typography variant='body2' fontWeight={600}>{destination}</Typography>
+                              <Box
+                                component='img'
+                                src={ENS_LOGO}
+                                alt='ENS'
+                                sx={{ width: 14, height: 14 }}
+                              />
+                              <Typography variant='body2' fontWeight={600}>
+                                {destination}
+                              </Typography>
                             </Stack>
-                            <Typography variant='caption' sx={{ opacity: 0.6, fontFamily: 'monospace' }} noWrap>
+                            <Typography
+                              variant='caption'
+                              sx={{ opacity: 0.6, fontFamily: 'monospace' }}
+                              noWrap
+                            >
                               {`${ensAddress.slice(0, 10)}...${ensAddress.slice(-6)}`}
                             </Typography>
                           </>
                         ) : (
-                          <Typography variant='body2' fontWeight={600} sx={{ maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          <Typography
+                            variant='body2'
+                            fontWeight={600}
+                            sx={{
+                              maxWidth: 220,
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap'
+                            }}
+                          >
                             {destination}
                           </Typography>
                         )}
@@ -1029,21 +1443,34 @@ export default function DashboardWithdrawModal({
                       <>
                         <Divider sx={{ borderStyle: 'dashed' }} />
                         <Stack direction='row' justifyContent='space-between' alignItems='center'>
-                          <Typography variant='body2' color='text.secondary'>{t('withdraw.network')}</Typography>
+                          <Typography variant='body2' color='text.secondary'>
+                            {t('withdraw.network')}
+                          </Typography>
                           <Stack direction='row' alignItems='center' spacing={1}>
                             {selectedChain && chainLogo(selectedChain, 18)}
-                            <Typography variant='body2' fontWeight={600}>{selectedChain?.name}</Typography>
+                            <Typography variant='body2' fontWeight={600}>
+                              {selectedChain?.name}
+                            </Typography>
                           </Stack>
                         </Stack>
 
                         <Divider sx={{ borderStyle: 'dashed' }} />
                         <Stack direction='row' justifyContent='space-between' alignItems='center'>
-                          <Typography variant='body2' color='text.secondary'>{t('withdraw.dest-token')}</Typography>
+                          <Typography variant='body2' color='text.secondary'>
+                            {t('withdraw.dest-token')}
+                          </Typography>
                           <Stack direction='row' alignItems='center' spacing={1}>
                             {selectedLifiToken?.logoURI && (
-                              <Box component='img' src={selectedLifiToken.logoURI} alt={destTokenSymbol} sx={{ width: 18, height: 18, borderRadius: '50%' }} />
+                              <Box
+                                component='img'
+                                src={selectedLifiToken.logoURI}
+                                alt={destTokenSymbol}
+                                sx={{ width: 18, height: 18, borderRadius: '50%' }}
+                              />
                             )}
-                            <Typography variant='subtitle2' fontWeight={700}>{destTokenSymbol}</Typography>
+                            <Typography variant='subtitle2' fontWeight={700}>
+                              {destTokenSymbol}
+                            </Typography>
                           </Stack>
                         </Stack>
                       </>
@@ -1055,9 +1482,13 @@ export default function DashboardWithdrawModal({
                         <Typography variant='body2' color='text.secondary'>
                           {t('withdraw.you-receive') || 'You receive'}
                         </Typography>
-                        <Typography variant='caption' color='text.disabled'>{t('withdraw.fee') || 'Fee'}: ${fNumber(feeInCurr)} {curr.toUpperCase()}</Typography>
+                        <Typography variant='caption' color='text.disabled'>
+                          {t('withdraw.fee') || 'Fee'}: ${fNumber(feeInCurr)} {curr.toUpperCase()}
+                        </Typography>
                       </Stack>
-                      <Typography variant='subtitle2' fontWeight={700}>~${fNumber(Math.max(0, currValue - feeInCurr))} {curr.toUpperCase()}</Typography>
+                      <Typography variant='subtitle2' fontWeight={700}>
+                        ~${fNumber(Math.max(0, currValue - feeInCurr))} {curr.toUpperCase()}
+                      </Typography>
                     </Stack>
                   </Stack>
                 </Box>
@@ -1068,7 +1499,12 @@ export default function DashboardWithdrawModal({
 
         {/* Error */}
         {error && (
-          <Typography variant='caption' color='error.main' fontWeight={600} sx={{ display: 'block', pb: 1 }}>
+          <Typography
+            variant='caption'
+            color='error.main'
+            fontWeight={600}
+            sx={{ display: 'block', pb: 1 }}
+          >
             {error}
           </Typography>
         )}
@@ -1078,20 +1514,38 @@ export default function DashboardWithdrawModal({
       <Box sx={{ px: 3, pb: 3, pt: 1 }}>
         {step < 2 ? (
           <Button
-            fullWidth variant='contained' color='primary' size='large'
+            fullWidth
+            variant='contained'
+            color='primary'
+            size='large'
             onClick={goNext}
             disabled={step === 0 ? !canProceedStep0 : !canProceedStep1}
             endIcon={<Iconify icon='eva:arrow-forward-fill' />}
-            sx={{ py: 1.5, fontWeight: 700, borderRadius: 50, textTransform: 'none', fontSize: '0.95rem' }}
+            sx={{
+              py: 1.5,
+              fontWeight: 700,
+              borderRadius: 50,
+              textTransform: 'none',
+              fontSize: '0.95rem'
+            }}
           >
             {t('withdraw.next')}
           </Button>
         ) : (
           <Button
-            fullWidth variant='contained' color='primary' size='large'
+            fullWidth
+            variant='contained'
+            color='primary'
+            size='large'
             onClick={handleSend}
             startIcon={<Iconify icon='ic:round-whatsapp' />}
-            sx={{ py: 1.5, fontWeight: 700, borderRadius: 50, textTransform: 'none', fontSize: '0.95rem' }}
+            sx={{
+              py: 1.5,
+              fontWeight: 700,
+              borderRadius: 50,
+              textTransform: 'none',
+              fontSize: '0.95rem'
+            }}
           >
             {t('withdraw.send-via-whatsapp')}
           </Button>

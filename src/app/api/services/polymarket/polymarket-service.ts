@@ -66,7 +66,11 @@ function extractArray<T>(raw: any, key: string): T[] {
 function parseJsonArray(value: unknown): string[] {
   if (Array.isArray(value)) return value
   if (typeof value === 'string') {
-    try { return JSON.parse(value) } catch { return [] }
+    try {
+      return JSON.parse(value)
+    } catch {
+      return []
+    }
   }
   return []
 }
@@ -153,9 +157,7 @@ export async function getMarkets(params?: string): Promise<ServiceResult<IPolyma
   }
 }
 
-export async function getMarketBySlug(
-  slug: string
-): Promise<ServiceResult<IPolymarketMarket>> {
+export async function getMarketBySlug(slug: string): Promise<ServiceResult<IPolymarketMarket>> {
   try {
     const response = await axios.get<BackendResponse<IPolymarketMarket>>(
       `${BACKEND_API_URL}/polymarket/markets/${slug}`,
@@ -191,9 +193,7 @@ export async function getCategories(): Promise<ServiceResult<IPolymarketCategory
   }
 }
 
-export async function searchMarkets(
-  query: string
-): Promise<ServiceResult<IPolymarketMarket[]>> {
+export async function searchMarkets(query: string): Promise<ServiceResult<IPolymarketMarket[]>> {
   try {
     const response = await axios.get<BackendResponse<IPolymarketMarket[]>>(
       `${BACKEND_API_URL}/polymarket/search?query=${encodeURIComponent(query)}`,
@@ -409,9 +409,7 @@ export async function getPositions(
   }
 }
 
-export async function getOrders(
-  channelUserId: string
-): Promise<ServiceResult<IPolymarketOrder[]>> {
+export async function getOrders(channelUserId: string): Promise<ServiceResult<IPolymarketOrder[]>> {
   try {
     const response = await axios.post<BackendResponse<IPolymarketOrder[]>>(
       `${BACKEND_API_URL}/polymarket/orders`,

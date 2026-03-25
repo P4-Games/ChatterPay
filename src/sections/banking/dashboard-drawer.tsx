@@ -37,7 +37,7 @@ export default function DashboardDrawer({ open, onClose, title, children, width 
             zIndex: theme.zIndex.drawer,
             backdropFilter: 'blur(6px)',
             WebkitBackdropFilter: 'blur(6px)',
-            backgroundColor: alpha(theme.palette.grey[900], 0.4),
+            backgroundColor: alpha(theme.palette.grey[900], 0.4)
           }}
         />
       )}
@@ -47,13 +47,13 @@ export default function DashboardDrawer({ open, onClose, title, children, width 
         open={open}
         onClose={onClose}
         slotProps={{
-          backdrop: { invisible: true },
+          backdrop: { invisible: true }
         }}
         PaperProps={{
           sx: {
             width: { xs: '100%', sm: width },
-            boxShadow: `-40px 40px 80px -8px ${alpha(theme.palette.common.black, 0.24)}`,
-          },
+            boxShadow: `-40px 40px 80px -8px ${alpha(theme.palette.common.black, 0.24)}`
+          }
         }}
       >
         {/* Header */}
@@ -73,9 +73,7 @@ export default function DashboardDrawer({ open, onClose, title, children, width 
 
         {/* Content */}
         <Scrollbar sx={{ flex: 1 }}>
-          <Stack sx={{ px: 3, pb: 3 }}>
-            {children}
-          </Stack>
+          <Stack sx={{ px: 3, pb: 3 }}>{children}</Stack>
         </Scrollbar>
       </Drawer>
     </>

@@ -1,7 +1,10 @@
 import { type NextRequest, NextResponse } from 'next/server'
 
 import { getMarketBySlug } from 'src/app/api/services/polymarket/polymarket-service'
-import { validateRequestSecurity, getUserIdFromRequest } from 'src/app/api/middleware/validators/base-security-validator'
+import {
+  validateRequestSecurity,
+  getUserIdFromRequest
+} from 'src/app/api/middleware/validators/base-security-validator'
 
 // ----------------------------------------------------------------------
 

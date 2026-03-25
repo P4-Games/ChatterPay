@@ -22,11 +22,11 @@ const polymarketIcon = (
   <Box
     component='img'
     src='/assets/icons/polymarket/logo.svg'
-    sx={{ 
-      width: 22, 
-      height: 22, 
-      filter: 'grayscale(1)', 
-      opacity: 0.8 
+    sx={{
+      width: 22,
+      height: 22,
+      filter: 'grayscale(1)',
+      opacity: 0.8
     }}
   />
 )
@@ -98,4 +98,3 @@ export function useNavData() {
 
   return data
 }
-

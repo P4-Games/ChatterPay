@@ -28,22 +28,21 @@ const EVENTS_PAGE_SIZE = 20
 // ----------------------------------------------------------------------
 
 export function useGetPolymarketCategories() {
-  return useGetCommon(
-    endpoints.polymarket.categories(),
-    { headers: getAuthorizationHeader() }
-  )
+  return useGetCommon(endpoints.polymarket.categories(), { headers: getAuthorizationHeader() })
 }
 
 export function useGetPolymarketEvents(params?: string) {
-  return useGetCommon(
-    endpoints.polymarket.events(params),
-    { headers: getAuthorizationHeader() }
-  )
+  return useGetCommon(endpoints.polymarket.events(params), { headers: getAuthorizationHeader() })
 }
 
 export function useGetPolymarketEventsInfinite(category?: string, userId?: string) {
   const getKey = (pageIndex: number, previousPageData: any) => {
-    if (previousPageData && (!previousPageData.ok || !Array.isArray(previousPageData.data) || previousPageData.data.length < EVENTS_PAGE_SIZE)) {
+    if (
+      previousPageData &&
+      (!previousPageData.ok ||
+        !Array.isArray(previousPageData.data) ||
+        previousPageData.data.length < EVENTS_PAGE_SIZE)
+    ) {
       return null
     }
 
@@ -58,18 +57,17 @@ export function useGetPolymarketEventsInfinite(category?: string, userId?: strin
     ]
   }
 
-  const { data, error, size, setSize, isLoading, isValidating } =
-    useSWRInfinite(getKey, fetcher, {
-      revalidateFirstPage: true,
-      revalidateAll: false,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    })
+  const { data, error, size, setSize, isLoading, isValidating } = useSWRInfinite(getKey, fetcher, {
+    revalidateFirstPage: true,
+    revalidateAll: false,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false
+  })
 
   const allEvents: IPolymarketEvent[] = useMemo(() => {
     const map = new Map<string, IPolymarketEvent>()
     for (const page of data || []) {
-      for (const event of (Array.isArray(page.data) ? page.data : [])) {
+      for (const event of Array.isArray(page.data) ? page.data : []) {
         const key = event.id || event.slug
         if (key && !map.has(key)) map.set(key, event)
       }
@@ -108,10 +106,7 @@ export function useGetPolymarketEventsInfinite(category?: string, userId?: strin
 }
 
 export function useGetPolymarketMarkets(params?: string) {
-  return useGetCommon(
-    endpoints.polymarket.markets(params),
-    { headers: getAuthorizationHeader() }
-  )
+  return useGetCommon(endpoints.polymarket.markets(params), { headers: getAuthorizationHeader() })
 }
 
 export function useGetPolymarketMarket(slug: string) {
@@ -146,7 +141,9 @@ export function useGetPolymarketPositionsSWR(refreshInterval = 10000) {
   return useMemo(
     () => ({
       data: (data?.data as any)?.positions as IPolymarketPosition[] | undefined,
-      activePurchases: (data?.data as any)?.active_purchases as IPolymarketActivePurchase[] | undefined,
+      activePurchases: (data?.data as any)?.active_purchases as
+        | IPolymarketActivePurchase[]
+        | undefined,
       isLoading,
       error,
       isValidating,
@@ -225,9 +222,7 @@ export async function polymarketAcceptTerms(termsVersion: number): Promise<{
   )
 }
 
-export async function polymarketPlaceOrder(
-  orderData: IPolymarketOrderPayload
-): Promise<{
+export async function polymarketPlaceOrder(orderData: IPolymarketOrderPayload): Promise<{
   ok: boolean
   data?: IPolymarketOrder
   message?: string
@@ -237,9 +232,7 @@ export async function polymarketPlaceOrder(
   })
 }
 
-export async function polymarketCancelOrder(
-  orderId: string
-): Promise<{
+export async function polymarketCancelOrder(orderId: string): Promise<{
   ok: boolean
   data?: { cancelled: boolean }
   message?: string
@@ -275,9 +268,7 @@ export async function polymarketGetPortfolio(): Promise<{
   return post(endpoints.polymarket.portfolio(), {}, { headers: getAuthorizationHeader() })
 }
 
-export async function polymarketPurchase(
-  orderData: IPolymarketOrderPayload
-): Promise<{
+export async function polymarketPurchase(orderData: IPolymarketOrderPayload): Promise<{
   ok: boolean
   data?: IPolymarketPurchaseResponse
   message?: string
@@ -287,37 +278,44 @@ export async function polymarketPurchase(
   })
 }
 
-export async function polymarketPurchaseStatus(
-  purchaseId: string
-): Promise<{
+export async function polymarketPurchaseStatus(purchaseId: string): Promise<{
   ok: boolean
   data?: IPolymarketPurchaseStatus
   message?: string
 }> {
-  return post(endpoints.polymarket.purchase.status(), { purchase_id: purchaseId }, {
-    headers: getAuthorizationHeader()
-  })
+  return post(
+    endpoints.polymarket.purchase.status(),
+    { purchase_id: purchaseId },
+    {
+      headers: getAuthorizationHeader()
+    }
+  )
 }
 
-export async function polymarketBridgeWithdraw(
-  amount: string
-): Promise<{
+export async function polymarketBridgeWithdraw(amount: string): Promise<{
   ok: boolean
   data?: { success: boolean; hash?: string }
   message?: string
 }> {
-  return post(endpoints.polymarket.bridge.withdraw(), { amount }, {
-    headers: getAuthorizationHeader()
-  })
+  return post(
+    endpoints.polymarket.bridge.withdraw(),
+    { amount },
+    {
+      headers: getAuthorizationHeader()
+    }
+  )
 }
 
 // ----------------------------------------------------------------------
 // Trade history & PNL
 // ----------------------------------------------------------------------
 
-export async function polymarketGetTrades(
-  filters?: { market?: string; limit?: number; offset?: number; side?: string }
-): Promise<{
+export async function polymarketGetTrades(filters?: {
+  market?: string
+  limit?: number
+  offset?: number
+  side?: string
+}): Promise<{
   ok: boolean
   data?: IPolymarketTrade[]
   message?: string
@@ -327,9 +325,7 @@ export async function polymarketGetTrades(
   })
 }
 
-export async function polymarketGetPnlHistory(
-  limit?: number
-): Promise<{
+export async function polymarketGetPnlHistory(limit?: number): Promise<{
   ok: boolean
   data?: IPolymarketPnlPoint[]
   message?: string
@@ -341,11 +337,15 @@ export async function polymarketGetPnlHistory(
 
 export function useGetPolymarketTradesSWR(refreshInterval = 30000, market?: string) {
   const { data, error, isLoading, isValidating, mutate } = useSWR(
-    [endpoints.polymarket.trades(), market ? { market } : {}, { headers: getAuthorizationHeader() }],
+    [
+      endpoints.polymarket.trades(),
+      market ? { market } : {},
+      { headers: getAuthorizationHeader() }
+    ],
     postFetcher,
     { refreshInterval }
   )
-  const raw = (data?.data as any)
+  const raw = data?.data as any
   const trades = Array.isArray(raw) ? raw : (raw?.trades ?? [])
   return useMemo(
     () => ({
@@ -365,7 +365,7 @@ export function useGetPolymarketClosedPositionsSWR(refreshInterval = 30000) {
     postFetcher,
     { refreshInterval }
   )
-  const raw = (data?.data as any)
+  const raw = data?.data as any
   const positions = Array.isArray(raw) ? raw : (raw?.positions ?? [])
   return useMemo(
     () => ({

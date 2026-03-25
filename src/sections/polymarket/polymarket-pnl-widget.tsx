@@ -9,16 +9,26 @@ import { alpha, useTheme } from '@mui/material/styles'
 import type { SxProps, Theme } from '@mui/material/styles'
 
 import { useState, useEffect, useMemo } from 'react'
-import { polymarketGetPortfolio, polymarketGetPnlHistory, polymarketGetPositions, polymarketGetTrades } from 'src/app/api/hooks'
+import {
+  polymarketGetPortfolio,
+  polymarketGetPnlHistory,
+  polymarketGetPositions,
+  polymarketGetTrades
+} from 'src/app/api/hooks'
 import { fNumber } from 'src/utils/format-number'
 import Chart, { useChart } from 'src/components/chart'
 import Iconify from 'src/components/iconify'
-import type { IPolymarketPortfolio, IPolymarketPosition, IPolymarketPnlPoint, IPolymarketTrade } from 'src/types/polymarket'
+import type {
+  IPolymarketPortfolio,
+  IPolymarketPosition,
+  IPolymarketPnlPoint,
+  IPolymarketTrade
+} from 'src/types/polymarket'
 
 // ----------------------------------------------------------------------
 
 const TIME_RANGES = ['1D', '1W', '1M', 'All'] as const
-type TimeRange = typeof TIME_RANGES[number]
+type TimeRange = (typeof TIME_RANGES)[number]
 
 function filterByTimeRange(points: IPolymarketPnlPoint[], range: TimeRange): IPolymarketPnlPoint[] {
   if (range === 'All' || points.length === 0) return points
@@ -27,7 +37,7 @@ function filterByTimeRange(points: IPolymarketPnlPoint[], range: TimeRange): IPo
   const msMap: Record<string, number> = {
     '1D': 24 * 60 * 60 * 1000,
     '1W': 7 * 24 * 60 * 60 * 1000,
-    '1M': 30 * 24 * 60 * 60 * 1000,
+    '1M': 30 * 24 * 60 * 60 * 1000
   }
   const cutoff = now - (msMap[range] ?? 0)
   return points.filter((p) => new Date(p.timestamp).getTime() >= cutoff)
@@ -45,7 +55,14 @@ type Props = {
   variant?: 'compact' | 'expanded'
 }
 
-export default function PolymarketPNLWidget({ sx, portfolioData, positions, trades, isLoadingExternal, variant = 'compact' }: Props = {}) {
+export default function PolymarketPNLWidget({
+  sx,
+  portfolioData,
+  positions,
+  trades,
+  isLoadingExternal,
+  variant = 'compact'
+}: Props = {}) {
   const theme = useTheme()
 
   const [portfolio, setPortfolio] = useState<IPolymarketPortfolio | null>(null)
@@ -72,7 +89,7 @@ export default function PolymarketPNLWidget({ sx, portfolioData, positions, trad
         const [portfolioRes, positionsRes, tradesRes] = await Promise.all([
           polymarketGetPortfolio(),
           !positions ? polymarketGetPositions() : Promise.resolve(null),
-          !trades ? polymarketGetTrades() : Promise.resolve(null),
+          !trades ? polymarketGetTrades() : Promise.resolve(null)
         ])
         if (portfolioRes.ok && portfolioRes.data) {
           const raw = portfolioRes.data as any
@@ -116,15 +133,20 @@ export default function PolymarketPNLWidget({ sx, portfolioData, positions, trad
 
   // Compute P&L from portfolio data, with positions fallback
   const portfolioPnl = portfolio?.total_pnl ?? portfolio?.totalPnl ?? 0
-  const positionsPnl = resolvedPositions?.reduce((sum, p) => sum + (p.pnl ?? p.cashPnl ?? 0), 0) ?? 0
+  const positionsPnl =
+    resolvedPositions?.reduce((sum, p) => sum + (p.pnl ?? p.cashPnl ?? 0), 0) ?? 0
   const pnl = portfolioPnl !== 0 ? portfolioPnl : positionsPnl
 
   const portfolioValue = portfolio?.total_value ?? portfolio?.totalValue ?? 0
-  const positionsValue = resolvedPositions?.reduce((sum, p) => sum + (p.currentValue ?? (p.size * (p.current_price ?? p.curPrice ?? 0))), 0) ?? 0
+  const positionsValue =
+    resolvedPositions?.reduce(
+      (sum, p) => sum + (p.currentValue ?? p.size * (p.current_price ?? p.curPrice ?? 0)),
+      0
+    ) ?? 0
   const totalValue = portfolioValue > 0 ? portfolioValue : positionsValue
 
   // Total volume from ALL trades: sum(trade.size * trade.price)
-  const totalVolume = resolvedTrades.reduce((sum, t) => sum + ((t.size || 0) * (t.price || 0)), 0)
+  const totalVolume = resolvedTrades.reduce((sum, t) => sum + (t.size || 0) * (t.price || 0), 0)
 
   const isPositive = pnl >= 0
   const invested = totalValue - pnl
@@ -137,15 +159,18 @@ export default function PolymarketPNLWidget({ sx, portfolioData, positions, trad
   )
 
   const chartCategories = useMemo(
-    () => filteredHistory.map((p) => {
-      const d = new Date(p.timestamp)
-      return `${d.getMonth() + 1}/${d.getDate()}`
-    }),
+    () =>
+      filteredHistory.map((p) => {
+        const d = new Date(p.timestamp)
+        return `${d.getMonth() + 1}/${d.getDate()}`
+      }),
     [filteredHistory]
   )
 
   const chartSeries = useMemo(
-    () => [{ name: 'P&L', data: filteredHistory.map((p) => Number(p.cumulativePnl?.toFixed(2) ?? 0)) }],
+    () => [
+      { name: 'P&L', data: filteredHistory.map((p) => Number(p.cumulativePnl?.toFixed(2) ?? 0)) }
+    ],
     [filteredHistory]
   )
 
@@ -153,7 +178,8 @@ export default function PolymarketPNLWidget({ sx, portfolioData, positions, trad
 
   const chartColor = isPositive ? theme.palette.success.main : theme.palette.error.main
 
-  const pnlDisplay = pnl === 0 ? '$0.00' : `${pnl > 0 ? '+' : '-'}$${fNumber(Math.abs(pnl)) || '0.00'}`
+  const pnlDisplay =
+    pnl === 0 ? '$0.00' : `${pnl > 0 ? '+' : '-'}$${fNumber(Math.abs(pnl)) || '0.00'}`
 
   // ──────────────────────────────────────────────────────────────────
   // COMPACT variant – small sparkline card with P&L overlay
@@ -169,14 +195,14 @@ export default function PolymarketPNLWidget({ sx, portfolioData, positions, trad
         shadeIntensity: 0,
         opacityFrom: 0.24,
         opacityTo: 0.02,
-        stops: [0, 100],
-      },
+        stops: [0, 100]
+      }
     },
     xaxis: {
       categories: chartCategories,
       axisBorder: { show: false },
       axisTicks: { show: false },
-      labels: { show: false },
+      labels: { show: false }
     },
     yaxis: { show: false },
     grid: { show: false },
@@ -184,9 +210,9 @@ export default function PolymarketPNLWidget({ sx, portfolioData, positions, trad
     tooltip: {
       theme: 'false' as const,
       x: { show: true },
-      y: { formatter: (val: number) => `$${val.toFixed(2)}` },
+      y: { formatter: (val: number) => `$${val.toFixed(2)}` }
     },
-    markers: { size: 0 },
+    markers: { size: 0 }
   })
 
   if (variant === 'compact') {
@@ -202,21 +228,21 @@ export default function PolymarketPNLWidget({ sx, portfolioData, positions, trad
           border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}`,
           boxShadow: theme.customShadows.card,
           overflow: 'hidden',
-          ...sx as any
+          ...(sx as any)
         }}
       >
-        <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
-          <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600 }}>
+        <Stack direction='row' justifyContent='space-between' alignItems='flex-start'>
+          <Typography variant='caption' sx={{ color: 'text.secondary', fontWeight: 600 }}>
             Profit / Loss
           </Typography>
 
           <Stack
-            direction="row"
+            direction='row'
             spacing={0.5}
             sx={{
               p: 0.5,
               borderRadius: 50,
-              bgcolor: alpha(theme.palette.grey[500], 0.08),
+              bgcolor: alpha(theme.palette.grey[500], 0.08)
             }}
           >
             {TIME_RANGES.map((tab) => (
@@ -233,11 +259,11 @@ export default function PolymarketPNLWidget({ sx, portfolioData, positions, trad
                   ...(tab === selectedRange
                     ? {
                         bgcolor: 'background.paper',
-                        boxShadow: theme.customShadows.z1,
+                        boxShadow: theme.customShadows.z1
                       }
                     : {
-                        color: 'text.secondary',
-                      }),
+                        color: 'text.secondary'
+                      })
                 }}
               >
                 {tab}
@@ -250,12 +276,12 @@ export default function PolymarketPNLWidget({ sx, portfolioData, positions, trad
           {loading ? (
             <CircularProgress size={24} sx={{ position: 'absolute', top: 0, left: 0 }} />
           ) : (
-            <Stack direction="row" alignItems="center" spacing={1}>
+            <Stack direction='row' alignItems='center' spacing={1}>
               <Typography
-                variant="h4"
+                variant='h4'
                 sx={{
                   fontWeight: 700,
-                  color: isPositive ? 'success.main' : 'error.main',
+                  color: isPositive ? 'success.main' : 'error.main'
                 }}
               >
                 {pnlDisplay}
@@ -271,10 +297,11 @@ export default function PolymarketPNLWidget({ sx, portfolioData, positions, trad
                   ),
                   color: isPositive ? theme.palette.success.main : theme.palette.error.main,
                   typography: 'caption',
-                  fontWeight: 700,
+                  fontWeight: 700
                 }}
               >
-                {isPositive ? '+' : ''}{fNumber(Math.abs(pnlPercent)) || '0.00'}%
+                {isPositive ? '+' : ''}
+                {fNumber(Math.abs(pnlPercent)) || '0.00'}%
               </Box>
             </Stack>
           )}
@@ -288,10 +315,10 @@ export default function PolymarketPNLWidget({ sx, portfolioData, positions, trad
                 left: -24,
                 width: 'calc(100% + 48px)',
                 height: 100,
-                pointerEvents: 'none',
+                pointerEvents: 'none'
               }}
             >
-              <Chart type="area" series={chartSeries} options={compactChartOptions} height={100} />
+              <Chart type='area' series={chartSeries} options={compactChartOptions} height={100} />
             </Box>
           )}
         </Box>
@@ -313,8 +340,8 @@ export default function PolymarketPNLWidget({ sx, portfolioData, positions, trad
         shadeIntensity: 0,
         opacityFrom: 0.24,
         opacityTo: 0.02,
-        stops: [0, 100],
-      },
+        stops: [0, 100]
+      }
     },
     xaxis: {
       categories: chartCategories,
@@ -324,40 +351,44 @@ export default function PolymarketPNLWidget({ sx, portfolioData, positions, trad
         show: true,
         style: {
           colors: theme.palette.text.disabled,
-          fontSize: '10px',
+          fontSize: '10px'
         },
         rotate: 0,
-        hideOverlappingLabels: true,
-      },
+        hideOverlappingLabels: true
+      }
     },
     yaxis: {
       show: true,
       labels: {
         style: {
           colors: theme.palette.text.disabled,
-          fontSize: '10px',
+          fontSize: '10px'
         },
-        formatter: (val: number) => `$${val.toFixed(0)}`,
-      },
+        formatter: (val: number) => `$${val.toFixed(0)}`
+      }
     },
     grid: {
       show: true,
       strokeDashArray: 3,
       borderColor: alpha(theme.palette.grey[500], 0.12),
       xaxis: { lines: { show: false } },
-      yaxis: { lines: { show: true } },
+      yaxis: { lines: { show: true } }
     },
     legend: { show: false },
     tooltip: {
       theme: 'false' as const,
       x: { show: true },
-      y: { formatter: (val: number) => `$${val.toFixed(2)}` },
+      y: { formatter: (val: number) => `$${val.toFixed(2)}` }
     },
-    markers: { size: 0 },
+    markers: { size: 0 }
   })
 
   return (
-    <Stack spacing={2} direction={{ xs: 'column', md: 'row' }} sx={{ width: '100%', ...sx as any }}>
+    <Stack
+      spacing={2}
+      direction={{ xs: 'column', md: 'row' }}
+      sx={{ width: '100%', ...(sx as any) }}
+    >
       {/* Left: Stats Cards */}
       <Stack spacing={2} sx={{ minWidth: { md: 200 }, flexShrink: 0 }}>
         {/* Total Volume Card */}
@@ -365,12 +396,16 @@ export default function PolymarketPNLWidget({ sx, portfolioData, positions, trad
           sx={{
             p: 2.5,
             border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}`,
-            boxShadow: theme.customShadows.card,
+            boxShadow: theme.customShadows.card
           }}
         >
           <Stack spacing={1}>
             <Stack direction='row' alignItems='center' spacing={0.75}>
-              <Iconify icon='solar:chart-2-bold-duotone' width={18} sx={{ color: 'primary.main' }} />
+              <Iconify
+                icon='solar:chart-2-bold-duotone'
+                width={18}
+                sx={{ color: 'primary.main' }}
+              />
               <Typography variant='caption' sx={{ color: 'text.secondary', fontWeight: 600 }}>
                 Total Volume
               </Typography>
@@ -390,12 +425,16 @@ export default function PolymarketPNLWidget({ sx, portfolioData, positions, trad
           sx={{
             p: 2.5,
             border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}`,
-            boxShadow: theme.customShadows.card,
+            boxShadow: theme.customShadows.card
           }}
         >
           <Stack spacing={1}>
             <Stack direction='row' alignItems='center' spacing={0.75}>
-              <Iconify icon='solar:wallet-money-bold-duotone' width={18} sx={{ color: 'info.main' }} />
+              <Iconify
+                icon='solar:wallet-money-bold-duotone'
+                width={18}
+                sx={{ color: 'info.main' }}
+              />
               <Typography variant='caption' sx={{ color: 'text.secondary', fontWeight: 600 }}>
                 Portfolio Value
               </Typography>
@@ -416,7 +455,7 @@ export default function PolymarketPNLWidget({ sx, portfolioData, positions, trad
             p: 2.5,
             border: `1px solid ${alpha(isPositive ? theme.palette.success.main : theme.palette.error.main, 0.2)}`,
             background: `linear-gradient(135deg, ${alpha(isPositive ? theme.palette.success.main : theme.palette.error.main, 0.04)} 0%, transparent 100%)`,
-            boxShadow: theme.customShadows.card,
+            boxShadow: theme.customShadows.card
           }}
         >
           <Stack spacing={1}>
@@ -438,7 +477,7 @@ export default function PolymarketPNLWidget({ sx, portfolioData, positions, trad
                   variant='h5'
                   sx={{
                     fontWeight: 700,
-                    color: isPositive ? 'success.main' : 'error.main',
+                    color: isPositive ? 'success.main' : 'error.main'
                   }}
                 >
                   {pnlDisplay}
@@ -455,10 +494,11 @@ export default function PolymarketPNLWidget({ sx, portfolioData, positions, trad
                     color: isPositive ? theme.palette.success.main : theme.palette.error.main,
                     typography: 'caption',
                     fontWeight: 700,
-                    width: 'fit-content',
+                    width: 'fit-content'
                   }}
                 >
-                  {isPositive ? '+' : ''}{fNumber(Math.abs(pnlPercent)) || '0.00'}%
+                  {isPositive ? '+' : ''}
+                  {fNumber(Math.abs(pnlPercent)) || '0.00'}%
                 </Box>
               </Stack>
             )}
@@ -476,21 +516,21 @@ export default function PolymarketPNLWidget({ sx, portfolioData, positions, trad
           flexDirection: 'column',
           border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}`,
           boxShadow: theme.customShadows.card,
-          overflow: 'hidden',
+          overflow: 'hidden'
         }}
       >
-        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+        <Stack direction='row' justifyContent='space-between' alignItems='center' sx={{ mb: 2 }}>
+          <Typography variant='subtitle2' sx={{ fontWeight: 700 }}>
             P&L History
           </Typography>
 
           <Stack
-            direction="row"
+            direction='row'
             spacing={0.5}
             sx={{
               p: 0.5,
               borderRadius: 50,
-              bgcolor: alpha(theme.palette.grey[500], 0.08),
+              bgcolor: alpha(theme.palette.grey[500], 0.08)
             }}
           >
             {TIME_RANGES.map((tab) => (
@@ -508,11 +548,11 @@ export default function PolymarketPNLWidget({ sx, portfolioData, positions, trad
                   ...(tab === selectedRange
                     ? {
                         bgcolor: 'background.paper',
-                        boxShadow: theme.customShadows.z1,
+                        boxShadow: theme.customShadows.z1
                       }
                     : {
-                        color: 'text.secondary',
-                      }),
+                        color: 'text.secondary'
+                      })
                 }}
               >
                 {tab}
@@ -527,10 +567,14 @@ export default function PolymarketPNLWidget({ sx, portfolioData, positions, trad
               <CircularProgress size={28} />
             </Stack>
           ) : hasChartData ? (
-            <Chart type="area" series={chartSeries} options={expandedChartOptions} height='100%' />
+            <Chart type='area' series={chartSeries} options={expandedChartOptions} height='100%' />
           ) : (
             <Stack alignItems='center' justifyContent='center' sx={{ height: '100%' }}>
-              <Iconify icon='solar:graph-new-up-bold-duotone' width={48} sx={{ color: 'text.disabled', mb: 1.5 }} />
+              <Iconify
+                icon='solar:graph-new-up-bold-duotone'
+                width={48}
+                sx={{ color: 'text.disabled', mb: 1.5 }}
+              />
               <Typography variant='body2' color='text.secondary'>
                 Not enough data for chart
               </Typography>

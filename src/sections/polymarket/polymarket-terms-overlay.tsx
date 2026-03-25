@@ -73,7 +73,7 @@ export default function PolymarketTermsOverlay({ terms, onAccepted }: Props) {
         WebkitBackdropFilter: 'blur(8px)',
         backgroundColor: isDark
           ? alpha(theme.palette.grey[900], 0.72)
-          : alpha(theme.palette.grey[300], 0.55),
+          : alpha(theme.palette.grey[300], 0.55)
       }}
     >
       <Card
@@ -85,7 +85,7 @@ export default function PolymarketTermsOverlay({ terms, onAccepted }: Props) {
           // Theme-aware: white in light mode, dark surface in dark mode
           bgcolor: isDark ? theme.palette.grey[900] : theme.palette.common.white,
           boxShadow: theme.shadows[24],
-          border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}`,
+          border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}`
         }}
       >
         <Stack spacing={3} alignItems='center' sx={{ textAlign: 'center' }}>
@@ -98,7 +98,7 @@ export default function PolymarketTermsOverlay({ terms, onAccepted }: Props) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              bgcolor: alpha(theme.palette.primary.main, 0.10),
+              bgcolor: alpha(theme.palette.primary.main, 0.1)
             }}
           >
             <Iconify
@@ -132,11 +132,15 @@ export default function PolymarketTermsOverlay({ terms, onAccepted }: Props) {
               '&::-webkit-scrollbar-track': { borderRadius: 3, bgcolor: 'transparent' },
               '&::-webkit-scrollbar-thumb': {
                 borderRadius: 3,
-                bgcolor: alpha(theme.palette.grey[500], 0.32),
-              },
+                bgcolor: alpha(theme.palette.grey[500], 0.32)
+              }
             }}
           >
-            <Typography variant='body2' color='text.secondary' sx={{ whiteSpace: 'pre-line', lineHeight: 1.8 }}>
+            <Typography
+              variant='body2'
+              color='text.secondary'
+              sx={{ whiteSpace: 'pre-line', lineHeight: 1.8 }}
+            >
               {terms.content}
             </Typography>
           </Box>
@@ -164,8 +168,8 @@ export default function PolymarketTermsOverlay({ terms, onAccepted }: Props) {
                 color: 'text.secondary',
                 '&:hover': {
                   borderColor: theme.palette.grey[500],
-                  bgcolor: alpha(theme.palette.grey[500], 0.08),
-                },
+                  bgcolor: alpha(theme.palette.grey[500], 0.08)
+                }
               }}
             >
               {t('polymarket.cancel')}
@@ -177,9 +181,7 @@ export default function PolymarketTermsOverlay({ terms, onAccepted }: Props) {
               size='large'
               onClick={handleAccept}
               disabled={isAccepting}
-              startIcon={
-                isAccepting ? <CircularProgress size={18} color='inherit' /> : null
-              }
+              startIcon={isAccepting ? <CircularProgress size={18} color='inherit' /> : null}
               sx={{
                 borderRadius: 2,
                 fontWeight: 700,
@@ -187,12 +189,12 @@ export default function PolymarketTermsOverlay({ terms, onAccepted }: Props) {
                 bgcolor: theme.palette.primary.main,
                 color: theme.palette.primary.contrastText,
                 '&:hover': {
-                  bgcolor: theme.palette.primary.dark,
+                  bgcolor: theme.palette.primary.dark
                 },
                 '&.Mui-disabled': {
                   bgcolor: alpha(theme.palette.primary.main, 0.48),
-                  color: alpha(theme.palette.primary.contrastText, 0.48),
-                },
+                  color: alpha(theme.palette.primary.contrastText, 0.48)
+                }
               }}
             >
               {isAccepting ? t('polymarket.accepting') : t('polymarket.agree-continue')}

@@ -29,7 +29,11 @@ type Props = {
   inlineImage?: boolean
 }
 
-export default function PolymarketMarketCard({ market, compact = false, inlineImage = false }: Props) {
+export default function PolymarketMarketCard({
+  market,
+  compact = false,
+  inlineImage = false
+}: Props) {
   const theme = useTheme()
   const router = useRouter()
 
@@ -92,7 +96,11 @@ export default function PolymarketMarketCard({ market, compact = false, inlineIm
               {displayTitle}
             </Typography>
           </Stack>
-          <HugeiconsIcon icon={ArrowRight01Icon} size={20} style={{ color: theme.palette.text.secondary }} />
+          <HugeiconsIcon
+            icon={ArrowRight01Icon}
+            size={20}
+            style={{ color: theme.palette.text.secondary }}
+          />
         </Stack>
       </Card>
     )
@@ -151,7 +159,12 @@ export default function PolymarketMarketCard({ market, compact = false, inlineIm
           />
         )}
 
-        <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={inlineImage ? 1.5 : 2}>
+        <Stack
+          direction='row'
+          alignItems='center'
+          justifyContent='space-between'
+          spacing={inlineImage ? 1.5 : 2}
+        >
           {inlineImage && market.image && (
             <Box
               component='img'
@@ -185,7 +198,11 @@ export default function PolymarketMarketCard({ market, compact = false, inlineIm
           >
             {displayTitle}
           </Typography>
-          <HugeiconsIcon icon={ArrowRight01Icon} size={18} style={{ color: theme.palette.text.secondary, flexShrink: 0 }} />
+          <HugeiconsIcon
+            icon={ArrowRight01Icon}
+            size={18}
+            style={{ color: theme.palette.text.secondary, flexShrink: 0 }}
+          />
         </Stack>
 
         {/* Yes / No bars */}
@@ -222,7 +239,12 @@ export default function PolymarketMarketCard({ market, compact = false, inlineIm
             }}
           />
 
-          <Stack direction='row' alignItems='center' justifyContent='space-between' sx={{ mt: 0.5 }}>
+          <Stack
+            direction='row'
+            alignItems='center'
+            justifyContent='space-between'
+            sx={{ mt: 0.5 }}
+          >
             <Stack direction='row' alignItems='center' spacing={0.5}>
               <Box
                 sx={{
@@ -256,7 +278,12 @@ export default function PolymarketMarketCard({ market, compact = false, inlineIm
         </Stack>
 
         {/* Volume & End Date */}
-        <Stack direction='row' alignItems='center' justifyContent='space-between' sx={{ pt: 0.5, mt: 'auto' }}>
+        <Stack
+          direction='row'
+          alignItems='center'
+          justifyContent='space-between'
+          sx={{ pt: 0.5, mt: 'auto' }}
+        >
           <Stack direction='row' alignItems='center' spacing={0.5}>
             <Iconify icon='solar:graph-up-bold' width={14} sx={{ color: 'text.secondary' }} />
             <Typography variant='caption' color='text.secondary'>

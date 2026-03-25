@@ -31,7 +31,16 @@ import { paths } from 'src/routes/paths'
 
 import { useTranslate } from 'src/locales'
 import { useResponsive } from 'src/hooks/use-responsive'
-import { useGetPolymarketMarket, polymarketPurchase, useGetWalletBalance, polymarketPurchaseStatus, useGetPolymarketPositionsSWR, useGetPolymarketOrdersSWR, polymarketCancelOrder, useGetPolymarketTradesSWR } from 'src/app/api/hooks'
+import {
+  useGetPolymarketMarket,
+  polymarketPurchase,
+  useGetWalletBalance,
+  polymarketPurchaseStatus,
+  useGetPolymarketPositionsSWR,
+  useGetPolymarketOrdersSWR,
+  polymarketCancelOrder,
+  useGetPolymarketTradesSWR
+} from 'src/app/api/hooks'
 import { useSnackbar } from 'src/components/snackbar'
 import { useSWRConfig } from 'swr'
 import { useAuthContext } from 'src/auth/hooks'
@@ -56,7 +65,7 @@ const OUTCOME_COLORS_LIGHT = [
   '#F44336', // Red
   '#FF9800', // Orange
   '#673AB7', // Purple
-  '#9E9E9E', // Grey (Other)
+  '#9E9E9E' // Grey (Other)
 ]
 
 const OUTCOME_COLORS_DARK = [
@@ -65,7 +74,7 @@ const OUTCOME_COLORS_DARK = [
   '#EF5350', // Red
   '#FFB74D', // Orange
   '#B39DDB', // Purple (brighter)
-  '#BDBDBD', // Grey (Other)
+  '#BDBDBD' // Grey (Other)
 ]
 
 function getOutcomeColor(index: number, dark: boolean): string {
@@ -117,20 +126,20 @@ const STEP_LABELS: Record<string, string> = {
   account_creation: 'Creating account',
   bridge: 'Bridging funds',
   order_placement: 'Placing order',
-  done: 'Complete',
+  done: 'Complete'
 }
 
 // ── Framer Motion variants ──
 const fadeInUp = {
   initial: { opacity: 0, y: 24 },
-  animate: { opacity: 1, y: 0 },
+  animate: { opacity: 1, y: 0 }
 }
 
 const staggerContainer = {
   initial: {},
   animate: {
-    transition: { staggerChildren: 0.08, delayChildren: 0.1 },
-  },
+    transition: { staggerChildren: 0.08, delayChildren: 0.1 }
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -183,7 +192,8 @@ export default function PolymarketDetailView({ slug }: Props) {
   const { data: marketTrades = [] } = useGetPolymarketTradesSWR(30000, market?.condition_id)
 
   const realMarketPositions = positions.filter((p) => {
-    if (p.conditionId !== market?.condition_id && p.market?.condition_id !== market?.condition_id) return false
+    if (p.conditionId !== market?.condition_id && p.market?.condition_id !== market?.condition_id)
+      return false
     return !soldPositionKeys.has((p.market?.condition_id || p.conditionId) + p.outcome)
   })
 
@@ -220,14 +230,14 @@ export default function PolymarketDetailView({ slug }: Props) {
         shadeIntensity: 0,
         opacityFrom: 0.28,
         opacityTo: 0.02,
-        stops: [0, 100],
-      },
+        stops: [0, 100]
+      }
     },
     xaxis: {
       categories: chartData?.categories || [],
       axisBorder: { show: false },
       axisTicks: { show: false },
-      labels: { style: { colors: theme.palette.text.disabled, fontSize: '11px' } },
+      labels: { style: { colors: theme.palette.text.disabled, fontSize: '11px' } }
     },
     yaxis: {
       min: 0,
@@ -235,18 +245,18 @@ export default function PolymarketDetailView({ slug }: Props) {
       tickAmount: 4,
       labels: {
         formatter: (val: number) => `${Math.round(val)}%`,
-        style: { colors: theme.palette.text.disabled, fontSize: '11px' },
-      },
+        style: { colors: theme.palette.text.disabled, fontSize: '11px' }
+      }
     },
     grid: {
       strokeDashArray: 4,
       borderColor: alpha(theme.palette.grey[500], 0.16),
       xaxis: { lines: { show: false } },
-      yaxis: { lines: { show: true } },
+      yaxis: { lines: { show: true } }
     },
     legend: { show: false },
     tooltip: { theme: 'false' as const, y: { formatter: (val: number) => `${val.toFixed(1)}%` } },
-    markers: { size: 0 },
+    markers: { size: 0 }
   })
 
   // ── Handlers ──
@@ -280,14 +290,15 @@ export default function PolymarketDetailView({ slug }: Props) {
         side: 'BUY',
         size: tokenQuantity,
         price: selectedPrice,
-        bridge_amount: bridgeAmountWei,
+        bridge_amount: bridgeAmountWei
       })
 
       if (result.ok) {
         enqueueSnackbar('Transaction in Progress: Bridging & Placing Order...', { variant: 'info' })
 
         mutate(
-          (key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'),
+          (key: any) =>
+            Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'),
           (currentData: any) => {
             if (!currentData || !Array.isArray(currentData.balances)) return currentData
             return {
@@ -318,7 +329,7 @@ export default function PolymarketDetailView({ slug }: Props) {
             size: tokenQuantity,
             price: selectedPrice,
             current_step: 'bridge',
-            status: 'processing',
+            status: 'processing'
           }
           setActivePurchases((prev) => [...prev, newPurchase])
 
@@ -351,23 +362,49 @@ export default function PolymarketDetailView({ slug }: Props) {
                       current_price: selectedPrice,
                       pnl: 0,
                       pnl_percent: 0,
-                      conditionId: market.condition_id,
+                      conditionId: market.condition_id
                     }
                     setOptimisticPositions((prev) => [...prev, optPos])
                     // Clear optimistic position after 30s (real data should arrive by then)
                     setTimeout(() => {
-                      setOptimisticPositions((prev) =>
-                        prev.filter((op) => op !== optPos)
-                      )
+                      setOptimisticPositions((prev) => prev.filter((op) => op !== optPos))
                     }, 30000)
                   }
 
                   // Revalidate all related data
                   const revalidateAll = () => {
-                    mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'), undefined, { revalidate: true })
-                    mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/positions'), undefined, { revalidate: true })
-                    mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders'), undefined, { revalidate: true })
-                    mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/portfolio'), undefined, { revalidate: true })
+                    mutate(
+                      (key: any) =>
+                        Array.isArray(key) &&
+                        typeof key[0] === 'string' &&
+                        key[0].includes('/balance'),
+                      undefined,
+                      { revalidate: true }
+                    )
+                    mutate(
+                      (key: any) =>
+                        Array.isArray(key) &&
+                        typeof key[0] === 'string' &&
+                        key[0].includes('/positions'),
+                      undefined,
+                      { revalidate: true }
+                    )
+                    mutate(
+                      (key: any) =>
+                        Array.isArray(key) &&
+                        typeof key[0] === 'string' &&
+                        key[0].includes('/orders'),
+                      undefined,
+                      { revalidate: true }
+                    )
+                    mutate(
+                      (key: any) =>
+                        Array.isArray(key) &&
+                        typeof key[0] === 'string' &&
+                        key[0].includes('/portfolio'),
+                      undefined,
+                      { revalidate: true }
+                    )
                   }
                   revalidateAll()
                   // Retry after 3s in case backend hasn't settled yet
@@ -375,8 +412,15 @@ export default function PolymarketDetailView({ slug }: Props) {
                 } else if (st === 'failed') {
                   clearInterval(pollInterval)
                   setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
-                  enqueueSnackbar(statusRes.data.error || 'Transaction failed', { variant: 'error' })
-                  mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'))
+                  enqueueSnackbar(statusRes.data.error || 'Transaction failed', {
+                    variant: 'error'
+                  })
+                  mutate(
+                    (key: any) =>
+                      Array.isArray(key) &&
+                      typeof key[0] === 'string' &&
+                      key[0].includes('/balance')
+                  )
                 }
               }
             } catch (e) {
@@ -397,13 +441,31 @@ export default function PolymarketDetailView({ slug }: Props) {
   // ── Loading skeleton ──
   if (isLoading) {
     return (
-      <Box sx={{ mt: -13, mx: { xs: 0, lg: -2 }, flex: 1, background: isDark ? 'linear-gradient(180deg, #161C24 0%, #0A2E1A 100%)' : 'linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 100%)', minHeight: '100vh', pb: 10 }}>
-        <Container maxWidth={settings.themeStretch ? false : 'xl'} sx={{ pt: { xs: 11, md: 12 }, px: { xs: 2, md: 3 } }}>
+      <Box
+        sx={{
+          mt: -13,
+          mx: { xs: 0, lg: -2 },
+          flex: 1,
+          background: isDark
+            ? 'linear-gradient(180deg, #161C24 0%, #0A2E1A 100%)'
+            : 'linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 100%)',
+          minHeight: '100vh',
+          pb: 10
+        }}
+      >
+        <Container
+          maxWidth={settings.themeStretch ? false : 'xl'}
+          sx={{ pt: { xs: 11, md: 12 }, px: { xs: 2, md: 3 } }}
+        >
           <Stack spacing={3}>
-            <Skeleton variant="rounded" height={60} />
+            <Skeleton variant='rounded' height={60} />
             <Grid container spacing={3}>
-              <Grid xs={12} md={5}><Skeleton variant="rounded" height={500} /></Grid>
-              <Grid xs={12} md={7}><Skeleton variant="rounded" height={500} /></Grid>
+              <Grid xs={12} md={5}>
+                <Skeleton variant='rounded' height={500} />
+              </Grid>
+              <Grid xs={12} md={7}>
+                <Skeleton variant='rounded' height={500} />
+              </Grid>
             </Grid>
           </Stack>
         </Container>
@@ -414,15 +476,28 @@ export default function PolymarketDetailView({ slug }: Props) {
   // ── Not found ──
   if (!market) {
     return (
-      <Box sx={{ mt: -13, mx: { xs: 0, lg: -2 }, flex: 1, background: isDark ? 'linear-gradient(180deg, #161C24 0%, #0A2E1A 100%)' : 'linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 100%)', minHeight: '100vh' }}>
-        <Container maxWidth={settings.themeStretch ? false : 'xl'} sx={{ pt: { xs: 11, md: 12 }, px: { xs: 2, md: 3 } }}>
-          <Stack alignItems="center" justifyContent="center" sx={{ py: 10 }}>
-            <Typography variant="h6" color="text.secondary">
+      <Box
+        sx={{
+          mt: -13,
+          mx: { xs: 0, lg: -2 },
+          flex: 1,
+          background: isDark
+            ? 'linear-gradient(180deg, #161C24 0%, #0A2E1A 100%)'
+            : 'linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 100%)',
+          minHeight: '100vh'
+        }}
+      >
+        <Container
+          maxWidth={settings.themeStretch ? false : 'xl'}
+          sx={{ pt: { xs: 11, md: 12 }, px: { xs: 2, md: 3 } }}
+        >
+          <Stack alignItems='center' justifyContent='center' sx={{ py: 10 }}>
+            <Typography variant='h6' color='text.secondary'>
               {t('polymarket.market-not-found')}
             </Typography>
             <Button
               onClick={() => router.push(paths.dashboard.polymarket.root)}
-              startIcon={<Iconify icon="eva:arrow-back-fill" />}
+              startIcon={<Iconify icon='eva:arrow-back-fill' />}
               sx={{ mt: 2 }}
             >
               {t('polymarket.back-to-markets')}
@@ -443,20 +518,30 @@ export default function PolymarketDetailView({ slug }: Props) {
       spacing={3}
       component={m.div}
       variants={staggerContainer}
-      initial="initial"
-      animate="animate"
+      initial='initial'
+      animate='animate'
     >
       <Card
         component={m.div}
         variants={fadeInUp}
         transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-        sx={{ border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}`, boxShadow: 'none', overflow: 'visible' }}
+        sx={{
+          border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}`,
+          boxShadow: 'none',
+          overflow: 'visible'
+        }}
       >
         {/* WHO DO YOU THINK WINS? */}
         <Box sx={{ p: 3 }}>
           <Typography
-            variant="overline"
-            sx={{ mb: 2, display: 'block', color: 'text.secondary', letterSpacing: 1.5, fontSize: '0.7rem' }}
+            variant='overline'
+            sx={{
+              mb: 2,
+              display: 'block',
+              color: 'text.secondary',
+              letterSpacing: 1.5,
+              fontSize: '0.7rem'
+            }}
           >
             WHO DO YOU THINK WINS?
           </Typography>
@@ -471,7 +556,11 @@ export default function PolymarketDetailView({ slug }: Props) {
               return (
                 <Box
                   key={outcome}
-                  onClick={() => { setSelectedOutcome(idx); setError(null); setSuccess(null) }}
+                  onClick={() => {
+                    setSelectedOutcome(idx)
+                    setError(null)
+                    setSuccess(null)
+                  }}
                   sx={{
                     display: 'flex',
                     alignItems: 'center',
@@ -483,18 +572,34 @@ export default function PolymarketDetailView({ slug }: Props) {
                     border: `2px solid ${isSelected ? theme.palette.primary.main : 'transparent'}`,
                     bgcolor: isSelected ? alpha(theme.palette.primary.main, 0.04) : 'transparent',
                     transition: 'border-color 0.1s ease, background-color 0.1s ease',
-                    '&:hover': { bgcolor: alpha(theme.palette.grey[500], 0.06) },
+                    '&:hover': { bgcolor: alpha(theme.palette.grey[500], 0.06) }
                   }}
                 >
-                  <Stack direction="row" alignItems="center" spacing={1.5}>
-                    <Box sx={{ width: 12, height: 12, borderRadius: '50%', bgcolor: dotColor, flexShrink: 0 }} />
-                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>{outcome}</Typography>
+                  <Stack direction='row' alignItems='center' spacing={1.5}>
+                    <Box
+                      sx={{
+                        width: 12,
+                        height: 12,
+                        borderRadius: '50%',
+                        bgcolor: dotColor,
+                        flexShrink: 0
+                      }}
+                    />
+                    <Typography variant='subtitle2' sx={{ fontWeight: 600 }}>
+                      {outcome}
+                    </Typography>
                   </Stack>
 
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <Typography variant="body2" color="text.secondary">{percent}% chance</Typography>
+                  <Stack direction='row' alignItems='center' spacing={1}>
+                    <Typography variant='body2' color='text.secondary'>
+                      {percent}% chance
+                    </Typography>
                     {isSelected && (
-                      <HugeiconsIcon icon={Tick02Icon} size={18} style={{ color: theme.palette.primary.main }} />
+                      <HugeiconsIcon
+                        icon={Tick02Icon}
+                        size={18}
+                        style={{ color: theme.palette.primary.main }}
+                      />
                     )}
                   </Stack>
                 </Box>
@@ -508,14 +613,20 @@ export default function PolymarketDetailView({ slug }: Props) {
         {/* HOW MUCH DO YOU WANT TO PREDICT? */}
         <Box sx={{ p: 3 }}>
           <Typography
-            variant="overline"
-            sx={{ mb: 2.5, display: 'block', color: 'text.secondary', letterSpacing: 1.5, fontSize: '0.7rem' }}
+            variant='overline'
+            sx={{
+              mb: 2.5,
+              display: 'block',
+              color: 'text.secondary',
+              letterSpacing: 1.5,
+              fontSize: '0.7rem'
+            }}
           >
             HOW MUCH DO YOU WANT TO PREDICT?
           </Typography>
 
           {/* Preset pills */}
-          <Stack direction="row" spacing={1} sx={{ mb: 2.5 }}>
+          <Stack direction='row' spacing={1} sx={{ mb: 2.5 }}>
             {PRESET_AMOUNTS.map((preset) => {
               const isActive = amount === preset
               return (
@@ -536,13 +647,19 @@ export default function PolymarketDetailView({ slug }: Props) {
                           bgcolor: isDark ? theme.palette.grey[200] : '#1B1B1B',
                           color: isDark ? theme.palette.grey[900] : '#fff',
                           boxShadow: 'none',
-                          '&:hover': { bgcolor: isDark ? theme.palette.grey[300] : '#333', boxShadow: 'none' },
+                          '&:hover': {
+                            bgcolor: isDark ? theme.palette.grey[300] : '#333',
+                            boxShadow: 'none'
+                          }
                         }
                       : {
                           borderColor: alpha(theme.palette.grey[500], 0.24),
                           color: 'text.primary',
-                          '&:hover': { borderColor: theme.palette.grey[400], bgcolor: alpha(theme.palette.grey[500], 0.08) },
-                        }),
+                          '&:hover': {
+                            borderColor: theme.palette.grey[400],
+                            bgcolor: alpha(theme.palette.grey[500], 0.08)
+                          }
+                        })
                   }}
                 >
                   ${preset}
@@ -560,15 +677,17 @@ export default function PolymarketDetailView({ slug }: Props) {
               borderRadius: 1.5,
               px: 2,
               py: 1.25,
-              maxWidth: { xs: '100%', md: 200 },
+              maxWidth: { xs: '100%', md: 200 }
             }}
           >
-            <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.secondary', mr: 1 }}>$</Typography>
+            <Typography variant='body2' sx={{ fontWeight: 600, color: 'text.secondary', mr: 1 }}>
+              $
+            </Typography>
             <Box
-              component="input"
+              component='input'
               value={customAmount}
               onChange={handleCustomAmountChange}
-              type="number"
+              type='number'
               sx={{
                 border: 'none',
                 outline: 'none',
@@ -578,15 +697,22 @@ export default function PolymarketDetailView({ slug }: Props) {
                 width: '100%',
                 fontFamily: 'inherit',
                 color: 'text.primary',
-                '&::-webkit-inner-spin-button, &::-webkit-outer-spin-button': { WebkitAppearance: 'none', margin: 0 },
+                '&::-webkit-inner-spin-button, &::-webkit-outer-spin-button': {
+                  WebkitAppearance: 'none',
+                  margin: 0
+                }
               }}
             />
           </Box>
 
-          <Typography variant="caption" color="text.secondary" sx={{ mt: 1.5, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+          <Typography
+            variant='caption'
+            color='text.secondary'
+            sx={{ mt: 1.5, display: 'flex', alignItems: 'center', gap: 0.5 }}
+          >
             Available: ${fNumber(availableBalance)}
             <Box
-              component="span"
+              component='span'
               sx={{
                 display: 'inline-flex',
                 px: 0.75,
@@ -596,7 +722,7 @@ export default function PolymarketDetailView({ slug }: Props) {
                 color: theme.palette.primary.main,
                 fontWeight: 700,
                 fontSize: '0.65rem',
-                letterSpacing: 0.5,
+                letterSpacing: 0.5
               }}
             >
               {balanceTokenSymbol}
@@ -609,13 +735,17 @@ export default function PolymarketDetailView({ slug }: Props) {
           <>
             <Divider />
             <Box sx={{ p: 3, bgcolor: alpha(theme.palette.primary.main, 0.06) }}>
-              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+              <Typography
+                variant='caption'
+                color='text.secondary'
+                sx={{ display: 'block', mb: 0.5 }}
+              >
                 If {outcomes[selectedOutcome]} wins...
               </Typography>
-              <Typography variant="h4" sx={{ fontWeight: 800, color: 'text.primary' }}>
+              <Typography variant='h4' sx={{ fontWeight: 800, color: 'text.primary' }}>
                 You get back ${fNumber(estimatedReturn)}
               </Typography>
-              <Typography variant="caption" color="text.secondary">
+              <Typography variant='caption' color='text.secondary'>
                 That&apos;s your ${fNumber(amount)} prediction + ${fNumber(estimatedProfit)} profit
               </Typography>
             </Box>
@@ -624,25 +754,37 @@ export default function PolymarketDetailView({ slug }: Props) {
       </Card>
 
       {/* Alerts */}
-      {error && <m.div variants={fadeInUp}><Alert severity="error">{error}</Alert></m.div>}
-      {success && <m.div variants={fadeInUp}><Alert severity="success">{success}</Alert></m.div>}
+      {error && (
+        <m.div variants={fadeInUp}>
+          <Alert severity='error'>{error}</Alert>
+        </m.div>
+      )}
+      {success && (
+        <m.div variants={fadeInUp}>
+          <Alert severity='success'>{success}</Alert>
+        </m.div>
+      )}
 
       {/* CTA */}
-      <Box component={m.div} variants={fadeInUp} transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}>
+      <Box
+        component={m.div}
+        variants={fadeInUp}
+        transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+      >
         <Button
           fullWidth
-          variant="contained"
-          color="primary"
-          size="large"
+          variant='contained'
+          color='primary'
+          size='large'
           onClick={handleSubmit}
           disabled={amount <= 0 || isSubmitting}
-          startIcon={isSubmitting ? <CircularProgress size={18} color="inherit" /> : null}
+          startIcon={isSubmitting ? <CircularProgress size={18} color='inherit' /> : null}
           sx={{
             py: 2,
             fontWeight: 700,
             fontSize: '1rem',
             borderRadius: 50,
-            textTransform: 'none',
+            textTransform: 'none'
           }}
         >
           {isSubmitting
@@ -658,30 +800,46 @@ export default function PolymarketDetailView({ slug }: Props) {
     <Card
       component={m.div}
       variants={fadeInUp}
-      initial="initial"
-      animate="animate"
+      initial='initial'
+      animate='animate'
       transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
       sx={{ border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}`, boxShadow: 'none' }}
     >
       {/* ODDS OVER TIME */}
       <Box sx={{ p: 3 }}>
         <Typography
-          variant="overline"
-          sx={{ mb: 2, display: 'block', color: 'text.secondary', letterSpacing: 1.5, fontSize: '0.7rem' }}
+          variant='overline'
+          sx={{
+            mb: 2,
+            display: 'block',
+            color: 'text.secondary',
+            letterSpacing: 1.5,
+            fontSize: '0.7rem'
+          }}
         >
           ODDS OVER TIME (%)
         </Typography>
 
         {chartData && (
-          <Chart type="area" series={chartData.series} options={chartOptions} height={220} />
+          <Chart type='area' series={chartData.series} options={chartOptions} height={220} />
         )}
 
         {/* Legend */}
-        <Stack direction="row" spacing={2} sx={{ mt: 1.5, flexWrap: 'wrap', gap: 1 }}>
+        <Stack direction='row' spacing={2} sx={{ mt: 1.5, flexWrap: 'wrap', gap: 1 }}>
           {outcomes.map((outcome, idx) => (
-            <Stack key={outcome} direction="row" alignItems="center" spacing={0.75}>
-              <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: getOutcomeColor(idx, isDark), flexShrink: 0 }} />
-              <Typography variant="caption" sx={{ fontSize: '0.7rem', color: 'text.secondary' }}>{outcome}</Typography>
+            <Stack key={outcome} direction='row' alignItems='center' spacing={0.75}>
+              <Box
+                sx={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: '50%',
+                  bgcolor: getOutcomeColor(idx, isDark),
+                  flexShrink: 0
+                }}
+              />
+              <Typography variant='caption' sx={{ fontSize: '0.7rem', color: 'text.secondary' }}>
+                {outcome}
+              </Typography>
             </Stack>
           ))}
         </Stack>
@@ -692,8 +850,14 @@ export default function PolymarketDetailView({ slug }: Props) {
       {/* CURRENT ODDS */}
       <Box sx={{ p: 3 }}>
         <Typography
-          variant="overline"
-          sx={{ mb: 2.5, display: 'block', color: 'text.secondary', letterSpacing: 1.5, fontSize: '0.7rem' }}
+          variant='overline'
+          sx={{
+            mb: 2.5,
+            display: 'block',
+            color: 'text.secondary',
+            letterSpacing: 1.5,
+            fontSize: '0.7rem'
+          }}
         >
           CURRENT ODDS
         </Typography>
@@ -705,24 +869,32 @@ export default function PolymarketDetailView({ slug }: Props) {
             const color = getOutcomeColor(idx, isDark)
 
             return (
-              <Stack key={outcome} direction="row" alignItems="center" spacing={2}>
-                <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: color, flexShrink: 0 }} />
-                <Typography variant="body2" sx={{ fontWeight: 600, minWidth: { xs: 60, md: 80 }, flexShrink: 0 }}>
+              <Stack key={outcome} direction='row' alignItems='center' spacing={2}>
+                <Box
+                  sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: color, flexShrink: 0 }}
+                />
+                <Typography
+                  variant='body2'
+                  sx={{ fontWeight: 600, minWidth: { xs: 60, md: 80 }, flexShrink: 0 }}
+                >
                   {outcome}
                 </Typography>
                 <Box sx={{ flex: 1 }}>
                   <LinearProgress
-                    variant="determinate"
+                    variant='determinate'
                     value={percent}
                     sx={{
                       height: 10,
                       borderRadius: 5,
                       bgcolor: alpha(theme.palette.grey[500], 0.08),
-                      '& .MuiLinearProgress-bar': { borderRadius: 5, bgcolor: color },
+                      '& .MuiLinearProgress-bar': { borderRadius: 5, bgcolor: color }
                     }}
                   />
                 </Box>
-                <Typography variant="body2" sx={{ fontWeight: 700, minWidth: 36, textAlign: 'right', flexShrink: 0 }}>
+                <Typography
+                  variant='body2'
+                  sx={{ fontWeight: 700, minWidth: 36, textAlign: 'right', flexShrink: 0 }}
+                >
                   {percent}%
                 </Typography>
               </Stack>
@@ -736,22 +908,30 @@ export default function PolymarketDetailView({ slug }: Props) {
       {/* HOW IT WORKS */}
       <Box sx={{ p: 3, bgcolor: alpha(theme.palette.grey[500], 0.04) }}>
         <Typography
-          variant="overline"
-          sx={{ mb: 1.5, display: 'block', color: 'text.secondary', letterSpacing: 1.5, fontSize: '0.7rem' }}
+          variant='overline'
+          sx={{
+            mb: 1.5,
+            display: 'block',
+            color: 'text.secondary',
+            letterSpacing: 1.5,
+            fontSize: '0.7rem'
+          }}
         >
           HOW IT WORKS
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
+        <Typography variant='body2' color='text.secondary' sx={{ lineHeight: 1.7 }}>
           Pick who you think will win. If you&apos;re right, you get your money back plus your
           winnings. If you&apos;re wrong, you lose your bet.
           {market.end_date_iso && (
             <>
-              {' '}Market closes on{' '}
+              {' '}
+              Market closes on{' '}
               {new Date(market.end_date_iso).toLocaleDateString('en-US', {
                 month: 'long',
                 day: 'numeric',
-                year: 'numeric',
-              })}.
+                year: 'numeric'
+              })}
+              .
             </>
           )}
         </Typography>
@@ -774,497 +954,689 @@ export default function PolymarketDetailView({ slug }: Props) {
           ? 'linear-gradient(180deg, #161C24 0%, #0A2E1A 600px)'
           : 'linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 600px)',
         pb: { xs: 10, md: 15 },
-        mb: { xs: -10, md: -15 }, // Buffer to prevent any clipping from parent layout
+        mb: { xs: -10, md: -15 } // Buffer to prevent any clipping from parent layout
       }}
     >
       <Container
         maxWidth={settings.themeStretch ? false : 'xl'}
         sx={{
           pt: { xs: 11, md: 12 },
-          px: { xs: 2, md: 3 },
+          px: { xs: 2, md: 3 }
         }}
       >
-          <Stack
-            spacing={3}
-            component={m.div}
-            initial="initial"
-            animate="animate"
-            variants={staggerContainer}
-          >
-            {/* ── HEADER ── */}
-            <Stack spacing={1.5} component={m.div} variants={fadeInUp} transition={{ duration: 0.4 }}>
-              <Button
-                onClick={() => router.push(paths.dashboard.polymarket.root)}
-                startIcon={<HugeiconsIcon icon={ArrowLeft01Icon} size={16} />}
-                sx={{
-                  alignSelf: 'flex-start',
-                  color: 'text.secondary',
-                  fontWeight: 500,
-                  fontSize: '0.85rem',
-                  textTransform: 'none',
-                  px: 0,
-                  minWidth: 'auto',
-                  '&:hover': { bgcolor: 'transparent', color: 'text.primary' },
-                }}
-              >
-                Back
-              </Button>
+        <Stack
+          spacing={3}
+          component={m.div}
+          initial='initial'
+          animate='animate'
+          variants={staggerContainer}
+        >
+          {/* ── HEADER ── */}
+          <Stack spacing={1.5} component={m.div} variants={fadeInUp} transition={{ duration: 0.4 }}>
+            <Button
+              onClick={() => router.push(paths.dashboard.polymarket.root)}
+              startIcon={<HugeiconsIcon icon={ArrowLeft01Icon} size={16} />}
+              sx={{
+                alignSelf: 'flex-start',
+                color: 'text.secondary',
+                fontWeight: 500,
+                fontSize: '0.85rem',
+                textTransform: 'none',
+                px: 0,
+                minWidth: 'auto',
+                '&:hover': { bgcolor: 'transparent', color: 'text.primary' }
+              }}
+            >
+              Back
+            </Button>
 
-              <Stack
-                direction={{ xs: 'column', md: 'row' }}
-                alignItems={{ xs: 'flex-start', md: 'center' }}
-                justifyContent="space-between"
-                spacing={2}
-              >
-                <Stack direction="row" alignItems="center" spacing={2} sx={{ flex: 1, minWidth: 0 }}>
-                  {market.image && (
-                    <Box
-                      component="img"
-                      src={market.image}
-                      alt={market.question}
-                      sx={{
-                        width: 48,
-                        height: 48,
-                        borderRadius: 1.5,
-                        objectFit: 'cover',
-                        bgcolor: 'grey.200',
-                        flexShrink: 0,
-                      }}
-                    />
-                  )}
-                  <Typography
-                    variant="h5"
-                    sx={{ fontWeight: 700, color: 'text.primary', fontSize: { xs: 20, md: 24 } }}
-                  >
-                    {market.question}
-                  </Typography>
-                  {market.category && (
-                    <Chip
-                      label={market.category}
-                      size="small"
-                      sx={{
-                        bgcolor: alpha(theme.palette.primary.main, 0.12),
-                        color: theme.palette.primary.main,
-                        fontWeight: 600,
-                        fontSize: '0.7rem',
-                        height: 24,
-                        borderRadius: 0.75,
-                        flexShrink: 0,
-                      }}
-                    />
-                  )}
-                </Stack>
+            <Stack
+              direction={{ xs: 'column', md: 'row' }}
+              alignItems={{ xs: 'flex-start', md: 'center' }}
+              justifyContent='space-between'
+              spacing={2}
+            >
+              <Stack direction='row' alignItems='center' spacing={2} sx={{ flex: 1, minWidth: 0 }}>
+                {market.image && (
+                  <Box
+                    component='img'
+                    src={market.image}
+                    alt={market.question}
+                    sx={{
+                      width: 48,
+                      height: 48,
+                      borderRadius: 1.5,
+                      objectFit: 'cover',
+                      bgcolor: 'grey.200',
+                      flexShrink: 0
+                    }}
+                  />
+                )}
+                <Typography
+                  variant='h5'
+                  sx={{ fontWeight: 700, color: 'text.primary', fontSize: { xs: 20, md: 24 } }}
+                >
+                  {market.question}
+                </Typography>
+                {market.category && (
+                  <Chip
+                    label={market.category}
+                    size='small'
+                    sx={{
+                      bgcolor: alpha(theme.palette.primary.main, 0.12),
+                      color: theme.palette.primary.main,
+                      fontWeight: 600,
+                      fontSize: '0.7rem',
+                      height: 24,
+                      borderRadius: 0.75,
+                      flexShrink: 0
+                    }}
+                  />
+                )}
+              </Stack>
 
-                <Stack direction="row" alignItems="center" spacing={3} sx={{ flexShrink: 0 }}>
-                  <Typography variant="body2" color="text.secondary">
-                    Vol: <strong>${fNumber(market.volume)}</strong>
+              <Stack direction='row' alignItems='center' spacing={3} sx={{ flexShrink: 0 }}>
+                <Typography variant='body2' color='text.secondary'>
+                  Vol: <strong>${fNumber(market.volume)}</strong>
+                </Typography>
+                {market.end_date_iso && (
+                  <Typography variant='body2' color='text.secondary'>
+                    Ends:{' '}
+                    <strong>
+                      {new Date(market.end_date_iso).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                      })}
+                    </strong>
                   </Typography>
-                  {market.end_date_iso && (
-                    <Typography variant="body2" color="text.secondary">
-                      Ends:{' '}
-                      <strong>
-                        {new Date(market.end_date_iso).toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric',
-                        })}
-                      </strong>
-                    </Typography>
-                  )}
-                </Stack>
+                )}
               </Stack>
             </Stack>
+          </Stack>
 
-            {/* ── DESKTOP: side-by-side layout ── */}
-            {mdUp && (
-              <Grid container spacing={3}>
-                <Grid xs={12} md={5}>
-                  {renderBetModule}
-                </Grid>
-                <Grid xs={12} md={7}>
-                  {renderMarketDetails}
-                </Grid>
+          {/* ── DESKTOP: side-by-side layout ── */}
+          {mdUp && (
+            <Grid container spacing={3}>
+              <Grid xs={12} md={5}>
+                {renderBetModule}
               </Grid>
-            )}
-
-            {/* ── MOBILE: bet module inside gradient ── */}
-            {!mdUp && renderBetModule}
-
-            {/* ── MOBILE: Market Details (also inside gradient) ── */}
-            {!mdUp && (
-              <Box component={m.div} variants={fadeInUp} transition={{ duration: 0.4 }}>
-                <Typography variant="h5" sx={{ mb: 3, fontWeight: 700 }}>
-                  Market Details
-                </Typography>
+              <Grid xs={12} md={7}>
                 {renderMarketDetails}
-              </Box>
-            )}
+              </Grid>
+            </Grid>
+          )}
 
-            {/* ── POSITIONS & ORDERS ── */}
+          {/* ── MOBILE: bet module inside gradient ── */}
+          {!mdUp && renderBetModule}
+
+          {/* ── MOBILE: Market Details (also inside gradient) ── */}
+          {!mdUp && (
             <Box component={m.div} variants={fadeInUp} transition={{ duration: 0.4 }}>
-              <Typography variant="h5" sx={{ mb: 3, fontWeight: 700, mt: mdUp ? 5 : 0 }}>
-                My Activity
+              <Typography variant='h5' sx={{ mb: 3, fontWeight: 700 }}>
+                Market Details
               </Typography>
-              
-              <Stack spacing={3}>
-                {/* Active Positions */}
-                <Card sx={{ border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}` }}>
-                  <Stack direction='row' alignItems='center' justifyContent='space-between' sx={{ px: 3, py: 2.5 }}>
-                    <Typography variant='subtitle1' fontWeight={700}>Open Positions</Typography>
-                    <Chip label={marketPositions.length} size='small' sx={{ fontWeight: 700, bgcolor: alpha(theme.palette.primary.main, 0.16), color: 'primary.main' }} />
+              {renderMarketDetails}
+            </Box>
+          )}
+
+          {/* ── POSITIONS & ORDERS ── */}
+          <Box component={m.div} variants={fadeInUp} transition={{ duration: 0.4 }}>
+            <Typography variant='h5' sx={{ mb: 3, fontWeight: 700, mt: mdUp ? 5 : 0 }}>
+              My Activity
+            </Typography>
+
+            <Stack spacing={3}>
+              {/* Active Positions */}
+              <Card sx={{ border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}` }}>
+                <Stack
+                  direction='row'
+                  alignItems='center'
+                  justifyContent='space-between'
+                  sx={{ px: 3, py: 2.5 }}
+                >
+                  <Typography variant='subtitle1' fontWeight={700}>
+                    Open Positions
+                  </Typography>
+                  <Chip
+                    label={marketPositions.length}
+                    size='small'
+                    sx={{
+                      fontWeight: 700,
+                      bgcolor: alpha(theme.palette.primary.main, 0.16),
+                      color: 'primary.main'
+                    }}
+                  />
+                </Stack>
+                {marketPositions.length === 0 ? (
+                  <Stack alignItems='center' spacing={1.5} sx={{ py: 4 }}>
+                    <Typography variant='body2' color='text.secondary'>
+                      No active positions for this market.
+                    </Typography>
                   </Stack>
-                  {marketPositions.length === 0 ? (
-                    <Stack alignItems='center' spacing={1.5} sx={{ py: 4 }}>
-                      <Typography variant='body2' color='text.secondary'>No active positions for this market.</Typography>
-                    </Stack>
-                  ) : (
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Outcome</TableCell>
-                          <TableCell align='right'>Size</TableCell>
-                          <TableCell align='right'>Avg Price</TableCell>
-                          <TableCell align='right'>Current</TableCell>
-                          <TableCell align='right'>PnL</TableCell>
-                          <TableCell align='right'>Actions</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {marketPositions.map((pos, idx) => (
-                          <TableRow key={idx} hover>
-                            <TableCell>
-                              <Chip
-                                label={pos.outcome}
-                                size='small'
-                                sx={{
-                                  fontWeight: 600,
-                                  bgcolor: alpha(pos.outcome?.toLowerCase() === 'yes' ? theme.palette.success.main : theme.palette.error.main, 0.1),
-                                  color: pos.outcome?.toLowerCase() === 'yes' ? theme.palette.success.dark : theme.palette.error.dark
-                                }}
-                              />
-                            </TableCell>
-                            <TableCell align='right'>
-                              <Typography variant='body2' fontWeight={600}>{fNumber(pos.size)}</Typography>
-                            </TableCell>
-                            <TableCell align='right'>
-                              <Typography variant='body2'>{Math.round((pos.avg_price ?? pos.avgPrice ?? 0) * 100)}¢</Typography>
-                            </TableCell>
-                            <TableCell align='right'>
-                              <Typography variant='body2'>{Math.round((pos.current_price ?? pos.curPrice ?? 0) * 100)}¢</Typography>
-                            </TableCell>
-                            <TableCell align='right'>
-                              {(() => {
-                                const pnlVal = pos.pnl ?? pos.cashPnl ?? 0;
-                                const pnlRounded = Math.floor(Math.abs(pnlVal) * 1e2) / 1e2 * (pnlVal < 0 ? -1 : 1);
-                                return (
-                                  <Typography variant='body2' fontWeight={700} color={pnlVal >= 0 ? 'success.main' : 'error.main'}>
-                                    {pnlRounded === 0 ? '$0.00' : `${pnlVal > 0 ? '+' : ''}$${fNumber(pnlRounded)}`}
-                                  </Typography>
-                                );
-                              })()}
-                            </TableCell>
-                            <TableCell align='right'>
-                              <Button
-                                size='small'
-                                color='error'
-                                variant='contained'
-                                disabled={sellingPos === (pos.market?.condition_id || pos.conditionId) + pos.outcome}
-                                onClick={async () => {
-                                  const posKey = (pos.market?.condition_id || pos.conditionId) + pos.outcome
-                                  setSellingPos(posKey)
+                ) : (
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Outcome</TableCell>
+                        <TableCell align='right'>Size</TableCell>
+                        <TableCell align='right'>Avg Price</TableCell>
+                        <TableCell align='right'>Current</TableCell>
+                        <TableCell align='right'>PnL</TableCell>
+                        <TableCell align='right'>Actions</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {marketPositions.map((pos, idx) => (
+                        <TableRow key={idx} hover>
+                          <TableCell>
+                            <Chip
+                              label={pos.outcome}
+                              size='small'
+                              sx={{
+                                fontWeight: 600,
+                                bgcolor: alpha(
+                                  pos.outcome?.toLowerCase() === 'yes'
+                                    ? theme.palette.success.main
+                                    : theme.palette.error.main,
+                                  0.1
+                                ),
+                                color:
+                                  pos.outcome?.toLowerCase() === 'yes'
+                                    ? theme.palette.success.dark
+                                    : theme.palette.error.dark
+                              }}
+                            />
+                          </TableCell>
+                          <TableCell align='right'>
+                            <Typography variant='body2' fontWeight={600}>
+                              {fNumber(pos.size)}
+                            </Typography>
+                          </TableCell>
+                          <TableCell align='right'>
+                            <Typography variant='body2'>
+                              {Math.round((pos.avg_price ?? pos.avgPrice ?? 0) * 100)}¢
+                            </Typography>
+                          </TableCell>
+                          <TableCell align='right'>
+                            <Typography variant='body2'>
+                              {Math.round((pos.current_price ?? pos.curPrice ?? 0) * 100)}¢
+                            </Typography>
+                          </TableCell>
+                          <TableCell align='right'>
+                            {(() => {
+                              const pnlVal = pos.pnl ?? pos.cashPnl ?? 0
+                              const pnlRounded =
+                                (Math.floor(Math.abs(pnlVal) * 1e2) / 1e2) * (pnlVal < 0 ? -1 : 1)
+                              return (
+                                <Typography
+                                  variant='body2'
+                                  fontWeight={700}
+                                  color={pnlVal >= 0 ? 'success.main' : 'error.main'}
+                                >
+                                  {pnlRounded === 0
+                                    ? '$0.00'
+                                    : `${pnlVal > 0 ? '+' : ''}$${fNumber(pnlRounded)}`}
+                                </Typography>
+                              )
+                            })()}
+                          </TableCell>
+                          <TableCell align='right'>
+                            <Button
+                              size='small'
+                              color='error'
+                              variant='contained'
+                              disabled={
+                                sellingPos ===
+                                (pos.market?.condition_id || pos.conditionId) + pos.outcome
+                              }
+                              onClick={async () => {
+                                const posKey =
+                                  (pos.market?.condition_id || pos.conditionId) + pos.outcome
+                                setSellingPos(posKey)
 
-                                  const token = market.tokens?.find((t) => t.outcome === pos.outcome)
-                                  if (!token?.token_id) {
-                                    enqueueSnackbar('Token ID not found', { variant: 'error' })
-                                    setSellingPos(null)
-                                    return
-                                  }
+                                const token = market.tokens?.find((t) => t.outcome === pos.outcome)
+                                if (!token?.token_id) {
+                                  enqueueSnackbar('Token ID not found', { variant: 'error' })
+                                  setSellingPos(null)
+                                  return
+                                }
 
-                                  const sellSize = Math.floor(pos.size * 1e6) / 1e6
-                                  const sellPrice = pos.current_price ?? pos.curPrice ?? 0
-                                  const tempId = `temp-${Date.now()}`
+                                const sellSize = Math.floor(pos.size * 1e6) / 1e6
+                                const sellPrice = pos.current_price ?? pos.curPrice ?? 0
+                                const tempId = `temp-${Date.now()}`
 
-                                  // Instantly show in Open Orders
-                                  setActivePurchases((prev) => [...prev, {
+                                // Instantly show in Open Orders
+                                setActivePurchases((prev) => [
+                                  ...prev,
+                                  {
                                     purchase_id: tempId,
                                     side: 'SELL',
                                     outcome: pos.outcome,
                                     size: sellSize,
                                     price: sellPrice,
                                     current_step: 'submitting',
-                                    status: 'processing',
-                                  }])
+                                    status: 'processing'
+                                  }
+                                ])
 
-                                  try {
-                                    const res = await polymarketPurchase({
-                                      token_id: token.token_id,
-                                      side: 'SELL',
-                                      size: sellSize,
-                                      price: sellPrice,
-                                      bridge_amount: "0"
-                                    })
-                                    if (res.ok) {
-                                      const purchaseId = res.data?.purchase_id || tempId
-                                      // Hide the sold position immediately
-                                      setSoldPositionKeys((prev) => new Set(prev).add(posKey))
-                                      // Update temp row with real purchase ID + step
-                                      setActivePurchases((prev) =>
-                                        prev.map((p) =>
-                                          p.purchase_id === tempId
-                                            ? { ...p, purchase_id: purchaseId, current_step: 'order_placement' }
-                                            : p
-                                        )
-                                      )
-
-                                      const poll = async () => {
-                                        try {
-                                          const statusRes = await polymarketPurchaseStatus(purchaseId)
-                                          if (statusRes.ok && statusRes.data) {
-                                            const st = statusRes.data.status
-                                            const step = statusRes.data.current_step || ''
-                                            setActivePurchases((prev) =>
-                                              prev.map((p) =>
-                                                p.purchase_id === purchaseId ? { ...p, current_step: step, status: st } : p
-                                              )
-                                            )
-                                            if (st === 'completed') {
-                                              clearInterval(pollInterval)
-                                              setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
-                                              enqueueSnackbar('Sell order completed', { variant: 'success' })
-                                              const revalidateSell = () => {
-                                                mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/positions'), undefined, { revalidate: true })
-                                                mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders'), undefined, { revalidate: true })
-                                                mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/portfolio'), undefined, { revalidate: true })
-                                                mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'), undefined, { revalidate: true })
-                                              }
-                                              revalidateSell()
-                                              setTimeout(revalidateSell, 3000)
-                                              setSoldPositionKeys((prev) => { const n = new Set(prev); n.delete(posKey); return n })
-                                            } else if (st === 'failed') {
-                                              clearInterval(pollInterval)
-                                              setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
-                                              enqueueSnackbar(statusRes.data.error || 'Sell failed', { variant: 'error' })
-                                              setSoldPositionKeys((prev) => { const n = new Set(prev); n.delete(posKey); return n })
+                                try {
+                                  const res = await polymarketPurchase({
+                                    token_id: token.token_id,
+                                    side: 'SELL',
+                                    size: sellSize,
+                                    price: sellPrice,
+                                    bridge_amount: '0'
+                                  })
+                                  if (res.ok) {
+                                    const purchaseId = res.data?.purchase_id || tempId
+                                    // Hide the sold position immediately
+                                    setSoldPositionKeys((prev) => new Set(prev).add(posKey))
+                                    // Update temp row with real purchase ID + step
+                                    setActivePurchases((prev) =>
+                                      prev.map((p) =>
+                                        p.purchase_id === tempId
+                                          ? {
+                                              ...p,
+                                              purchase_id: purchaseId,
+                                              current_step: 'order_placement'
                                             }
+                                          : p
+                                      )
+                                    )
+
+                                    const poll = async () => {
+                                      try {
+                                        const statusRes = await polymarketPurchaseStatus(purchaseId)
+                                        if (statusRes.ok && statusRes.data) {
+                                          const st = statusRes.data.status
+                                          const step = statusRes.data.current_step || ''
+                                          setActivePurchases((prev) =>
+                                            prev.map((p) =>
+                                              p.purchase_id === purchaseId
+                                                ? { ...p, current_step: step, status: st }
+                                                : p
+                                            )
+                                          )
+                                          if (st === 'completed') {
+                                            clearInterval(pollInterval)
+                                            setActivePurchases((prev) =>
+                                              prev.filter((p) => p.purchase_id !== purchaseId)
+                                            )
+                                            enqueueSnackbar('Sell order completed', {
+                                              variant: 'success'
+                                            })
+                                            const revalidateSell = () => {
+                                              mutate(
+                                                (key: any) =>
+                                                  Array.isArray(key) &&
+                                                  typeof key[0] === 'string' &&
+                                                  key[0].includes('/positions'),
+                                                undefined,
+                                                { revalidate: true }
+                                              )
+                                              mutate(
+                                                (key: any) =>
+                                                  Array.isArray(key) &&
+                                                  typeof key[0] === 'string' &&
+                                                  key[0].includes('/orders'),
+                                                undefined,
+                                                { revalidate: true }
+                                              )
+                                              mutate(
+                                                (key: any) =>
+                                                  Array.isArray(key) &&
+                                                  typeof key[0] === 'string' &&
+                                                  key[0].includes('/portfolio'),
+                                                undefined,
+                                                { revalidate: true }
+                                              )
+                                              mutate(
+                                                (key: any) =>
+                                                  Array.isArray(key) &&
+                                                  typeof key[0] === 'string' &&
+                                                  key[0].includes('/balance'),
+                                                undefined,
+                                                { revalidate: true }
+                                              )
+                                            }
+                                            revalidateSell()
+                                            setTimeout(revalidateSell, 3000)
+                                            setSoldPositionKeys((prev) => {
+                                              const n = new Set(prev)
+                                              n.delete(posKey)
+                                              return n
+                                            })
+                                          } else if (st === 'failed') {
+                                            clearInterval(pollInterval)
+                                            setActivePurchases((prev) =>
+                                              prev.filter((p) => p.purchase_id !== purchaseId)
+                                            )
+                                            enqueueSnackbar(statusRes.data.error || 'Sell failed', {
+                                              variant: 'error'
+                                            })
+                                            setSoldPositionKeys((prev) => {
+                                              const n = new Set(prev)
+                                              n.delete(posKey)
+                                              return n
+                                            })
                                           }
-                                        } catch (e) { console.error(e) }
+                                        }
+                                      } catch (e) {
+                                        console.error(e)
                                       }
-                                      poll() // immediate first check
-                                      const pollInterval = setInterval(poll, 4000)
-                                    } else {
-                                      // Remove temp row on failure
-                                      setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== tempId))
-                                      enqueueSnackbar(res.message || 'Error executing sell', { variant: 'error' })
+                                    }
+                                    poll() // immediate first check
+                                    const pollInterval = setInterval(poll, 4000)
+                                  } else {
+                                    // Remove temp row on failure
+                                    setActivePurchases((prev) =>
+                                      prev.filter((p) => p.purchase_id !== tempId)
+                                    )
+                                    enqueueSnackbar(res.message || 'Error executing sell', {
+                                      variant: 'error'
+                                    })
+                                  }
+                                } catch {
+                                  setActivePurchases((prev) =>
+                                    prev.filter((p) => p.purchase_id !== tempId)
+                                  )
+                                  enqueueSnackbar('Error executing sell', { variant: 'error' })
+                                } finally {
+                                  setSellingPos(null)
+                                }
+                              }}
+                            >
+                              {sellingPos ===
+                              (pos.market?.condition_id || pos.conditionId) + pos.outcome ? (
+                                <CircularProgress size={14} color='inherit' />
+                              ) : (
+                                'Sell'
+                              )}
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </Card>
+
+              {/* Open Orders */}
+              <Card sx={{ border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}` }}>
+                <Stack
+                  direction='row'
+                  alignItems='center'
+                  justifyContent='space-between'
+                  sx={{ px: 3, py: 2.5 }}
+                >
+                  <Typography variant='subtitle1' fontWeight={700}>
+                    Open Orders
+                  </Typography>
+                  <Chip
+                    label={activePurchases.length + marketOrders.length}
+                    size='small'
+                    sx={{
+                      fontWeight: 700,
+                      bgcolor: alpha(theme.palette.warning.main, 0.16),
+                      color: 'warning.main'
+                    }}
+                  />
+                </Stack>
+                {activePurchases.length === 0 && marketOrders.length === 0 ? (
+                  <Stack alignItems='center' spacing={1.5} sx={{ py: 4 }}>
+                    <Typography variant='body2' color='text.secondary'>
+                      No active orders.
+                    </Typography>
+                  </Stack>
+                ) : (
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Side</TableCell>
+                        <TableCell>Outcome</TableCell>
+                        <TableCell align='right'>Size</TableCell>
+                        <TableCell align='right'>Price</TableCell>
+                        <TableCell align='right'>Actions</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {activePurchases.map((ap) => (
+                        <TableRow
+                          key={ap.purchase_id}
+                          sx={{
+                            '@keyframes softPulse': {
+                              '0%, 100%': { opacity: 1 },
+                              '50%': { opacity: 0.5 }
+                            },
+                            animation: 'softPulse 2s ease-in-out infinite'
+                          }}
+                        >
+                          <TableCell>
+                            <Chip
+                              label={ap.side}
+                              size='small'
+                              sx={{
+                                fontWeight: 600,
+                                bgcolor: alpha(
+                                  ap.side === 'BUY'
+                                    ? theme.palette.success.main
+                                    : theme.palette.error.main,
+                                  0.1
+                                ),
+                                color:
+                                  ap.side === 'BUY'
+                                    ? theme.palette.success.dark
+                                    : theme.palette.error.dark
+                              }}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant='body2'>{ap.outcome}</Typography>
+                          </TableCell>
+                          <TableCell align='right'>
+                            <Typography variant='body2' fontWeight={600}>
+                              {fNumber(ap.size)}
+                            </Typography>
+                          </TableCell>
+                          <TableCell align='right'>
+                            <Typography variant='body2'>{fNumber(ap.price)}</Typography>
+                          </TableCell>
+                          <TableCell align='right'>
+                            <Chip
+                              icon={
+                                <CircularProgress size={12} sx={{ color: 'inherit !important' }} />
+                              }
+                              label={STEP_LABELS[ap.current_step] || ap.current_step}
+                              size='small'
+                              sx={{
+                                fontWeight: 600,
+                                bgcolor: theme.palette.text.primary,
+                                color: theme.palette.background.paper,
+                                px: 1,
+                                gap: 0.5,
+                                '& .MuiChip-icon': { color: 'inherit', ml: 0 },
+                                '& .MuiChip-label': { px: 0 },
+                                pointerEvents: 'none'
+                              }}
+                            />
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      {marketOrders.map((order) => (
+                        <TableRow key={order.id} hover>
+                          <TableCell>
+                            <Chip
+                              label={order.side}
+                              size='small'
+                              sx={{
+                                fontWeight: 600,
+                                bgcolor: alpha(
+                                  order.side === 'BUY'
+                                    ? theme.palette.success.main
+                                    : theme.palette.error.main,
+                                  0.1
+                                ),
+                                color:
+                                  order.side === 'BUY'
+                                    ? theme.palette.success.dark
+                                    : theme.palette.error.dark
+                              }}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant='body2'>{order.outcome}</Typography>
+                          </TableCell>
+                          <TableCell align='right'>
+                            <Typography variant='body2' fontWeight={600}>
+                              {fNumber(order.size)}
+                            </Typography>
+                          </TableCell>
+                          <TableCell align='right'>
+                            <Typography variant='body2'>{fNumber(order.price)}</Typography>
+                          </TableCell>
+                          <TableCell align='right'>
+                            {order.status !== 'cancelled' && order.status !== 'filled' && (
+                              <Button
+                                size='small'
+                                variant='outlined'
+                                color='inherit'
+                                disabled={cancellingId === order.id}
+                                onClick={async () => {
+                                  setCancellingId(order.id)
+                                  try {
+                                    const result = await polymarketCancelOrder(order.id)
+                                    if (result.ok) {
+                                      enqueueSnackbar('Order Cancelled', { variant: 'success' })
+                                      mutate(
+                                        (key: any) =>
+                                          Array.isArray(key) &&
+                                          typeof key[0] === 'string' &&
+                                          key[0].includes('/orders')
+                                      )
                                     }
                                   } catch {
-                                    setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== tempId))
-                                    enqueueSnackbar('Error executing sell', { variant: 'error' })
                                   } finally {
-                                    setSellingPos(null)
+                                    setCancellingId(null)
                                   }
                                 }}
                               >
-                                {sellingPos === (pos.market?.condition_id || pos.conditionId) + pos.outcome ? <CircularProgress size={14} color="inherit" /> : 'Sell'}
+                                {cancellingId === order.id ? (
+                                  <CircularProgress size={14} color='inherit' />
+                                ) : (
+                                  'Cancel'
+                                )}
                               </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  )}
-                </Card>
-
-                {/* Open Orders */}
-                <Card sx={{ border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}` }}>
-                  <Stack direction='row' alignItems='center' justifyContent='space-between' sx={{ px: 3, py: 2.5 }}>
-                    <Typography variant='subtitle1' fontWeight={700}>Open Orders</Typography>
-                    <Chip label={activePurchases.length + marketOrders.length} size='small' sx={{ fontWeight: 700, bgcolor: alpha(theme.palette.warning.main, 0.16), color: 'warning.main' }} />
-                  </Stack>
-                  {activePurchases.length === 0 && marketOrders.length === 0 ? (
-                    <Stack alignItems='center' spacing={1.5} sx={{ py: 4 }}>
-                      <Typography variant='body2' color='text.secondary'>No active orders.</Typography>
-                    </Stack>
-                  ) : (
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Side</TableCell>
-                          <TableCell>Outcome</TableCell>
-                          <TableCell align='right'>Size</TableCell>
-                          <TableCell align='right'>Price</TableCell>
-                          <TableCell align='right'>Actions</TableCell>
+                            )}
+                          </TableCell>
                         </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {activePurchases.map((ap) => (
-                          <TableRow
-                            key={ap.purchase_id}
-                            sx={{
-                              '@keyframes softPulse': {
-                                '0%, 100%': { opacity: 1 },
-                                '50%': { opacity: 0.5 },
-                              },
-                              animation: 'softPulse 2s ease-in-out infinite',
-                            }}
-                          >
-                            <TableCell>
-                              <Chip
-                                label={ap.side}
-                                size='small'
-                                sx={{
-                                  fontWeight: 600,
-                                  bgcolor: alpha(ap.side === 'BUY' ? theme.palette.success.main : theme.palette.error.main, 0.1),
-                                  color: ap.side === 'BUY' ? theme.palette.success.dark : theme.palette.error.dark
-                                }}
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <Typography variant='body2'>{ap.outcome}</Typography>
-                            </TableCell>
-                            <TableCell align='right'>
-                              <Typography variant='body2' fontWeight={600}>{fNumber(ap.size)}</Typography>
-                            </TableCell>
-                            <TableCell align='right'>
-                              <Typography variant='body2'>{fNumber(ap.price)}</Typography>
-                            </TableCell>
-                            <TableCell align='right'>
-                              <Chip
-                                icon={<CircularProgress size={12} sx={{ color: 'inherit !important' }} />}
-                                label={STEP_LABELS[ap.current_step] || ap.current_step}
-                                size='small'
-                                sx={{
-                                  fontWeight: 600,
-                                  bgcolor: theme.palette.text.primary,
-                                  color: theme.palette.background.paper,
-                                  px: 1,
-                                  gap: 0.5,
-                                  '& .MuiChip-icon': { color: 'inherit', ml: 0 },
-                                  '& .MuiChip-label': { px: 0 },
-                                  pointerEvents: 'none',
-                                }}
-                              />
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                        {marketOrders.map((order) => (
-                          <TableRow key={order.id} hover>
-                            <TableCell>
-                              <Chip
-                                label={order.side}
-                                size='small'
-                                sx={{
-                                  fontWeight: 600,
-                                  bgcolor: alpha(order.side === 'BUY' ? theme.palette.success.main : theme.palette.error.main, 0.1),
-                                  color: order.side === 'BUY' ? theme.palette.success.dark : theme.palette.error.dark
-                                }}
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <Typography variant='body2'>{order.outcome}</Typography>
-                            </TableCell>
-                            <TableCell align='right'>
-                              <Typography variant='body2' fontWeight={600}>{fNumber(order.size)}</Typography>
-                            </TableCell>
-                            <TableCell align='right'>
-                              <Typography variant='body2'>{fNumber(order.price)}</Typography>
-                            </TableCell>
-                            <TableCell align='right'>
-                              {order.status !== 'cancelled' && order.status !== 'filled' && (
-                                <Button
-                                  size='small'
-                                  variant='outlined'
-                                  color='inherit'
-                                  disabled={cancellingId === order.id}
-                                  onClick={async () => {
-                                    setCancellingId(order.id)
-                                    try {
-                                      const result = await polymarketCancelOrder(order.id)
-                                      if (result.ok) {
-                                        enqueueSnackbar('Order Cancelled', { variant: 'success' })
-                                        mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders'))
-                                      }
-                                    } catch {
-                                    } finally {
-                                      setCancellingId(null)
-                                    }
-                                  }}
-                                >
-                                  {cancellingId === order.id ? <CircularProgress size={14} color="inherit" /> : 'Cancel'}
-                                </Button>
-                              )}
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  )}
-                </Card>
-
-                {/* Trade History */}
-                {marketTrades.length > 0 && (
-                  <Card sx={{ border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}` }}>
-                    <Stack direction='row' alignItems='center' justifyContent='space-between' sx={{ px: 3, py: 2.5 }}>
-                      <Stack direction='row' alignItems='center' spacing={1}>
-                        <Typography variant='subtitle1' fontWeight={700}>Trade History</Typography>
-                        <Chip label={marketTrades.length} size='small' sx={{ fontWeight: 700, bgcolor: alpha(theme.palette.info.main, 0.16), color: 'info.main' }} />
-                      </Stack>
-                    </Stack>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Side</TableCell>
-                          <TableCell>Outcome</TableCell>
-                          <TableCell align='right'>Size</TableCell>
-                          <TableCell align='right'>Price</TableCell>
-                          <TableCell align='right'>Date</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {marketTrades.map((trade) => {
-                          const date = new Date(trade.timestamp)
-                          const dateStr = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
-                          const timeStr = date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
-
-                          return (
-                            <TableRow key={trade.id} hover>
-                              <TableCell>
-                                <Chip
-                                  label={trade.side}
-                                  size='small'
-                                  sx={{
-                                    fontWeight: 600,
-                                    bgcolor: alpha(trade.side === 'BUY' ? theme.palette.success.main : theme.palette.error.main, 0.1),
-                                    color: trade.side === 'BUY' ? theme.palette.success.dark : theme.palette.error.dark
-                                  }}
-                                />
-                              </TableCell>
-                              <TableCell>
-                                <Typography variant='body2'>{trade.outcome}</Typography>
-                              </TableCell>
-                              <TableCell align='right'>
-                                <Typography variant='body2' fontWeight={600}>{fNumber(trade.size)}</Typography>
-                              </TableCell>
-                              <TableCell align='right'>
-                                <Typography variant='body2'>{Math.round(trade.price * 100)}¢</Typography>
-                              </TableCell>
-                              <TableCell align='right'>
-                                <Stack alignItems='flex-end'>
-                                  <Typography variant='caption' fontWeight={600}>{dateStr}</Typography>
-                                  <Typography variant='caption' color='text.secondary'>{timeStr}</Typography>
-                                </Stack>
-                              </TableCell>
-                            </TableRow>
-                          )
-                        })}
-                      </TableBody>
-                    </Table>
-                  </Card>
+                      ))}
+                    </TableBody>
+                  </Table>
                 )}
-              </Stack>
-            </Box>
+              </Card>
 
-          </Stack>
-        </Container>
+              {/* Trade History */}
+              {marketTrades.length > 0 && (
+                <Card sx={{ border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}` }}>
+                  <Stack
+                    direction='row'
+                    alignItems='center'
+                    justifyContent='space-between'
+                    sx={{ px: 3, py: 2.5 }}
+                  >
+                    <Stack direction='row' alignItems='center' spacing={1}>
+                      <Typography variant='subtitle1' fontWeight={700}>
+                        Trade History
+                      </Typography>
+                      <Chip
+                        label={marketTrades.length}
+                        size='small'
+                        sx={{
+                          fontWeight: 700,
+                          bgcolor: alpha(theme.palette.info.main, 0.16),
+                          color: 'info.main'
+                        }}
+                      />
+                    </Stack>
+                  </Stack>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Side</TableCell>
+                        <TableCell>Outcome</TableCell>
+                        <TableCell align='right'>Size</TableCell>
+                        <TableCell align='right'>Price</TableCell>
+                        <TableCell align='right'>Date</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {marketTrades.map((trade) => {
+                        const date = new Date(trade.timestamp)
+                        const dateStr = date.toLocaleDateString(undefined, {
+                          month: 'short',
+                          day: 'numeric'
+                        })
+                        const timeStr = date.toLocaleTimeString(undefined, {
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })
+
+                        return (
+                          <TableRow key={trade.id} hover>
+                            <TableCell>
+                              <Chip
+                                label={trade.side}
+                                size='small'
+                                sx={{
+                                  fontWeight: 600,
+                                  bgcolor: alpha(
+                                    trade.side === 'BUY'
+                                      ? theme.palette.success.main
+                                      : theme.palette.error.main,
+                                    0.1
+                                  ),
+                                  color:
+                                    trade.side === 'BUY'
+                                      ? theme.palette.success.dark
+                                      : theme.palette.error.dark
+                                }}
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Typography variant='body2'>{trade.outcome}</Typography>
+                            </TableCell>
+                            <TableCell align='right'>
+                              <Typography variant='body2' fontWeight={600}>
+                                {fNumber(trade.size)}
+                              </Typography>
+                            </TableCell>
+                            <TableCell align='right'>
+                              <Typography variant='body2'>
+                                {Math.round(trade.price * 100)}¢
+                              </Typography>
+                            </TableCell>
+                            <TableCell align='right'>
+                              <Stack alignItems='flex-end'>
+                                <Typography variant='caption' fontWeight={600}>
+                                  {dateStr}
+                                </Typography>
+                                <Typography variant='caption' color='text.secondary'>
+                                  {timeStr}
+                                </Typography>
+                              </Stack>
+                            </TableCell>
+                          </TableRow>
+                        )
+                      })}
+                    </TableBody>
+                  </Table>
+                </Card>
+              )}
+            </Stack>
+          </Box>
+        </Stack>
+      </Container>
     </Box>
   )
 }

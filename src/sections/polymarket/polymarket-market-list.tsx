@@ -68,36 +68,38 @@ export default function PolymarketMarketList({
   const topCategories = allCategories.filter((c) => !c.parentCategory)
 
   const sortedEvents = useMemo(() => {
-    if (!events) return [];
+    if (!events) return []
 
     // For 'recommended' or any other unknown sort, return events in their original order
     if (sortBy === 'recommended' || !['volume', 'ending'].includes(sortBy)) {
-      return events;
+      return events
     }
 
     return [...events].sort((a, b) => {
-      const volA = a.markets.reduce((sum, m) => sum + (m.volume || 0), 0);
-      const volB = b.markets.reduce((sum, m) => sum + (m.volume || 0), 0);
+      const volA = a.markets.reduce((sum, m) => sum + (m.volume || 0), 0)
+      const volB = b.markets.reduce((sum, m) => sum + (m.volume || 0), 0)
 
       if (sortBy === 'volume') {
-        return volB - volA;
+        return volB - volA
       }
 
       if (sortBy === 'ending') {
-        const endA = a.markets
-          .filter((m) => m.end_date_iso)
-          .map((m) => new Date(m.end_date_iso).getTime())
-          .sort((x, y) => x - y)[0] || Number.MAX_SAFE_INTEGER;
-        const endB = b.markets
-          .filter((m) => m.end_date_iso)
-          .map((m) => new Date(m.end_date_iso).getTime())
-          .sort((x, y) => x - y)[0] || Number.MAX_SAFE_INTEGER;
-        return endA - endB;
+        const endA =
+          a.markets
+            .filter((m) => m.end_date_iso)
+            .map((m) => new Date(m.end_date_iso).getTime())
+            .sort((x, y) => x - y)[0] || Number.MAX_SAFE_INTEGER
+        const endB =
+          b.markets
+            .filter((m) => m.end_date_iso)
+            .map((m) => new Date(m.end_date_iso).getTime())
+            .sort((x, y) => x - y)[0] || Number.MAX_SAFE_INTEGER
+        return endA - endB
       }
 
-      return 0;
-    });
-  }, [events, sortBy]);
+      return 0
+    })
+  }, [events, sortBy])
 
   // Stable sentinel callback ref — observer is created once and reads current
   // props via ref so it never needs to be torn down/recreated on prop changes.
@@ -121,7 +123,12 @@ export default function PolymarketMarketList({
   }, [])
 
   // Disconnect observer on unmount
-  useEffect(() => () => { observerRef.current?.disconnect() }, [])
+  useEffect(
+    () => () => {
+      observerRef.current?.disconnect()
+    },
+    []
+  )
 
   const renderFilters = (
     <Stack
@@ -141,7 +148,7 @@ export default function PolymarketMarketList({
           maxWidth: '100%',
           overflowX: 'auto',
           scrollbarWidth: 'none',
-          '&::-webkit-scrollbar': { display: 'none' },
+          '&::-webkit-scrollbar': { display: 'none' }
         }}
       >
         {['All', ...topCategories.map((c) => c.label)].map((label) => {
@@ -159,12 +166,14 @@ export default function PolymarketMarketList({
                 fontSize: '0.85rem',
                 fontFamily: "'Satoshi Variable', sans-serif",
                 bgcolor: isActive ? 'background.paper' : 'transparent',
-                boxShadow: isActive ? (theme.customShadows?.z1 || '0px 6px 17px 0px rgba(0,0,0,0.08)') : 'none',
+                boxShadow: isActive
+                  ? theme.customShadows?.z1 || '0px 6px 17px 0px rgba(0,0,0,0.08)'
+                  : 'none',
                 color: 'text.primary',
                 cursor: 'pointer',
                 '&:hover': {
-                  bgcolor: isActive ? 'background.paper' : alpha(theme.palette.grey[500], 0.08),
-                },
+                  bgcolor: isActive ? 'background.paper' : alpha(theme.palette.grey[500], 0.08)
+                }
               }}
             />
           )
@@ -177,7 +186,11 @@ export default function PolymarketMarketList({
         onChange={(e) => onChangeSortBy(e.target.value)}
         startAdornment={
           <InputAdornment position='start'>
-            <Iconify icon='solar:sort-vertical-bold' width={18} sx={{ color: 'text.secondary', ml: 0.5 }} />
+            <Iconify
+              icon='solar:sort-vertical-bold'
+              width={18}
+              sx={{ color: 'text.secondary', ml: 0.5 }}
+            />
           </InputAdornment>
         }
         sx={{
@@ -189,11 +202,11 @@ export default function PolymarketMarketList({
             py: 1,
             pl: '0 !important',
             fontSize: '0.85rem',
-            fontWeight: 600,
+            fontWeight: 600
           },
           '& .MuiOutlinedInput-notchedOutline': {
-            border: 'none',
-          },
+            border: 'none'
+          }
         }}
       >
         {SORT_OPTIONS.map((option) => (
@@ -209,10 +222,7 @@ export default function PolymarketMarketList({
     <Grid container spacing={3}>
       {Array.from({ length: 8 }).map((_, index) => (
         <Grid xs={12} sm={6} md={4} lg={3} key={index}>
-          <Skeleton
-            variant='rounded'
-            sx={{ height: 340, borderRadius: 2 }}
-          />
+          <Skeleton variant='rounded' sx={{ height: 340, borderRadius: 2 }} />
         </Grid>
       ))}
     </Grid>

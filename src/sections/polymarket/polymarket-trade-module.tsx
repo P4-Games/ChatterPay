@@ -77,18 +77,19 @@ export default function PolymarketTradeModule({ market, accountStatus }: Props) 
       if (result.ok) {
         setAmount('')
         enqueueSnackbar('Transaction in Progress: Bridging & Placing Order...', { variant: 'info' })
-        
+
         // Optimistically deduct visual balance
         mutate(
-          (key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'),
+          (key: any) =>
+            Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'),
           (currentData: any) => {
-            if (!currentData || !currentData.data) return currentData;
+            if (!currentData || !currentData.data) return currentData
             // Best effort optimistic deduction, assume USDC is primary
-            const newBal = { ...currentData };
+            const newBal = { ...currentData }
             if (newBal.data.balance) {
-               newBal.data.balance = Math.max(0, newBal.data.balance - amountNum);
+              newBal.data.balance = Math.max(0, newBal.data.balance - amountNum)
             }
-            return newBal;
+            return newBal
           },
           { revalidate: false }
         )
@@ -104,14 +105,39 @@ export default function PolymarketTradeModule({ market, accountStatus }: Props) 
                   clearInterval(pollInterval)
                   enqueueSnackbar(t('polymarket.order-placed'), { variant: 'success' })
                   // Hard invalidate balance
-                  mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'))
-                  mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/positions'))
-                  mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders'))
-                  mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/portfolio'))
+                  mutate(
+                    (key: any) =>
+                      Array.isArray(key) &&
+                      typeof key[0] === 'string' &&
+                      key[0].includes('/balance')
+                  )
+                  mutate(
+                    (key: any) =>
+                      Array.isArray(key) &&
+                      typeof key[0] === 'string' &&
+                      key[0].includes('/positions')
+                  )
+                  mutate(
+                    (key: any) =>
+                      Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders')
+                  )
+                  mutate(
+                    (key: any) =>
+                      Array.isArray(key) &&
+                      typeof key[0] === 'string' &&
+                      key[0].includes('/portfolio')
+                  )
                 } else if (st === 'failed') {
                   clearInterval(pollInterval)
-                  enqueueSnackbar(statusRes.data.error || 'Transaction failed', { variant: 'error' })
-                  mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'))
+                  enqueueSnackbar(statusRes.data.error || 'Transaction failed', {
+                    variant: 'error'
+                  })
+                  mutate(
+                    (key: any) =>
+                      Array.isArray(key) &&
+                      typeof key[0] === 'string' &&
+                      key[0].includes('/balance')
+                  )
                 }
               }
             } catch (e) {
@@ -166,13 +192,9 @@ export default function PolymarketTradeModule({ market, accountStatus }: Props) 
                       ? alpha(theme.palette.success.main, 0.12)
                       : alpha(theme.palette.error.main, 0.12),
                   color:
-                    selectedOutcome === 0
-                      ? theme.palette.success.dark
-                      : theme.palette.error.dark,
+                    selectedOutcome === 0 ? theme.palette.success.dark : theme.palette.error.dark,
                   borderColor:
-                    selectedOutcome === 0
-                      ? theme.palette.success.main
-                      : theme.palette.error.main,
+                    selectedOutcome === 0 ? theme.palette.success.main : theme.palette.error.main,
                   '&:hover': {
                     bgcolor:
                       selectedOutcome === 0
@@ -264,9 +286,7 @@ export default function PolymarketTradeModule({ market, accountStatus }: Props) 
         {error && <Alert severity='error'>{error}</Alert>}
         {success && <Alert severity='success'>{success}</Alert>}
 
-        {!canTrade && (
-          <Alert severity='warning'>{t('polymarket.setup-required')}</Alert>
-        )}
+        {!canTrade && <Alert severity='warning'>{t('polymarket.setup-required')}</Alert>}
 
         {/* Submit */}
         <Button
@@ -286,15 +306,9 @@ export default function PolymarketTradeModule({ market, accountStatus }: Props) 
             py: 1.5,
             fontWeight: 700,
             fontSize: '1rem',
-            bgcolor:
-              selectedOutcome === 0
-                ? theme.palette.success.main
-                : theme.palette.error.main,
+            bgcolor: selectedOutcome === 0 ? theme.palette.success.main : theme.palette.error.main,
             '&:hover': {
-              bgcolor:
-                selectedOutcome === 0
-                  ? theme.palette.success.dark
-                  : theme.palette.error.dark
+              bgcolor: selectedOutcome === 0 ? theme.palette.success.dark : theme.palette.error.dark
             }
           }}
         >

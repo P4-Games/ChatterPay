@@ -34,10 +34,7 @@ import { useSWRConfig } from 'swr'
 import Iconify from 'src/components/iconify'
 import { fNumber } from 'src/utils/format-number'
 
-import type {
-  IPolymarketOrder,
-  IPolymarketPosition
-} from 'src/types/polymarket'
+import type { IPolymarketOrder, IPolymarketPosition } from 'src/types/polymarket'
 
 // ----------------------------------------------------------------------
 
@@ -57,7 +54,7 @@ const STEP_LABELS: Record<string, string> = {
   account_creation: 'Creating account',
   bridge: 'Bridging funds',
   order_placement: 'Placing order',
-  done: 'Complete',
+  done: 'Complete'
 }
 
 type Props = {
@@ -67,12 +64,7 @@ type Props = {
   idleUsdc: number
 }
 
-export default function DashboardPositionsTable({
-  positions,
-  orders,
-  isLoading,
-  idleUsdc
-}: Props) {
+export default function DashboardPositionsTable({ positions, orders, isLoading, idleUsdc }: Props) {
   const { enqueueSnackbar } = useSnackbar()
   const { mutate } = useSWRConfig()
   const { t } = useTranslate()
@@ -86,21 +78,28 @@ export default function DashboardPositionsTable({
 
   // Fetch trade history and closed positions
   const { data: trades = [], isLoading: isTradesLoading } = useGetPolymarketTradesSWR(30000)
-  const { data: closedPositions = [], isLoading: isClosedLoading } = useGetPolymarketClosedPositionsSWR(30000)
+  const { data: closedPositions = [], isLoading: isClosedLoading } =
+    useGetPolymarketClosedPositionsSWR(30000)
 
   // Track polling intervals for cleanup on unmount
   const pollIntervalsRef = useRef<Map<string, NodeJS.Timeout>>(new Map())
 
-  useEffect(() => () => {
-    pollIntervalsRef.current.forEach((interval) => clearInterval(interval))
-  }, [])
+  useEffect(
+    () => () => {
+      pollIntervalsRef.current.forEach((interval) => clearInterval(interval))
+    },
+    []
+  )
 
   const handleCancelOrder = async (orderId: string) => {
     setCancellingId(orderId)
     try {
       const result = await polymarketCancelOrder(orderId)
       if (result.ok) {
-        mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders'))
+        mutate(
+          (key: any) =>
+            Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders')
+        )
       }
     } catch {
       // Silently fail
@@ -127,16 +126,19 @@ export default function DashboardPositionsTable({
     const tempId = `temp-${Date.now()}`
     const marketTitle = pos.title || pos.market_title || pos.market?.question || '—'
 
-    setActivePurchases((prev) => [...prev, {
-      purchase_id: tempId,
-      side: 'SELL',
-      outcome: pos.outcome,
-      size: sellSize,
-      price: sellPrice,
-      market_title: marketTitle,
-      current_step: 'submitting',
-      status: 'processing',
-    }])
+    setActivePurchases((prev) => [
+      ...prev,
+      {
+        purchase_id: tempId,
+        side: 'SELL',
+        outcome: pos.outcome,
+        size: sellSize,
+        price: sellPrice,
+        market_title: marketTitle,
+        current_step: 'submitting',
+        status: 'processing'
+      }
+    ])
 
     try {
       const res = await polymarketPurchase({
@@ -144,7 +146,7 @@ export default function DashboardPositionsTable({
         side: 'SELL',
         size: sellSize,
         price: sellPrice,
-        bridge_amount: "0"
+        bridge_amount: '0'
       })
       if (res.ok) {
         const purchaseId = res.data?.purchase_id || tempId
@@ -170,24 +172,59 @@ export default function DashboardPositionsTable({
               )
               if (st === 'completed') {
                 const interval = pollIntervalsRef.current.get(purchaseId)
-                if (interval) { clearInterval(interval); pollIntervalsRef.current.delete(purchaseId) }
+                if (interval) {
+                  clearInterval(interval)
+                  pollIntervalsRef.current.delete(purchaseId)
+                }
                 setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
                 enqueueSnackbar('Sell order completed', { variant: 'success' })
-                mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/positions'))
-                mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders'))
-                mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/portfolio'))
-                mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'))
-                mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/trades'))
-                setSoldPositionKeys((prev) => { const n = new Set(prev); n.delete(posKey); return n })
+                mutate(
+                  (key: any) =>
+                    Array.isArray(key) &&
+                    typeof key[0] === 'string' &&
+                    key[0].includes('/positions')
+                )
+                mutate(
+                  (key: any) =>
+                    Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders')
+                )
+                mutate(
+                  (key: any) =>
+                    Array.isArray(key) &&
+                    typeof key[0] === 'string' &&
+                    key[0].includes('/portfolio')
+                )
+                mutate(
+                  (key: any) =>
+                    Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance')
+                )
+                mutate(
+                  (key: any) =>
+                    Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/trades')
+                )
+                setSoldPositionKeys((prev) => {
+                  const n = new Set(prev)
+                  n.delete(posKey)
+                  return n
+                })
               } else if (st === 'failed') {
                 const interval = pollIntervalsRef.current.get(purchaseId)
-                if (interval) { clearInterval(interval); pollIntervalsRef.current.delete(purchaseId) }
+                if (interval) {
+                  clearInterval(interval)
+                  pollIntervalsRef.current.delete(purchaseId)
+                }
                 setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
                 enqueueSnackbar(statusRes.data.error || 'Sell failed', { variant: 'error' })
-                setSoldPositionKeys((prev) => { const n = new Set(prev); n.delete(posKey); return n })
+                setSoldPositionKeys((prev) => {
+                  const n = new Set(prev)
+                  n.delete(posKey)
+                  return n
+                })
               }
             }
-          } catch (e) { console.error(e) }
+          } catch (e) {
+            console.error(e)
+          }
         }
         poll()
         const pollInterval = setInterval(poll, 4000)
@@ -318,19 +355,26 @@ export default function DashboardPositionsTable({
                     const avgPrice = pos.avg_price ?? pos.avgPrice ?? 0
                     const currentPrice = pos.current_price ?? pos.curPrice ?? 0
                     const pnlVal = pos.pnl ?? pos.cashPnl ?? 0
-                    const pnlRounded = Math.floor(Math.abs(pnlVal) * 1e2) / 1e2 * (pnlVal < 0 ? -1 : 1)
+                    const pnlRounded =
+                      (Math.floor(Math.abs(pnlVal) * 1e2) / 1e2) * (pnlVal < 0 ? -1 : 1)
                     const valueUsd = pos.size * currentPrice
 
                     return (
                       <TableRow key={idx} hover>
                         <TableCell>
                           <Stack direction='row' alignItems='center' spacing={2}>
-                            {(pos.icon || pos.market?.image) ? (
+                            {pos.icon || pos.market?.image ? (
                               <Box
                                 component='img'
                                 src={pos.icon || pos.market?.image}
                                 alt=''
-                                sx={{ width: 40, height: 40, borderRadius: '50%', flexShrink: 0, objectFit: 'cover' }}
+                                sx={{
+                                  width: 40,
+                                  height: 40,
+                                  borderRadius: '50%',
+                                  flexShrink: 0,
+                                  objectFit: 'cover'
+                                }}
                               />
                             ) : (
                               <Box
@@ -345,12 +389,20 @@ export default function DashboardPositionsTable({
                                   flexShrink: 0
                                 }}
                               >
-                                <Iconify icon='solar:chart-bold' width={20} sx={{ color: 'text.secondary' }} />
+                                <Iconify
+                                  icon='solar:chart-bold'
+                                  width={20}
+                                  sx={{ color: 'text.secondary' }}
+                                />
                               </Box>
                             )}
                             <Stack spacing={0.5}>
                               <Link
-                                href={(pos.slug || pos.market_slug || pos.market?.slug) ? `/dashboard/polymarket/${pos.slug || pos.market_slug || pos.market?.slug}` : '#'}
+                                href={
+                                  pos.slug || pos.market_slug || pos.market?.slug
+                                    ? `/dashboard/polymarket/${pos.slug || pos.market_slug || pos.market?.slug}`
+                                    : '#'
+                                }
                                 style={{ textDecoration: 'none', color: 'inherit' }}
                               >
                                 <Typography
@@ -388,15 +440,11 @@ export default function DashboardPositionsTable({
                         </TableCell>
 
                         <TableCell align='right'>
-                          <Typography variant='body2'>
-                            {Math.round(avgPrice * 100)}¢
-                          </Typography>
+                          <Typography variant='body2'>{Math.round(avgPrice * 100)}¢</Typography>
                         </TableCell>
 
                         <TableCell align='right'>
-                          <Typography variant='body2'>
-                            {Math.round(currentPrice * 100)}¢
-                          </Typography>
+                          <Typography variant='body2'>{Math.round(currentPrice * 100)}¢</Typography>
                         </TableCell>
 
                         <TableCell align='right'>
@@ -406,9 +454,10 @@ export default function DashboardPositionsTable({
                             </Typography>
                             {(() => {
                               const pctRaw = pos.pnl_percent ?? pos.percentPnl ?? 0
-                              const pctDisplay = Math.abs(pctRaw) > 1
-                                ? pctRaw  // Already a percentage (e.g. -96.71)
-                                : pctRaw * 100  // Decimal, convert (e.g. -0.9671 → -96.71)
+                              const pctDisplay =
+                                Math.abs(pctRaw) > 1
+                                  ? pctRaw // Already a percentage (e.g. -96.71)
+                                  : pctRaw * 100 // Decimal, convert (e.g. -0.9671 → -96.71)
                               const pctRounded = Math.round(pctDisplay * 100) / 100
                               return (
                                 <Typography
@@ -433,7 +482,11 @@ export default function DashboardPositionsTable({
                             disabled={sellingPos === posKey}
                             onClick={() => handleSellPosition(pos)}
                           >
-                            {sellingPos === posKey ? <CircularProgress size={14} color='inherit' /> : 'Sell'}
+                            {sellingPos === posKey ? (
+                              <CircularProgress size={14} color='inherit' />
+                            ) : (
+                              'Sell'
+                            )}
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -456,7 +509,11 @@ export default function DashboardPositionsTable({
                   <Chip
                     label={activePurchases.length + orders.length}
                     size='small'
-                    sx={{ fontWeight: 700, bgcolor: alpha(theme.palette.warning.main, 0.16), color: 'warning.main' }}
+                    sx={{
+                      fontWeight: 700,
+                      bgcolor: alpha(theme.palette.warning.main, 0.16),
+                      color: 'warning.main'
+                    }}
                   />
                 </Stack>
               </Stack>
@@ -479,9 +536,9 @@ export default function DashboardPositionsTable({
                         sx={{
                           '@keyframes softPulse': {
                             '0%, 100%': { opacity: 1 },
-                            '50%': { opacity: 0.5 },
+                            '50%': { opacity: 0.5 }
                           },
-                          animation: 'softPulse 2s ease-in-out infinite',
+                          animation: 'softPulse 2s ease-in-out infinite'
                         }}
                       >
                         <TableCell>
@@ -496,10 +553,15 @@ export default function DashboardPositionsTable({
                             sx={{
                               fontWeight: 600,
                               bgcolor: alpha(
-                                ap.side === 'BUY' ? theme.palette.success.main : theme.palette.error.main,
+                                ap.side === 'BUY'
+                                  ? theme.palette.success.main
+                                  : theme.palette.error.main,
                                 0.1
                               ),
-                              color: ap.side === 'BUY' ? theme.palette.success.dark : theme.palette.error.dark
+                              color:
+                                ap.side === 'BUY'
+                                  ? theme.palette.success.dark
+                                  : theme.palette.error.dark
                             }}
                           />
                         </TableCell>
@@ -507,14 +569,18 @@ export default function DashboardPositionsTable({
                           <Typography variant='body2'>{ap.outcome}</Typography>
                         </TableCell>
                         <TableCell align='right'>
-                          <Typography variant='body2' fontWeight={600}>{fNumber(ap.size)}</Typography>
+                          <Typography variant='body2' fontWeight={600}>
+                            {fNumber(ap.size)}
+                          </Typography>
                         </TableCell>
                         <TableCell align='right'>
                           <Typography variant='body2'>{Math.round(ap.price * 100)}¢</Typography>
                         </TableCell>
                         <TableCell align='right'>
                           <Chip
-                            icon={<CircularProgress size={12} sx={{ color: 'inherit !important' }} />}
+                            icon={
+                              <CircularProgress size={12} sx={{ color: 'inherit !important' }} />
+                            }
                             label={STEP_LABELS[ap.current_step] || ap.current_step}
                             size='small'
                             sx={{
@@ -522,7 +588,7 @@ export default function DashboardPositionsTable({
                               bgcolor: theme.palette.text.primary,
                               color: theme.palette.background.paper,
                               '& .MuiChip-icon': { color: 'inherit' },
-                              pointerEvents: 'none',
+                              pointerEvents: 'none'
                             }}
                           />
                         </TableCell>
@@ -542,10 +608,15 @@ export default function DashboardPositionsTable({
                             sx={{
                               fontWeight: 600,
                               bgcolor: alpha(
-                                order.side === 'BUY' ? theme.palette.success.main : theme.palette.error.main,
+                                order.side === 'BUY'
+                                  ? theme.palette.success.main
+                                  : theme.palette.error.main,
                                 0.1
                               ),
-                              color: order.side === 'BUY' ? theme.palette.success.dark : theme.palette.error.dark
+                              color:
+                                order.side === 'BUY'
+                                  ? theme.palette.success.dark
+                                  : theme.palette.error.dark
                             }}
                           />
                         </TableCell>
@@ -553,7 +624,9 @@ export default function DashboardPositionsTable({
                           <Typography variant='body2'>{order.outcome}</Typography>
                         </TableCell>
                         <TableCell align='right'>
-                          <Typography variant='body2' fontWeight={600}>{fNumber(order.size)}</Typography>
+                          <Typography variant='body2' fontWeight={600}>
+                            {fNumber(order.size)}
+                          </Typography>
                         </TableCell>
                         <TableCell align='right'>
                           <Typography variant='body2'>{Math.round(order.price * 100)}¢</Typography>
@@ -627,12 +700,18 @@ export default function DashboardPositionsTable({
                       <TableRow key={idx} hover>
                         <TableCell>
                           <Stack direction='row' alignItems='center' spacing={2}>
-                            {(pos.icon || pos.market?.image) ? (
+                            {pos.icon || pos.market?.image ? (
                               <Box
                                 component='img'
                                 src={pos.icon || pos.market?.image}
                                 alt=''
-                                sx={{ width: 36, height: 36, borderRadius: '50%', flexShrink: 0, objectFit: 'cover' }}
+                                sx={{
+                                  width: 36,
+                                  height: 36,
+                                  borderRadius: '50%',
+                                  flexShrink: 0,
+                                  objectFit: 'cover'
+                                }}
                               />
                             ) : (
                               <Box
@@ -647,7 +726,11 @@ export default function DashboardPositionsTable({
                                   flexShrink: 0
                                 }}
                               >
-                                <Iconify icon='solar:chart-bold' width={18} sx={{ color: 'text.disabled' }} />
+                                <Iconify
+                                  icon='solar:chart-bold'
+                                  width={18}
+                                  sx={{ color: 'text.disabled' }}
+                                />
                               </Box>
                             )}
                             <Stack spacing={0.25}>
@@ -662,7 +745,7 @@ export default function DashboardPositionsTable({
                                   height: 20,
                                   width: 'fit-content',
                                   bgcolor: alpha(theme.palette.grey[500], 0.1),
-                                  color: 'text.secondary',
+                                  color: 'text.secondary'
                                 }}
                               />
                             </Stack>
@@ -682,7 +765,9 @@ export default function DashboardPositionsTable({
                             fontWeight={700}
                             color={pnlVal >= 0 ? 'success.main' : 'error.main'}
                           >
-                            {pnlVal === 0 ? '$0.00' : `${pnlVal > 0 ? '+' : '-'}$${fNumber(Math.abs(pnlVal))}`}
+                            {pnlVal === 0
+                              ? '$0.00'
+                              : `${pnlVal > 0 ? '+' : '-'}$${fNumber(Math.abs(pnlVal))}`}
                           </Typography>
                         </TableCell>
                       </TableRow>
@@ -717,24 +802,49 @@ export default function DashboardPositionsTable({
                   <TableCell align='right'>Size</TableCell>
                   <TableCell align='right'>Price</TableCell>
                   <TableCell align='right'>Date</TableCell>
-                  <TableCell align='center' sx={{ width: 48 }}>TX</TableCell>
+                  <TableCell align='center' sx={{ width: 48 }}>
+                    TX
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {trades.map((trade, idx) => {
                   // Handle both Unix epoch seconds (number) and ISO string timestamps
-                  const ts = typeof trade.timestamp === 'number'
-                    ? (trade.timestamp > 1e12 ? trade.timestamp : trade.timestamp * 1000)
-                    : new Date(trade.timestamp).getTime()
+                  const ts =
+                    typeof trade.timestamp === 'number'
+                      ? trade.timestamp > 1e12
+                        ? trade.timestamp
+                        : trade.timestamp * 1000
+                      : new Date(trade.timestamp).getTime()
                   const date = new Date(ts)
-                  const dateStr = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
-                  const timeStr = date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
+                  const dateStr = date.toLocaleDateString(undefined, {
+                    month: 'short',
+                    day: 'numeric'
+                  })
+                  const timeStr = date.toLocaleTimeString(undefined, {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })
 
                   // Use actual API fields (title, slug, conditionId) with normalized aliases as fallback
                   const tradeConditionId = trade.conditionId || trade.condition_id
-                  const matchedPos = tradeConditionId ? positionByConditionId.get(tradeConditionId) : undefined
-                  const marketTitle = trade.title || trade.market_title || matchedPos?.title || matchedPos?.market_title || matchedPos?.market?.question || '—'
-                  const marketSlug = trade.slug || trade.market_slug || matchedPos?.slug || matchedPos?.market_slug || matchedPos?.market?.slug || ''
+                  const matchedPos = tradeConditionId
+                    ? positionByConditionId.get(tradeConditionId)
+                    : undefined
+                  const marketTitle =
+                    trade.title ||
+                    trade.market_title ||
+                    matchedPos?.title ||
+                    matchedPos?.market_title ||
+                    matchedPos?.market?.question ||
+                    '—'
+                  const marketSlug =
+                    trade.slug ||
+                    trade.market_slug ||
+                    matchedPos?.slug ||
+                    matchedPos?.market_slug ||
+                    matchedPos?.market?.slug ||
+                    ''
                   const txHash = trade.transactionHash || trade.tx_hash || trade.bridge_tx_hash
 
                   return (
@@ -746,10 +856,15 @@ export default function DashboardPositionsTable({
                           sx={{
                             fontWeight: 600,
                             bgcolor: alpha(
-                              trade.side === 'BUY' ? theme.palette.success.main : theme.palette.error.main,
+                              trade.side === 'BUY'
+                                ? theme.palette.success.main
+                                : theme.palette.error.main,
                               0.1
                             ),
-                            color: trade.side === 'BUY' ? theme.palette.success.dark : theme.palette.error.dark
+                            color:
+                              trade.side === 'BUY'
+                                ? theme.palette.success.dark
+                                : theme.palette.error.dark
                           }}
                         />
                       </TableCell>
@@ -773,14 +888,16 @@ export default function DashboardPositionsTable({
                         </Typography>
                       </TableCell>
                       <TableCell align='right'>
-                        <Typography variant='body2'>
-                          {Math.round(trade.price * 100)}¢
-                        </Typography>
+                        <Typography variant='body2'>{Math.round(trade.price * 100)}¢</Typography>
                       </TableCell>
                       <TableCell align='right'>
                         <Stack alignItems='flex-end'>
-                          <Typography variant='caption' fontWeight={600}>{dateStr}</Typography>
-                          <Typography variant='caption' color='text.secondary'>{timeStr}</Typography>
+                          <Typography variant='caption' fontWeight={600}>
+                            {dateStr}
+                          </Typography>
+                          <Typography variant='caption' color='text.secondary'>
+                            {timeStr}
+                          </Typography>
                         </Stack>
                       </TableCell>
                       <TableCell align='center'>
@@ -792,11 +909,22 @@ export default function DashboardPositionsTable({
                               rel='noopener noreferrer'
                               style={{ color: 'inherit' }}
                             >
-                              <Iconify icon='solar:link-round-bold' width={18} sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }} />
+                              <Iconify
+                                icon='solar:link-round-bold'
+                                width={18}
+                                sx={{
+                                  color: 'text.secondary',
+                                  '&:hover': { color: 'primary.main' }
+                                }}
+                              />
                             </a>
                           </Tooltip>
                         ) : (
-                          <Iconify icon='solar:link-broken-bold' width={18} sx={{ color: 'text.disabled' }} />
+                          <Iconify
+                            icon='solar:link-broken-bold'
+                            width={18}
+                            sx={{ color: 'text.disabled' }}
+                          />
                         )}
                       </TableCell>
                     </TableRow>

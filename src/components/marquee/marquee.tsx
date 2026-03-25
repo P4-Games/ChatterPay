@@ -17,7 +17,7 @@ export default function Marquee({
   children,
   direction = 'left',
   speed = 40,
-  pauseOnHover = true,
+  pauseOnHover = true
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
@@ -41,8 +41,8 @@ export default function Marquee({
       transition: {
         ease: 'linear',
         duration,
-        repeat: Infinity,
-      },
+        repeat: Infinity
+      }
     })
   }, [contentWidth, direction, speed, controls])
 
@@ -53,7 +53,7 @@ export default function Marquee({
         width: '100%',
         overflow: 'hidden',
         position: 'relative',
-        display: 'flex',
+        display: 'flex'
       }}
       onMouseEnter={() => pauseOnHover && controls.stop()}
       onMouseLeave={() => {
@@ -64,15 +64,12 @@ export default function Marquee({
           transition: {
             ease: 'linear',
             duration,
-            repeat: Infinity,
-          },
+            repeat: Infinity
+          }
         })
       }}
     >
-      <m.div
-        animate={controls}
-        style={{ display: 'flex', whiteSpace: 'nowrap' }}
-      >
+      <m.div animate={controls} style={{ display: 'flex', whiteSpace: 'nowrap' }}>
         <Box ref={contentRef} sx={{ display: 'flex', gap: 2, px: 1 }}>
           {children}
         </Box>
@@ -82,4 +79,3 @@ export default function Marquee({
     </Box>
   )
 }
-

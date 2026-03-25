@@ -56,7 +56,7 @@ const STEP_LABELS: Record<string, string> = {
   account_creation: 'Creating account',
   bridge: 'Bridging funds',
   order_placement: 'Placing order',
-  done: 'Complete',
+  done: 'Complete'
 }
 
 export default function PolymarketPortfolio() {
@@ -71,7 +71,7 @@ export default function PolymarketPortfolio() {
   const { data: orders = [], isLoading: isOrdersLoading } = useGetPolymarketOrdersSWR(10000)
   const { data: trades = [] } = useGetPolymarketTradesSWR(30000)
   const { data: balanceData, isLoading: isBalanceLoading } = useGetWalletBalance(user?.wallet || '')
-  
+
   const polyBalance = balanceData?.polymarket
   const idleUsdc = polyBalance?.idle_usdc ?? 0
   const totalUsd = polyBalance?.total_usd ?? 0
@@ -87,7 +87,10 @@ export default function PolymarketPortfolio() {
     try {
       const result = await polymarketCancelOrder(orderId)
       if (result.ok) {
-        mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders'))
+        mutate(
+          (key: any) =>
+            Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders')
+        )
       }
     } catch {
       // Silently fail
@@ -108,8 +111,14 @@ export default function PolymarketPortfolio() {
       if (result.ok) {
         enqueueSnackbar('Funds Claiming... This may take a minute.', { variant: 'info' })
         setTimeout(() => {
-          mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'))
-          mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/portfolio'))
+          mutate(
+            (key: any) =>
+              Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance')
+          )
+          mutate(
+            (key: any) =>
+              Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/portfolio')
+          )
           enqueueSnackbar('Scroll Wallet Balance Updated', { variant: 'success' })
           setIsClaiming(false)
         }, 40000)
@@ -131,31 +140,50 @@ export default function PolymarketPortfolio() {
     )
   }
 
-  const totalValue = totalUsd > 0 ? totalUsd : (portfolio?.total_value ?? portfolio?.totalValue ?? 0)
+  const totalValue =
+    totalUsd > 0 ? totalUsd : (portfolio?.total_value ?? portfolio?.totalValue ?? 0)
   const totalPnl = portfolio?.total_pnl ?? portfolio?.totalPnl ?? 0
-  const totalPnlRounded = Math.floor(Math.abs(totalPnl) * 1e2) / 1e2 * (totalPnl < 0 ? -1 : 1)
-  const activePositionsCount = portfolio?.positions_count ?? portfolio?.positionsCount ?? positions.length
+  const totalPnlRounded = (Math.floor(Math.abs(totalPnl) * 1e2) / 1e2) * (totalPnl < 0 ? -1 : 1)
+  const activePositionsCount =
+    portfolio?.positions_count ?? portfolio?.positionsCount ?? positions.length
 
   return (
     <Stack spacing={3}>
       {/* Portfolio Summary */}
-      <Stack direction={{ xs: 'column', sm: 'row' }} alignItems={{ xs: 'flex-start', sm: 'center' }} justifyContent="space-between" spacing={2}>
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        alignItems={{ xs: 'flex-start', sm: 'center' }}
+        justifyContent='space-between'
+        spacing={2}
+      >
         <Stack spacing={0.5}>
-          <Typography variant="h6" fontWeight={700}>Portfolio Overview</Typography>
+          <Typography variant='h6' fontWeight={700}>
+            Portfolio Overview
+          </Typography>
           {idleUsdc > 0 && (
-             <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-               <Iconify icon="solar:info-circle-bold" width={14} />
-               <strong>${fNumber(idleUsdc)} USDC</strong> available in Polygon Safe
-             </Typography>
+            <Typography
+              variant='caption'
+              color='text.secondary'
+              sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
+            >
+              <Iconify icon='solar:info-circle-bold' width={14} />
+              <strong>${fNumber(idleUsdc)} USDC</strong> available in Polygon Safe
+            </Typography>
           )}
         </Stack>
         {idleUsdc >= 0.01 && (
-          <Button 
-            variant="contained" 
-            color="primary"
+          <Button
+            variant='contained'
+            color='primary'
             onClick={handleClaimSubmit}
             disabled={isClaiming}
-            startIcon={isClaiming ? <CircularProgress size={16} color="inherit" /> : <Iconify icon="solar:arrow-right-up-bold" />}
+            startIcon={
+              isClaiming ? (
+                <CircularProgress size={16} color='inherit' />
+              ) : (
+                <Iconify icon='solar:arrow-right-up-bold' />
+              )
+            }
             sx={{ borderRadius: 1.5, px: 2, width: { xs: '100%', sm: 'auto' } }}
           >
             {isClaiming ? 'Claiming...' : `Claim All to Scroll`}
@@ -201,7 +229,9 @@ export default function PolymarketPortfolio() {
               fontWeight={800}
               color={totalPnl >= 0 ? 'success.main' : 'error.main'}
             >
-              {totalPnlRounded === 0 ? '$0.00' : `${totalPnl > 0 ? '+' : ''}$${fNumber(totalPnlRounded)}`}
+              {totalPnlRounded === 0
+                ? '$0.00'
+                : `${totalPnl > 0 ? '+' : ''}$${fNumber(totalPnlRounded)}`}
             </Typography>
           </Stack>
         </Card>
@@ -237,11 +267,17 @@ export default function PolymarketPortfolio() {
           <Chip
             label={positions.length}
             size='small'
-            sx={{ fontWeight: 700, bgcolor: alpha(theme.palette.primary.main, 0.16), color: 'primary.main' }}
+            sx={{
+              fontWeight: 700,
+              bgcolor: alpha(theme.palette.primary.main, 0.16),
+              color: 'primary.main'
+            }}
           />
         </Stack>
 
-        {positions.filter((p) => !soldPositionKeys.has((p.market?.condition_id || p.conditionId) + p.outcome)).length === 0 ? (
+        {positions.filter(
+          (p) => !soldPositionKeys.has((p.market?.condition_id || p.conditionId) + p.outcome)
+        ).length === 0 ? (
           <Stack alignItems='center' sx={{ py: 6 }}>
             <Iconify
               icon='solar:graph-up-bold-duotone'
@@ -267,175 +303,252 @@ export default function PolymarketPortfolio() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {positions.filter((p) => !soldPositionKeys.has((p.market?.condition_id || p.conditionId) + p.outcome)).map((pos, idx) => (
-                  <TableRow key={idx} hover>
-                    <TableCell>
-                      <Link
-                        href={(pos.slug || pos.market_slug) ? `/markets/${pos.slug || pos.market_slug}` : '#'}
-                        style={{ textDecoration: 'none', color: 'inherit' }}
-                      >
-                        <Typography
-                          variant='subtitle2'
-                          noWrap
-                          sx={{ maxWidth: 200, '&:hover': { textDecoration: 'underline' } }}
+                {positions
+                  .filter(
+                    (p) =>
+                      !soldPositionKeys.has((p.market?.condition_id || p.conditionId) + p.outcome)
+                  )
+                  .map((pos, idx) => (
+                    <TableRow key={idx} hover>
+                      <TableCell>
+                        <Link
+                          href={
+                            pos.slug || pos.market_slug
+                              ? `/markets/${pos.slug || pos.market_slug}`
+                              : '#'
+                          }
+                          style={{ textDecoration: 'none', color: 'inherit' }}
                         >
-                          {pos.title || pos.market_title || pos.market?.question || '—'}
-                        </Typography>
-                      </Link>
-                    </TableCell>
-                    <TableCell>
-                      <Chip
-                        label={pos.outcome}
-                        size='small'
-                        sx={{
-                          fontWeight: 600,
-                          bgcolor: alpha(
-                            pos.outcome?.toLowerCase() === 'yes'
-                              ? theme.palette.success.main
-                              : theme.palette.error.main,
-                            0.1
-                          ),
-                          color:
-                            pos.outcome?.toLowerCase() === 'yes'
-                              ? theme.palette.success.dark
-                              : theme.palette.error.dark
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell align='right'>
-                      <Typography variant='body2' fontWeight={600}>
-                        {fNumber(pos.size)}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align='right'>
-                      <Typography variant='body2'>{Math.round((pos.avg_price ?? pos.avgPrice ?? 0) * 100)}¢</Typography>
-                    </TableCell>
-                    <TableCell align='right'>
-                      <Typography variant='body2'>
-                        {Math.round((pos.current_price ?? pos.curPrice ?? 0) * 100)}¢
-                      </Typography>
-                    </TableCell>
-                    <TableCell align='right'>
-                      {(() => {
-                        const pnlVal = pos.pnl ?? pos.cashPnl ?? 0;
-                        const pnlRounded = Math.floor(Math.abs(pnlVal) * 1e2) / 1e2 * (pnlVal < 0 ? -1 : 1);
-                        return (
                           <Typography
-                            variant='body2'
-                            fontWeight={700}
-                            color={pnlVal >= 0 ? 'success.main' : 'error.main'}
+                            variant='subtitle2'
+                            noWrap
+                            sx={{ maxWidth: 200, '&:hover': { textDecoration: 'underline' } }}
                           >
-                            {pnlRounded === 0 ? '$0.00' : `${pnlVal > 0 ? '+' : ''}$${fNumber(pnlRounded)}`}
+                            {pos.title || pos.market_title || pos.market?.question || '—'}
                           </Typography>
-                        );
-                      })()}
-                    </TableCell>
-                    <TableCell align='right'>
-                      <Button
-                        size='small'
-                        color='error'
-                        variant='contained'
-                        disabled={sellingPos === (pos.market?.condition_id || pos.conditionId) + pos.outcome}
-                        onClick={async () => {
-                          const posKey = (pos.market?.condition_id || pos.conditionId) + pos.outcome
-                          setSellingPos(posKey)
-
-                          const token = pos.market?.tokens?.find((t) => t.outcome === pos.outcome)
-                          const tokenId = pos.asset || pos.token_id || token?.token_id
-
-                          if (!tokenId) {
-                            enqueueSnackbar('Token ID not found', { variant: 'error' })
-                            setSellingPos(null)
-                            return
+                        </Link>
+                      </TableCell>
+                      <TableCell>
+                        <Chip
+                          label={pos.outcome}
+                          size='small'
+                          sx={{
+                            fontWeight: 600,
+                            bgcolor: alpha(
+                              pos.outcome?.toLowerCase() === 'yes'
+                                ? theme.palette.success.main
+                                : theme.palette.error.main,
+                              0.1
+                            ),
+                            color:
+                              pos.outcome?.toLowerCase() === 'yes'
+                                ? theme.palette.success.dark
+                                : theme.palette.error.dark
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell align='right'>
+                        <Typography variant='body2' fontWeight={600}>
+                          {fNumber(pos.size)}
+                        </Typography>
+                      </TableCell>
+                      <TableCell align='right'>
+                        <Typography variant='body2'>
+                          {Math.round((pos.avg_price ?? pos.avgPrice ?? 0) * 100)}¢
+                        </Typography>
+                      </TableCell>
+                      <TableCell align='right'>
+                        <Typography variant='body2'>
+                          {Math.round((pos.current_price ?? pos.curPrice ?? 0) * 100)}¢
+                        </Typography>
+                      </TableCell>
+                      <TableCell align='right'>
+                        {(() => {
+                          const pnlVal = pos.pnl ?? pos.cashPnl ?? 0
+                          const pnlRounded =
+                            (Math.floor(Math.abs(pnlVal) * 1e2) / 1e2) * (pnlVal < 0 ? -1 : 1)
+                          return (
+                            <Typography
+                              variant='body2'
+                              fontWeight={700}
+                              color={pnlVal >= 0 ? 'success.main' : 'error.main'}
+                            >
+                              {pnlRounded === 0
+                                ? '$0.00'
+                                : `${pnlVal > 0 ? '+' : ''}$${fNumber(pnlRounded)}`}
+                            </Typography>
+                          )
+                        })()}
+                      </TableCell>
+                      <TableCell align='right'>
+                        <Button
+                          size='small'
+                          color='error'
+                          variant='contained'
+                          disabled={
+                            sellingPos ===
+                            (pos.market?.condition_id || pos.conditionId) + pos.outcome
                           }
+                          onClick={async () => {
+                            const posKey =
+                              (pos.market?.condition_id || pos.conditionId) + pos.outcome
+                            setSellingPos(posKey)
 
-                          const sellSize = Math.floor(pos.size * 1e6) / 1e6
-                          const sellPrice = pos.current_price
-                          const tempId = `temp-${Date.now()}`
-                          const marketTitle = pos.title || pos.market_title || pos.market?.question || '—'
+                            const token = pos.market?.tokens?.find((t) => t.outcome === pos.outcome)
+                            const tokenId = pos.asset || pos.token_id || token?.token_id
 
-                          // Instantly show in Open Orders
-                          setActivePurchases((prev) => [...prev, {
-                            purchase_id: tempId,
-                            side: 'SELL',
-                            outcome: pos.outcome,
-                            size: sellSize,
-                            price: sellPrice,
-                            market_title: marketTitle,
-                            current_step: 'submitting',
-                            status: 'processing',
-                          }])
-
-                          try {
-                            const res = await polymarketPurchase({
-                              token_id: tokenId,
-                              side: 'SELL',
-                              size: sellSize,
-                              price: sellPrice,
-                              bridge_amount: "0"
-                            })
-                            if (res.ok) {
-                              const purchaseId = res.data?.purchase_id || tempId
-                              // Hide the sold position immediately
-                              setSoldPositionKeys((prev) => new Set(prev).add(posKey))
-                              // Update temp row with real purchase ID + step
-                              setActivePurchases((prev) =>
-                                prev.map((p) =>
-                                  p.purchase_id === tempId
-                                    ? { ...p, purchase_id: purchaseId, current_step: 'order_placement' }
-                                    : p
-                                )
-                              )
-
-                              const poll = async () => {
-                                try {
-                                  const statusRes = await polymarketPurchaseStatus(purchaseId)
-                                  if (statusRes.ok && statusRes.data) {
-                                    const st = statusRes.data.status
-                                    const step = statusRes.data.current_step || ''
-                                    setActivePurchases((prev) =>
-                                      prev.map((p) =>
-                                        p.purchase_id === purchaseId ? { ...p, current_step: step, status: st } : p
-                                      )
-                                    )
-                                    if (st === 'completed') {
-                                      clearInterval(pollInterval)
-                                      setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
-                                      enqueueSnackbar('Sell order completed', { variant: 'success' })
-                                      mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/positions'))
-                                      mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders'))
-                                      mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/portfolio'))
-                                      mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'))
-                                      setSoldPositionKeys((prev) => { const n = new Set(prev); n.delete(posKey); return n })
-                                    } else if (st === 'failed') {
-                                      clearInterval(pollInterval)
-                                      setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
-                                      enqueueSnackbar(statusRes.data.error || 'Sell failed', { variant: 'error' })
-                                      setSoldPositionKeys((prev) => { const n = new Set(prev); n.delete(posKey); return n })
-                                    }
-                                  }
-                                } catch (e) { console.error(e) }
-                              }
-                              poll() // immediate first check
-                              const pollInterval = setInterval(poll, 4000)
-                            } else {
-                              // Remove temp row on failure
-                              setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== tempId))
-                              enqueueSnackbar(res.message || 'Error executing sell', { variant: 'error' })
+                            if (!tokenId) {
+                              enqueueSnackbar('Token ID not found', { variant: 'error' })
+                              setSellingPos(null)
+                              return
                             }
-                          } catch {
-                            setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== tempId))
-                            enqueueSnackbar('Error executing sell', { variant: 'error' })
-                          } finally {
-                            setSellingPos(null)
-                          }
-                        }}
-                      >
-                        {sellingPos === (pos.market?.condition_id || pos.conditionId) + pos.outcome ? <CircularProgress size={14} color="inherit" /> : 'Sell'}
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
+
+                            const sellSize = Math.floor(pos.size * 1e6) / 1e6
+                            const sellPrice = pos.current_price
+                            const tempId = `temp-${Date.now()}`
+                            const marketTitle =
+                              pos.title || pos.market_title || pos.market?.question || '—'
+
+                            // Instantly show in Open Orders
+                            setActivePurchases((prev) => [
+                              ...prev,
+                              {
+                                purchase_id: tempId,
+                                side: 'SELL',
+                                outcome: pos.outcome,
+                                size: sellSize,
+                                price: sellPrice,
+                                market_title: marketTitle,
+                                current_step: 'submitting',
+                                status: 'processing'
+                              }
+                            ])
+
+                            try {
+                              const res = await polymarketPurchase({
+                                token_id: tokenId,
+                                side: 'SELL',
+                                size: sellSize,
+                                price: sellPrice,
+                                bridge_amount: '0'
+                              })
+                              if (res.ok) {
+                                const purchaseId = res.data?.purchase_id || tempId
+                                // Hide the sold position immediately
+                                setSoldPositionKeys((prev) => new Set(prev).add(posKey))
+                                // Update temp row with real purchase ID + step
+                                setActivePurchases((prev) =>
+                                  prev.map((p) =>
+                                    p.purchase_id === tempId
+                                      ? {
+                                          ...p,
+                                          purchase_id: purchaseId,
+                                          current_step: 'order_placement'
+                                        }
+                                      : p
+                                  )
+                                )
+
+                                const poll = async () => {
+                                  try {
+                                    const statusRes = await polymarketPurchaseStatus(purchaseId)
+                                    if (statusRes.ok && statusRes.data) {
+                                      const st = statusRes.data.status
+                                      const step = statusRes.data.current_step || ''
+                                      setActivePurchases((prev) =>
+                                        prev.map((p) =>
+                                          p.purchase_id === purchaseId
+                                            ? { ...p, current_step: step, status: st }
+                                            : p
+                                        )
+                                      )
+                                      if (st === 'completed') {
+                                        clearInterval(pollInterval)
+                                        setActivePurchases((prev) =>
+                                          prev.filter((p) => p.purchase_id !== purchaseId)
+                                        )
+                                        enqueueSnackbar('Sell order completed', {
+                                          variant: 'success'
+                                        })
+                                        mutate(
+                                          (key: any) =>
+                                            Array.isArray(key) &&
+                                            typeof key[0] === 'string' &&
+                                            key[0].includes('/positions')
+                                        )
+                                        mutate(
+                                          (key: any) =>
+                                            Array.isArray(key) &&
+                                            typeof key[0] === 'string' &&
+                                            key[0].includes('/orders')
+                                        )
+                                        mutate(
+                                          (key: any) =>
+                                            Array.isArray(key) &&
+                                            typeof key[0] === 'string' &&
+                                            key[0].includes('/portfolio')
+                                        )
+                                        mutate(
+                                          (key: any) =>
+                                            Array.isArray(key) &&
+                                            typeof key[0] === 'string' &&
+                                            key[0].includes('/balance')
+                                        )
+                                        setSoldPositionKeys((prev) => {
+                                          const n = new Set(prev)
+                                          n.delete(posKey)
+                                          return n
+                                        })
+                                      } else if (st === 'failed') {
+                                        clearInterval(pollInterval)
+                                        setActivePurchases((prev) =>
+                                          prev.filter((p) => p.purchase_id !== purchaseId)
+                                        )
+                                        enqueueSnackbar(statusRes.data.error || 'Sell failed', {
+                                          variant: 'error'
+                                        })
+                                        setSoldPositionKeys((prev) => {
+                                          const n = new Set(prev)
+                                          n.delete(posKey)
+                                          return n
+                                        })
+                                      }
+                                    }
+                                  } catch (e) {
+                                    console.error(e)
+                                  }
+                                }
+                                poll() // immediate first check
+                                const pollInterval = setInterval(poll, 4000)
+                              } else {
+                                // Remove temp row on failure
+                                setActivePurchases((prev) =>
+                                  prev.filter((p) => p.purchase_id !== tempId)
+                                )
+                                enqueueSnackbar(res.message || 'Error executing sell', {
+                                  variant: 'error'
+                                })
+                              }
+                            } catch {
+                              setActivePurchases((prev) =>
+                                prev.filter((p) => p.purchase_id !== tempId)
+                              )
+                              enqueueSnackbar('Error executing sell', { variant: 'error' })
+                            } finally {
+                              setSellingPos(null)
+                            }
+                          }}
+                        >
+                          {sellingPos ===
+                          (pos.market?.condition_id || pos.conditionId) + pos.outcome ? (
+                            <CircularProgress size={14} color='inherit' />
+                          ) : (
+                            'Sell'
+                          )}
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </TableContainer>
@@ -456,7 +569,11 @@ export default function PolymarketPortfolio() {
           <Chip
             label={activePurchases.length + orders.length}
             size='small'
-            sx={{ fontWeight: 700, bgcolor: alpha(theme.palette.warning.main, 0.16), color: 'warning.main' }}
+            sx={{
+              fontWeight: 700,
+              bgcolor: alpha(theme.palette.warning.main, 0.16),
+              color: 'warning.main'
+            }}
           />
         </Stack>
 
@@ -491,9 +608,9 @@ export default function PolymarketPortfolio() {
                     sx={{
                       '@keyframes softPulse': {
                         '0%, 100%': { opacity: 1 },
-                        '50%': { opacity: 0.5 },
+                        '50%': { opacity: 0.5 }
                       },
-                      animation: 'softPulse 2s ease-in-out infinite',
+                      animation: 'softPulse 2s ease-in-out infinite'
                     }}
                   >
                     <TableCell>
@@ -508,10 +625,15 @@ export default function PolymarketPortfolio() {
                         sx={{
                           fontWeight: 600,
                           bgcolor: alpha(
-                            ap.side === 'BUY' ? theme.palette.success.main : theme.palette.error.main,
+                            ap.side === 'BUY'
+                              ? theme.palette.success.main
+                              : theme.palette.error.main,
                             0.1
                           ),
-                          color: ap.side === 'BUY' ? theme.palette.success.dark : theme.palette.error.dark
+                          color:
+                            ap.side === 'BUY'
+                              ? theme.palette.success.dark
+                              : theme.palette.error.dark
                         }}
                       />
                     </TableCell>
@@ -519,7 +641,9 @@ export default function PolymarketPortfolio() {
                       <Typography variant='body2'>{ap.outcome}</Typography>
                     </TableCell>
                     <TableCell align='right'>
-                      <Typography variant='body2' fontWeight={600}>{fNumber(ap.size)}</Typography>
+                      <Typography variant='body2' fontWeight={600}>
+                        {fNumber(ap.size)}
+                      </Typography>
                     </TableCell>
                     <TableCell align='right'>
                       <Typography variant='body2'>{Math.round(ap.price * 100)}¢</Typography>
@@ -534,7 +658,7 @@ export default function PolymarketPortfolio() {
                           bgcolor: theme.palette.text.primary,
                           color: theme.palette.background.paper,
                           '& .MuiChip-icon': { color: 'inherit' },
-                          pointerEvents: 'none',
+                          pointerEvents: 'none'
                         }}
                       />
                     </TableCell>
@@ -575,9 +699,7 @@ export default function PolymarketPortfolio() {
                       </Typography>
                     </TableCell>
                     <TableCell align='right'>
-                      <Typography variant='body2'>
-                        {Math.round(order.price * 100)}¢
-                      </Typography>
+                      <Typography variant='body2'>{Math.round(order.price * 100)}¢</Typography>
                     </TableCell>
                     <TableCell align='right'>
                       <Button
@@ -627,17 +749,28 @@ export default function PolymarketPortfolio() {
                   <TableCell align='right'>{t('polymarket.size')}</TableCell>
                   <TableCell align='right'>{t('polymarket.price')}</TableCell>
                   <TableCell align='right'>Date</TableCell>
-                  <TableCell align='center' sx={{ width: 48 }}>TX</TableCell>
+                  <TableCell align='center' sx={{ width: 48 }}>
+                    TX
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {trades.map((trade, idx) => {
-                  const ts = typeof trade.timestamp === 'number'
-                    ? (trade.timestamp > 1e12 ? trade.timestamp : trade.timestamp * 1000)
-                    : new Date(trade.timestamp).getTime()
+                  const ts =
+                    typeof trade.timestamp === 'number'
+                      ? trade.timestamp > 1e12
+                        ? trade.timestamp
+                        : trade.timestamp * 1000
+                      : new Date(trade.timestamp).getTime()
                   const date = new Date(ts)
-                  const dateStr = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
-                  const timeStr = date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
+                  const dateStr = date.toLocaleDateString(undefined, {
+                    month: 'short',
+                    day: 'numeric'
+                  })
+                  const timeStr = date.toLocaleTimeString(undefined, {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })
                   const marketTitle = trade.title || trade.market_title || '—'
                   const marketSlug = trade.slug || trade.market_slug || ''
                   const txHash = trade.transactionHash || trade.tx_hash
@@ -651,10 +784,15 @@ export default function PolymarketPortfolio() {
                           sx={{
                             fontWeight: 600,
                             bgcolor: alpha(
-                              trade.side === 'BUY' ? theme.palette.success.main : theme.palette.error.main,
+                              trade.side === 'BUY'
+                                ? theme.palette.success.main
+                                : theme.palette.error.main,
                               0.1
                             ),
-                            color: trade.side === 'BUY' ? theme.palette.success.dark : theme.palette.error.dark
+                            color:
+                              trade.side === 'BUY'
+                                ? theme.palette.success.dark
+                                : theme.palette.error.dark
                           }}
                         />
                       </TableCell>
@@ -678,14 +816,16 @@ export default function PolymarketPortfolio() {
                         </Typography>
                       </TableCell>
                       <TableCell align='right'>
-                        <Typography variant='body2'>
-                          {Math.round(trade.price * 100)}¢
-                        </Typography>
+                        <Typography variant='body2'>{Math.round(trade.price * 100)}¢</Typography>
                       </TableCell>
                       <TableCell align='right'>
                         <Stack alignItems='flex-end'>
-                          <Typography variant='caption' fontWeight={600}>{dateStr}</Typography>
-                          <Typography variant='caption' color='text.secondary'>{timeStr}</Typography>
+                          <Typography variant='caption' fontWeight={600}>
+                            {dateStr}
+                          </Typography>
+                          <Typography variant='caption' color='text.secondary'>
+                            {timeStr}
+                          </Typography>
                         </Stack>
                       </TableCell>
                       <TableCell align='center'>
@@ -696,10 +836,18 @@ export default function PolymarketPortfolio() {
                             rel='noopener noreferrer'
                             style={{ color: 'inherit' }}
                           >
-                            <Iconify icon='solar:link-round-bold' width={18} sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }} />
+                            <Iconify
+                              icon='solar:link-round-bold'
+                              width={18}
+                              sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}
+                            />
                           </a>
                         ) : (
-                          <Iconify icon='solar:link-broken-bold' width={18} sx={{ color: 'text.disabled' }} />
+                          <Iconify
+                            icon='solar:link-broken-bold'
+                            width={18}
+                            sx={{ color: 'text.disabled' }}
+                          />
                         )}
                       </TableCell>
                     </TableRow>

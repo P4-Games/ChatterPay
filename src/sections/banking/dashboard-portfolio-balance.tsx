@@ -8,7 +8,7 @@ import {
   Collapse,
   Typography,
   IconButton,
-  CircularProgress,
+  CircularProgress
 } from '@mui/material'
 import { alpha, useTheme } from '@mui/material/styles'
 
@@ -179,7 +179,9 @@ function CryptoAssetRow({
           </Box>
         )}
         <Box>
-          <Typography variant='subtitle2' fontWeight={600}>{balance.token}</Typography>
+          <Typography variant='subtitle2' fontWeight={600}>
+            {balance.token}
+          </Typography>
           <Typography variant='caption' sx={{ color: 'text.secondary' }}>
             {fNumber(balance.balance)}
           </Typography>
@@ -204,7 +206,8 @@ function CryptoAssetRow({
                 fontWeight: 600
               }}
             >
-              {isPositiveChange ? '+' : ''}{fNumber(priceChange)}%
+              {isPositiveChange ? '+' : ''}
+              {fNumber(priceChange)}%
             </Typography>
           </Box>
         )}
@@ -346,7 +349,9 @@ export default function DashboardPortfolioBalance({
           </Stack>
           <Stack direction='row' alignItems='center' spacing={1}>
             <Typography variant='subtitle1' fontWeight={600}>
-              {hideValues ? '********' : `$${fNumber(totals[selectedCurrency] || 0)} ${selectedCurrency.toUpperCase()}`}
+              {hideValues
+                ? '********'
+                : `$${fNumber(totals[selectedCurrency] || 0)} ${selectedCurrency.toUpperCase()}`}
             </Typography>
             <Iconify
               icon='eva:chevron-down-fill'
@@ -418,7 +423,9 @@ export default function DashboardPortfolioBalance({
           </Stack>
           <Stack direction='row' alignItems='center' spacing={1}>
             <Typography variant='subtitle1' fontWeight={600}>
-              {hideValues ? '********' : `$${fNumber(polymarketConverted)} ${selectedCurrency.toUpperCase()}`}
+              {hideValues
+                ? '********'
+                : `$${fNumber(polymarketConverted)} ${selectedCurrency.toUpperCase()}`}
             </Typography>
             <Iconify icon='eva:chevron-right-fill' width={20} sx={{ color: 'text.secondary' }} />
           </Stack>
@@ -439,8 +446,8 @@ export default function DashboardPortfolioBalance({
             ...(isDark && {
               bgcolor: '#1B9C85',
               color: '#fff',
-              '&:hover': { bgcolor: '#22b89a' },
-            }),
+              '&:hover': { bgcolor: '#22b89a' }
+            })
           }}
         >
           {t('balances.deposit')}
@@ -460,7 +467,7 @@ export default function DashboardPortfolioBalance({
             '&:hover': {
               borderColor: btnColor,
               bgcolor: alpha(btnColor, 0.06),
-              borderWidth: '0.5px',
+              borderWidth: '0.5px'
             }
           }}
         >
@@ -489,7 +496,7 @@ export default function DashboardPortfolioBalance({
               '&:hover': {
                 borderColor: btnColor,
                 bgcolor: alpha(btnColor, 0.06),
-                borderWidth: '0.5px',
+                borderWidth: '0.5px'
               }
             }}
           >

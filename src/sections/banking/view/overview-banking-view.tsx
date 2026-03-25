@@ -28,7 +28,6 @@ import { useBoolean } from 'src/hooks/use-boolean'
 import { useSettingsContext } from 'src/components/settings'
 import { useSnackbar } from 'src/components/snackbar'
 
-
 import type { IToken, IBalances, ITransaction } from 'src/types/wallet'
 import type { TokenPriceData } from 'src/app/api/services/coingecko/coingecko-service'
 
@@ -101,7 +100,8 @@ export default function OverviewBankingView() {
   }: { data: ITransaction[]; isLoading: boolean } = useGetWalletTransactions(walletAddress)
 
   // Polymarket data (pre-loaded for drawer)
-  const { data: positions = [], isLoading: isLoadingPositions } = useGetPolymarketPositionsSWR(10000)
+  const { data: positions = [], isLoading: isLoadingPositions } =
+    useGetPolymarketPositionsSWR(10000)
   const { data: orders = [], isLoading: isLoadingOrders } = useGetPolymarketOrdersSWR(10000)
   const { data: portfolioData, isLoading: isLoadingPortfolio } = useGetPolymarketPortfolioSWR(10000)
   const { data: trades = [], isLoading: isLoadingTrades } = useGetPolymarketTradesSWR(30000)
@@ -154,8 +154,14 @@ export default function OverviewBankingView() {
       if (result.ok) {
         enqueueSnackbar('Funds Claiming... This may take a minute.', { variant: 'info' })
         setTimeout(() => {
-          mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'))
-          mutate((key: any) => Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/portfolio'))
+          mutate(
+            (key: any) =>
+              Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance')
+          )
+          mutate(
+            (key: any) =>
+              Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/portfolio')
+          )
           enqueueSnackbar('Scroll Wallet Balance Updated', { variant: 'success' })
           setIsClaiming(false)
         }, 40000)
@@ -183,7 +189,7 @@ export default function OverviewBankingView() {
             ? 'linear-gradient(180deg, #161C24 0%, #0A2E1A 100%)'
             : 'linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 100%)',
           zIndex: -1,
-          pointerEvents: 'none',
+          pointerEvents: 'none'
         }}
       />
 

@@ -25,11 +25,7 @@ export default function PolymarketPortfolioView() {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
       <Stack spacing={3}>
-        <Stack
-          direction='row'
-          alignItems='center'
-          justifyContent='space-between'
-        >
+        <Stack direction='row' alignItems='center' justifyContent='space-between'>
           <Typography variant='h4' fontWeight={800}>
             {t('polymarket.portfolio-title')}
           </Typography>

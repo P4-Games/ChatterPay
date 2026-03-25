@@ -7,7 +7,6 @@ import IconButton from '@mui/material/IconButton'
 import { useOffSetTop } from 'src/hooks/use-off-set-top'
 import { useResponsive } from 'src/hooks/use-responsive'
 
-
 import Logo from 'src/components/logo'
 import SvgColor from 'src/components/svg-color'
 import { useSettingsContext } from 'src/components/settings'

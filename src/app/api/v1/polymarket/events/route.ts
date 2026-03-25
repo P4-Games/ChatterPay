@@ -1,7 +1,11 @@
 import { type NextRequest, NextResponse } from 'next/server'
 
 import { getEvents } from 'src/app/api/services/polymarket/polymarket-service'
-import { validateRequestSecurity, getUserIdFromRequest, type AuthContext } from 'src/app/api/middleware/validators/base-security-validator'
+import {
+  validateRequestSecurity,
+  getUserIdFromRequest,
+  type AuthContext
+} from 'src/app/api/middleware/validators/base-security-validator'
 
 // ----------------------------------------------------------------------
 
