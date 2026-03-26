@@ -30,7 +30,7 @@ import { alpha, useTheme } from '@mui/material/styles'
 import { useTranslate } from 'src/locales'
 import Iconify from 'src/components/iconify'
 import { fNumber } from 'src/utils/format-number'
-import { BOT_WAPP_URL } from 'src/config-global'
+import { BOT_WAPP_URL, TRANSACTION_FEE_USD, LIFI_CHAINS_URL, ENS_LOGO } from 'src/config-global'
 
 import type { IBalance, ITransaction, IToken } from 'src/types/wallet'
 
@@ -69,8 +69,7 @@ type RecentDest = {
 
 // ----------------------------------------------------------------------
 
-const ENS_LOGO = 'https://cryptofonts.com/img/SVG/ens.svg'
-const LIFI_CHAINS_URL = 'https://li.quest/v1/chains?chainTypes=EVM,SVM'
+// ----------------------------------------------------------------------
 
 const CHAIN_PRIORITY: Record<number, number> = {
   534352: 0,
@@ -288,9 +287,9 @@ export default function DashboardWithdrawModal({
   const tokenPrice =
     availableAmount > 0 ? (selectedBalance?.balance_conv?.usd ?? 0) / availableAmount : 0
 
-  const feeInUsd = 0.08
-  const feeInCurr = feeInUsd * currRate
-  const feeInTokens = tokenPrice > 0 ? feeInUsd / tokenPrice : 0
+  const feeInCurr = TRANSACTION_FEE_USD * currRate
+  const feeInTokens =
+    tokenPrice > 0 ? Math.min(TRANSACTION_FEE_USD / tokenPrice, availableAmount) : 0
 
   const dbToken = tokens?.find((t) => t.symbol === selectedToken)
   const isL1 = destType === 'address' && selectedChainId === 1

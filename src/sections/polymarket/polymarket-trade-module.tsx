@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
@@ -21,10 +21,18 @@ import { useTranslate } from 'src/locales'
 import { polymarketPurchase, polymarketPurchaseStatus } from 'src/app/api/hooks'
 
 import Iconify from 'src/components/iconify'
+import { POLYMARKET_POLL_INTERVAL_MS } from 'src/config-global'
 
 import type { IPolymarketMarket, IPolymarketAccountStatus } from 'src/types/polymarket'
 
 // ----------------------------------------------------------------------
+
+const PAYOUT_PER_SHARE = 1 // Each share pays $1 if correct
+const TOKEN_QTY_PRECISION = 1e6 // 6 decimal places
+
+function matchesSWRKey(key: any, segment: string): boolean {
+  return Array.isArray(key) && typeof key[0] === 'string' && key[0].includes(segment)
+}
 
 type Props = {
   market: IPolymarketMarket
@@ -36,6 +44,15 @@ export default function PolymarketTradeModule({ market, accountStatus }: Props) 
   const { mutate } = useSWRConfig()
   const { t } = useTranslate()
   const theme = useTheme()
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  // Clear polling on unmount
+  useEffect(
+    () => () => {
+      if (pollRef.current) clearInterval(pollRef.current)
+    },
+    []
+  )
 
   const [selectedOutcome, setSelectedOutcome] = useState<number>(0)
   const [amount, setAmount] = useState('')
@@ -48,11 +65,17 @@ export default function PolymarketTradeModule({ market, accountStatus }: Props) 
   const selectedPrice = prices[selectedOutcome] || 0
   const amountNum = Number.parseFloat(amount) || 0
   const estimatedShares = selectedPrice > 0 ? amountNum / selectedPrice : 0
-  const estimatedReturn = estimatedShares * 1 // Each share pays $1 if correct
+  const estimatedReturn = estimatedShares * PAYOUT_PER_SHARE
   const estimatedProfit = estimatedReturn - amountNum
 
   const canTrade = accountStatus?.account?.has_account && accountStatus?.account?.terms_accepted
   const tokenId = market.tokens?.[selectedOutcome]?.token_id || ''
+
+  const invalidateKeys = (...segments: string[]) => {
+    for (const seg of segments) {
+      mutate((key: any) => matchesSWRKey(key, seg))
+    }
+  }
 
   const handleSubmit = async () => {
     if (!canTrade || amountNum <= 0 || !tokenId || selectedPrice <= 0) return
@@ -63,7 +86,8 @@ export default function PolymarketTradeModule({ market, accountStatus }: Props) 
 
     try {
       // `size` = number of prediction tokens, not USD.
-      const tokenQuantity = Math.floor((amountNum / selectedPrice) * 100) / 100
+      const tokenQuantity =
+        Math.floor((amountNum / selectedPrice) * TOKEN_QTY_PRECISION) / TOKEN_QTY_PRECISION
       const bridgeAmountWei = Math.floor(amountNum * 1e6).toString()
 
       const result = await polymarketPurchase({
@@ -80,11 +104,9 @@ export default function PolymarketTradeModule({ market, accountStatus }: Props) 
 
         // Optimistically deduct visual balance
         mutate(
-          (key: any) =>
-            Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'),
+          (key: any) => matchesSWRKey(key, '/balance'),
           (currentData: any) => {
             if (!currentData || !currentData.data) return currentData
-            // Best effort optimistic deduction, assume USDC is primary
             const newBal = { ...currentData }
             if (newBal.data.balance) {
               newBal.data.balance = Math.max(0, newBal.data.balance - amountNum)
@@ -96,54 +118,32 @@ export default function PolymarketTradeModule({ market, accountStatus }: Props) 
 
         const purchaseId = result.data?.purchase_id
         if (purchaseId) {
-          const pollInterval = setInterval(async () => {
+          // Clear any existing poll before starting a new one
+          if (pollRef.current) clearInterval(pollRef.current)
+
+          pollRef.current = setInterval(async () => {
             try {
               const statusRes = await polymarketPurchaseStatus(purchaseId)
               if (statusRes.ok && statusRes.data) {
                 const st = statusRes.data.status
                 if (st === 'completed') {
-                  clearInterval(pollInterval)
+                  if (pollRef.current) clearInterval(pollRef.current)
+                  pollRef.current = null
                   enqueueSnackbar(t('polymarket.order-placed'), { variant: 'success' })
-                  // Hard invalidate balance
-                  mutate(
-                    (key: any) =>
-                      Array.isArray(key) &&
-                      typeof key[0] === 'string' &&
-                      key[0].includes('/balance')
-                  )
-                  mutate(
-                    (key: any) =>
-                      Array.isArray(key) &&
-                      typeof key[0] === 'string' &&
-                      key[0].includes('/positions')
-                  )
-                  mutate(
-                    (key: any) =>
-                      Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders')
-                  )
-                  mutate(
-                    (key: any) =>
-                      Array.isArray(key) &&
-                      typeof key[0] === 'string' &&
-                      key[0].includes('/portfolio')
-                  )
+                  invalidateKeys('/balance', '/positions', '/orders', '/portfolio')
                 } else if (st === 'failed') {
-                  clearInterval(pollInterval)
+                  if (pollRef.current) clearInterval(pollRef.current)
+                  pollRef.current = null
                   enqueueSnackbar(statusRes.data.error || t('polymarket.transaction-failed'), {
                     variant: 'error'
                   })
-                  mutate(
-                    (key: any) =>
-                      Array.isArray(key) &&
-                      typeof key[0] === 'string' &&
-                      key[0].includes('/balance')
-                  )
+                  invalidateKeys('/balance')
                 }
               }
             } catch (e) {
               console.error(e)
             }
-          }, 4000)
+          }, POLYMARKET_POLL_INTERVAL_MS)
         }
       } else {
         setError(result.message || t('polymarket.order-error'))

@@ -256,7 +256,9 @@ export default function DashboardPortfolioBalance({
   }
 
   const polymarketConverted = polymarketTotalUsd * conversionRate
-  const combinedTotal = (totals[selectedCurrency] || 0) + polymarketConverted
+  // Backend totals already include polymarket — don't double-count
+  const combinedTotal = totals[selectedCurrency] || 0
+  const cryptoOnly = combinedTotal - polymarketConverted
 
   // Sort balances by USD value for dropdown
   const sortedBalances = [...balances].sort(
@@ -351,7 +353,7 @@ export default function DashboardPortfolioBalance({
             <Typography variant='subtitle1' fontWeight={600}>
               {hideValues
                 ? '********'
-                : `$${fNumber(totals[selectedCurrency] || 0)} ${selectedCurrency.toUpperCase()}`}
+                : `$${fNumber(cryptoOnly)} ${selectedCurrency.toUpperCase()}`}
             </Typography>
             <Iconify
               icon='eva:chevron-down-fill'

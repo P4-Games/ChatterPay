@@ -100,6 +100,12 @@ export const NOTIFICATIONS_INTERVAL_TO_FETCH_PAGE: number = Number.isNaN(
 
 export const notificationsRefreshInterval = 5000
 
+// Polymarket / External Configurations
+export const POLYMARKET_POLL_INTERVAL_MS = 4000
+export const TRANSACTION_FEE_USD = 0.08
+export const LIFI_CHAINS_URL = 'https://li.quest/v1/chains?chainTypes=EVM,SVM'
+export const ENS_LOGO = 'https://cryptofonts.com/img/SVG/ens.svg'
+
 export const defaultBalance: IBalance = {
   network: '',
   token: '',

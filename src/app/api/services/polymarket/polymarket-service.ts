@@ -57,6 +57,28 @@ function extractError(error: unknown): string {
   return error instanceof Error ? error.message : 'Unknown error'
 }
 
+async function request<TData extends object>(
+  method: 'get' | 'post',
+  path: string,
+  body?: Record<string, unknown>
+): Promise<ServiceResult<TData>> {
+  try {
+    const url = `${BACKEND_API_URL}${path}`
+    const response =
+      method === 'get'
+        ? await axios.get<BackendResponse<TData>>(url, { headers: backendHeaders })
+        : await axios.post<BackendResponse<TData>>(url, body, { headers: backendHeaders })
+
+    if (response.data.status !== 'success') {
+      return { ok: false, message: normalizeError(response.data) }
+    }
+
+    return { ok: true, data: response.data.data }
+  } catch (error) {
+    return { ok: false, message: extractError(error) }
+  }
+}
+
 function extractArray<T>(raw: any, key: string): T[] {
   if (Array.isArray(raw)) return raw
   if (raw && Array.isArray(raw[key])) return raw[key]
@@ -122,75 +144,52 @@ function normalizeEvent(raw: any): IPolymarketEvent {
 // ----------------------------------------------------------------------
 
 export async function getEvents(params?: string): Promise<ServiceResult<IPolymarketEvent[]>> {
-  try {
-    const url = `${BACKEND_API_URL}/polymarket/events${params ? `?${params}` : ''}`
-    const response = await axios.get<BackendResponse<IPolymarketEvent[]>>(url, {
-      headers: backendHeaders
-    })
-
-    if (response.data.status !== 'success') {
-      return { ok: false, message: normalizeError(response.data) }
-    }
-
-    const raw = extractArray<any>(response.data.data, 'events')
-    return { ok: true, data: raw.map(normalizeEvent) }
-  } catch (error) {
-    return { ok: false, message: extractError(error) }
-  }
+  const path = `/polymarket/events${params ? `?${params}` : ''}`
+  const result = await request<IPolymarketEvent[]>('get', path)
+  if (!result.ok) return result
+  const raw = extractArray<any>(result.data, 'events')
+  return { ok: true, data: raw.map(normalizeEvent) }
 }
 
 export async function getMarkets(params?: string): Promise<ServiceResult<IPolymarketMarket[]>> {
-  try {
-    const url = `${BACKEND_API_URL}/polymarket/markets${params ? `?${params}` : ''}`
-    const response = await axios.get<BackendResponse<IPolymarketMarket[]>>(url, {
-      headers: backendHeaders
-    })
-
-    if (response.data.status !== 'success') {
-      return { ok: false, message: normalizeError(response.data) }
-    }
-
-    const raw = extractArray<any>(response.data.data, 'markets')
-    return { ok: true, data: raw.map(normalizeMarket) }
-  } catch (error) {
-    return { ok: false, message: extractError(error) }
-  }
+  const path = `/polymarket/markets${params ? `?${params}` : ''}`
+  const result = await request<IPolymarketMarket[]>('get', path)
+  if (!result.ok) return result
+  const raw = extractArray<any>(result.data, 'markets')
+  return { ok: true, data: raw.map(normalizeMarket) }
 }
 
 export async function getMarketBySlug(slug: string): Promise<ServiceResult<IPolymarketMarket>> {
-  try {
-    const response = await axios.get<BackendResponse<IPolymarketMarket>>(
-      `${BACKEND_API_URL}/polymarket/markets/${slug}`,
-      { headers: backendHeaders }
-    )
-
-    if (response.data.status !== 'success') {
-      return { ok: false, message: normalizeError(response.data) }
-    }
-
-    const rawData = response.data.data as any
-    return { ok: true, data: normalizeMarket(rawData?.market || rawData) }
-  } catch (error) {
-    return { ok: false, message: extractError(error) }
-  }
+  const result = await request<IPolymarketMarket>('get', `/polymarket/markets/${slug}`)
+  if (!result.ok) return result
+  const rawData = result.data as any
+  return { ok: true, data: normalizeMarket(rawData?.market || rawData) }
 }
 
 export async function searchMarkets(query: string): Promise<ServiceResult<IPolymarketMarket[]>> {
-  try {
-    const response = await axios.get<BackendResponse<IPolymarketMarket[]>>(
-      `${BACKEND_API_URL}/polymarket/search?query=${encodeURIComponent(query)}`,
-      { headers: backendHeaders }
-    )
+  const result = await request<IPolymarketMarket[]>(
+    'get',
+    `/polymarket/search?query=${encodeURIComponent(query)}`
+  )
+  if (!result.ok) return result
+  const raw = extractArray<any>(result.data, 'markets')
+  return { ok: true, data: raw.map(normalizeMarket) }
+}
 
-    if (response.data.status !== 'success') {
-      return { ok: false, message: normalizeError(response.data) }
-    }
-
-    const raw = extractArray<any>(response.data.data, 'markets')
-    return { ok: true, data: raw.map(normalizeMarket) }
-  } catch (error) {
-    return { ok: false, message: extractError(error) }
-  }
+export async function getCategories(): Promise<ServiceResult<IPolymarketCategory[]>> {
+  const categories: IPolymarketCategory[] = [
+    { id: 'politics', label: 'Politics', slug: 'politics' },
+    { id: 'sports', label: 'Sports', slug: 'sports' },
+    { id: 'crypto', label: 'Crypto', slug: 'crypto' },
+    { id: 'esports', label: 'Esports', slug: 'esports' },
+    { id: 'finance', label: 'Finance', slug: 'finance' },
+    { id: 'geopolitics', label: 'Geopolitics', slug: 'geopolitics' },
+    { id: 'tech', label: 'Tech', slug: 'tech' },
+    { id: 'culture', label: 'Culture', slug: 'culture' },
+    { id: 'economy', label: 'Economy', slug: 'economy' },
+    { id: 'weather', label: 'Weather', slug: 'weather' }
+  ]
+  return { ok: true, data: categories }
 }
 
 // ----------------------------------------------------------------------
@@ -200,62 +199,23 @@ export async function searchMarkets(query: string): Promise<ServiceResult<IPolym
 export async function getAccountStatus(
   channelUserId: string
 ): Promise<ServiceResult<IPolymarketAccountStatus>> {
-  try {
-    const response = await axios.post<BackendResponse<IPolymarketAccountStatus>>(
-      `${BACKEND_API_URL}/polymarket/account/status`,
-      { channel_user_id: channelUserId },
-      { headers: backendHeaders }
-    )
-
-    if (response.data.status !== 'success') {
-      return { ok: false, message: normalizeError(response.data) }
-    }
-
-    return { ok: true, data: response.data.data }
-  } catch (error) {
-    return { ok: false, message: extractError(error) }
-  }
+  return request('post', '/polymarket/account/status', { channel_user_id: channelUserId })
 }
 
 export async function createAccount(
   channelUserId: string
 ): Promise<ServiceResult<IPolymarketAccountStatus>> {
-  try {
-    const response = await axios.post<BackendResponse<IPolymarketAccountStatus>>(
-      `${BACKEND_API_URL}/polymarket/account/create`,
-      { channel_user_id: channelUserId },
-      { headers: backendHeaders }
-    )
-
-    if (response.data.status !== 'success') {
-      return { ok: false, message: normalizeError(response.data) }
-    }
-
-    return { ok: true, data: response.data.data }
-  } catch (error) {
-    return { ok: false, message: extractError(error) }
-  }
+  return request('post', '/polymarket/account/create', { channel_user_id: channelUserId })
 }
 
 export async function acceptTerms(
   channelUserId: string,
   termsVersion: number
 ): Promise<ServiceResult<{ terms_accepted: boolean }>> {
-  try {
-    const response = await axios.post<BackendResponse<{ terms_accepted: boolean }>>(
-      `${BACKEND_API_URL}/polymarket/account/accept_terms`,
-      { channel_user_id: channelUserId, terms_version: termsVersion },
-      { headers: backendHeaders }
-    )
-
-    if (response.data.status !== 'success') {
-      return { ok: false, message: normalizeError(response.data) }
-    }
-
-    return { ok: true, data: response.data.data }
-  } catch (error) {
-    return { ok: false, message: extractError(error) }
-  }
+  return request('post', '/polymarket/account/accept_terms', {
+    channel_user_id: channelUserId,
+    terms_version: termsVersion
+  })
 }
 
 // ----------------------------------------------------------------------
@@ -266,105 +226,47 @@ export async function placeOrder(
   channelUserId: string,
   orderData: IPolymarketOrderPayload
 ): Promise<ServiceResult<IPolymarketOrder>> {
-  try {
-    const response = await axios.post<BackendResponse<IPolymarketOrder>>(
-      `${BACKEND_API_URL}/polymarket/order/place`,
-      { channel_user_id: channelUserId, ...orderData },
-      { headers: backendHeaders }
-    )
-
-    if (response.data.status !== 'success') {
-      return { ok: false, message: normalizeError(response.data) }
-    }
-
-    return { ok: true, data: response.data.data }
-  } catch (error) {
-    return { ok: false, message: extractError(error) }
-  }
+  return request('post', '/polymarket/order/place', {
+    channel_user_id: channelUserId,
+    ...orderData
+  })
 }
 
 export async function cancelOrder(
   channelUserId: string,
   orderId: string
 ): Promise<ServiceResult<{ cancelled: boolean }>> {
-  try {
-    const response = await axios.post<BackendResponse<{ cancelled: boolean }>>(
-      `${BACKEND_API_URL}/polymarket/order/cancel`,
-      { channel_user_id: channelUserId, order_id: orderId },
-      { headers: backendHeaders }
-    )
-
-    if (response.data.status !== 'success') {
-      return { ok: false, message: normalizeError(response.data) }
-    }
-
-    return { ok: true, data: response.data.data }
-  } catch (error) {
-    return { ok: false, message: extractError(error) }
-  }
+  return request('post', '/polymarket/order/cancel', {
+    channel_user_id: channelUserId,
+    order_id: orderId
+  })
 }
 
 export async function purchase(
   channelUserId: string,
   payload: IPolymarketOrderPayload
 ): Promise<ServiceResult<IPolymarketPurchaseResponse>> {
-  try {
-    const response = await axios.post<BackendResponse<IPolymarketPurchaseResponse>>(
-      `${BACKEND_API_URL}/polymarket/purchase`,
-      { channel_user_id: channelUserId, ...payload },
-      { headers: backendHeaders }
-    )
-
-    if (response.data.status !== 'success') {
-      return { ok: false, message: normalizeError(response.data) }
-    }
-
-    return { ok: true, data: response.data.data }
-  } catch (error) {
-    return { ok: false, message: extractError(error) }
-  }
+  return request('post', '/polymarket/purchase', { channel_user_id: channelUserId, ...payload })
 }
 
 export async function purchaseStatus(
   channelUserId: string,
   purchaseId: string
 ): Promise<ServiceResult<IPolymarketPurchaseStatus>> {
-  try {
-    const response = await axios.post<BackendResponse<IPolymarketPurchaseStatus>>(
-      `${BACKEND_API_URL}/polymarket/purchase/status`,
-      { channel_user_id: channelUserId, purchase_id: purchaseId },
-      { headers: backendHeaders }
-    )
-
-    if (response.data.status !== 'success') {
-      return { ok: false, message: normalizeError(response.data) }
-    }
-
-    return { ok: true, data: response.data.data }
-  } catch (error) {
-    return { ok: false, message: extractError(error) }
-  }
+  return request('post', '/polymarket/purchase/status', {
+    channel_user_id: channelUserId,
+    purchase_id: purchaseId
+  })
 }
 
 export async function bridgeWithdraw(
   channelUserId: string,
   amount: string
 ): Promise<ServiceResult<{ success: boolean; hash?: string }>> {
-  try {
-    const response = await axios.post<BackendResponse<{ success: boolean; hash?: string }>>(
-      `${BACKEND_API_URL}/polymarket/bridge/withdraw/`,
-      { channel_user_id: channelUserId, amount },
-      { headers: backendHeaders }
-    )
-
-    if (response.data.status !== 'success') {
-      return { ok: false, message: normalizeError(response.data) }
-    }
-
-    return { ok: true, data: response.data.data }
-  } catch (error) {
-    return { ok: false, message: extractError(error) }
-  }
+  return request('post', '/polymarket/bridge/withdraw/', {
+    channel_user_id: channelUserId,
+    amount
+  })
 }
 
 // ----------------------------------------------------------------------
@@ -374,59 +276,23 @@ export async function bridgeWithdraw(
 export async function getPositions(
   channelUserId: string
 ): Promise<ServiceResult<IPolymarketPosition[]>> {
-  try {
-    const response = await axios.post<BackendResponse<IPolymarketPosition[]>>(
-      `${BACKEND_API_URL}/polymarket/positions`,
-      { channel_user_id: channelUserId },
-      { headers: backendHeaders }
-    )
-
-    if (response.data.status !== 'success') {
-      return { ok: false, message: normalizeError(response.data) }
-    }
-
-    return { ok: true, data: response.data.data }
-  } catch (error) {
-    return { ok: false, message: extractError(error) }
-  }
+  return request<IPolymarketPosition[]>('post', '/polymarket/positions', {
+    channel_user_id: channelUserId
+  })
 }
 
 export async function getOrders(channelUserId: string): Promise<ServiceResult<IPolymarketOrder[]>> {
-  try {
-    const response = await axios.post<BackendResponse<IPolymarketOrder[]>>(
-      `${BACKEND_API_URL}/polymarket/orders`,
-      { channel_user_id: channelUserId },
-      { headers: backendHeaders }
-    )
-
-    if (response.data.status !== 'success') {
-      return { ok: false, message: normalizeError(response.data) }
-    }
-
-    return { ok: true, data: response.data.data }
-  } catch (error) {
-    return { ok: false, message: extractError(error) }
-  }
+  return request<IPolymarketOrder[]>('post', '/polymarket/orders', {
+    channel_user_id: channelUserId
+  })
 }
 
 export async function getPortfolio(
   channelUserId: string
 ): Promise<ServiceResult<IPolymarketPortfolio>> {
-  try {
-    const response = await axios.post<BackendResponse<IPolymarketPortfolio>>(
-      `${BACKEND_API_URL}/polymarket/portfolio`,
-      { channel_user_id: channelUserId },
-      { headers: backendHeaders }
-    )
-
-    if (response.data.status !== 'success') {
-      return { ok: false, message: normalizeError(response.data) }
-    }
-
-    return { ok: true, data: response.data.data }
-  } catch (error) {
-    return { ok: false, message: extractError(error) }
-  }
+  return request<IPolymarketPortfolio>('post', '/polymarket/portfolio', {
+    channel_user_id: channelUserId
+  })
 }
 
 // ----------------------------------------------------------------------
@@ -437,61 +303,28 @@ export async function getTradesHistory(
   channelUserId: string,
   filters?: { market?: string; limit?: number; offset?: number; side?: string }
 ): Promise<ServiceResult<IPolymarketTrade[]>> {
-  try {
-    const response = await axios.post<BackendResponse<IPolymarketTrade[]>>(
-      `${BACKEND_API_URL}/polymarket/trades`,
-      { channel_user_id: channelUserId, ...filters },
-      { headers: backendHeaders }
-    )
-
-    if (response.data.status !== 'success') {
-      return { ok: false, message: normalizeError(response.data) }
-    }
-
-    return { ok: true, data: response.data.data }
-  } catch (error) {
-    return { ok: false, message: extractError(error) }
-  }
+  return request<IPolymarketTrade[]>('post', '/polymarket/trades', {
+    channel_user_id: channelUserId,
+    ...filters
+  })
 }
 
 export async function getPnlHistory(
   channelUserId: string,
   limit?: number
 ): Promise<ServiceResult<IPolymarketPnlPoint[]>> {
-  try {
-    const response = await axios.post<BackendResponse<IPolymarketPnlPoint[]>>(
-      `${BACKEND_API_URL}/polymarket/pnl/history`,
-      { channel_user_id: channelUserId, ...(limit ? { limit } : {}) },
-      { headers: backendHeaders }
-    )
-
-    if (response.data.status !== 'success') {
-      return { ok: false, message: normalizeError(response.data) }
-    }
-
-    return { ok: true, data: response.data.data }
-  } catch (error) {
-    return { ok: false, message: extractError(error) }
-  }
+  return request<IPolymarketPnlPoint[]>('post', '/polymarket/pnl/history', {
+    channel_user_id: channelUserId,
+    ...(limit ? { limit } : {})
+  })
 }
 
 export async function getClosedPositions(
   channelUserId: string,
   market?: string
 ): Promise<ServiceResult<IPolymarketPosition[]>> {
-  try {
-    const response = await axios.post<BackendResponse<IPolymarketPosition[]>>(
-      `${BACKEND_API_URL}/polymarket/positions/closed`,
-      { channel_user_id: channelUserId, ...(market ? { market } : {}) },
-      { headers: backendHeaders }
-    )
-
-    if (response.data.status !== 'success') {
-      return { ok: false, message: normalizeError(response.data) }
-    }
-
-    return { ok: true, data: response.data.data }
-  } catch (error) {
-    return { ok: false, message: extractError(error) }
-  }
+  return request<IPolymarketPosition[]>('post', '/polymarket/positions/closed', {
+    channel_user_id: channelUserId,
+    ...(market ? { market } : {})
+  })
 }
