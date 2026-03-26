@@ -76,7 +76,7 @@ export default function PolymarketTradeModule({ market, accountStatus }: Props) 
 
       if (result.ok) {
         setAmount('')
-        enqueueSnackbar('Transaction in Progress: Bridging & Placing Order...', { variant: 'info' })
+        enqueueSnackbar(t('polymarket.transaction-in-progress'), { variant: 'info' })
 
         // Optimistically deduct visual balance
         mutate(
@@ -129,7 +129,7 @@ export default function PolymarketTradeModule({ market, accountStatus }: Props) 
                   )
                 } else if (st === 'failed') {
                   clearInterval(pollInterval)
-                  enqueueSnackbar(statusRes.data.error || 'Transaction failed', {
+                  enqueueSnackbar(statusRes.data.error || t('polymarket.transaction-failed'), {
                     variant: 'error'
                   })
                   mutate(
@@ -205,20 +205,24 @@ export default function PolymarketTradeModule({ market, accountStatus }: Props) 
               }
             }}
           >
-            {outcomes.map((outcome, idx) => (
-              <ToggleButton key={outcome} value={idx}>
-                <Stack direction='row' alignItems='center' spacing={1}>
-                  <span>{outcome}</span>
-                  <Typography
-                    component='span'
-                    variant='caption'
-                    sx={{ fontWeight: 700, opacity: 0.7 }}
-                  >
-                    {Math.round((prices[idx] || 0) * 100)}¢
-                  </Typography>
-                </Stack>
-              </ToggleButton>
-            ))}
+            {outcomes.map((outcome, idx) => {
+              const displayOutcome =
+                outcome === 'Yes' ? t('common.yes') : outcome === 'No' ? t('common.no') : outcome
+              return (
+                <ToggleButton key={outcome} value={idx}>
+                  <Stack direction='row' alignItems='center' spacing={1}>
+                    <span>{displayOutcome}</span>
+                    <Typography
+                      component='span'
+                      variant='caption'
+                      sx={{ fontWeight: 700, opacity: 0.7 }}
+                    >
+                      {Math.round((prices[idx] || 0) * 100)}¢
+                    </Typography>
+                  </Stack>
+                </ToggleButton>
+              )
+            })}
           </ToggleButtonGroup>
         </Box>
 
@@ -314,7 +318,7 @@ export default function PolymarketTradeModule({ market, accountStatus }: Props) 
         >
           {isSubmitting
             ? t('polymarket.placing')
-            : `${t('polymarket.buy')} ${outcomes[selectedOutcome]}`}
+            : `${t('polymarket.buy')} ${outcomes[selectedOutcome] === 'Yes' ? t('common.yes') : outcomes[selectedOutcome] === 'No' ? t('common.no') : outcomes[selectedOutcome]}`}
         </Button>
       </Stack>
     </Card>

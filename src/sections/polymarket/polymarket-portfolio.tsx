@@ -52,11 +52,11 @@ type ActivePurchase = {
 }
 
 const STEP_LABELS: Record<string, string> = {
-  submitting: 'Submitting',
-  account_creation: 'Creating account',
-  bridge: 'Bridging funds',
-  order_placement: 'Placing order',
-  done: 'Complete'
+  submitting: 'polymarket.submitting',
+  account_creation: 'polymarket.creating-account',
+  bridge: 'polymarket.bridging-funds',
+  order_placement: 'polymarket.placing-order',
+  done: 'polymarket.complete'
 }
 
 export default function PolymarketPortfolio() {
@@ -101,7 +101,7 @@ export default function PolymarketPortfolio() {
 
   const handleClaimSubmit = async () => {
     if (idleUsdc <= 0) {
-      enqueueSnackbar('No idle funds to claim', { variant: 'warning' })
+      enqueueSnackbar(t('polymarket.no-idle-funds'), { variant: 'warning' })
       return
     }
 
@@ -109,7 +109,7 @@ export default function PolymarketPortfolio() {
     try {
       const result = await polymarketBridgeWithdraw(idleUsdc.toString())
       if (result.ok) {
-        enqueueSnackbar('Funds Claiming... This may take a minute.', { variant: 'info' })
+        enqueueSnackbar(t('polymarket.claiming-funds-desc'), { variant: 'info' })
         setTimeout(() => {
           mutate(
             (key: any) =>
@@ -119,15 +119,15 @@ export default function PolymarketPortfolio() {
             (key: any) =>
               Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/portfolio')
           )
-          enqueueSnackbar('Scroll Wallet Balance Updated', { variant: 'success' })
+          enqueueSnackbar(t('polymarket.balance-updated'), { variant: 'success' })
           setIsClaiming(false)
         }, 40000)
       } else {
-        enqueueSnackbar(result.message || 'Error claiming funds', { variant: 'error' })
+        enqueueSnackbar(result.message || t('polymarket.error-claiming'), { variant: 'error' })
         setIsClaiming(false)
       }
     } catch {
-      enqueueSnackbar('Error claiming funds', { variant: 'error' })
+      enqueueSnackbar(t('polymarket.error-claiming'), { variant: 'error' })
       setIsClaiming(false)
     }
   }
@@ -158,7 +158,7 @@ export default function PolymarketPortfolio() {
       >
         <Stack spacing={0.5}>
           <Typography variant='h6' fontWeight={700}>
-            Portfolio Overview
+            {t('polymarket.portfolio-overview')}
           </Typography>
           {idleUsdc > 0 && (
             <Typography
@@ -167,7 +167,7 @@ export default function PolymarketPortfolio() {
               sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
             >
               <Iconify icon='solar:info-circle-bold' width={14} />
-              <strong>${fNumber(idleUsdc)} USDC</strong> available in Polygon Safe
+              <strong>${fNumber(idleUsdc)} USDC</strong> {t('polymarket.available-in-polygon')}
             </Typography>
           )}
         </Stack>
@@ -186,7 +186,7 @@ export default function PolymarketPortfolio() {
             }
             sx={{ borderRadius: 1.5, px: 2, width: { xs: '100%', sm: 'auto' } }}
           >
-            {isClaiming ? 'Claiming...' : `Claim All to Scroll`}
+            {isClaiming ? t('polymarket.claiming') : t('polymarket.claim-all-scroll')}
           </Button>
         )}
       </Stack>
@@ -299,7 +299,7 @@ export default function PolymarketPortfolio() {
                   <TableCell align='right'>{t('polymarket.avg-price')}</TableCell>
                   <TableCell align='right'>{t('polymarket.current')}</TableCell>
                   <TableCell align='right'>{t('polymarket.pnl')}</TableCell>
-                  <TableCell align='right'>Actions</TableCell>
+                  <TableCell align='right'>{t('polymarket.actions')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -398,7 +398,9 @@ export default function PolymarketPortfolio() {
                             const tokenId = pos.asset || pos.token_id || token?.token_id
 
                             if (!tokenId) {
-                              enqueueSnackbar('Token ID not found', { variant: 'error' })
+                              enqueueSnackbar(t('polymarket.token-id-not-found'), {
+                                variant: 'error'
+                              })
                               setSellingPos(null)
                               return
                             }
@@ -467,7 +469,7 @@ export default function PolymarketPortfolio() {
                                         setActivePurchases((prev) =>
                                           prev.filter((p) => p.purchase_id !== purchaseId)
                                         )
-                                        enqueueSnackbar('Sell order completed', {
+                                        enqueueSnackbar(t('polymarket.sell-completed'), {
                                           variant: 'success'
                                         })
                                         mutate(
@@ -504,9 +506,12 @@ export default function PolymarketPortfolio() {
                                         setActivePurchases((prev) =>
                                           prev.filter((p) => p.purchase_id !== purchaseId)
                                         )
-                                        enqueueSnackbar(statusRes.data.error || 'Sell failed', {
-                                          variant: 'error'
-                                        })
+                                        enqueueSnackbar(
+                                          statusRes.data.error || t('polymarket.sell-failed'),
+                                          {
+                                            variant: 'error'
+                                          }
+                                        )
                                         setSoldPositionKeys((prev) => {
                                           const n = new Set(prev)
                                           n.delete(posKey)
@@ -525,15 +530,20 @@ export default function PolymarketPortfolio() {
                                 setActivePurchases((prev) =>
                                   prev.filter((p) => p.purchase_id !== tempId)
                                 )
-                                enqueueSnackbar(res.message || 'Error executing sell', {
-                                  variant: 'error'
-                                })
+                                enqueueSnackbar(
+                                  res.message || t('polymarket.error-executing-sell'),
+                                  {
+                                    variant: 'error'
+                                  }
+                                )
                               }
                             } catch {
                               setActivePurchases((prev) =>
                                 prev.filter((p) => p.purchase_id !== tempId)
                               )
-                              enqueueSnackbar('Error executing sell', { variant: 'error' })
+                              enqueueSnackbar(t('polymarket.error-executing-sell'), {
+                                variant: 'error'
+                              })
                             } finally {
                               setSellingPos(null)
                             }
@@ -543,7 +553,7 @@ export default function PolymarketPortfolio() {
                           (pos.market?.condition_id || pos.conditionId) + pos.outcome ? (
                             <CircularProgress size={14} color='inherit' />
                           ) : (
-                            'Sell'
+                            t('polymarket.sell')
                           )}
                         </Button>
                       </TableCell>
@@ -651,7 +661,7 @@ export default function PolymarketPortfolio() {
                     <TableCell align='right'>
                       <Chip
                         icon={<CircularProgress size={12} sx={{ color: 'inherit !important' }} />}
-                        label={STEP_LABELS[ap.current_step] || ap.current_step}
+                        label={t(STEP_LABELS[ap.current_step] || ap.current_step)}
                         size='small'
                         sx={{
                           fontWeight: 600,
@@ -737,7 +747,7 @@ export default function PolymarketPortfolio() {
             sx={{ px: 3, py: 2.5 }}
           >
             <Typography variant='h6' fontWeight={700}>
-              Trade History
+              {t('polymarket.trade-history')}
             </Typography>
           </Stack>
           <TableContainer>
@@ -748,9 +758,9 @@ export default function PolymarketPortfolio() {
                   <TableCell>{t('polymarket.market')}</TableCell>
                   <TableCell align='right'>{t('polymarket.size')}</TableCell>
                   <TableCell align='right'>{t('polymarket.price')}</TableCell>
-                  <TableCell align='right'>Date</TableCell>
+                  <TableCell align='right'>{t('polymarket.date')}</TableCell>
                   <TableCell align='center' sx={{ width: 48 }}>
-                    TX
+                    {t('polymarket.tx')}
                   </TableCell>
                 </TableRow>
               </TableHead>

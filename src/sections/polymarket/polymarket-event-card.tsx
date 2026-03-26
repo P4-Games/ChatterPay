@@ -16,6 +16,7 @@ import { HugeiconsIcon } from '@hugeicons/react'
 import { ArrowRight01Icon } from '@hugeicons/core-free-icons'
 
 import Iconify from 'src/components/iconify'
+import { useTranslate } from 'src/locales'
 
 import type { IPolymarketEvent } from 'src/types/polymarket'
 
@@ -29,6 +30,7 @@ type Props = {
 }
 
 export default function PolymarketEventCard({ event, compact = false }: Props) {
+  const { t } = useTranslate()
   const theme = useTheme()
   const router = useRouter()
 
@@ -233,7 +235,7 @@ export default function PolymarketEventCard({ event, compact = false }: Props) {
                 fontWeight: 500
               }}
             >
-              +{hiddenCount} more option{hiddenCount > 1 ? 's' : ''}
+              +{hiddenCount} {t('polymarket.more-options')}
             </Typography>
           )}
         </Stack>
@@ -248,7 +250,7 @@ export default function PolymarketEventCard({ event, compact = false }: Props) {
           </Stack>
           {earliestEnd && (
             <Typography variant='caption' color='text.secondary'>
-              Ends {new Date(earliestEnd).toLocaleDateString()}
+              {t('polymarket.ends')} {new Date(earliestEnd).toLocaleDateString()}
             </Typography>
           )}
         </Stack>

@@ -492,12 +492,11 @@ export default function PolymarketDetailView({ slug }: Props) {
           sx={{ pt: { xs: 11, md: 12 }, px: { xs: 2, md: 3 } }}
         >
           <Stack alignItems='center' justifyContent='center' sx={{ py: 10 }}>
-            <Typography variant='h6' color='text.secondary'>
-              {t('polymarket.market-not-found')}
-            </Typography>
+            <Typography variant='h6'>{t('polymarket.market-not-found')}</Typography>
             <Button
+              variant='contained'
               onClick={() => router.push(paths.dashboard.polymarket.root)}
-              startIcon={<Iconify icon='eva:arrow-back-fill' />}
+              startIcon={<HugeiconsIcon icon={ArrowLeft01Icon} />}
               sx={{ mt: 2 }}
             >
               {t('polymarket.back-to-markets')}
@@ -543,7 +542,7 @@ export default function PolymarketDetailView({ slug }: Props) {
               fontSize: '0.7rem'
             }}
           >
-            WHO DO YOU THINK WINS?
+            {t('polymarket.predict-question-header')}
           </Typography>
 
           <Stack spacing={0}>
@@ -592,7 +591,7 @@ export default function PolymarketDetailView({ slug }: Props) {
 
                   <Stack direction='row' alignItems='center' spacing={1}>
                     <Typography variant='body2' color='text.secondary'>
-                      {percent}% chance
+                      {percent}% {t('polymarket.chance')}
                     </Typography>
                     {isSelected && (
                       <HugeiconsIcon
@@ -622,7 +621,7 @@ export default function PolymarketDetailView({ slug }: Props) {
               fontSize: '0.7rem'
             }}
           >
-            HOW MUCH DO YOU WANT TO PREDICT?
+            {t('polymarket.predict-amount-header')}
           </Typography>
 
           {/* Preset pills */}
@@ -710,7 +709,7 @@ export default function PolymarketDetailView({ slug }: Props) {
             color='text.secondary'
             sx={{ mt: 1.5, display: 'flex', alignItems: 'center', gap: 0.5 }}
           >
-            Available: ${fNumber(availableBalance)}
+            {t('polymarket.available')}: ${fNumber(availableBalance)}
             <Box
               component='span'
               sx={{
@@ -740,13 +739,16 @@ export default function PolymarketDetailView({ slug }: Props) {
                 color='text.secondary'
                 sx={{ display: 'block', mb: 0.5 }}
               >
-                If {outcomes[selectedOutcome]} wins...
+                {t('polymarket.if-outcome-wins', { outcome: outcomes[selectedOutcome] })}
               </Typography>
               <Typography variant='h4' sx={{ fontWeight: 800, color: 'text.primary' }}>
-                You get back ${fNumber(estimatedReturn)}
+                {t('polymarket.you-get-back', { amount: fNumber(estimatedReturn) })}
               </Typography>
               <Typography variant='caption' color='text.secondary'>
-                That&apos;s your ${fNumber(amount)} prediction + ${fNumber(estimatedProfit)} profit
+                {t('polymarket.prediction-summary', {
+                  amount: fNumber(amount),
+                  profit: fNumber(estimatedProfit)
+                })}
               </Typography>
             </Box>
           </>
@@ -788,8 +790,11 @@ export default function PolymarketDetailView({ slug }: Props) {
           }}
         >
           {isSubmitting
-            ? 'Placing prediction...'
-            : `Predict $${fNumber(amount)} on ${outcomes[selectedOutcome]}`}
+            ? t('polymarket.placing-prediction')
+            : t('polymarket.predict-cta', {
+                amount: fNumber(amount),
+                outcome: outcomes[selectedOutcome]
+              })}
         </Button>
       </Box>
     </Stack>
@@ -817,7 +822,7 @@ export default function PolymarketDetailView({ slug }: Props) {
             fontSize: '0.7rem'
           }}
         >
-          ODDS OVER TIME (%)
+          {t('polymarket.odds-time')}
         </Typography>
 
         {chartData && (
@@ -859,7 +864,7 @@ export default function PolymarketDetailView({ slug }: Props) {
             fontSize: '0.7rem'
           }}
         >
-          CURRENT ODDS
+          {t('polymarket.current-odds')}
         </Typography>
 
         <Stack spacing={2}>
@@ -917,16 +922,15 @@ export default function PolymarketDetailView({ slug }: Props) {
             fontSize: '0.7rem'
           }}
         >
-          HOW IT WORKS
+          {t('polymarket.how-it-works')}
         </Typography>
-        <Typography variant='body2' color='text.secondary' sx={{ lineHeight: 1.7 }}>
-          Pick who you think will win. If you&apos;re right, you get your money back plus your
-          winnings. If you&apos;re wrong, you lose your bet.
+        <Typography variant='body2' color='text.secondary'>
+          {t('polymarket.how-it-works-desc')}
           {market.end_date_iso && (
             <>
               {' '}
-              Market closes on{' '}
-              {new Date(market.end_date_iso).toLocaleDateString('en-US', {
+              {t('polymarket.market-closes')}{' '}
+              {new Date(market.end_date_iso).toLocaleDateString(undefined, {
                 month: 'long',
                 day: 'numeric',
                 year: 'numeric'
@@ -987,7 +991,7 @@ export default function PolymarketDetailView({ slug }: Props) {
                 '&:hover': { bgcolor: 'transparent', color: 'text.primary' }
               }}
             >
-              Back
+              {t('polymarket.back')}
             </Button>
 
             <Stack
@@ -1037,13 +1041,13 @@ export default function PolymarketDetailView({ slug }: Props) {
 
               <Stack direction='row' alignItems='center' spacing={3} sx={{ flexShrink: 0 }}>
                 <Typography variant='body2' color='text.secondary'>
-                  Vol: <strong>${fNumber(market.volume)}</strong>
+                  {t('polymarket.vol')} <strong>${fNumber(market.volume)}</strong>
                 </Typography>
                 {market.end_date_iso && (
                   <Typography variant='body2' color='text.secondary'>
-                    Ends:{' '}
+                    {t('polymarket.ends-label')}{' '}
                     <strong>
-                      {new Date(market.end_date_iso).toLocaleDateString('en-US', {
+                      {new Date(market.end_date_iso).toLocaleDateString(undefined, {
                         month: 'short',
                         day: 'numeric',
                         year: 'numeric'
@@ -1074,7 +1078,7 @@ export default function PolymarketDetailView({ slug }: Props) {
           {!mdUp && (
             <Box component={m.div} variants={fadeInUp} transition={{ duration: 0.4 }}>
               <Typography variant='h5' sx={{ mb: 3, fontWeight: 700 }}>
-                Market Details
+                {t('polymarket.market-details')}
               </Typography>
               {renderMarketDetails}
             </Box>
@@ -1083,7 +1087,7 @@ export default function PolymarketDetailView({ slug }: Props) {
           {/* ── POSITIONS & ORDERS ── */}
           <Box component={m.div} variants={fadeInUp} transition={{ duration: 0.4 }}>
             <Typography variant='h5' sx={{ mb: 3, fontWeight: 700, mt: mdUp ? 5 : 0 }}>
-              My Activity
+              {t('polymarket.my-activity')}
             </Typography>
 
             <Stack spacing={3}>
@@ -1096,7 +1100,7 @@ export default function PolymarketDetailView({ slug }: Props) {
                   sx={{ px: 3, py: 2.5 }}
                 >
                   <Typography variant='subtitle1' fontWeight={700}>
-                    Open Positions
+                    {t('polymarket.open-positions')}
                   </Typography>
                   <Chip
                     label={marketPositions.length}
@@ -1111,19 +1115,19 @@ export default function PolymarketDetailView({ slug }: Props) {
                 {marketPositions.length === 0 ? (
                   <Stack alignItems='center' spacing={1.5} sx={{ py: 4 }}>
                     <Typography variant='body2' color='text.secondary'>
-                      No active positions for this market.
+                      {t('polymarket.no-positions-market')}
                     </Typography>
                   </Stack>
                 ) : (
                   <Table>
                     <TableHead>
                       <TableRow>
-                        <TableCell>Outcome</TableCell>
-                        <TableCell align='right'>Size</TableCell>
-                        <TableCell align='right'>Avg Price</TableCell>
-                        <TableCell align='right'>Current</TableCell>
-                        <TableCell align='right'>PnL</TableCell>
-                        <TableCell align='right'>Actions</TableCell>
+                        <TableCell>{t('polymarket.outcome')}</TableCell>
+                        <TableCell align='right'>{t('polymarket.size')}</TableCell>
+                        <TableCell align='right'>{t('polymarket.avg-price')}</TableCell>
+                        <TableCell align='right'>{t('polymarket.current')}</TableCell>
+                        <TableCell align='right'>{t('polymarket.pnl')}</TableCell>
+                        <TableCell align='right'>{t('polymarket.actions')}</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -1197,7 +1201,9 @@ export default function PolymarketDetailView({ slug }: Props) {
 
                                 const token = market.tokens?.find((t) => t.outcome === pos.outcome)
                                 if (!token?.token_id) {
-                                  enqueueSnackbar('Token ID not found', { variant: 'error' })
+                                  enqueueSnackbar(t('polymarket.token-id-not-found'), {
+                                    variant: 'error'
+                                  })
                                   setSellingPos(null)
                                   return
                                 }
@@ -1263,7 +1269,7 @@ export default function PolymarketDetailView({ slug }: Props) {
                                             setActivePurchases((prev) =>
                                               prev.filter((p) => p.purchase_id !== purchaseId)
                                             )
-                                            enqueueSnackbar('Sell order completed', {
+                                            enqueueSnackbar(t('polymarket.sell-completed'), {
                                               variant: 'success'
                                             })
                                             const revalidateSell = () => {
@@ -1312,9 +1318,12 @@ export default function PolymarketDetailView({ slug }: Props) {
                                             setActivePurchases((prev) =>
                                               prev.filter((p) => p.purchase_id !== purchaseId)
                                             )
-                                            enqueueSnackbar(statusRes.data.error || 'Sell failed', {
-                                              variant: 'error'
-                                            })
+                                            enqueueSnackbar(
+                                              statusRes.data.error || t('polymarket.sell-failed'),
+                                              {
+                                                variant: 'error'
+                                              }
+                                            )
                                             setSoldPositionKeys((prev) => {
                                               const n = new Set(prev)
                                               n.delete(posKey)
@@ -1333,15 +1342,20 @@ export default function PolymarketDetailView({ slug }: Props) {
                                     setActivePurchases((prev) =>
                                       prev.filter((p) => p.purchase_id !== tempId)
                                     )
-                                    enqueueSnackbar(res.message || 'Error executing sell', {
-                                      variant: 'error'
-                                    })
+                                    enqueueSnackbar(
+                                      res.message || t('polymarket.error-executing-sell'),
+                                      {
+                                        variant: 'error'
+                                      }
+                                    )
                                   }
                                 } catch {
                                   setActivePurchases((prev) =>
                                     prev.filter((p) => p.purchase_id !== tempId)
                                   )
-                                  enqueueSnackbar('Error executing sell', { variant: 'error' })
+                                  enqueueSnackbar(t('polymarket.error-executing-sell'), {
+                                    variant: 'error'
+                                  })
                                 } finally {
                                   setSellingPos(null)
                                 }
@@ -1351,7 +1365,7 @@ export default function PolymarketDetailView({ slug }: Props) {
                               (pos.market?.condition_id || pos.conditionId) + pos.outcome ? (
                                 <CircularProgress size={14} color='inherit' />
                               ) : (
-                                'Sell'
+                                t('polymarket.sell')
                               )}
                             </Button>
                           </TableCell>
@@ -1371,7 +1385,7 @@ export default function PolymarketDetailView({ slug }: Props) {
                   sx={{ px: 3, py: 2.5 }}
                 >
                   <Typography variant='subtitle1' fontWeight={700}>
-                    Open Orders
+                    {t('polymarket.open-orders')}
                   </Typography>
                   <Chip
                     label={activePurchases.length + marketOrders.length}
@@ -1386,18 +1400,18 @@ export default function PolymarketDetailView({ slug }: Props) {
                 {activePurchases.length === 0 && marketOrders.length === 0 ? (
                   <Stack alignItems='center' spacing={1.5} sx={{ py: 4 }}>
                     <Typography variant='body2' color='text.secondary'>
-                      No active orders.
+                      {t('polymarket.no-orders-market')}
                     </Typography>
                   </Stack>
                 ) : (
                   <Table>
                     <TableHead>
                       <TableRow>
-                        <TableCell>Side</TableCell>
-                        <TableCell>Outcome</TableCell>
-                        <TableCell align='right'>Size</TableCell>
-                        <TableCell align='right'>Price</TableCell>
-                        <TableCell align='right'>Actions</TableCell>
+                        <TableCell>{t('polymarket.side')}</TableCell>
+                        <TableCell>{t('polymarket.outcome')}</TableCell>
+                        <TableCell align='right'>{t('polymarket.size')}</TableCell>
+                        <TableCell align='right'>{t('polymarket.price')}</TableCell>
+                        <TableCell align='right'>{t('polymarket.actions')}</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -1507,7 +1521,9 @@ export default function PolymarketDetailView({ slug }: Props) {
                                   try {
                                     const result = await polymarketCancelOrder(order.id)
                                     if (result.ok) {
-                                      enqueueSnackbar('Order Cancelled', { variant: 'success' })
+                                      enqueueSnackbar(t('polymarket.order-cancelled'), {
+                                        variant: 'success'
+                                      })
                                       mutate(
                                         (key: any) =>
                                           Array.isArray(key) &&
@@ -1524,7 +1540,7 @@ export default function PolymarketDetailView({ slug }: Props) {
                                 {cancellingId === order.id ? (
                                   <CircularProgress size={14} color='inherit' />
                                 ) : (
-                                  'Cancel'
+                                  t('polymarket.cancel')
                                 )}
                               </Button>
                             )}
@@ -1547,7 +1563,7 @@ export default function PolymarketDetailView({ slug }: Props) {
                   >
                     <Stack direction='row' alignItems='center' spacing={1}>
                       <Typography variant='subtitle1' fontWeight={700}>
-                        Trade History
+                        {t('polymarket.trade-history')}
                       </Typography>
                       <Chip
                         label={marketTrades.length}
@@ -1563,11 +1579,11 @@ export default function PolymarketDetailView({ slug }: Props) {
                   <Table>
                     <TableHead>
                       <TableRow>
-                        <TableCell>Side</TableCell>
-                        <TableCell>Outcome</TableCell>
-                        <TableCell align='right'>Size</TableCell>
-                        <TableCell align='right'>Price</TableCell>
-                        <TableCell align='right'>Date</TableCell>
+                        <TableCell>{t('polymarket.side')}</TableCell>
+                        <TableCell>{t('polymarket.outcome')}</TableCell>
+                        <TableCell align='right'>{t('polymarket.size')}</TableCell>
+                        <TableCell align='right'>{t('polymarket.price')}</TableCell>
+                        <TableCell align='right'>{t('polymarket.date')}</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>

@@ -18,6 +18,7 @@ import {
 import { fNumber } from 'src/utils/format-number'
 import Chart, { useChart } from 'src/components/chart'
 import Iconify from 'src/components/iconify'
+import { useTranslate } from 'src/locales'
 import type {
   IPolymarketPortfolio,
   IPolymarketPosition,
@@ -63,6 +64,7 @@ export default function PolymarketPNLWidget({
   isLoadingExternal,
   variant = 'compact'
 }: Props = {}) {
+  const { t } = useTranslate()
   const theme = useTheme()
 
   const [portfolio, setPortfolio] = useState<IPolymarketPortfolio | null>(null)
@@ -233,7 +235,7 @@ export default function PolymarketPNLWidget({
       >
         <Stack direction='row' justifyContent='space-between' alignItems='flex-start'>
           <Typography variant='caption' sx={{ color: 'text.secondary', fontWeight: 600 }}>
-            Profit / Loss
+            {t('polymarket.profit-loss')}
           </Typography>
 
           <Stack
@@ -266,7 +268,7 @@ export default function PolymarketPNLWidget({
                       })
                 }}
               >
-                {tab}
+                {tab === 'All' ? t('polymarket.all') : tab}
               </Box>
             ))}
           </Stack>
@@ -407,7 +409,7 @@ export default function PolymarketPNLWidget({
                 sx={{ color: 'primary.main' }}
               />
               <Typography variant='caption' sx={{ color: 'text.secondary', fontWeight: 600 }}>
-                Total Volume
+                {t('polymarket.total-volume')}
               </Typography>
             </Stack>
             {loading ? (
@@ -436,7 +438,7 @@ export default function PolymarketPNLWidget({
                 sx={{ color: 'info.main' }}
               />
               <Typography variant='caption' sx={{ color: 'text.secondary', fontWeight: 600 }}>
-                Portfolio Value
+                {t('polymarket.portfolio-value')}
               </Typography>
             </Stack>
             {loading ? (
@@ -466,7 +468,7 @@ export default function PolymarketPNLWidget({
                 sx={{ color: isPositive ? 'success.main' : 'error.main' }}
               />
               <Typography variant='caption' sx={{ color: 'text.secondary', fontWeight: 600 }}>
-                Profit / Loss
+                {t('polymarket.profit-loss')}
               </Typography>
             </Stack>
             {loading ? (
@@ -521,7 +523,7 @@ export default function PolymarketPNLWidget({
       >
         <Stack direction='row' justifyContent='space-between' alignItems='center' sx={{ mb: 2 }}>
           <Typography variant='subtitle2' sx={{ fontWeight: 700 }}>
-            P&L History
+            {t('polymarket.pnl-history')}
           </Typography>
 
           <Stack
@@ -576,10 +578,7 @@ export default function PolymarketPNLWidget({
                 sx={{ color: 'text.disabled', mb: 1.5 }}
               />
               <Typography variant='body2' color='text.secondary'>
-                Not enough data for chart
-              </Typography>
-              <Typography variant='caption' color='text.disabled'>
-                Trade more to see your P&L trend
+                {t('polymarket.no-pnl-data')}
               </Typography>
             </Stack>
           )}

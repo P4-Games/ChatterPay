@@ -18,6 +18,7 @@ import { HugeiconsIcon } from '@hugeicons/react'
 import { ArrowRight01Icon } from '@hugeicons/core-free-icons'
 
 import Iconify from 'src/components/iconify'
+import { useTranslate } from 'src/locales'
 
 import type { IPolymarketMarket } from 'src/types/polymarket'
 
@@ -34,6 +35,7 @@ export default function PolymarketMarketCard({
   compact = false,
   inlineImage = false
 }: Props) {
+  const { t } = useTranslate()
   const theme = useTheme()
   const router = useRouter()
 
@@ -218,7 +220,7 @@ export default function PolymarketMarketCard({
                 }}
               />
               <Typography variant='caption' fontWeight={600}>
-                Yes
+                {t('common.yes')}
               </Typography>
             </Stack>
             <Typography variant='caption' fontWeight={700} color='success.main'>
@@ -255,7 +257,7 @@ export default function PolymarketMarketCard({
                 }}
               />
               <Typography variant='caption' fontWeight={600}>
-                No
+                {t('common.no')}
               </Typography>
             </Stack>
             <Typography variant='caption' fontWeight={700} color='error.main'>
@@ -292,7 +294,7 @@ export default function PolymarketMarketCard({
           </Stack>
           {market.end_date_iso && (
             <Typography variant='caption' color='text.secondary'>
-              Ends {new Date(market.end_date_iso).toLocaleDateString()}
+              {t('polymarket.ends')} {new Date(market.end_date_iso).toLocaleDateString()}
             </Typography>
           )}
         </Stack>

@@ -25,6 +25,7 @@ import PolymarketEventCard from '../polymarket-event-card'
 import PolymarketPNLWidget from '../polymarket-pnl-widget'
 import PolymarketTermsOverlay from '../polymarket-terms-overlay'
 import Marquee from 'src/components/marquee'
+import Iconify from 'src/components/iconify'
 
 // ----------------------------------------------------------------------
 
@@ -111,30 +112,24 @@ export default function PolymarketHubView() {
               >
                 <Box sx={{ maxWidth: 480 }}>
                   <Typography
-                    variant='h1'
+                    variant='h3'
                     sx={{
-                      fontWeight: 700,
-                      color: 'text.primary',
-                      mb: 2,
-                      fontSize: { xs: 32, md: 36 },
+                      color: 'common.white',
+                      mb: 1,
                       letterSpacing: '-0.36px'
                     }}
                   >
-                    {t('polymarket.title')}
+                    {t('polymarket.making-predictions')}
                   </Typography>
                   <Typography
-                    variant='body1'
+                    variant='h4'
                     sx={{
-                      color: 'text.primary',
-                      fontSize: 16,
-                      letterSpacing: '-0.16px',
-                      lineHeight: 1.5,
-                      mb: 3
+                      color: 'primary.main',
+                      fontWeight: 700,
+                      letterSpacing: '-0.24px'
                     }}
                   >
-                    Make your predictions on Polymarket
-                    <br />
-                    just with WhatsApp!
+                    {t('polymarket.just-with-whatsapp')}
                   </Typography>
                 </Box>
 
@@ -147,14 +142,18 @@ export default function PolymarketHubView() {
                   <Typography
                     variant='body1'
                     sx={{
-                      mb: 3,
+                      mb: 2,
                       color: 'text.primary',
                       fontSize: 16,
+                      fontWeight: 600,
                       letterSpacing: '-0.16px',
-                      fontFamily: "'Satoshi Variable', sans-serif"
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1
                     }}
                   >
-                    Trending Today:
+                    <Iconify icon='solar:fire-bold' width={22} sx={{ color: 'error.main' }} />
+                    {t('polymarket.trending-today')}
                   </Typography>
 
                   <Box sx={{ py: 1.5 }}>

@@ -127,7 +127,7 @@ export default function PolymarketEventDetailView({ eventId }: Props) {
         >
           <Stack alignItems='center' justifyContent='center' sx={{ py: 10 }}>
             <Typography variant='h6' color='text.secondary'>
-              Event not found
+              {t('polymarket.event-not-found')}
             </Typography>
             <Button
               onClick={() => router.push(paths.dashboard.polymarket.root)}
@@ -184,7 +184,7 @@ export default function PolymarketEventDetailView({ eventId }: Props) {
                 '&:hover': { bgcolor: 'transparent', color: 'text.primary' }
               }}
             >
-              Back
+              {t('polymarket.back')}
             </Button>
 
             <Stack
@@ -219,13 +219,13 @@ export default function PolymarketEventDetailView({ eventId }: Props) {
 
               <Stack direction='row' alignItems='center' spacing={2} sx={{ flexShrink: 0 }}>
                 <Typography variant='body2' color='text.secondary'>
-                  Vol: <strong>${fNumber(totalVolume)}</strong>
+                  {t('polymarket.vol')} <strong>${fNumber(totalVolume)}</strong>
                 </Typography>
                 {earliestEnd && (
                   <Typography variant='body2' color='text.secondary'>
-                    Ends:{' '}
+                    {t('polymarket.ends-label')}{' '}
                     <strong>
-                      {new Date(earliestEnd).toLocaleDateString('en-US', {
+                      {new Date(earliestEnd).toLocaleDateString(undefined, {
                         month: 'short',
                         day: 'numeric',
                         year: 'numeric'
@@ -252,7 +252,7 @@ export default function PolymarketEventDetailView({ eventId }: Props) {
                       px: 2
                     }}
                   >
-                    About
+                    {t('polymarket.about')}
                   </Button>
                 )}
               </Stack>
@@ -268,7 +268,7 @@ export default function PolymarketEventDetailView({ eventId }: Props) {
               fullWidth
               PaperProps={{ sx: { borderRadius: 3 } }}
             >
-              <DialogTitle sx={{ fontWeight: 700 }}>About this event</DialogTitle>
+              <DialogTitle sx={{ fontWeight: 700 }}>{t('polymarket.about-event')}</DialogTitle>
               <DialogContent>
                 <Typography variant='body2' sx={{ lineHeight: 1.8, whiteSpace: 'pre-line' }}>
                   {event.description}
@@ -281,7 +281,7 @@ export default function PolymarketEventDetailView({ eventId }: Props) {
                   color='primary'
                   sx={{ borderRadius: 50, textTransform: 'none', fontWeight: 600 }}
                 >
-                  Got it
+                  {t('polymarket.got-it')}
                 </Button>
               </DialogActions>
             </Dialog>
@@ -299,7 +299,7 @@ export default function PolymarketEventDetailView({ eventId }: Props) {
               return (
                 <>
                   <Typography variant='h5' sx={{ mb: 3, fontWeight: 700, color: 'text.primary' }}>
-                    Predict on ({visibleMarkets.length})
+                    {t('polymarket.predict-on')} ({visibleMarkets.length})
                   </Typography>
 
                   <Grid container spacing={3}>

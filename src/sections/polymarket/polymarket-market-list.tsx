@@ -25,10 +25,10 @@ import type { IPolymarketEvent, IPolymarketCategory } from 'src/types/polymarket
 
 // ----------------------------------------------------------------------
 const SORT_OPTIONS = [
-  { value: 'recommended', label: 'Recommended' },
-  { value: 'volume', label: 'Volume' },
-  { value: 'newest', label: 'Newest' },
-  { value: 'ending', label: 'Ending Soon' }
+  { value: 'recommended', label: 'polymarket.recommended' },
+  { value: 'volume', label: 'polymarket.volume' },
+  { value: 'newest', label: 'polymarket.newest' },
+  { value: 'ending', label: 'polymarket.ending-soon' }
 ]
 
 type Props = {
@@ -156,12 +156,11 @@ export default function PolymarketMarketList({
           return (
             <Chip
               key={label}
-              label={label}
+              label={label === 'All' ? t('polymarket.all') : label}
               onClick={() => onChangeCategory(label)}
               sx={{
                 borderRadius: 50,
                 px: 0.5,
-                height: 32,
                 fontWeight: isActive ? 700 : 600,
                 fontSize: '0.85rem',
                 fontFamily: "'Satoshi Variable', sans-serif",
@@ -170,7 +169,12 @@ export default function PolymarketMarketList({
                   ? theme.customShadows?.z1 || '0px 6px 17px 0px rgba(0,0,0,0.08)'
                   : 'none',
                 color: 'text.primary',
-                cursor: 'pointer',
+                border: 'none',
+                transition: theme.transitions.create([
+                  'background-color',
+                  'box-shadow',
+                  'font-weight'
+                ]),
                 '&:hover': {
                   bgcolor: isActive ? 'background.paper' : alpha(theme.palette.grey[500], 0.08)
                 }
@@ -211,7 +215,7 @@ export default function PolymarketMarketList({
       >
         {SORT_OPTIONS.map((option) => (
           <MenuItem key={option.value} value={option.value}>
-            {option.label}
+            {t(option.label)}
           </MenuItem>
         ))}
       </Select>
