@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useEffect, useCallback, useMemo } from 'react'
+import { useRef, useEffect, useCallback, useMemo, useState } from 'react'
 
 import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
@@ -12,17 +12,16 @@ import Typography from '@mui/material/Typography'
 import Grid from '@mui/material/Unstable_Grid2'
 import InputAdornment from '@mui/material/InputAdornment'
 import CircularProgress from '@mui/material/CircularProgress'
+import IconButton from '@mui/material/IconButton'
 import { alpha, useTheme } from '@mui/material/styles'
 
 import Iconify from 'src/components/iconify'
 import { useTranslate } from 'src/locales'
-import { useGetPolymarketCategories } from 'src/app/api/hooks/use-polymarket'
 
 import PolymarketMarketCard from './polymarket-market-card'
 import PolymarketEventCard from './polymarket-event-card'
 
-import type { IPolymarketEvent, IPolymarketCategory } from 'src/types/polymarket'
-
+import type { IPolymarketEvent } from 'src/types/polymarket'
 // ----------------------------------------------------------------------
 const SORT_OPTIONS = [
   { value: 'recommended', label: 'polymarket.recommended' },
@@ -63,9 +62,67 @@ export default function PolymarketMarketList({
   const propsRef = useRef({ hasMore, isLoadingMore, isLoading, onLoadMore })
   propsRef.current = { hasMore, isLoadingMore, isLoading, onLoadMore }
 
-  const { data: categoriesData } = useGetPolymarketCategories()
-  const allCategories: IPolymarketCategory[] = categoriesData?.data ?? []
-  const topCategories = allCategories.filter((c) => !c.parentCategory)
+  const categoriesScrollRef = useRef<HTMLDivElement>(null)
+  const [canScrollLeft, setCanScrollLeft] = useState(false)
+  const [canScrollRight, setCanScrollRight] = useState(false)
+
+  const HARDCODED_CATEGORIES = useMemo(
+    () => [
+      'politics',
+      'sports',
+      'crypto',
+      'esports',
+      'finance',
+      'geopolitics',
+      'tech',
+      'pop-culture',
+      'economy',
+      'weather'
+    ],
+    []
+  )
+
+  const checkScrollState = useCallback(() => {
+    const container = categoriesScrollRef.current
+    if (!container) return
+
+    const { scrollLeft, scrollWidth, clientWidth } = container
+    const isScrollable = scrollWidth > clientWidth
+
+    setCanScrollLeft(isScrollable && scrollLeft > 0)
+    setCanScrollRight(isScrollable && scrollLeft < scrollWidth - clientWidth - 1)
+  }, [])
+
+  const handleScroll = useCallback((direction: 'left' | 'right') => {
+    const container = categoriesScrollRef.current
+    if (!container) return
+
+    const scrollAmount = 200
+    const newScrollLeft =
+      direction === 'left'
+        ? container.scrollLeft - scrollAmount
+        : container.scrollLeft + scrollAmount
+
+    container.scrollTo({ left: newScrollLeft, behavior: 'smooth' })
+  }, [])
+
+  useEffect(() => {
+    checkScrollState()
+
+    const container = categoriesScrollRef.current
+    if (!container) return
+
+    const handleScrollEvent = () => checkScrollState()
+    const resizeObserver = new ResizeObserver(checkScrollState)
+
+    container.addEventListener('scroll', handleScrollEvent)
+    resizeObserver.observe(container)
+
+    return () => {
+      container.removeEventListener('scroll', handleScrollEvent)
+      resizeObserver.disconnect()
+    }
+  }, [checkScrollState, HARDCODED_CATEGORIES])
 
   const sortedEvents = useMemo(() => {
     if (!events) return []
@@ -138,50 +195,86 @@ export default function PolymarketMarketList({
       spacing={2}
       sx={{ mb: 3 }}
     >
-      <Box
-        sx={{
-          display: 'inline-flex',
-          gap: '2px',
-          bgcolor: isDark ? alpha(theme.palette.grey[500], 0.12) : '#ebebeb',
-          borderRadius: 50,
-          p: 0.5,
-          maxWidth: '100%',
-          overflowX: 'auto',
-          scrollbarWidth: 'none',
-          '&::-webkit-scrollbar': { display: 'none' }
-        }}
-      >
-        {['All', ...topCategories.map((c) => c.label)].map((label) => {
-          const isActive = category === label
-          return (
-            <Chip
-              key={label}
-              label={label === 'All' ? t('polymarket.all') : label}
-              onClick={() => onChangeCategory(label)}
-              sx={{
-                borderRadius: 50,
-                px: 0.5,
-                fontWeight: isActive ? 700 : 600,
-                fontSize: '0.85rem',
-                fontFamily: "'Satoshi Variable', sans-serif",
-                bgcolor: isActive ? 'background.paper' : 'transparent',
-                boxShadow: isActive
-                  ? theme.customShadows?.z1 || '0px 6px 17px 0px rgba(0,0,0,0.08)'
-                  : 'none',
-                color: 'text.primary',
-                border: 'none',
-                transition: theme.transitions.create([
-                  'background-color',
-                  'box-shadow',
-                  'font-weight'
-                ]),
-                '&:hover': {
-                  bgcolor: isActive ? 'background.paper' : alpha(theme.palette.grey[500], 0.08)
-                }
-              }}
-            />
-          )
-        })}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flex: 1, minWidth: 0 }}>
+        {canScrollLeft && (
+          <IconButton
+            size='small'
+            onClick={() => handleScroll('left')}
+            sx={{
+              bgcolor: isDark ? alpha(theme.palette.grey[500], 0.12) : '#ebebeb',
+              '&:hover': {
+                bgcolor: isDark ? alpha(theme.palette.grey[500], 0.2) : '#ddd'
+              }
+            }}
+          >
+            <Iconify icon='eva:arrow-ios-back-fill' width={20} />
+          </IconButton>
+        )}
+
+        <Box
+          ref={categoriesScrollRef}
+          sx={{
+            display: 'inline-flex',
+            gap: '2px',
+            bgcolor: isDark ? alpha(theme.palette.grey[500], 0.12) : '#ebebeb',
+            borderRadius: 50,
+            p: 0.5,
+            maxWidth: '100%',
+            overflowX: 'auto',
+            scrollbarWidth: 'none',
+            '&::-webkit-scrollbar': { display: 'none' }
+          }}
+        >
+          {['All', ...HARDCODED_CATEGORIES].map((slug) => {
+            const isAll = slug === 'All'
+            const value = slug
+            const isActive = category === value
+
+            return (
+              <Chip
+                key={value}
+                label={isAll ? t('polymarket.all') : t(`polymarket.categories.${slug}`)}
+                onClick={() => onChangeCategory(value)}
+                sx={{
+                  borderRadius: 50,
+                  px: 0.5,
+                  fontWeight: isActive ? 700 : 600,
+                  fontSize: '0.85rem',
+                  fontFamily: "'Satoshi Variable', sans-serif",
+                  bgcolor: isActive ? 'background.paper' : 'transparent',
+                  boxShadow: isActive
+                    ? theme.customShadows?.z1 || '0px 6px 17px 0px rgba(0,0,0,0.08)'
+                    : 'none',
+                  color: 'text.primary',
+                  border: 'none',
+                  transition: theme.transitions.create([
+                    'background-color',
+                    'box-shadow',
+                    'font-weight'
+                  ]),
+                  '&:hover': {
+                    bgcolor: isActive ? 'background.paper' : alpha(theme.palette.grey[500], 0.08)
+                  }
+                }}
+              />
+            )
+          })}
+        </Box>
+
+        {canScrollRight && (
+          <IconButton
+            size='small'
+            onClick={() => handleScroll('right')}
+            sx={{
+              bgcolor: isDark ? alpha(theme.palette.grey[500], 0.12) : '#ebebeb',
+              '&:hover': {
+                bgcolor: isDark ? alpha(theme.palette.grey[500], 0.2) : '#ddd'
+              }
+            }}
+          >
+            <Iconify icon='eva:arrow-ios-forward-fill' width={20} />
+          </IconButton>
+        )}
       </Box>
 
       <Select

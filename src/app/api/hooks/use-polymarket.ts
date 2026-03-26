@@ -27,10 +27,6 @@ const EVENTS_PAGE_SIZE = 20
 
 // ----------------------------------------------------------------------
 
-export function useGetPolymarketCategories() {
-  return useGetCommon(endpoints.polymarket.categories(), { headers: getAuthorizationHeader() })
-}
-
 export function useGetPolymarketEvents(params?: string) {
   return useGetCommon(endpoints.polymarket.events(params), { headers: getAuthorizationHeader() })
 }

@@ -112,21 +112,25 @@ export default function PolymarketHubView() {
               >
                 <Box sx={{ maxWidth: 480 }}>
                   <Typography
-                    variant='h3'
+                    variant='h1'
                     sx={{
-                      color: 'common.white',
-                      mb: 1,
+                      fontWeight: 700,
+                      color: 'text.primary',
+                      mb: 2,
+                      fontSize: { xs: 32, md: 36 },
                       letterSpacing: '-0.36px'
                     }}
                   >
                     {t('polymarket.making-predictions')}
                   </Typography>
                   <Typography
-                    variant='h4'
+                    variant='body1'
                     sx={{
-                      color: 'primary.main',
-                      fontWeight: 700,
-                      letterSpacing: '-0.24px'
+                      color: 'text.primary',
+                      fontSize: 16,
+                      letterSpacing: '-0.16px',
+                      lineHeight: 1.5,
+                      mb: 3
                     }}
                   >
                     {t('polymarket.just-with-whatsapp')}

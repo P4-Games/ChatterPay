@@ -175,24 +175,6 @@ export async function getMarketBySlug(slug: string): Promise<ServiceResult<IPoly
   }
 }
 
-export async function getCategories(): Promise<ServiceResult<IPolymarketCategory[]>> {
-  try {
-    const response = await axios.get<BackendResponse<IPolymarketCategory[]>>(
-      `${BACKEND_API_URL}/polymarket/categories`,
-      { headers: backendHeaders }
-    )
-
-    if (response.data.status !== 'success') {
-      return { ok: false, message: normalizeError(response.data) }
-    }
-
-    const raw = extractArray<IPolymarketCategory>(response.data.data, 'categories')
-    return { ok: true, data: raw }
-  } catch (error) {
-    return { ok: false, message: extractError(error) }
-  }
-}
-
 export async function searchMarkets(query: string): Promise<ServiceResult<IPolymarketMarket[]>> {
   try {
     const response = await axios.get<BackendResponse<IPolymarketMarket[]>>(

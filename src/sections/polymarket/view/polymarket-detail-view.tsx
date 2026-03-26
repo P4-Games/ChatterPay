@@ -542,7 +542,9 @@ export default function PolymarketDetailView({ slug }: Props) {
               fontSize: '0.7rem'
             }}
           >
-            {t('polymarket.predict-question-header')}
+            {outcomes.length === 2
+              ? t('polymarket.predict-question-yn')
+              : t('polymarket.predict-question-header')}
           </Typography>
 
           <Stack spacing={0}>
@@ -585,7 +587,11 @@ export default function PolymarketDetailView({ slug }: Props) {
                       }}
                     />
                     <Typography variant='subtitle2' sx={{ fontWeight: 600 }}>
-                      {outcome}
+                      {outcome === 'Yes'
+                        ? t('common.yes')
+                        : outcome === 'No'
+                          ? t('common.no')
+                          : outcome}
                     </Typography>
                   </Stack>
 
@@ -739,7 +745,14 @@ export default function PolymarketDetailView({ slug }: Props) {
                 color='text.secondary'
                 sx={{ display: 'block', mb: 0.5 }}
               >
-                {t('polymarket.if-outcome-wins', { outcome: outcomes[selectedOutcome] })}
+                {t('polymarket.if-outcome-wins', {
+                  outcome:
+                    outcomes[selectedOutcome] === 'Yes'
+                      ? t('common.yes')
+                      : outcomes[selectedOutcome] === 'No'
+                        ? t('common.no')
+                        : outcomes[selectedOutcome]
+                })}
               </Typography>
               <Typography variant='h4' sx={{ fontWeight: 800, color: 'text.primary' }}>
                 {t('polymarket.you-get-back', { amount: fNumber(estimatedReturn) })}
@@ -793,7 +806,12 @@ export default function PolymarketDetailView({ slug }: Props) {
             ? t('polymarket.placing-prediction')
             : t('polymarket.predict-cta', {
                 amount: fNumber(amount),
-                outcome: outcomes[selectedOutcome]
+                outcome:
+                  outcomes[selectedOutcome] === 'Yes'
+                    ? t('common.yes')
+                    : outcomes[selectedOutcome] === 'No'
+                      ? t('common.no')
+                      : outcomes[selectedOutcome]
               })}
         </Button>
       </Box>

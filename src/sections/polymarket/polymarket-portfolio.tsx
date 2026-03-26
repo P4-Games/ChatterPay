@@ -330,7 +330,13 @@ export default function PolymarketPortfolio() {
                       </TableCell>
                       <TableCell>
                         <Chip
-                          label={pos.outcome}
+                          label={
+                            pos.outcome === 'Yes'
+                              ? t('common.yes')
+                              : pos.outcome === 'No'
+                                ? t('common.no')
+                                : pos.outcome
+                          }
                           size='small'
                           sx={{
                             fontWeight: 600,
@@ -648,7 +654,13 @@ export default function PolymarketPortfolio() {
                       />
                     </TableCell>
                     <TableCell>
-                      <Typography variant='body2'>{ap.outcome}</Typography>
+                      <Typography variant='body2'>
+                        {ap.outcome === 'Yes'
+                          ? t('common.yes')
+                          : ap.outcome === 'No'
+                            ? t('common.no')
+                            : ap.outcome}
+                      </Typography>
                     </TableCell>
                     <TableCell align='right'>
                       <Typography variant='body2' fontWeight={600}>
@@ -701,7 +713,13 @@ export default function PolymarketPortfolio() {
                       />
                     </TableCell>
                     <TableCell>
-                      <Typography variant='body2'>{order.outcome}</Typography>
+                      <Typography variant='body2'>
+                        {order.outcome === 'Yes'
+                          ? t('common.yes')
+                          : order.outcome === 'No'
+                            ? t('common.no')
+                            : order.outcome}
+                      </Typography>
                     </TableCell>
                     <TableCell align='right'>
                       <Typography variant='body2' fontWeight={600}>
