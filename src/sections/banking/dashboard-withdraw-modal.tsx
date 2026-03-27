@@ -63,6 +63,7 @@ type LifiToken = {
 
 type RecentDest = {
   label: string
+  subtitle?: string
   value: string
   type: DestType
 }
@@ -430,7 +431,7 @@ export default function DashboardWithdrawModal({
 
     const timer = setTimeout(() => {
       setIsResolvingEns(true)
-      fetch(`https://api.ensideas.com/ens/resolve/${trimmed}`)
+      fetch(`/api/v1/proxy/ens?name=${encodeURIComponent(trimmed)}`)
         .then((r) => r.json())
         .then((data) => {
           if (data?.address && isValidEvmAddress(data.address)) {
@@ -460,32 +461,65 @@ export default function DashboardWithdrawModal({
     [lifiTokens, destTokenSymbol]
   )
 
-  // Recent sends
+  // Recent sends — top 5 most frequent recipients
   const recentSends = useMemo((): RecentDest[] => {
     if (!transactions || !userWallet) return []
-    const seen = new Set<string>()
-    const result: RecentDest[] = []
+    const wallet = userWallet.toLowerCase()
+
+    // Count frequency per unique recipient wallet
+    const freqMap = new Map<
+      string,
+      { count: number; name: string | null; phone: string | null; wallet: string }
+    >()
     for (const tx of transactions) {
-      if (tx.wallet_from?.toLowerCase() !== userWallet.toLowerCase()) continue
-      if (tx.wallet_to && !seen.has(tx.wallet_to.toLowerCase())) {
-        seen.add(tx.wallet_to.toLowerCase())
-        result.push({
-          label: tx.contact_to_name || `${tx.wallet_to.slice(0, 6)}...${tx.wallet_to.slice(-4)}`,
-          value: tx.wallet_to,
-          type: 'address'
+      if (tx.wallet_from?.toLowerCase() !== wallet) continue
+      if (!tx.wallet_to) continue
+      // Skip polymarket / swap transactions — not person-to-person sends
+      if (tx.type !== 'transfer') continue
+
+      const dest = tx.wallet_to
+      const isChatterPayUser =
+        tx.contact_to_phone && tx.contact_to_phone !== dest && isValidPhone(tx.contact_to_phone)
+      const isValidDest =
+        isValidEvmAddress(dest) || isValidBtcAddress(dest) || isValidSolAddress(dest)
+
+      // Skip entries that are neither a valid address nor a ChatterPay user
+      if (!isChatterPayUser && !isValidDest) continue
+
+      const key = dest.toLowerCase()
+      const existing = freqMap.get(key)
+      if (existing) {
+        existing.count += 1
+        if (!existing.name && tx.contact_to_name) existing.name = tx.contact_to_name
+        if (!existing.phone && isChatterPayUser) existing.phone = tx.contact_to_phone
+      } else {
+        freqMap.set(key, {
+          count: 1,
+          name: tx.contact_to_name || null,
+          phone: isChatterPayUser ? tx.contact_to_phone : null,
+          wallet: dest
         })
       }
-      if (tx.contact_to_phone && !seen.has(tx.contact_to_phone)) {
-        seen.add(tx.contact_to_phone)
-        result.push({
-          label: tx.contact_to_name || tx.contact_to_phone,
-          value: tx.contact_to_phone,
-          type: 'phone'
-        })
-      }
-      if (result.length >= 5) break
     }
-    return result
+
+    return Array.from(freqMap.values())
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5)
+      .map(({ name, phone, wallet: w }) => {
+        if (phone) {
+          return {
+            label: name || phone,
+            subtitle: name ? phone : undefined,
+            value: phone,
+            type: 'phone' as DestType
+          }
+        }
+        return {
+          label: `${w.slice(0, 6)}...${w.slice(-4)}`,
+          value: w,
+          type: 'address' as DestType
+        }
+      })
   }, [transactions, userWallet])
 
   // Phone contacts for autocomplete (deduplicated by phone number)
@@ -514,11 +548,11 @@ export default function DashboardWithdrawModal({
       const detected = detectChainFromAddress(trimmed)
       if (detected) {
         setSelectedChainId(detected)
-      } else if (trimmed.endsWith('.eth')) {
-        // ENS names resolve to EVM addresses — ensure an EVM chain is selected
+      } else if (trimmed.endsWith('.eth') || isValidEvmAddress(trimmed)) {
+        // ENS / EVM addresses — ensure an EVM chain is selected (default Scroll)
         setSelectedChainId((prev) => {
           const currentChain = chains.find((c) => c.id === prev)
-          if (currentChain?.addressType !== 'evm') return 534352 // default to Scroll
+          if (currentChain?.addressType !== 'evm') return 534352
           return prev
         })
       }
@@ -735,7 +769,7 @@ export default function DashboardWithdrawModal({
 
       {/* Content */}
       <DialogContent
-        sx={{ px: 3, py: 0, minHeight: 320, position: 'relative', overflow: 'hidden' }}
+        sx={{ px: 3, py: 0, minHeight: 320, position: 'relative', overflowX: 'hidden' }}
       >
         <AnimatePresence initial={false} custom={direction} mode='wait'>
           {/* ============ STEP 0: Token & Amount ============ */}
@@ -926,8 +960,8 @@ export default function DashboardWithdrawModal({
               transition={{ duration: 0.2, ease: 'easeInOut' }}
             >
               <Stack spacing={2.5} sx={{ py: 3 }}>
-                {/* Recent Sends */}
-                {recentSends.length > 0 && (
+                {/* Recent Sends — hide once a destination is filled */}
+                {recentSends.length > 0 && !destination && (
                   <Stack spacing={1}>
                     <Typography variant='caption' color='text.secondary' fontWeight={600}>
                       {t('withdraw.recent-sends')}
@@ -936,20 +970,45 @@ export default function DashboardWithdrawModal({
                       {recentSends.map((rs) => (
                         <Chip
                           key={rs.value}
-                          label={rs.label}
-                          size='small'
+                          label={
+                            rs.subtitle ? (
+                              <Stack direction='column' alignItems='flex-start' sx={{ py: 0.25 }}>
+                                <Typography
+                                  variant='caption'
+                                  fontWeight={700}
+                                  lineHeight={1.3}
+                                  noWrap
+                                >
+                                  {rs.label}
+                                </Typography>
+                                <Typography
+                                  variant='caption'
+                                  fontSize={10}
+                                  color='text.secondary'
+                                  lineHeight={1.2}
+                                  noWrap
+                                >
+                                  {rs.subtitle}
+                                </Typography>
+                              </Stack>
+                            ) : (
+                              rs.label
+                            )
+                          }
+                          size={rs.subtitle ? 'medium' : 'small'}
                           onClick={() => {
                             setDestType(rs.type)
                             setDestination(rs.value)
                             if (rs.type === 'address') handleAddressChange(rs.value)
                             setError('')
                           }}
+                          variant='outlined'
                           sx={{
                             cursor: 'pointer',
                             fontWeight: 600,
-                            maxWidth: 160,
-                            bgcolor: alpha(theme.palette.grey[500], 0.08),
-                            '&:hover': { bgcolor: alpha(theme.palette.grey[500], 0.16) }
+                            maxWidth: 180,
+                            borderColor: alpha(theme.palette.grey[500], 0.24),
+                            '&:hover': { bgcolor: alpha(theme.palette.grey[500], 0.12) }
                           }}
                         />
                       ))}
