@@ -411,6 +411,25 @@
     "you-send": "You send",
     "amount-receive": "Amount to Receive"
   },
+  "swap": {
+    "title": "Swap",
+    "from": "From",
+    "to": "To",
+    "amount": "Amount",
+    "max": "Max",
+    "available": "Available",
+    "search-tokens": "Search tokens...",
+    "no-tokens": "No tokens found",
+    "select-token": "Select a token",
+    "estimated-output": "Estimated output",
+    "rate": "Rate",
+    "fee": "Transaction Fee",
+    "swap-via-whatsapp": "Swap via WhatsApp",
+    "invalid-amount": "Invalid amount",
+    "exceeds-balance": "Amount exceeds available balance",
+    "fetching-quote": "Fetching quote...",
+    "no-quote": "No quote available for this pair"
+  },
   "balances": {
     "title": "Your money",
     "deposit": "Deposit",

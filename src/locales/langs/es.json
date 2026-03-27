@@ -411,6 +411,25 @@
     "you-send": "Envías",
     "amount-receive": "Monto a recibir"
   },
+  "swap": {
+    "title": "Intercambiar",
+    "from": "Desde",
+    "to": "Hacia",
+    "amount": "Monto",
+    "max": "Máx",
+    "available": "Disponible",
+    "search-tokens": "Buscar tokens...",
+    "no-tokens": "No se encontraron tokens",
+    "select-token": "Seleccionar token",
+    "estimated-output": "Resultado estimado",
+    "rate": "Tasa",
+    "fee": "Tarifa de transacción",
+    "swap-via-whatsapp": "Intercambiar por WhatsApp",
+    "invalid-amount": "Monto inválido",
+    "exceeds-balance": "El monto excede el saldo disponible",
+    "fetching-quote": "Obteniendo cotización...",
+    "no-quote": "Cotización no disponible para este par"
+  },
   "balances": {
     "title": "Tu dinero",
     "deposit": "Depositar",

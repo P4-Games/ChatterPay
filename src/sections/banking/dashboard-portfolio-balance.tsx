@@ -30,6 +30,7 @@ type Props = {
   onToggleHideValues: () => void
   onDepositClick: () => void
   onWithdrawClick: () => void
+  onSwapClick: () => void
   onClaimClick: () => void
   onCryptoClick: () => void
   onPolymarketClick: () => void
@@ -225,6 +226,7 @@ export default function DashboardPortfolioBalance({
   onToggleHideValues,
   onDepositClick,
   onWithdrawClick,
+  onSwapClick,
   onClaimClick,
   onCryptoClick,
   onPolymarketClick,
@@ -474,6 +476,27 @@ export default function DashboardPortfolioBalance({
           }}
         >
           Withdraw
+        </Button>
+
+        <Button
+          variant='outlined'
+          startIcon={<Iconify icon='solar:transfer-horizontal-bold' />}
+          onClick={onSwapClick}
+          sx={{
+            px: 3,
+            py: 1.2,
+            flex: { xs: 1, sm: 'none' },
+            color: btnColor,
+            borderColor: btnColor,
+            borderWidth: '0.5px',
+            '&:hover': {
+              borderColor: btnColor,
+              bgcolor: alpha(btnColor, 0.06),
+              borderWidth: '0.5px'
+            }
+          }}
+        >
+          {t('swap.title')}
         </Button>
 
         {idleUsdc >= 0.01 && (

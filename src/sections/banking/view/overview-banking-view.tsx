@@ -36,6 +36,7 @@ import PolymarketPNLWidget from 'src/sections/polymarket/polymarket-pnl-widget'
 import BankingRecentTransitions from '../banking-recent-transitions'
 import DashboardDepositModal from '../dashboard-deposit-modal'
 import DashboardWithdrawModal from '../dashboard-withdraw-modal'
+import DashboardSwapModal from '../dashboard-swap-modal'
 import DashboardPortfolioBalance from '../dashboard-portfolio-balance'
 import DashboardPositionsTable from '../dashboard-positions-table'
 import DashboardDrawer from '../dashboard-drawer'
@@ -60,6 +61,7 @@ export default function OverviewBankingView() {
 
   const depositModal = useBoolean()
   const withdrawModal = useBoolean()
+  const swapModal = useBoolean()
   const polymarketDrawer = useBoolean()
 
   // Load hide preference from localStorage
@@ -204,6 +206,7 @@ export default function OverviewBankingView() {
           onToggleHideValues={handleToggleHideValues}
           onDepositClick={depositModal.onTrue}
           onWithdrawClick={withdrawModal.onTrue}
+          onSwapClick={swapModal.onTrue}
           onClaimClick={handleClaimSubmit}
           onCryptoClick={() => setCryptoExpanded((prev) => !prev)}
           onPolymarketClick={polymarketDrawer.onTrue}
@@ -275,6 +278,17 @@ export default function OverviewBankingView() {
         balances={safeBalances.balances}
         tokenLogos={tokenLogos}
         transactions={safeTransactions}
+        userWallet={walletAddress}
+        tokens={tokens}
+        selectedCurrency={selectedCurrency}
+      />
+
+      {/* Swap Modal */}
+      <DashboardSwapModal
+        open={swapModal.value}
+        onClose={swapModal.onFalse}
+        balances={safeBalances.balances}
+        tokenLogos={tokenLogos}
         userWallet={walletAddress}
         tokens={tokens}
         selectedCurrency={selectedCurrency}
