@@ -16,6 +16,10 @@ import TableHead from '@mui/material/TableHead'
 import Typography from '@mui/material/Typography'
 import TableContainer from '@mui/material/TableContainer'
 import CircularProgress from '@mui/material/CircularProgress'
+import ButtonGroup from '@mui/material/ButtonGroup'
+import Popover from '@mui/material/Popover'
+import TextField from '@mui/material/TextField'
+import InputAdornment from '@mui/material/InputAdornment'
 import { alpha, useTheme } from '@mui/material/styles'
 
 import { useTranslate } from 'src/locales'
@@ -37,6 +41,8 @@ import { useSWRConfig } from 'swr'
 import Iconify from 'src/components/iconify'
 
 import { fNumber } from 'src/utils/format-number'
+
+import type { IPolymarketPosition } from 'src/types/polymarket'
 
 // ----------------------------------------------------------------------
 
@@ -81,6 +87,9 @@ export default function PolymarketPortfolio() {
   const [isClaiming, setIsClaiming] = useState(false)
   const [activePurchases, setActivePurchases] = useState<ActivePurchase[]>([])
   const [soldPositionKeys, setSoldPositionKeys] = useState<Set<string>>(new Set())
+  const [partialSellAnchor, setPartialSellAnchor] = useState<HTMLElement | null>(null)
+  const [partialSellPos, setPartialSellPos] = useState<IPolymarketPosition | null>(null)
+  const [partialSellAmount, setPartialSellAmount] = useState('')
 
   const handleCancelOrder = async (orderId: string) => {
     setCancellingId(orderId)
@@ -97,6 +106,134 @@ export default function PolymarketPortfolio() {
     } finally {
       setCancellingId(null)
     }
+  }
+
+  const handleSellPosition = async (pos: IPolymarketPosition, overrideSize?: number) => {
+    const posKey = (pos.market?.condition_id || pos.conditionId) + pos.outcome
+    setSellingPos(posKey)
+
+    const token = pos.market?.tokens?.find((tk: any) => tk.outcome === pos.outcome)
+    const tokenId = pos.asset || pos.token_id || token?.token_id
+
+    if (!tokenId) {
+      enqueueSnackbar(t('polymarket.token-id-not-found'), { variant: 'error' })
+      setSellingPos(null)
+      return
+    }
+
+    const sellSize = overrideSize ?? Math.floor(pos.size * 1e6) / 1e6
+    const sellPrice = pos.current_price
+    const tempId = `temp-${Date.now()}`
+    const marketTitle = pos.title || pos.market_title || pos.market?.question || '—'
+
+    setActivePurchases((prev) => [
+      ...prev,
+      {
+        purchase_id: tempId,
+        side: 'SELL',
+        outcome: pos.outcome,
+        size: sellSize,
+        price: sellPrice,
+        market_title: marketTitle,
+        current_step: 'submitting',
+        status: 'processing'
+      }
+    ])
+
+    try {
+      const res = await polymarketPurchase({
+        token_id: tokenId,
+        side: 'SELL',
+        size: sellSize,
+        price: sellPrice,
+        bridge_amount: '0'
+      })
+      if (res.ok) {
+        const purchaseId = res.data?.purchase_id || tempId
+        setSoldPositionKeys((prev) => new Set(prev).add(posKey))
+        setActivePurchases((prev) =>
+          prev.map((p) =>
+            p.purchase_id === tempId
+              ? { ...p, purchase_id: purchaseId, current_step: 'order_placement' }
+              : p
+          )
+        )
+
+        const poll = async () => {
+          try {
+            const statusRes = await polymarketPurchaseStatus(purchaseId)
+            if (statusRes.ok && statusRes.data) {
+              const st = statusRes.data.status
+              const step = statusRes.data.current_step || ''
+              setActivePurchases((prev) =>
+                prev.map((p) =>
+                  p.purchase_id === purchaseId ? { ...p, current_step: step, status: st } : p
+                )
+              )
+              if (st === 'completed') {
+                clearInterval(pollInterval)
+                setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
+                enqueueSnackbar(t('polymarket.sell-completed'), { variant: 'success' })
+                mutate(
+                  (key: any) =>
+                    Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/positions')
+                )
+                mutate(
+                  (key: any) =>
+                    Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders')
+                )
+                mutate(
+                  (key: any) =>
+                    Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/portfolio')
+                )
+                mutate(
+                  (key: any) =>
+                    Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance')
+                )
+                setSoldPositionKeys((prev) => {
+                  const n = new Set(prev)
+                  n.delete(posKey)
+                  return n
+                })
+              } else if (st === 'failed') {
+                clearInterval(pollInterval)
+                setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
+                enqueueSnackbar(statusRes.data.error || t('polymarket.sell-failed'), {
+                  variant: 'error'
+                })
+                setSoldPositionKeys((prev) => {
+                  const n = new Set(prev)
+                  n.delete(posKey)
+                  return n
+                })
+              }
+            }
+          } catch (e) {
+            console.error(e)
+          }
+        }
+        poll()
+        const pollInterval = setInterval(poll, 4000)
+      } else {
+        setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== tempId))
+        enqueueSnackbar(res.message || t('polymarket.error-executing-sell'), { variant: 'error' })
+      }
+    } catch {
+      setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== tempId))
+      enqueueSnackbar(t('polymarket.error-executing-sell'), { variant: 'error' })
+    } finally {
+      setSellingPos(null)
+    }
+  }
+
+  const handlePartialSell = () => {
+    if (!partialSellPos) return
+    const amt = parseFloat(partialSellAmount)
+    if (!amt || amt <= 0 || amt > partialSellPos.size) return
+    setPartialSellAnchor(null)
+    handleSellPosition(partialSellPos, Math.floor(amt * 1e6) / 1e6)
+    setPartialSellPos(null)
+    setPartialSellAmount('')
   }
 
   const handleClaimSubmit = async () => {
@@ -387,181 +524,36 @@ export default function PolymarketPortfolio() {
                         })()}
                       </TableCell>
                       <TableCell align='right'>
-                        <Button
-                          size='small'
-                          color='error'
-                          variant='contained'
-                          disabled={
-                            sellingPos ===
+                        {(() => {
+                          const posKey =
                             (pos.market?.condition_id || pos.conditionId) + pos.outcome
-                          }
-                          onClick={async () => {
-                            const posKey =
-                              (pos.market?.condition_id || pos.conditionId) + pos.outcome
-                            setSellingPos(posKey)
-
-                            const token = pos.market?.tokens?.find((t) => t.outcome === pos.outcome)
-                            const tokenId = pos.asset || pos.token_id || token?.token_id
-
-                            if (!tokenId) {
-                              enqueueSnackbar(t('polymarket.token-id-not-found'), {
-                                variant: 'error'
-                              })
-                              setSellingPos(null)
-                              return
-                            }
-
-                            const sellSize = Math.floor(pos.size * 1e6) / 1e6
-                            const sellPrice = pos.current_price
-                            const tempId = `temp-${Date.now()}`
-                            const marketTitle =
-                              pos.title || pos.market_title || pos.market?.question || '—'
-
-                            // Instantly show in Open Orders
-                            setActivePurchases((prev) => [
-                              ...prev,
-                              {
-                                purchase_id: tempId,
-                                side: 'SELL',
-                                outcome: pos.outcome,
-                                size: sellSize,
-                                price: sellPrice,
-                                market_title: marketTitle,
-                                current_step: 'submitting',
-                                status: 'processing'
-                              }
-                            ])
-
-                            try {
-                              const res = await polymarketPurchase({
-                                token_id: tokenId,
-                                side: 'SELL',
-                                size: sellSize,
-                                price: sellPrice,
-                                bridge_amount: '0'
-                              })
-                              if (res.ok) {
-                                const purchaseId = res.data?.purchase_id || tempId
-                                // Hide the sold position immediately
-                                setSoldPositionKeys((prev) => new Set(prev).add(posKey))
-                                // Update temp row with real purchase ID + step
-                                setActivePurchases((prev) =>
-                                  prev.map((p) =>
-                                    p.purchase_id === tempId
-                                      ? {
-                                          ...p,
-                                          purchase_id: purchaseId,
-                                          current_step: 'order_placement'
-                                        }
-                                      : p
-                                  )
-                                )
-
-                                const poll = async () => {
-                                  try {
-                                    const statusRes = await polymarketPurchaseStatus(purchaseId)
-                                    if (statusRes.ok && statusRes.data) {
-                                      const st = statusRes.data.status
-                                      const step = statusRes.data.current_step || ''
-                                      setActivePurchases((prev) =>
-                                        prev.map((p) =>
-                                          p.purchase_id === purchaseId
-                                            ? { ...p, current_step: step, status: st }
-                                            : p
-                                        )
-                                      )
-                                      if (st === 'completed') {
-                                        clearInterval(pollInterval)
-                                        setActivePurchases((prev) =>
-                                          prev.filter((p) => p.purchase_id !== purchaseId)
-                                        )
-                                        enqueueSnackbar(t('polymarket.sell-completed'), {
-                                          variant: 'success'
-                                        })
-                                        mutate(
-                                          (key: any) =>
-                                            Array.isArray(key) &&
-                                            typeof key[0] === 'string' &&
-                                            key[0].includes('/positions')
-                                        )
-                                        mutate(
-                                          (key: any) =>
-                                            Array.isArray(key) &&
-                                            typeof key[0] === 'string' &&
-                                            key[0].includes('/orders')
-                                        )
-                                        mutate(
-                                          (key: any) =>
-                                            Array.isArray(key) &&
-                                            typeof key[0] === 'string' &&
-                                            key[0].includes('/portfolio')
-                                        )
-                                        mutate(
-                                          (key: any) =>
-                                            Array.isArray(key) &&
-                                            typeof key[0] === 'string' &&
-                                            key[0].includes('/balance')
-                                        )
-                                        setSoldPositionKeys((prev) => {
-                                          const n = new Set(prev)
-                                          n.delete(posKey)
-                                          return n
-                                        })
-                                      } else if (st === 'failed') {
-                                        clearInterval(pollInterval)
-                                        setActivePurchases((prev) =>
-                                          prev.filter((p) => p.purchase_id !== purchaseId)
-                                        )
-                                        enqueueSnackbar(
-                                          statusRes.data.error || t('polymarket.sell-failed'),
-                                          {
-                                            variant: 'error'
-                                          }
-                                        )
-                                        setSoldPositionKeys((prev) => {
-                                          const n = new Set(prev)
-                                          n.delete(posKey)
-                                          return n
-                                        })
-                                      }
-                                    }
-                                  } catch (e) {
-                                    console.error(e)
-                                  }
-                                }
-                                poll() // immediate first check
-                                const pollInterval = setInterval(poll, 4000)
-                              } else {
-                                // Remove temp row on failure
-                                setActivePurchases((prev) =>
-                                  prev.filter((p) => p.purchase_id !== tempId)
-                                )
-                                enqueueSnackbar(
-                                  res.message || t('polymarket.error-executing-sell'),
-                                  {
-                                    variant: 'error'
-                                  }
-                                )
-                              }
-                            } catch {
-                              setActivePurchases((prev) =>
-                                prev.filter((p) => p.purchase_id !== tempId)
-                              )
-                              enqueueSnackbar(t('polymarket.error-executing-sell'), {
-                                variant: 'error'
-                              })
-                            } finally {
-                              setSellingPos(null)
-                            }
-                          }}
-                        >
-                          {sellingPos ===
-                          (pos.market?.condition_id || pos.conditionId) + pos.outcome ? (
-                            <CircularProgress size={14} color='inherit' />
-                          ) : (
-                            t('polymarket.sell')
-                          )}
-                        </Button>
+                          return (
+                            <ButtonGroup
+                              size='small'
+                              color='error'
+                              variant='contained'
+                              disabled={sellingPos === posKey}
+                            >
+                              <Button onClick={() => handleSellPosition(pos)}>
+                                {sellingPos === posKey ? (
+                                  <CircularProgress size={14} color='inherit' />
+                                ) : (
+                                  t('polymarket.sell-all')
+                                )}
+                              </Button>
+                              <Button
+                                sx={{ px: 0.5, minWidth: 28 }}
+                                onClick={(e) => {
+                                  setPartialSellPos(pos)
+                                  setPartialSellAmount(String(Math.floor(pos.size * 1e6) / 1e6))
+                                  setPartialSellAnchor(e.currentTarget)
+                                }}
+                              >
+                                <Iconify icon='eva:chevron-down-fill' width={16} />
+                              </Button>
+                            </ButtonGroup>
+                          )
+                        })()}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -886,6 +878,56 @@ export default function PolymarketPortfolio() {
           </TableContainer>
         </Card>
       )}
+      <Popover
+        open={Boolean(partialSellAnchor)}
+        anchorEl={partialSellAnchor}
+        onClose={() => {
+          setPartialSellAnchor(null)
+          setPartialSellPos(null)
+        }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Stack sx={{ p: 2, width: 220 }} spacing={1.5}>
+          <Typography variant='subtitle2'>{t('polymarket.partial-sell')}</Typography>
+          <TextField
+            label={t('polymarket.amount')}
+            type='number'
+            size='small'
+            value={partialSellAmount}
+            onChange={(e) => setPartialSellAmount(e.target.value)}
+            inputProps={{ min: 0.000001, max: partialSellPos?.size, step: 0.01 }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position='end'>
+                  <Typography variant='caption' color='text.secondary'>
+                    / {partialSellPos ? Math.floor(partialSellPos.size * 1e6) / 1e6 : 0}
+                  </Typography>
+                </InputAdornment>
+              )
+            }}
+            helperText={
+              partialSellAmount && Number(partialSellAmount) > 0 && partialSellPos
+                ? `≈ $${(Number(partialSellAmount) * (partialSellPos.current_price ?? (partialSellPos as any).curPrice ?? 0)).toFixed(2)}`
+                : ' '
+            }
+          />
+          <Button
+            fullWidth
+            size='small'
+            color='error'
+            variant='contained'
+            disabled={
+              !partialSellAmount ||
+              Number(partialSellAmount) <= 0 ||
+              Number(partialSellAmount) > (partialSellPos?.size ?? 0)
+            }
+            onClick={handlePartialSell}
+          >
+            {t('polymarket.sell-x-shares', { amount: partialSellAmount })}
+          </Button>
+        </Stack>
+      </Popover>
     </Stack>
   )
 }

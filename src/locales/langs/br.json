@@ -864,6 +864,9 @@
     "terms-content-3": "O ChatterPay atua como uma interface para o Polymarket. Todas as transações são executadas na rede e são irreversíveis uma vez confirmadas.",
     "terms-error": "Não foi possível aceitar os termos",
     "agree-continue": "Concordar e Continuar",
-    "accepting": "Aceitando..."
+    "accepting": "Aceitando...",
+    "sell-all": "Vender tudo",
+    "partial-sell": "Venda parcial",
+    "sell-x-shares": "Vender {{amount}} ações"
   }
 }

@@ -18,6 +18,10 @@ import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import TableContainer from '@mui/material/TableContainer'
 import CircularProgress from '@mui/material/CircularProgress'
+import ButtonGroup from '@mui/material/ButtonGroup'
+import Popover from '@mui/material/Popover'
+import TextField from '@mui/material/TextField'
+import InputAdornment from '@mui/material/InputAdornment'
 import { alpha, useTheme } from '@mui/material/styles'
 
 import { useTranslate } from 'src/locales'
@@ -61,10 +65,9 @@ type Props = {
   positions: IPolymarketPosition[]
   orders: IPolymarketOrder[]
   isLoading: boolean
-  idleUsdc: number
 }
 
-export default function DashboardPositionsTable({ positions, orders, isLoading, idleUsdc }: Props) {
+export default function DashboardPositionsTable({ positions, orders, isLoading }: Props) {
   const { enqueueSnackbar } = useSnackbar()
   const { mutate } = useSWRConfig()
   const { t } = useTranslate()
@@ -75,9 +78,12 @@ export default function DashboardPositionsTable({ positions, orders, isLoading, 
   const [sellingPos, setSellingPos] = useState<string | null>(null)
   const [activePurchases, setActivePurchases] = useState<ActivePurchase[]>([])
   const [soldPositionKeys, setSoldPositionKeys] = useState<Set<string>>(new Set())
+  const [partialSellAnchor, setPartialSellAnchor] = useState<HTMLElement | null>(null)
+  const [partialSellPos, setPartialSellPos] = useState<IPolymarketPosition | null>(null)
+  const [partialSellAmount, setPartialSellAmount] = useState('')
 
   // Fetch trade history and closed positions
-  const { data: trades = [], isLoading: isTradesLoading } = useGetPolymarketTradesSWR(30000)
+  const { data: trades = [] } = useGetPolymarketTradesSWR(30000)
   const { data: closedPositions = [], isLoading: isClosedLoading } =
     useGetPolymarketClosedPositionsSWR(30000)
 
@@ -108,7 +114,7 @@ export default function DashboardPositionsTable({ positions, orders, isLoading, 
     }
   }
 
-  const handleSellPosition = async (pos: IPolymarketPosition) => {
+  const handleSellPosition = async (pos: IPolymarketPosition, overrideSize?: number) => {
     const posKey = (pos.market?.condition_id || pos.conditionId) + pos.outcome
     setSellingPos(posKey)
 
@@ -121,7 +127,7 @@ export default function DashboardPositionsTable({ positions, orders, isLoading, 
       return
     }
 
-    const sellSize = Math.floor(pos.size * 1e6) / 1e6
+    const sellSize = overrideSize ?? Math.floor(pos.size * 1e6) / 1e6
     const sellPrice = pos.current_price ?? pos.curPrice ?? 0
     const tempId = `temp-${Date.now()}`
     const marketTitle = pos.title || pos.market_title || pos.market?.question || '—'
@@ -239,6 +245,16 @@ export default function DashboardPositionsTable({ positions, orders, isLoading, 
     } finally {
       setSellingPos(null)
     }
+  }
+
+  const handlePartialSell = () => {
+    if (!partialSellPos) return
+    const amount = parseFloat(partialSellAmount)
+    if (!amount || amount <= 0 || amount > partialSellPos.size) return
+    setPartialSellAnchor(null)
+    handleSellPosition(partialSellPos, Math.floor(amount * 1e6) / 1e6)
+    setPartialSellPos(null)
+    setPartialSellAmount('')
   }
 
   const filteredPositions = positions.filter(
@@ -475,19 +491,25 @@ export default function DashboardPositionsTable({ positions, orders, isLoading, 
                         </TableCell>
 
                         <TableCell align='right'>
-                          <Button
-                            size='small'
-                            color='error'
-                            variant='contained'
-                            disabled={sellingPos === posKey}
-                            onClick={() => handleSellPosition(pos)}
-                          >
-                            {sellingPos === posKey ? (
-                              <CircularProgress size={14} color='inherit' />
-                            ) : (
-                              'Sell'
-                            )}
-                          </Button>
+                          <ButtonGroup size='small' color='error' variant='contained' disabled={sellingPos === posKey}>
+                            <Button onClick={() => handleSellPosition(pos)}>
+                              {sellingPos === posKey ? (
+                                <CircularProgress size={14} color='inherit' />
+                              ) : (
+                                t('polymarket.sell-all')
+                              )}
+                            </Button>
+                            <Button
+                              sx={{ px: 0.5, minWidth: 28 }}
+                              onClick={(e) => {
+                                setPartialSellPos(pos)
+                                setPartialSellAmount(String(Math.floor(pos.size * 1e6) / 1e6))
+                                setPartialSellAnchor(e.currentTarget)
+                              }}
+                            >
+                              <Iconify icon='eva:chevron-down-fill' width={16} />
+                            </Button>
+                          </ButtonGroup>
                         </TableCell>
                       </TableRow>
                     )
@@ -935,6 +957,57 @@ export default function DashboardPositionsTable({ positions, orders, isLoading, 
           </TableContainer>
         </Card>
       )}
+
+      <Popover
+        open={Boolean(partialSellAnchor)}
+        anchorEl={partialSellAnchor}
+        onClose={() => {
+          setPartialSellAnchor(null)
+          setPartialSellPos(null)
+        }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Stack sx={{ p: 2, width: 220 }} spacing={1.5}>
+          <Typography variant='subtitle2'>{t('polymarket.partial-sell')}</Typography>
+          <TextField
+            label={t('polymarket.amount')}
+            type='number'
+            size='small'
+            value={partialSellAmount}
+            onChange={(e) => setPartialSellAmount(e.target.value)}
+            inputProps={{ min: 0.000001, max: partialSellPos?.size, step: 0.01 }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position='end'>
+                  <Typography variant='caption' color='text.secondary'>
+                    / {partialSellPos ? Math.floor(partialSellPos.size * 1e6) / 1e6 : 0}
+                  </Typography>
+                </InputAdornment>
+              )
+            }}
+            helperText={
+              partialSellAmount && Number(partialSellAmount) > 0 && partialSellPos
+                ? `≈ $${(Number(partialSellAmount) * (partialSellPos.current_price ?? partialSellPos.curPrice ?? 0)).toFixed(2)}`
+                : ' '
+            }
+          />
+          <Button
+            fullWidth
+            size='small'
+            color='error'
+            variant='contained'
+            disabled={
+              !partialSellAmount ||
+              Number(partialSellAmount) <= 0 ||
+              Number(partialSellAmount) > (partialSellPos?.size ?? 0)
+            }
+            onClick={handlePartialSell}
+          >
+            {t('polymarket.sell-x-shares', { amount: partialSellAmount })}
+          </Button>
+        </Stack>
+      </Popover>
     </Stack>
   )
 }
