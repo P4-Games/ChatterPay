@@ -259,7 +259,6 @@ export default function OverviewBankingView() {
             positions={positions}
             orders={orders}
             isLoading={isLoadingPositions || isLoadingOrders}
-
           />
         </Stack>
       </DashboardDrawer>

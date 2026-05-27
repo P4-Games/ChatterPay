@@ -176,7 +176,9 @@ export default function PolymarketPortfolio() {
                 enqueueSnackbar(t('polymarket.sell-completed'), { variant: 'success' })
                 mutate(
                   (key: any) =>
-                    Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/positions')
+                    Array.isArray(key) &&
+                    typeof key[0] === 'string' &&
+                    key[0].includes('/positions')
                 )
                 mutate(
                   (key: any) =>
@@ -184,7 +186,9 @@ export default function PolymarketPortfolio() {
                 )
                 mutate(
                   (key: any) =>
-                    Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/portfolio')
+                    Array.isArray(key) &&
+                    typeof key[0] === 'string' &&
+                    key[0].includes('/portfolio')
                 )
                 mutate(
                   (key: any) =>
@@ -525,8 +529,7 @@ export default function PolymarketPortfolio() {
                       </TableCell>
                       <TableCell align='right'>
                         {(() => {
-                          const posKey =
-                            (pos.market?.condition_id || pos.conditionId) + pos.outcome
+                          const posKey = (pos.market?.condition_id || pos.conditionId) + pos.outcome
                           return (
                             <ButtonGroup
                               size='small'

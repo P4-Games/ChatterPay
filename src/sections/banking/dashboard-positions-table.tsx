@@ -491,7 +491,12 @@ export default function DashboardPositionsTable({ positions, orders, isLoading }
                         </TableCell>
 
                         <TableCell align='right'>
-                          <ButtonGroup size='small' color='error' variant='contained' disabled={sellingPos === posKey}>
+                          <ButtonGroup
+                            size='small'
+                            color='error'
+                            variant='contained'
+                            disabled={sellingPos === posKey}
+                          >
                             <Button onClick={() => handleSellPosition(pos)}>
                               {sellingPos === posKey ? (
                                 <CircularProgress size={14} color='inherit' />

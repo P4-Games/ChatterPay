@@ -1376,9 +1376,7 @@ export default function PolymarketDetailView({ slug }: Props) {
                                     sx={{ px: 0.5, minWidth: 28 }}
                                     onClick={(e) => {
                                       setPartialSellPos(pos)
-                                      setPartialSellAmount(
-                                        String(Math.floor(pos.size * 1e6) / 1e6)
-                                      )
+                                      setPartialSellAmount(String(Math.floor(pos.size * 1e6) / 1e6))
                                       setPartialSellAnchor(e.currentTarget)
                                     }}
                                   >
