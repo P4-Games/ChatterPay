@@ -372,7 +372,9 @@
     "network": "Red",
     "network-warning": "Cualquier activo enviado en otra red se perderá",
     "wallet-address": "Dirección de billetera",
-    "copy-address": "Copiar dirección"
+    "copy-address": "Copiar dirección",
+    "show-address": "Ver mi dirección en Scroll",
+    "back-to-deposit": "Volver a depositar"
   },
   "withdraw": {
     "title": "Retirar",
@@ -878,5 +880,18 @@
     "terms-error": "No se pudieron aceptar los términos",
     "agree-continue": "Aceptar y Continuar",
     "accepting": "Aceptando..."
+  },
+  "layerswapDeposit": {
+    "title": "Depositar en ChatterPay",
+    "description": "Transfiere tus activos a Scroll y deposita directamente en tu billetera ChatterPay.",
+    "returnButton": "Volver a ChatterPay",
+    "whatsappReturnText": "Quiero ver mi balance",
+    "actionButton": "Depositar en ChatterPay",
+    "badge": "Impulsado por Layerswap",
+    "errors": {
+      "title": "Solicitud inválida",
+      "missingAddress": "Se requiere una dirección de billetera. Proporciónala en la URL (?address=0x...).",
+      "invalidAddress": "La dirección de billetera proporcionada no es una dirección Ethereum válida."
+    }
   }
 }
