@@ -17,6 +17,11 @@ export type IBalances = {
   wallet: string
   balances: IBalance[]
   totals: Record<CurrencyKey, number>
+  polymarket?: {
+    idle_usdc: number
+    positions_value: number
+    total_usd: number
+  }
   message?: string
   certificates?: []
 }
@@ -70,6 +75,8 @@ export type ITransaction = {
   fee: number
   type: string
   status: string
+  user_notes?: string
+  chain_id?: number
 }
 
 export type IToken = {

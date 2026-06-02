@@ -14,8 +14,8 @@
     "must-be-valid-email": "El correo electrónico debe ser una dirección de correo válida",
     "must-be-min": "Debe tener un mínimo de {MIN_CHARS} caracteres",
     "nodata": "Sin Datos",
-    "close": "Cerrar",
     "save": "Guardar Cambios",
+    "close": "Cerrar",
     "cancel": "Cancelar",
     "yes": "Sí",
     "no": "No",
@@ -25,10 +25,10 @@
     "metadata": "Ver Metadata",
     "copied": "Copiado",
     "accessibility": {
-      "copy-referral-code": "Copiar codigo de referido",
-      "copy-referred-by-code": "Copiar codigo de referido por",
+      "copy-referral-code": "Copiar código de referido",
+      "copy-referred-by-code": "Copiar código de referido por",
       "copy-wallet": "Copiar billetera",
-      "open-settings": "Abrir configuracion",
+      "open-settings": "Abrir configuración",
       "telegram-icon": "Telegram"
     },
     "msg": {
@@ -49,7 +49,8 @@
     "logout": "Cerrar Sesión",
     "email": "Cambiar Correo",
     "notifications": "Notificaciones",
-    "security": "Seguridad"
+    "security": "Seguridad",
+    "polymarket": "Mercados"
   },
   "user": {
     "account": {
@@ -58,16 +59,28 @@
     },
     "cards": {
       "profile": {
-        "title": "Informacion de perfil",
-        "description": "Tus datos personales, correo, wallet."
+        "title": "Información de perfil",
+        "description": "Tus datos personales, correo, wallet.",
+        "cta": "Ver detalles",
+        "badge": "Ver"
       },
       "security": {
         "title": "Seguridad",
-        "description": "Estado, PIN, preguntas de recuperacion y eventos."
+        "description": "Estado, PIN, preguntas de recuperación y eventos.",
+        "cta": "Administrar seguridad",
+        "badge": {
+          "configured": "Configurado",
+          "actionRequired": "Acción requerida"
+        }
       },
       "referrals": {
         "title": "Referidos",
-        "description": "Comparte tu codigo y revisa el uso."
+        "description": "Comparte tu código y revisa el uso.",
+        "cta": "Ver referidos",
+        "badge": {
+          "configured": "Configurado",
+          "addCode": "Agregar código"
+        }
       }
     },
     "profile": {
@@ -79,17 +92,17 @@
       },
       "rows": {
         "name": "Nombre",
-        "phone": "Telefono",
+        "phone": "Teléfono",
         "wallet": "Billetera",
         "email": "Correo"
       }
     },
     "referrals": {
       "title": "Referidos",
-      "description": "Tus codigos y uso de referidos.",
+      "description": "Tus códigos y uso de referidos.",
       "referredCode": {
-        "title": "Codigo referido",
-        "description": "Ingresa el codigo de referido con el que te invitaron."
+        "title": "Código referido",
+        "description": "Ingresa el código de referido con el que te invitaron."
       }
     },
     "security": {
@@ -98,7 +111,7 @@
       "sections": {
         "status": "Estado de seguridad",
         "statusDescription": "Ver información del PIN, intentos fallidos y estado de bloqueo.",
-        "recoveryQuestions": "Preguntas de recuperacion",
+        "recoveryQuestions": "Preguntas de recuperación",
         "recoveryQuestionsDescription": "Actualizar tus preguntas y respuestas de seguridad.",
         "pinManagement": "PIN de seguridad",
         "pinManagementDescription": "Configurar o restablecer tu PIN de seguridad.",
@@ -109,7 +122,7 @@
   },
   "referrals": {
     "title": "Referidos",
-    "description": "Comparte tu cA3digo y vincula a un referente.",
+    "description": "Comparte tu código y vincula a un referente.",
     "my-code": "Tu código de referido",
     "usage-count": "Usado {COUNT} veces",
     "referred-by": "Código de quien te refirió",
@@ -128,69 +141,6 @@
       "user-not-found": "Usuario no encontrado",
       "submit-failed": "No se pudo guardar el código"
     }
-  },
-  "terms": {
-    "title": "Términos y Condiciones",
-    "introduction": {
-      "title": "1. Introducción",
-      "description": "Bienvenido a ChatterPay, una wallet de Web3 para WhatsApp. Al utilizar nuestra aplicación, aceptas cumplir con los siguientes Términos y Condiciones."
-    },
-    "usage": {
-      "title": "2. Uso de ChatterPay",
-      "description": "ChatterPay te permite enviar, recibir y gestionar activos digitales dentro de WhatsApp utilizando tecnología blockchain. Aceptas que eres responsable de las transacciones realizadas."
-    },
-    "security": {
-      "title": "3. Seguridad",
-      "description": "Te comprometes a mantener la confidencialidad de tu cuenta y clave privada. ChatterPay no se responsabiliza por pérdidas debidas a accesos no autorizados."
-    },
-    "privacy_policy": {
-      "title": "4. Política de Privacidad",
-      "description": "Respetamos tu privacidad. Para más información sobre cómo manejamos tus datos personales, consulta nuestra",
-      "link": "Política de Privacidad"
-    },
-    "modifications": {
-      "title": "5. Modificaciones",
-      "description": "ChatterPay se reserva el derecho de modificar estos Términos y Condiciones en cualquier momento. Las actualizaciones serán publicadas en esta página."
-    },
-    "contact": {
-      "title": "6. Contacto",
-      "description": "Si tienes preguntas sobre estos Términos y Condiciones, contáctanos en"
-    },
-    "last_updated": "Última actualización:",
-    "date": "Septiembre 2024"
-  },
-  "policy": {
-    "title": "Política de Privacidad",
-    "introduction": {
-      "title": "1. Introducción",
-      "description": "En ChatterPay, respetamos tu privacidad y estamos comprometidos a proteger tus datos personales. Esta política describe cómo recopilamos, usamos y protegemos tu información."
-    },
-    "data_collection": {
-      "title": "2. Recopilación de Datos",
-      "description": "Recopilamos información personal como tu nombre, dirección de correo electrónico y detalles de las transacciones realizadas en nuestra plataforma."
-    },
-    "data_usage": {
-      "title": "3. Uso de los Datos",
-      "description": "Utilizamos tu información para mejorar nuestros servicios, asegurar la seguridad de las transacciones y ofrecerte una experiencia personalizada."
-    },
-    "third_party": {
-      "title": "4. Compartir con Terceros",
-      "description": "No compartimos tus datos con terceros sin tu consentimiento, excepto cuando sea necesario para cumplir con obligaciones legales."
-    },
-    "security": {
-      "title": "5. Seguridad",
-      "description": "Implementamos medidas de seguridad avanzadas para proteger tus datos personales contra accesos no autorizados y ataques."
-    },
-    "modifications": {
-      "title": "6. Modificaciones",
-      "description": "Nos reservamos el derecho de modificar esta Política de Privacidad en cualquier momento. Las modificaciones serán publicadas en esta página."
-    },
-    "contact": {
-      "title": "7. Contacto",
-      "description": "Si tienes preguntas sobre esta Política de Privacidad, no dudes en contactarnos en"
-    },
-    "last_updated": "Última actualización:",
-    "date": "Septiembre 2024"
   },
   "home": {
     "header": {
@@ -321,6 +271,69 @@
       "whatsapp_message": "¡Hola! Quiero crear una cuenta"
     }
   },
+  "terms": {
+    "title": "Términos y Condiciones",
+    "introduction": {
+      "title": "1. Introducción",
+      "description": "Bienvenido a ChatterPay, una wallet de Web3 para WhatsApp. Al utilizar nuestra aplicación, aceptas cumplir con los siguientes Términos y Condiciones."
+    },
+    "usage": {
+      "title": "2. Uso de ChatterPay",
+      "description": "ChatterPay te permite enviar, recibir y gestionar activos digitales dentro de WhatsApp utilizando tecnología blockchain. Aceptas que eres responsable de las transacciones realizadas."
+    },
+    "security": {
+      "title": "3. Seguridad",
+      "description": "Te comprometes a mantener la confidencialidad de tu cuenta y clave privada. ChatterPay no se responsabiliza por pérdidas debidas a accesos no autorizados."
+    },
+    "privacy_policy": {
+      "title": "4. Política de Privacidad",
+      "description": "Respetamos tu privacidad. Para más información sobre cómo manejamos tus datos personales, consulta nuestra",
+      "link": "Política de Privacidad"
+    },
+    "modifications": {
+      "title": "5. Modificaciones",
+      "description": "ChatterPay se reserva el derecho de modificar estos Términos y Condiciones en cualquier momento. Las actualizaciones serán publicadas en esta página."
+    },
+    "contact": {
+      "title": "6. Contacto",
+      "description": "Si tienes preguntas sobre estos Términos y Condiciones, contáctanos en"
+    },
+    "last_updated": "Última actualización:",
+    "date": "Septiembre 2024"
+  },
+  "policy": {
+    "title": "Política de Privacidad",
+    "introduction": {
+      "title": "1. Introducción",
+      "description": "En ChatterPay, respetamos tu privacidad y estamos comprometidos a proteger tus datos personales. Esta política describe cómo recopilamos, usamos y protegemos tu información."
+    },
+    "data_collection": {
+      "title": "2. Recopilación de Datos",
+      "description": "Recopilamos información personal como tu nombre, dirección de correo electrónico y detalles de las transacciones realizadas en nuestra plataforma."
+    },
+    "data_usage": {
+      "title": "3. Uso de los Datos",
+      "description": "Utilizamos tu información para mejorar nuestros servicios, asegurar la seguridad de las transacciones y ofrecerte una experiencia personalizada."
+    },
+    "third_party": {
+      "title": "4. Compartir con Terceros",
+      "description": "No compartimos tus datos con terceros sin tu consentimiento, excepto cuando sea necesario para cumplir con obligaciones legales."
+    },
+    "security": {
+      "title": "5. Seguridad",
+      "description": "Implementamos medidas de seguridad avanzadas para proteger tus datos personales contra accesos no autorizados y ataques."
+    },
+    "modifications": {
+      "title": "6. Modificaciones",
+      "description": "Nos reservamos el derecho de modificar esta Política de Privacidad en cualquier momento. Las modificaciones serán publicadas en esta página."
+    },
+    "contact": {
+      "title": "7. Contacto",
+      "description": "Si tienes preguntas sobre esta Política de Privacidad, no dudes en contactarnos en"
+    },
+    "last_updated": "Última actualización:",
+    "date": "Septiembre 2024"
+  },
   "login": {
     "title": "Iniciar sesión en ChatterPay",
     "new-user": "¿Nuevo usuario?",
@@ -363,6 +376,62 @@
     "show-address": "Ver mi dirección en Scroll",
     "back-to-deposit": "Volver a depositar"
   },
+  "withdraw": {
+    "title": "Retirar",
+    "source-token": "Token",
+    "amount": "Monto",
+    "max": "Máx",
+    "available": "Disponible",
+    "destination": "Destino",
+    "phone": "Número de teléfono",
+    "address": "Dirección de billetera",
+    "network": "Red",
+    "dest-token": "Recibir como",
+    "send-via-whatsapp": "Enviar por WhatsApp",
+    "invalid-amount": "Monto inválido",
+    "exceeds-balance": "El monto excede el saldo disponible",
+    "invalid-address": "Dirección inválida para la red seleccionada",
+    "invalid-phone": "Número de teléfono inválido",
+    "same-as-source": "Igual al origen",
+    "step-amount": "Monto",
+    "step-destination": "Destino",
+    "step-review": "Revisar",
+    "next": "Continuar",
+    "back": "Volver",
+    "search-tokens": "Buscar tokens...",
+    "sending": "Enviando",
+    "to": "A",
+    "on-network": "en",
+    "no-tokens": "No se encontraron tokens",
+    "select-token": "Seleccionar token",
+    "recent-sends": "Recientes",
+    "paste": "Pegar",
+    "resolving-ens": "Resolviendo...",
+    "usd-value": "Valor USD",
+    "fee": "Tarifa de transacción",
+    "you-receive": "Recibes",
+    "you-send": "Envías",
+    "amount-receive": "Monto a recibir"
+  },
+  "swap": {
+    "title": "Intercambiar",
+    "from": "Desde",
+    "to": "Hacia",
+    "amount": "Monto",
+    "max": "Máx",
+    "available": "Disponible",
+    "search-tokens": "Buscar tokens...",
+    "no-tokens": "No se encontraron tokens",
+    "select-token": "Seleccionar token",
+    "estimated-output": "Resultado estimado",
+    "rate": "Tasa",
+    "fee": "Tarifa de transacción",
+    "swap-via-whatsapp": "Intercambiar por WhatsApp",
+    "invalid-amount": "Monto inválido",
+    "exceeds-balance": "El monto excede el saldo disponible",
+    "fetching-quote": "Obteniendo cotización...",
+    "no-quote": "Cotización no disponible para este par"
+  },
   "balances": {
     "title": "Tu dinero",
     "deposit": "Depositar",
@@ -387,7 +456,11 @@
     "table-print": "Imprimir",
     "table-share": "Compartir",
     "receive-from": "Recibiste de",
-    "sent-to": "Enviaste a"
+    "sent-to": "Enviaste a",
+    "polymarket-buy": "Polymarket Compra",
+    "polymarket-sell": "Polymarket Venta",
+    "polymarket-transfer-to": "Transferencia a Polymarket",
+    "polymarket-transfer-from": "Transferencia desde Polymarket"
   },
   "nfts": {
     "view-trx": "Ver detalles de la transacción",
@@ -422,7 +495,7 @@
     "change-email": "Cambiar",
     "profile": {
       "title": "Perfil",
-      "description": "Revisa los datos bA!sicos de tu cuenta."
+      "description": "Revisa los datos básicos de tu cuenta."
     },
     "email": {
       "title": "Correo",
@@ -498,7 +571,6 @@
         "date": "Fecha",
         "type": "Tipo",
         "channel": "Canal",
-        "message": "Mensaje",
         "details": "Detalles"
       },
       "empty": {
@@ -512,7 +584,7 @@
         "QUESTIONS_UPDATED": "Preguntas actualizadas",
         "PIN_RESET": "PIN restablecido",
         "PIN_BLOCKED": "PIN bloqueado",
-        "PIN_VERIFY_FAILED": "Verificacion de PIN fallida",
+        "PIN_VERIFY_FAILED": "Verificación de PIN fallida",
         "PIN_RESET_FAILED": "Fallo al restablecer PIN",
         "QUESTIONS_SET": "Preguntas configuradas",
         "PIN_SET": "PIN configurado"
@@ -550,24 +622,24 @@
       }
     },
     "2fa": {
-      "title": "Verificacion WhatsApp",
-      "description": "Verifica con un codigo enviado a tu WhatsApp antes de continuar.",
-      "sendCode": "Enviar codigo a WhatsApp para validar",
-      "verifyCode": "Verificar codigo",
-      "codeLabel": "Codigo de verificacion",
-      "code-message": "Ingresa este codigo {2FA_CODE} para validar tu accion de seguridad en Chatterpay. No compartas este codigo con nadie. Si no lo solicitaste, ignora este mensaje y contactanos.",
-      "code-sent": "Codigo de verificacion enviado",
+      "title": "Verificación WhatsApp",
+      "description": "Verifica con un código enviado a tu WhatsApp antes de continuar.",
+      "sendCode": "Enviar código a WhatsApp para validar",
+      "verifyCode": "Verificar código",
+      "codeLabel": "Código de verificación",
+      "code-message": "Ingresa este código {2FA_CODE} para validar tu acción de seguridad en Chatterpay. No compartas este código con nadie. Si no lo solicitaste, ignora este mensaje y contáctanos.",
+      "code-sent": "Código de verificación enviado",
       "errors": {
-        "invalid": "Codigo de verificacion invalido.",
-        "expired": "El codigo expiro. Solicita uno nuevo.",
-        "generic": "No se pudo verificar el codigo. Intenta nuevamente."
+        "invalid": "Código de verificación inválido.",
+        "expired": "El código expiró. Solicita uno nuevo.",
+        "generic": "No se pudo verificar el código. Intenta nuevamente."
       }
     },
     "blocked": {
       "now": "Ahora",
       "unlockAt": "Desbloquea en",
       "remaining": "Tiempo restante",
-      "tryAgainAfter": "El PIN esta bloqueado."
+      "tryAgainAfter": "El PIN está bloqueado."
     },
     "actions": {
       "set-pin": "Configurar PIN",
@@ -592,7 +664,6 @@
     "validation": {
       "select-exactly": "Selecciona exactamente {COUNT} preguntas.",
       "unique-questions": "Las preguntas deben ser únicas.",
-      "pin-format": "El PIN debe tener exactamente 6 dígitos.",
       "pin-match": "Los PIN deben coincidir.",
       "answers-required": "Las respuestas son obligatorias."
     }
@@ -665,6 +736,150 @@
         "description": "Accedé a ChatterPay directamente desde Telegram. Consultá tu billetera y saldo sin salir del chat: rápido, seguro y privado."
       }
     }
+  },
+  "polymarket": {
+    "categories": {
+      "politics": "Política",
+      "sports": "Deportes",
+      "crypto": "Cripto",
+      "esports": "Esports",
+      "finance": "Finanzas",
+      "geopolitics": "Geopolítica",
+      "tech": "Tecnología",
+      "pop-culture": "Cultura",
+      "economy": "Economía",
+      "weather": "Clima"
+    },
+    "title": "Mercados de Predicción",
+    "subtitle": "Opera sobre el resultado de eventos del mundo real. Impulsado por Polymarket.",
+    "trending": "Mercados Tendencia Hoy",
+    "all-markets": "Todas las Predicciones",
+    "no-markets": "No hay predicciones disponibles",
+    "market-detail": "Detalle del Mercado",
+    "market-not-found": "Mercado no encontrado",
+    "back-to-markets": "Volver a Mercados",
+    "current-prices": "Precios Actuales",
+    "market-stats": "Estadísticas del Mercado",
+    "volume": "Volumen",
+    "volume-24h": "Volumen 24h",
+    "liquidity": "Liquidez",
+    "end-date": "Fecha de Finalización",
+    "trade": "Hacer Predicción",
+    "pick-outcome": "Elegir un resultado",
+    "amount": "Monto",
+    "shares": "Acciones Est.",
+    "potential-return": "Retorno Potencial",
+    "potential-profit": "Retorno Potencial",
+    "buy": "Comprar",
+    "placing": "Enviando orden...",
+    "order-placed": "¡Orden enviada exitosamente!",
+    "order-error": "No se pudo enviar la orden",
+    "cancel": "Cancelar",
+    "portfolio-title": "Mi Portafolio",
+    "browse-markets": "Explorar Mercados",
+    "total-value": "Valor Total",
+    "open-positions": "Posiciones Abiertas",
+    "active-positions": "Posiciones Activas",
+    "no-positions": "No hay posiciones abiertas",
+    "no-positions-market": "No hay posiciones activas para este mercado.",
+    "market": "Mercado",
+    "outcome": "Resultado",
+    "size": "Tamaño",
+    "avg-price": "Precio Promedio",
+    "current": "Actual",
+    "pnl": "P&L",
+    "side": "Lado",
+    "price": "Precio",
+    "actions": "Acciones",
+    "recommended": "Recomendado",
+    "newest": "Más Reciente",
+    "ending-soon": "Termina Pronto",
+    "all": "Todo",
+    "ends": "Termina",
+    "ends-label": "Termina:",
+    "more-options": "más opción(es)",
+    "transaction-in-progress": "Transacción en progreso...",
+    "transaction-failed": "Transacción fallida",
+    "profit-loss": "Ganancia / Pérdida",
+    "total-volume": "Volumen Total",
+    "portfolio-value": "Valor del Portafolio",
+    "pnl-history": "Historial de P&L",
+    "no-pnl-data": "Aún no hay datos de P&L disponibles.",
+    "available": "Disponible",
+    "available-in-polygon": "disponible en Polygon Safe",
+    "claim-all-scroll": "Reclamar todo a Scroll",
+    "claiming": "Reclamando...",
+    "trade-history": "Historial de Operaciones",
+    "odds-time": "Probabilidades en el tiempo (%)",
+    "current-odds": "Probabilidades actuales",
+    "how-it-works": "Cómo funciona",
+    "how-it-works-desc": "Elige quién crees que ganará. Si aciertas, recuperarás tu dinero más tu retorno. Si te equivocas, no recuperas nada.",
+    "market-closes": "El mercado cierra el",
+    "back": "Atrás",
+    "vol": "Vol:",
+    "market-details": "Detalles del Mercado",
+    "my-activity": "Mi Actividad",
+    "open-orders": "Órdenes Abiertas",
+    "no-orders": "No hay órdenes abiertas",
+    "no-orders-market": "No hay órdenes activas.",
+    "sell-completed": "Venta completada",
+    "sell-failed": "Venta fallida",
+    "error-executing-sell": "Error al ejecutar la venta",
+    "order-cancelled": "Orden Cancelada",
+    "event-not-found": "Evento no encontrado",
+    "back-to-hub": "Volver al Hub",
+    "got-it": "Entendido",
+    "about": "Sobre",
+    "about-event": "Sobre este evento",
+    "predict-on": "Predecir en",
+    "making-predictions": "Haz tus predicciones en Polymarket",
+    "just-with-whatsapp": "¡Solo con WhatsApp!",
+    "trending-today": "Tendencia de Hoy:",
+    "creating-account": "Creando cuenta",
+    "submitting": "Enviando",
+    "bridging-funds": "Transfiriendo fondos",
+    "placing-order": "Haciendo pedido",
+    "complete": "Completado",
+    "chance": "de probabilidad",
+    "token-id-not-found": "ID de token no encontrado",
+    "sell": "Vender",
+    "sell-all": "Vender todo",
+    "partial-sell": "Venta parcial",
+    "sell-x-shares": "Vender {{amount}} acciones",
+    "portfolio-overview": "Resumen del Portafolio",
+    "no-idle-funds": "No hay fondos inactivos para reclamar",
+    "claiming-funds-desc": "Reclamando fondos... Esto puede tardar un minuto.",
+    "balance-updated": "Saldo de Scroll Wallet Actualizado",
+    "error-claiming": "Error al reclamar fondos",
+    "date": "Fecha",
+    "tx": "TX",
+    "you-get-back": "Recibirás de vuelta ${{amount}}",
+    "prediction-summary": "Tu predicción: ${{amount}} + ${{profit}} si aciertas",
+    "placing-prediction": "Haciendo predicción...",
+    "predict-cta": "Predecir {{amount}} en {{outcome}}",
+    "predict-question-header": "¿Quién crees que gana?",
+    "predict-amount-header": "¿Cuánto quieres poner?",
+    "if-outcome-wins": "Si ganas con {{outcome}}...",
+    "predict-question-yn": "¿CREES QUE GANARÁ?",
+    "total-pnl": "P&L Total",
+    "predict-question": "¿Quién crees que ganará?",
+    "predict-amount": "¿Cuánto quieres predecir?",
+    "setup-required": "Debes configurar tu cuenta de Polymarket antes de operar.",
+    "setup-title": "Comienza con los Mercados de Predicción",
+    "setup-description": "Crea tu billetera de Polymarket para comenzar a operar sobre resultados de eventos.",
+    "create-wallet": "Crear Billetera de Polymarket",
+    "creating": "Creando...",
+    "account-create-error": "No se pudo crear la cuenta",
+    "terms-title": "Aceptar Términos de Servicio",
+    "terms-description": "Revisa y acepta los términos de servicio de Polymarket para comenzar a operar.",
+    "accept-terms": "Revisar Términos",
+    "terms-dialog-title": "Términos de Servicio de Polymarket",
+    "terms-content-1": "Al usar Polymarket a través de ChatterPay, aceptas cumplir con los Términos de Servicio de Polymarket y las regulaciones aplicables.",
+    "terms-content-2": "Los mercados de predicción implican riesgo financiero. Puedes perder parte o la totalidad de tu inversión. Solo opera con fondos que puedas permitirte perder.",
+    "terms-content-3": "ChatterPay actúa como interfaz para Polymarket. Todas las operaciones se ejecutan en la cadena y son irreversibles una vez confirmadas.",
+    "terms-error": "No se pudieron aceptar los términos",
+    "agree-continue": "Aceptar y Continuar",
+    "accepting": "Aceptando..."
   },
   "layerswapDeposit": {
     "title": "Depositar en ChatterPay",

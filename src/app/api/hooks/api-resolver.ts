@@ -151,6 +151,38 @@ export const endpoints = {
       }
     }
   },
+  polymarket: {
+    categories: () => getFullUIEndpoint('polymarket/categories'),
+    events: (params?: string) =>
+      getFullUIEndpoint(`polymarket/events${params ? `?${params}` : ''}`),
+    markets: (params?: string) =>
+      getFullUIEndpoint(`polymarket/markets${params ? `?${params}` : ''}`),
+    marketBySlug: (slug: string) => getFullUIEndpoint(`polymarket/markets/${slug}`),
+    search: (query: string) =>
+      getFullUIEndpoint(`polymarket/search?query=${encodeURIComponent(query)}`),
+    account: {
+      status: () => getFullUIEndpoint('polymarket/account/status'),
+      create: () => getFullUIEndpoint('polymarket/account/create'),
+      acceptTerms: () => getFullUIEndpoint('polymarket/account/accept-terms')
+    },
+    order: {
+      place: () => getFullUIEndpoint('polymarket/order/place'),
+      cancel: () => getFullUIEndpoint('polymarket/order/cancel')
+    },
+    purchase: {
+      root: () => getFullUIEndpoint('polymarket/purchase'),
+      status: () => getFullUIEndpoint('polymarket/purchase/status')
+    },
+    bridge: {
+      withdraw: () => getFullUIEndpoint('polymarket/bridge/withdraw')
+    },
+    positions: () => getFullUIEndpoint('polymarket/positions'),
+    closedPositions: () => getFullUIEndpoint('polymarket/positions/closed'),
+    orders: () => getFullUIEndpoint('polymarket/orders'),
+    portfolio: () => getFullUIEndpoint('polymarket/portfolio'),
+    trades: () => getFullUIEndpoint('polymarket/trades'),
+    pnlHistory: () => getFullUIEndpoint('polymarket/pnl/history')
+  },
   backend_bot: {
     sendMessage: () => getFullBotEndpoint('chatbot/conversations/send-message')
   }

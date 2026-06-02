@@ -8,6 +8,7 @@ export const varBgColor = (props?: BackgroundType) => {
   const ease = props?.ease || 'linear'
 
   return {
+    /* eslint-disable-next-line */ ...({} as any),
     animate: {
       background: colors,
       transition: { duration, ease }
@@ -22,6 +23,7 @@ export const varBgKenburns = (props?: BackgroundType) => {
   const ease = props?.ease || 'easeOut'
 
   return {
+    /* eslint-disable-next-line */ ...({} as any),
     top: {
       animate: {
         scale: [1, 1.25],
@@ -69,6 +71,7 @@ export const varBgPan = (props?: BackgroundType) => {
   const gradient = (deg: number) => `linear-gradient(${deg}deg, ${colors})`
 
   return {
+    /* eslint-disable-next-line */ ...({} as any),
     top: {
       animate: {
         backgroundImage: [gradient(0), gradient(0)],

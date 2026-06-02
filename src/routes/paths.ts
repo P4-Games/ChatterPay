@@ -43,6 +43,11 @@ export const paths = {
     transfer: {
       all: `${ROOTS.DASHBOARD}/transfer/all`
     },
+    polymarket: {
+      root: `${ROOTS.DASHBOARD}/polymarket`,
+      detail: (slug: string) => `${ROOTS.DASHBOARD}/polymarket/${slug}`,
+      event: (id: string) => `${ROOTS.DASHBOARD}/polymarket/event/${id}`
+    },
     user: {
       root: `${ROOTS.DASHBOARD}/user`,
       account: `${ROOTS.DASHBOARD}/user/account`,
