@@ -17,7 +17,6 @@ steps:
       - BOT_API_URL=${_BOT_API_URL}
       - BOT_API_WAPP_ENABLED=${_BOT_API_WAPP_ENABLED}
       - BACKEND_API_URL=${_BACKEND_API_URL}
-      - BACKEND_API_TOKEN=${_BACKEND_API_TOKEN}
       - NODE_PROVIDER_SEPOLIA_URL=${_NODE_PROVIDER_SEPOLIA_URL}
       - NODE_PROVIDER_MUMBAI_URL=${_NODE_PROVIDER_MUMBAI_URL}
       - NODE_PROVIDER_SCROLL_URL=${_NODE_PROVIDER_SCROLL_URL}
@@ -42,7 +41,7 @@ steps:
       - NEXT_PUBLIC_SECURITY_RECOVERY_QUESTIONS_COUNT=${_NEXT_PUBLIC_SECURITY_RECOVERY_QUESTIONS_COUNT}
       - NEXT_PUBLIC_SECURITY_PIN_LENGTH=${_NEXT_PUBLIC_SECURITY_PIN_LENGTH}
     secretEnv: [
-      'BACKEND_API_TOKEN_SECRET'
+      'BACKEND_API_TOKEN'
     ]
   #
   # Build docker imagen.
@@ -69,8 +68,7 @@ steps:
       '--build-arg', 'BOT_API_URL=${_BOT_API_URL}',
       '--build-arg', 'BOT_API_WAPP_ENABLED=${_BOT_API_WAPP_ENABLED}',
       '--build-arg', 'BACKEND_API_URL=${_BACKEND_API_URL}',
-      '--build-arg', 'BACKEND_API_TOKEN=${_BACKEND_API_TOKEN}',
-      '--build-arg', 'BACKEND_API_TOKEN_SECRET=$$BACKEND_API_TOKEN_SECRET',
+      '--build-arg', 'BACKEND_API_TOKEN=$$BACKEND_API_TOKEN',
       '--build-arg', 'NODE_PROVIDER_SEPOLIA_URL=${_NODE_PROVIDER_SEPOLIA_URL}',
       '--build-arg', 'NODE_PROVIDER_MUMBAI_URL=${_NODE_PROVIDER_MUMBAI_URL}',
       '--build-arg', 'NODE_PROVIDER_SCROLL_URL=${_NODE_PROVIDER_SCROLL_URL}',
@@ -93,7 +91,7 @@ steps:
       '.'
     ]  
     secretEnv: [
-      'BACKEND_API_TOKEN_SECRET'
+      'BACKEND_API_TOKEN'
     ]
 
   #
@@ -126,20 +124,11 @@ steps:
       '--quiet',
       '--allow-unauthenticated',
     ]
-  #
-  # print secret variables
-  #
-  - name: 'bash'
-    script: |
-      #!/usr/bin/env bash
-    secretEnv: [
-      'BACKEND_API_TOKEN_SECRET'
-    ]
 
 availableSecrets:
   secretManager:
     - versionName: 'projects/$PROJECT_ID/secrets/${_BACKEND_API_TOKEN_SECRET_NAME}/versions/latest'
-      env: 'BACKEND_API_TOKEN_SECRET'
+      env: 'BACKEND_API_TOKEN'
 
 images:
   - $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
