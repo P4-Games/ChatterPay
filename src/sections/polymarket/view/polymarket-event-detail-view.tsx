@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { m } from 'framer-motion'
 
 import Box from '@mui/material/Box'
@@ -60,9 +60,17 @@ export default function PolymarketEventDetailView({ eventId }: Props) {
   const settings = useSettingsContext()
   const [aboutOpen, setAboutOpen] = useState(false)
 
-  // Find the event from the cached events data
-  const { events, isLoading } = useGetPolymarketEventsInfinite()
+  // Find the event from the cached events data, auto-loading more pages if needed
+  const { events, isLoading, isLoadingMore, hasMore, loadMore } = useGetPolymarketEventsInfinite()
   const event: IPolymarketEvent | undefined = events.find((e) => e.id === eventId)
+
+  useEffect(() => {
+    if (!event && !isLoading && !isLoadingMore && hasMore) {
+      loadMore()
+    }
+  }, [event, isLoading, isLoadingMore, hasMore, loadMore])
+
+  const isSearching = !event && (isLoading || isLoadingMore || hasMore)
 
   const totalVolume = event?.markets.reduce((sum, m) => sum + (m.volume || 0), 0) || 0
 
@@ -73,7 +81,7 @@ export default function PolymarketEventDetailView({ eventId }: Props) {
     )[0]?.end_date_iso
 
   // Loading skeleton
-  if (isLoading) {
+  if (isLoading || isSearching) {
     return (
       <Box
         sx={{

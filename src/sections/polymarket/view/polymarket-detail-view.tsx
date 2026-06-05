@@ -37,6 +37,7 @@ import { useTranslate } from 'src/locales'
 import { useResponsive } from 'src/hooks/use-responsive'
 import {
   useGetPolymarketMarket,
+  useGetPolymarketEventsInfinite,
   polymarketPurchase,
   useGetWalletBalance,
   polymarketPurchaseStatus,
@@ -163,7 +164,13 @@ export default function PolymarketDetailView({ slug }: Props) {
   const { mutate } = useSWRConfig()
 
   const { data, isLoading } = useGetPolymarketMarket(slug)
-  const market: IPolymarketMarket | null = data?.data || null
+  const { events } = useGetPolymarketEventsInfinite()
+  const marketFromApi: IPolymarketMarket | null = data?.data || null
+  const marketFromCache: IPolymarketMarket | null =
+    !marketFromApi && !isLoading
+      ? events.flatMap((e) => e.markets).find((m) => m.slug === slug) ?? null
+      : null
+  const market: IPolymarketMarket | null = marketFromApi || marketFromCache
 
   // Wallet balance
   const walletAddress = user?.wallet || ''
