@@ -168,7 +168,7 @@ export default function PolymarketDetailView({ slug }: Props) {
   const marketFromApi: IPolymarketMarket | null = data?.data || null
   const marketFromCache: IPolymarketMarket | null =
     !marketFromApi && !isLoading
-      ? events.flatMap((e) => e.markets).find((m) => m.slug === slug) ?? null
+      ? (events.flatMap((e) => e.markets).find((m) => m.slug === slug) ?? null)
       : null
   const market: IPolymarketMarket | null = marketFromApi || marketFromCache
 
