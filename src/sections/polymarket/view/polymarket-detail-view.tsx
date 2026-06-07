@@ -37,6 +37,7 @@ import { useTranslate } from 'src/locales'
 import { useResponsive } from 'src/hooks/use-responsive'
 import {
   useGetPolymarketMarket,
+  useGetPolymarketEventsInfinite,
   polymarketPurchase,
   useGetWalletBalance,
   polymarketPurchaseStatus,
@@ -163,7 +164,13 @@ export default function PolymarketDetailView({ slug }: Props) {
   const { mutate } = useSWRConfig()
 
   const { data, isLoading } = useGetPolymarketMarket(slug)
-  const market: IPolymarketMarket | null = data?.data || null
+  const { events } = useGetPolymarketEventsInfinite()
+  const marketFromApi: IPolymarketMarket | null = data?.data || null
+  const marketFromCache: IPolymarketMarket | null =
+    !marketFromApi && !isLoading
+      ? (events.flatMap((e) => e.markets).find((m) => m.slug === slug) ?? null)
+      : null
+  const market: IPolymarketMarket | null = marketFromApi || marketFromCache
 
   // Wallet balance
   const walletAddress = user?.wallet || ''
@@ -1271,15 +1278,22 @@ export default function PolymarketDetailView({ slug }: Props) {
                   <Typography variant='subtitle1' fontWeight={700}>
                     {t('polymarket.open-positions')}
                   </Typography>
-                  <Chip
-                    label={marketPositions.length}
-                    size='small'
+                  <Box
                     sx={{
-                      fontWeight: 700,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: 22,
+                      height: 22,
+                      borderRadius: '50%',
                       bgcolor: alpha(theme.palette.primary.main, 0.16),
-                      color: 'primary.main'
+                      color: 'primary.main',
+                      fontWeight: 700,
+                      fontSize: 12
                     }}
-                  />
+                  >
+                    {marketPositions.length}
+                  </Box>
                 </Stack>
                 {marketPositions.length === 0 ? (
                   <Stack alignItems='center' spacing={1.5} sx={{ py: 4 }}>
@@ -1404,15 +1418,22 @@ export default function PolymarketDetailView({ slug }: Props) {
                   <Typography variant='subtitle1' fontWeight={700}>
                     {t('polymarket.open-orders')}
                   </Typography>
-                  <Chip
-                    label={activePurchases.length + marketOrders.length}
-                    size='small'
+                  <Box
                     sx={{
-                      fontWeight: 700,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: 22,
+                      height: 22,
+                      borderRadius: '50%',
                       bgcolor: alpha(theme.palette.warning.main, 0.16),
-                      color: 'warning.main'
+                      color: 'warning.main',
+                      fontWeight: 700,
+                      fontSize: 12
                     }}
-                  />
+                  >
+                    {activePurchases.length + marketOrders.length}
+                  </Box>
                 </Stack>
                 {activePurchases.length === 0 && marketOrders.length === 0 ? (
                   <Stack alignItems='center' spacing={1.5} sx={{ py: 4 }}>
@@ -1475,19 +1496,27 @@ export default function PolymarketDetailView({ slug }: Props) {
                           </TableCell>
                           <TableCell align='right'>
                             <Chip
-                              icon={
-                                <CircularProgress size={12} sx={{ color: 'inherit !important' }} />
+                              label={
+                                <Box
+                                  component='span'
+                                  sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}
+                                >
+                                  <CircularProgress
+                                    size={10}
+                                    sx={{
+                                      color: 'inherit !important',
+                                      display: 'block',
+                                      mt: '1px'
+                                    }}
+                                  />
+                                  {STEP_LABELS[ap.current_step] || ap.current_step}
+                                </Box>
                               }
-                              label={STEP_LABELS[ap.current_step] || ap.current_step}
                               size='small'
                               sx={{
                                 fontWeight: 600,
                                 bgcolor: theme.palette.text.primary,
                                 color: theme.palette.background.paper,
-                                px: 1,
-                                gap: 0.5,
-                                '& .MuiChip-icon': { color: 'inherit', ml: 0 },
-                                '& .MuiChip-label': { px: 0 },
                                 pointerEvents: 'none'
                               }}
                             />
@@ -1582,15 +1611,22 @@ export default function PolymarketDetailView({ slug }: Props) {
                       <Typography variant='subtitle1' fontWeight={700}>
                         {t('polymarket.trade-history')}
                       </Typography>
-                      <Chip
-                        label={marketTrades.length}
-                        size='small'
+                      <Box
                         sx={{
-                          fontWeight: 700,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          width: 22,
+                          height: 22,
+                          borderRadius: '50%',
                           bgcolor: alpha(theme.palette.info.main, 0.16),
-                          color: 'info.main'
+                          color: 'info.main',
+                          fontWeight: 700,
+                          fontSize: 12
                         }}
-                      />
+                      >
+                        {marketTrades.length}
+                      </Box>
                     </Stack>
                   </Stack>
                   <Table>

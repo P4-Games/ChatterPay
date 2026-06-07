@@ -405,15 +405,22 @@ export default function PolymarketPortfolio() {
           <Typography variant='h6' fontWeight={700}>
             {t('polymarket.open-positions')}
           </Typography>
-          <Chip
-            label={positions.length}
-            size='small'
+          <Box
             sx={{
-              fontWeight: 700,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 22,
+              height: 22,
+              borderRadius: '50%',
               bgcolor: alpha(theme.palette.primary.main, 0.16),
-              color: 'primary.main'
+              color: 'primary.main',
+              fontWeight: 700,
+              fontSize: 12
             }}
-          />
+          >
+            {positions.length}
+          </Box>
         </Stack>
 
         {positions.filter(
@@ -577,15 +584,22 @@ export default function PolymarketPortfolio() {
           <Typography variant='h6' fontWeight={700}>
             {t('polymarket.open-orders')}
           </Typography>
-          <Chip
-            label={activePurchases.length + orders.length}
-            size='small'
+          <Box
             sx={{
-              fontWeight: 700,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 22,
+              height: 22,
+              borderRadius: '50%',
               bgcolor: alpha(theme.palette.warning.main, 0.16),
-              color: 'warning.main'
+              color: 'warning.main',
+              fontWeight: 700,
+              fontSize: 12
             }}
-          />
+          >
+            {activePurchases.length + orders.length}
+          </Box>
         </Stack>
 
         {activePurchases.length === 0 && orders.length === 0 ? (
@@ -667,14 +681,23 @@ export default function PolymarketPortfolio() {
                     </TableCell>
                     <TableCell align='right'>
                       <Chip
-                        icon={<CircularProgress size={12} sx={{ color: 'inherit !important' }} />}
-                        label={t(STEP_LABELS[ap.current_step] || ap.current_step)}
+                        label={
+                          <Box
+                            component='span'
+                            sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}
+                          >
+                            <CircularProgress
+                              size={10}
+                              sx={{ color: 'inherit !important', display: 'block', mt: '1px' }}
+                            />
+                            {t(STEP_LABELS[ap.current_step] || ap.current_step)}
+                          </Box>
+                        }
                         size='small'
                         sx={{
                           fontWeight: 600,
                           bgcolor: theme.palette.text.primary,
                           color: theme.palette.background.paper,
-                          '& .MuiChip-icon': { color: 'inherit' },
                           pointerEvents: 'none'
                         }}
                       />
