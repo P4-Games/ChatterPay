@@ -14,6 +14,8 @@ import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
 import CircularProgress from '@mui/material/CircularProgress'
 import ButtonGroup from '@mui/material/ButtonGroup'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
 import Popover from '@mui/material/Popover'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
@@ -62,7 +64,7 @@ import type { AuthUserType } from 'src/auth/types'
 
 // ----------------------------------------------------------------------
 
-const PRESET_AMOUNTS = [10, 25, 50, 100]
+const PRESET_AMOUNTS = [1, 5, 10, 50, 100]
 
 const OUTCOME_COLORS_LIGHT = [
   '#1B1B1B', // Black
@@ -208,6 +210,7 @@ export default function PolymarketDetailView({ slug }: Props) {
   const [activePurchases, setActivePurchases] = useState<ActivePurchase[]>([])
   const [soldPositionKeys, setSoldPositionKeys] = useState<Set<string>>(new Set())
   const [partialSellAnchor, setPartialSellAnchor] = useState<HTMLElement | null>(null)
+  const [tokenMenuAnchor, setTokenMenuAnchor] = useState<HTMLElement | null>(null)
   const [partialSellPos, setPartialSellPos] = useState<IPolymarketPosition | null>(null)
   const [partialSellAmount, setPartialSellAmount] = useState('')
   const [optimisticPositions, setOptimisticPositions] = useState<IPolymarketPosition[]>([])
@@ -460,7 +463,7 @@ export default function PolymarketDetailView({ slug }: Props) {
         size: tokenQuantity,
         price: selectedPrice,
         bridge_amount: bridgeAmountWei,
-        token: effectiveToken || undefined
+        bridge_token: effectiveToken || balanceTokenSymbol
       })
 
       if (result.ok) {
@@ -473,13 +476,17 @@ export default function PolymarketDetailView({ slug }: Props) {
             if (!currentData || !Array.isArray(currentData.balances)) return currentData
             return {
               ...currentData,
-              balances: currentData.balances.map((b: any) => ({
-                ...b,
-                balance_conv: {
-                  ...b.balance_conv,
-                  usd: Math.max(0, (b.balance_conv?.usd || 0) - amount)
-                }
-              })),
+              balances: currentData.balances.map((b: any) =>
+                b.token === effectiveToken
+                  ? {
+                      ...b,
+                      balance_conv: {
+                        ...b.balance_conv,
+                        usd: Math.max(0, (b.balance_conv?.usd || 0) - amount)
+                      }
+                    }
+                  : b
+              ),
               totals: {
                 ...currentData.totals,
                 usd: Math.max(0, (currentData.totals?.usd || 0) - amount)
@@ -800,79 +807,48 @@ export default function PolymarketDetailView({ slug }: Props) {
             {t('polymarket.predict-amount-header')}
           </Typography>
 
-          {/* Token selector */}
-          {availableTokens.length > 1 && (
-            <Box sx={{ mb: 2 }}>
-              <Typography
-                variant='caption'
-                color='text.secondary'
-                sx={{ mb: 1, display: 'block', fontWeight: 600 }}
-              >
-                {t('polymarket.pay-with')}
-              </Typography>
-              <Stack direction='row' spacing={1} flexWrap='wrap' useFlexGap>
-                {availableTokens.map((tok) => {
-                  const isSelected = effectiveToken === tok.token
-                  return (
-                    <Chip
-                      key={tok.token}
-                      label={`${tok.token} $${fNumber(tok.balance_conv.usd)}`}
-                      size='small'
-                      onClick={() => setSelectedToken(tok.token)}
-                      variant={isSelected ? 'filled' : 'outlined'}
-                      color={isSelected ? 'primary' : 'default'}
-                      sx={{ fontWeight: isSelected ? 700 : 500, fontSize: '0.78rem' }}
-                    />
-                  )
-                })}
-              </Stack>
-            </Box>
-          )}
-
           {/* Preset pills */}
-          {dynamicPresets.length > 0 && (
-            <Stack direction='row' spacing={1} sx={{ mb: 2.5 }}>
-              {dynamicPresets.map((preset) => {
-                const isActive = amount === preset
-                return (
-                  <Button
-                    key={preset}
-                    variant={isActive ? 'contained' : 'outlined'}
-                    onClick={() => handlePresetClick(preset)}
-                    sx={{
-                      minWidth: 64,
-                      fontWeight: 700,
-                      fontSize: '0.85rem',
-                      borderRadius: 50,
-                      textTransform: 'none',
-                      px: 2.5,
-                      py: 1,
-                      ...(isActive
-                        ? {
-                            bgcolor: isDark ? theme.palette.grey[200] : '#1B1B1B',
-                            color: isDark ? theme.palette.grey[900] : '#fff',
-                            boxShadow: 'none',
-                            '&:hover': {
-                              bgcolor: isDark ? theme.palette.grey[300] : '#333',
-                              boxShadow: 'none'
-                            }
+          <Stack direction='row' spacing={1} sx={{ mb: 2.5 }} flexWrap='wrap' useFlexGap>
+            {PRESET_AMOUNTS.map((preset) => {
+              const isActive = amount === preset
+              return (
+                <Button
+                  key={preset}
+                  variant={isActive ? 'contained' : 'outlined'}
+                  onClick={() => handlePresetClick(preset)}
+                  sx={{
+                    minWidth: 64,
+                    fontWeight: 700,
+                    fontSize: '0.85rem',
+                    borderRadius: 50,
+                    textTransform: 'none',
+                    px: 2.5,
+                    py: 1,
+                    ...(isActive
+                      ? {
+                          bgcolor: isDark ? theme.palette.grey[200] : '#1B1B1B',
+                          color: isDark ? theme.palette.grey[900] : '#fff',
+                          boxShadow: 'none',
+                          '&:hover': {
+                            bgcolor: isDark ? theme.palette.grey[300] : '#333',
+                            boxShadow: 'none'
                           }
-                        : {
-                            borderColor: alpha(theme.palette.grey[500], 0.24),
-                            color: 'text.primary',
-                            '&:hover': {
-                              borderColor: theme.palette.grey[400],
-                              bgcolor: alpha(theme.palette.grey[500], 0.08)
-                            }
-                          })
-                    }}
-                  >
-                    ${preset}
-                  </Button>
-                )
-              })}
-            </Stack>
-          )}
+                        }
+                      : {
+                          borderColor: alpha(theme.palette.grey[500], 0.24),
+                          color: 'text.primary',
+                          '&:hover': {
+                            borderColor: theme.palette.grey[400],
+                            bgcolor: alpha(theme.palette.grey[500], 0.08)
+                          }
+                        })
+                  }}
+                >
+                  ${preset}
+                </Button>
+              )
+            })}
+          </Stack>
 
           {/* Custom amount input */}
           <Box
@@ -920,8 +896,15 @@ export default function PolymarketDetailView({ slug }: Props) {
             {t('polymarket.available')}: ${fNumber(selectedTokenBalance)}
             <Box
               component='span'
+              onClick={
+                availableTokens.length > 1
+                  ? (e: any) => setTokenMenuAnchor(e.currentTarget)
+                  : undefined
+              }
               sx={{
                 display: 'inline-flex',
+                alignItems: 'center',
+                gap: 0.25,
                 px: 0.75,
                 py: 0.125,
                 borderRadius: 0.5,
@@ -929,12 +912,49 @@ export default function PolymarketDetailView({ slug }: Props) {
                 color: theme.palette.primary.main,
                 fontWeight: 700,
                 fontSize: '0.65rem',
-                letterSpacing: 0.5
+                letterSpacing: 0.5,
+                cursor: availableTokens.length > 1 ? 'pointer' : 'default',
+                userSelect: 'none',
+                '&:hover':
+                  availableTokens.length > 1
+                    ? { bgcolor: alpha(theme.palette.primary.main, 0.16) }
+                    : {}
               }}
             >
               {effectiveToken || balanceTokenSymbol}
+              {availableTokens.length > 1 && <Iconify icon='eva:chevron-down-fill' width={10} />}
             </Box>
           </Typography>
+
+          <Menu
+            anchorEl={tokenMenuAnchor}
+            open={Boolean(tokenMenuAnchor)}
+            onClose={() => setTokenMenuAnchor(null)}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+            transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+            slotProps={{ paper: { sx: { minWidth: 180, mt: 0.5 } } }}
+          >
+            {availableTokens.map((tok) => (
+              <MenuItem
+                key={tok.token}
+                selected={effectiveToken === tok.token}
+                onClick={() => {
+                  setSelectedToken(tok.token)
+                  setTokenMenuAnchor(null)
+                }}
+                sx={{ fontSize: '0.85rem' }}
+              >
+                <Stack direction='row' justifyContent='space-between' width='100%' spacing={2}>
+                  <Typography variant='body2' fontWeight={600}>
+                    {tok.token}
+                  </Typography>
+                  <Typography variant='caption' color='text.secondary'>
+                    ${fNumber(tok.balance_conv.usd)}
+                  </Typography>
+                </Stack>
+              </MenuItem>
+            ))}
+          </Menu>
 
           {/* Insufficient balance */}
           {amount > selectedTokenBalance && selectedTokenBalance >= 0 && amount > 0 && (

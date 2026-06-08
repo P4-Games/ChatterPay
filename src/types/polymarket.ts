@@ -137,7 +137,7 @@ export type IPolymarketOrderPayload = {
   size: number
   price: number
   bridge_amount?: string
-  token?: string
+  bridge_token?: string
 }
 
 export type IPolymarketPurchaseResponse = {

@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json()
-    const { token_id, side, size, price, bridge_amount } = body
+    const { token_id, side, size, price, bridge_amount, bridge_token } = body
 
     if (!token_id || !side || !size || !price) {
       return NextResponse.json(
@@ -36,7 +36,14 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const result = await purchase(phoneNumber, { token_id, side, size, price, bridge_amount })
+    const result = await purchase(phoneNumber, {
+      token_id,
+      side,
+      size,
+      price,
+      bridge_amount,
+      bridge_token
+    })
 
     return NextResponse.json(result, {
       headers: { 'Content-Type': 'application/json' }
