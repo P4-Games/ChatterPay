@@ -867,6 +867,9 @@
     "terms-error": "Não foi possível aceitar os termos",
     "agree-continue": "Concordar e Continuar",
     "accepting": "Aceitando...",
+    "insufficient-balance": "Saldo insuficiente",
+    "deposit": "Depositar",
+    "pay-with": "Pagar com",
     "sell-all": "Vender tudo",
     "partial-sell": "Venda parcial",
     "sell-x-shares": "Vender {{amount}} ações"

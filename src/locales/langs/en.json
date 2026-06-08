@@ -878,7 +878,10 @@
     "terms-content-3": "ChatterPay acts as an interface to Polymarket. All trades are executed on-chain and are irreversible once confirmed.",
     "terms-error": "Failed to accept terms",
     "agree-continue": "Agree & Continue",
-    "accepting": "Accepting..."
+    "accepting": "Accepting...",
+    "insufficient-balance": "Insufficient balance",
+    "deposit": "Deposit",
+    "pay-with": "Pay with"
   },
   "layerswapDeposit": {
     "title": "Deposit to ChatterPay",

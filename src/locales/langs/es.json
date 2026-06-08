@@ -879,7 +879,10 @@
     "terms-content-3": "ChatterPay actúa como interfaz para Polymarket. Todas las operaciones se ejecutan en la cadena y son irreversibles una vez confirmadas.",
     "terms-error": "No se pudieron aceptar los términos",
     "agree-continue": "Aceptar y Continuar",
-    "accepting": "Aceptando..."
+    "accepting": "Aceptando...",
+    "insufficient-balance": "Balance insuficiente",
+    "deposit": "Depositar",
+    "pay-with": "Pagar con"
   },
   "layerswapDeposit": {
     "title": "Depositar en ChatterPay",

@@ -184,12 +184,23 @@ export default function PolymarketDetailView({ slug }: Props) {
   const availableBalance = maxBalanceToken?.balance_conv?.usd || 0
   const balanceTokenSymbol = maxBalanceToken?.token || 'USDC'
 
+  // Token selector (null = use highest-balance token by default)
+  const [selectedToken, setSelectedToken] = useState<string | null>(null)
+  const effectiveToken = selectedToken ?? maxBalanceToken?.token ?? ''
+  const availableTokens = (balances?.balances || []).filter((b) => (b.balance_conv?.usd || 0) > 0)
+  const selectedTokenData =
+    balances?.balances?.find((b) => b.token === effectiveToken) ?? maxBalanceToken
+  const selectedTokenBalance = selectedTokenData?.balance_conv?.usd || 0
+
+  const dynamicPresets = PRESET_AMOUNTS.filter((p) => p <= selectedTokenBalance)
+  const depositUrl = `https://chatterpay.net/deposit?address=${walletAddress}`
+
   // Trade state
   const [selectedOutcome, setSelectedOutcome] = useState<number>(0)
-  const [amount, setAmount] = useState<number>(10)
+  const [amount, setAmount] = useState<number>(1)
   const [cancellingId, setCancellingId] = useState<string | null>(null)
   const [sellingPos, setSellingPos] = useState<string | null>(null)
-  const [customAmount, setCustomAmount] = useState<string>('10')
+  const [customAmount, setCustomAmount] = useState<string>('1')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
@@ -448,7 +459,8 @@ export default function PolymarketDetailView({ slug }: Props) {
         side: 'BUY',
         size: tokenQuantity,
         price: selectedPrice,
-        bridge_amount: bridgeAmountWei
+        bridge_amount: bridgeAmountWei,
+        token: effectiveToken || undefined
       })
 
       if (result.ok) {
@@ -788,55 +800,86 @@ export default function PolymarketDetailView({ slug }: Props) {
             {t('polymarket.predict-amount-header')}
           </Typography>
 
+          {/* Token selector */}
+          {availableTokens.length > 1 && (
+            <Box sx={{ mb: 2 }}>
+              <Typography
+                variant='caption'
+                color='text.secondary'
+                sx={{ mb: 1, display: 'block', fontWeight: 600 }}
+              >
+                {t('polymarket.pay-with')}
+              </Typography>
+              <Stack direction='row' spacing={1} flexWrap='wrap' useFlexGap>
+                {availableTokens.map((tok) => {
+                  const isSelected = effectiveToken === tok.token
+                  return (
+                    <Chip
+                      key={tok.token}
+                      label={`${tok.token} $${fNumber(tok.balance_conv.usd)}`}
+                      size='small'
+                      onClick={() => setSelectedToken(tok.token)}
+                      variant={isSelected ? 'filled' : 'outlined'}
+                      color={isSelected ? 'primary' : 'default'}
+                      sx={{ fontWeight: isSelected ? 700 : 500, fontSize: '0.78rem' }}
+                    />
+                  )
+                })}
+              </Stack>
+            </Box>
+          )}
+
           {/* Preset pills */}
-          <Stack direction='row' spacing={1} sx={{ mb: 2.5 }}>
-            {PRESET_AMOUNTS.map((preset) => {
-              const isActive = amount === preset
-              return (
-                <Button
-                  key={preset}
-                  variant={isActive ? 'contained' : 'outlined'}
-                  onClick={() => handlePresetClick(preset)}
-                  sx={{
-                    minWidth: 64,
-                    fontWeight: 700,
-                    fontSize: '0.85rem',
-                    borderRadius: 50,
-                    textTransform: 'none',
-                    px: 2.5,
-                    py: 1,
-                    ...(isActive
-                      ? {
-                          bgcolor: isDark ? theme.palette.grey[200] : '#1B1B1B',
-                          color: isDark ? theme.palette.grey[900] : '#fff',
-                          boxShadow: 'none',
-                          '&:hover': {
-                            bgcolor: isDark ? theme.palette.grey[300] : '#333',
-                            boxShadow: 'none'
+          {dynamicPresets.length > 0 && (
+            <Stack direction='row' spacing={1} sx={{ mb: 2.5 }}>
+              {dynamicPresets.map((preset) => {
+                const isActive = amount === preset
+                return (
+                  <Button
+                    key={preset}
+                    variant={isActive ? 'contained' : 'outlined'}
+                    onClick={() => handlePresetClick(preset)}
+                    sx={{
+                      minWidth: 64,
+                      fontWeight: 700,
+                      fontSize: '0.85rem',
+                      borderRadius: 50,
+                      textTransform: 'none',
+                      px: 2.5,
+                      py: 1,
+                      ...(isActive
+                        ? {
+                            bgcolor: isDark ? theme.palette.grey[200] : '#1B1B1B',
+                            color: isDark ? theme.palette.grey[900] : '#fff',
+                            boxShadow: 'none',
+                            '&:hover': {
+                              bgcolor: isDark ? theme.palette.grey[300] : '#333',
+                              boxShadow: 'none'
+                            }
                           }
-                        }
-                      : {
-                          borderColor: alpha(theme.palette.grey[500], 0.24),
-                          color: 'text.primary',
-                          '&:hover': {
-                            borderColor: theme.palette.grey[400],
-                            bgcolor: alpha(theme.palette.grey[500], 0.08)
-                          }
-                        })
-                  }}
-                >
-                  ${preset}
-                </Button>
-              )
-            })}
-          </Stack>
+                        : {
+                            borderColor: alpha(theme.palette.grey[500], 0.24),
+                            color: 'text.primary',
+                            '&:hover': {
+                              borderColor: theme.palette.grey[400],
+                              bgcolor: alpha(theme.palette.grey[500], 0.08)
+                            }
+                          })
+                    }}
+                  >
+                    ${preset}
+                  </Button>
+                )
+              })}
+            </Stack>
+          )}
 
           {/* Custom amount input */}
           <Box
             sx={{
               display: 'flex',
               alignItems: 'center',
-              border: `1px solid ${alpha(theme.palette.grey[500], 0.2)}`,
+              border: `1px solid ${amount > selectedTokenBalance && selectedTokenBalance > 0 ? theme.palette.warning.main : alpha(theme.palette.grey[500], 0.2)}`,
               borderRadius: 1.5,
               px: 2,
               py: 1.25,
@@ -851,6 +894,7 @@ export default function PolymarketDetailView({ slug }: Props) {
               value={customAmount}
               onChange={handleCustomAmountChange}
               type='number'
+              min={1}
               sx={{
                 border: 'none',
                 outline: 'none',
@@ -873,7 +917,7 @@ export default function PolymarketDetailView({ slug }: Props) {
             color='text.secondary'
             sx={{ mt: 1.5, display: 'flex', alignItems: 'center', gap: 0.5 }}
           >
-            {t('polymarket.available')}: ${fNumber(availableBalance)}
+            {t('polymarket.available')}: ${fNumber(selectedTokenBalance)}
             <Box
               component='span'
               sx={{
@@ -888,9 +932,30 @@ export default function PolymarketDetailView({ slug }: Props) {
                 letterSpacing: 0.5
               }}
             >
-              {balanceTokenSymbol}
+              {effectiveToken || balanceTokenSymbol}
             </Box>
           </Typography>
+
+          {/* Insufficient balance */}
+          {amount > selectedTokenBalance && selectedTokenBalance >= 0 && amount > 0 && (
+            <Alert
+              severity='warning'
+              sx={{ mt: 1.5, py: 0.75 }}
+              action={
+                <Button
+                  size='small'
+                  href={depositUrl}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  sx={{ fontWeight: 700, whiteSpace: 'nowrap' }}
+                >
+                  {t('polymarket.deposit')}
+                </Button>
+              }
+            >
+              {t('polymarket.insufficient-balance')}
+            </Alert>
+          )}
         </Box>
 
         {/* Return estimate */}
@@ -950,7 +1015,7 @@ export default function PolymarketDetailView({ slug }: Props) {
           color='primary'
           size='large'
           onClick={handleSubmit}
-          disabled={amount <= 0 || isSubmitting}
+          disabled={amount <= 0 || isSubmitting || amount > selectedTokenBalance}
           startIcon={isSubmitting ? <CircularProgress size={18} color='inherit' /> : null}
           sx={{
             py: 2,
