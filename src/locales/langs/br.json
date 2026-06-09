@@ -882,7 +882,10 @@
     "balance-updated": "Saldo da carteira Scroll atualizado",
     "error-claiming": "Erro ao resgatar fundos",
     "date": "Data",
-    "tx": "TX"
+    "tx": "TX",
+    "place-another": "Fazer outra ordem",
+    "order-sent": "Ordem enviada!",
+    "order-sent-subtitle": "Acompanhe seu progresso abaixo"
   },
   "layerswapDeposit": {
     "title": "Depositar no ChatterPay",

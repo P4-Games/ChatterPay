@@ -882,7 +882,10 @@
     "accepting": "Aceptando...",
     "insufficient-balance": "Balance insuficiente",
     "deposit": "Depositar",
-    "pay-with": "Pagar con"
+    "pay-with": "Pagar con",
+    "place-another": "Realizar otra orden",
+    "order-sent": "¡Orden enviada!",
+    "order-sent-subtitle": "Seguí el progreso abajo"
   },
   "layerswapDeposit": {
     "title": "Depositar en ChatterPay",
