@@ -1033,7 +1033,7 @@ export default function PolymarketDetailView({ slug }: Props) {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                onClick={() => setOrderSuccess(null)}
+                onClick={closeOrderSuccess}
                 style={{
                   position: 'absolute',
                   inset: 0,
@@ -1053,7 +1053,7 @@ export default function PolymarketDetailView({ slug }: Props) {
                 dragConstraints={{ top: 0 }}
                 dragElastic={{ top: 0, bottom: 0.25 }}
                 onDragEnd={(_, { offset, velocity }) => {
-                  if (offset.y > 60 || velocity.y > 400) setOrderSuccess(null)
+                  if (offset.y > 60 || velocity.y > 400) closeOrderSuccess()
                 }}
                 transition={{ type: 'spring', damping: 38, stiffness: 380 }}
                 style={{
@@ -1092,16 +1092,6 @@ export default function PolymarketDetailView({ slug }: Props) {
                     src='/assets/images/illustrations/checkmark_animation.json'
                     autoplay
                     loop={false}
-                    dotLottieRefCallback={(dl) => {
-                      if (!dl) return
-                      let frozen = false
-                      dl.addEventListener('frame', ({ currentFrame }: { currentFrame: number }) => {
-                        if (!frozen && currentFrame >= 49) {
-                          frozen = true
-                          dl.freeze()
-                        }
-                      })
-                    }}
                     style={{ width: 140, height: 140 }}
                   />
                 </Box>
@@ -1142,7 +1132,7 @@ export default function PolymarketDetailView({ slug }: Props) {
           variant='contained'
           color='primary'
           size='large'
-          onClick={orderSuccess ? () => setOrderSuccess(null) : handleSubmit}
+          onClick={orderSuccess ? closeOrderSuccess : handleSubmit}
           disabled={!orderSuccess && (amount <= 0 || isSubmitting || amount > selectedTokenBalance)}
           startIcon={
             isSubmitting ? (
