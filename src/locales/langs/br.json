@@ -872,7 +872,17 @@
     "pay-with": "Pagar com",
     "sell-all": "Vender tudo",
     "partial-sell": "Venda parcial",
-    "sell-x-shares": "Vender {{amount}} ações"
+    "sell-x-shares": "Vender {{amount}} ações",
+    "chance": "chance",
+    "token-id-not-found": "ID do token não encontrado",
+    "sell": "Vender",
+    "portfolio-overview": "Visão geral da carteira",
+    "no-idle-funds": "Nenhum fundo disponível para resgatar",
+    "claiming-funds-desc": "Resgatando fundos... Isso pode levar um minuto.",
+    "balance-updated": "Saldo da carteira Scroll atualizado",
+    "error-claiming": "Erro ao resgatar fundos",
+    "date": "Data",
+    "tx": "TX"
   },
   "layerswapDeposit": {
     "title": "Depositar no ChatterPay",
