@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { m } from 'framer-motion'
 
 import Box from '@mui/material/Box'
@@ -23,7 +23,8 @@ import { useRouter } from 'src/routes/hooks'
 import { paths } from 'src/routes/paths'
 
 import { useTranslate } from 'src/locales'
-import { useGetPolymarketEventsInfinite } from 'src/app/api/hooks'
+import { useAuthContext } from 'src/auth/hooks'
+import { useGetPolymarketEventsInfinite, polymarketAccountStatus } from 'src/app/api/hooks'
 
 import { useSettingsContext } from 'src/components/settings'
 import Iconify from 'src/components/iconify'
@@ -31,8 +32,9 @@ import Iconify from 'src/components/iconify'
 import { fNumber } from 'src/utils/format-number'
 
 import PolymarketMarketCard from '../polymarket-market-card'
+import PolymarketTermsOverlay from '../polymarket-terms-overlay'
 
-import type { IPolymarketEvent } from 'src/types/polymarket'
+import type { IPolymarketEvent, IPolymarketAccountStatus } from 'src/types/polymarket'
 
 // ----------------------------------------------------------------------
 
@@ -58,7 +60,35 @@ export default function PolymarketEventDetailView({ eventId }: Props) {
   const isDark = theme.palette.mode === 'dark'
   const router = useRouter()
   const settings = useSettingsContext()
+  const { user } = useAuthContext()
   const [aboutOpen, setAboutOpen] = useState(false)
+
+  const [accountStatus, setAccountStatus] = useState<IPolymarketAccountStatus | null>(null)
+  const [statusLoading, setStatusLoading] = useState(true)
+
+  const checkAccountStatus = useCallback(async () => {
+    try {
+      const result = await polymarketAccountStatus()
+      if (result.ok && result.data) {
+        setAccountStatus(result.data)
+      }
+    } catch {
+      // Silently fail
+    } finally {
+      setStatusLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (user?.id) {
+      checkAccountStatus()
+    } else {
+      setStatusLoading(false)
+    }
+  }, [user?.id, checkAccountStatus])
+
+  const showTermsOverlay =
+    !statusLoading && !!user?.id && accountStatus && !accountStatus.account?.terms_accepted
 
   // Find the event from the cached events data, auto-loading more pages if needed
   const { events, isLoading, isLoadingMore, hasMore, loadMore } = useGetPolymarketEventsInfinite()
@@ -151,178 +181,193 @@ export default function PolymarketEventDetailView({ eventId }: Props) {
   }
 
   return (
-    <Box
-      sx={{
-        mt: -13,
-        mx: { xs: 0, lg: -2 },
-        flex: 1,
-        minHeight: '100vh',
-        bgcolor: isDark ? '#0A2E1A' : '#B8F6C9',
-        backgroundImage: isDark
-          ? 'linear-gradient(180deg, #161C24 0%, #0A2E1A 600px)'
-          : 'linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 600px)',
-        pb: { xs: 10, md: 15 },
-        mb: { xs: -10, md: -15 }
-      }}
-    >
-      <Container
-        maxWidth={settings.themeStretch ? false : 'xl'}
-        sx={{ pt: { xs: 11, md: 12 }, px: { xs: 2, md: 3 } }}
+    <>
+      {showTermsOverlay && accountStatus?.terms && (
+        <PolymarketTermsOverlay terms={accountStatus.terms} onAccepted={checkAccountStatus} />
+      )}
+      <Box
+        sx={{
+          mt: -13,
+          mx: { xs: 0, lg: -2 },
+          flex: 1,
+          minHeight: '100vh',
+          bgcolor: isDark ? '#0A2E1A' : '#B8F6C9',
+          backgroundImage: isDark
+            ? 'linear-gradient(180deg, #161C24 0%, #0A2E1A 600px)'
+            : 'linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 600px)',
+          pb: { xs: 10, md: 15 },
+          mb: { xs: -10, md: -15 }
+        }}
       >
-        <Stack
-          spacing={3}
-          component={m.div}
-          initial='initial'
-          animate='animate'
-          variants={staggerContainer}
+        <Container
+          maxWidth={settings.themeStretch ? false : 'xl'}
+          sx={{ pt: { xs: 11, md: 12 }, px: { xs: 2, md: 3 } }}
         >
-          {/* Header */}
-          <Stack spacing={1.5} component={m.div} variants={fadeInUp} transition={{ duration: 0.4 }}>
-            <Button
-              onClick={() => router.push(paths.dashboard.polymarket.root)}
-              startIcon={<HugeiconsIcon icon={ArrowLeft01Icon} size={16} />}
-              sx={{
-                alignSelf: 'flex-start',
-                color: 'text.secondary',
-                fontWeight: 500,
-                fontSize: '0.85rem',
-                textTransform: 'none',
-                px: 0,
-                minWidth: 'auto',
-                '&:hover': { bgcolor: 'transparent', color: 'text.primary' }
-              }}
-            >
-              {t('polymarket.back')}
-            </Button>
-
+          <Stack
+            spacing={3}
+            component={m.div}
+            initial='initial'
+            animate='animate'
+            variants={staggerContainer}
+          >
+            {/* Header */}
             <Stack
-              direction={{ xs: 'column', md: 'row' }}
-              alignItems={{ xs: 'flex-start', md: 'center' }}
-              justifyContent='space-between'
-              spacing={2}
+              spacing={1.5}
+              component={m.div}
+              variants={fadeInUp}
+              transition={{ duration: 0.4 }}
             >
-              <Stack direction='row' alignItems='center' spacing={2} sx={{ flex: 1, minWidth: 0 }}>
-                {(event.image || event.icon || event.markets[0]?.image) && (
-                  <Box
-                    component='img'
-                    src={event.image || event.icon || event.markets[0]?.image}
-                    alt={event.title}
-                    sx={{
-                      width: 56,
-                      height: 56,
-                      borderRadius: 1.5,
-                      objectFit: 'cover',
-                      bgcolor: 'grey.200',
-                      flexShrink: 0
-                    }}
-                  />
-                )}
-                <Typography
-                  variant='h4'
-                  sx={{ fontWeight: 700, color: 'text.primary', fontSize: { xs: 22, md: 28 } }}
-                >
-                  {event.title}
-                </Typography>
-              </Stack>
+              <Button
+                onClick={() => router.push(paths.dashboard.polymarket.root)}
+                startIcon={<HugeiconsIcon icon={ArrowLeft01Icon} size={16} />}
+                sx={{
+                  alignSelf: 'flex-start',
+                  color: 'text.secondary',
+                  fontWeight: 500,
+                  fontSize: '0.85rem',
+                  textTransform: 'none',
+                  px: 0,
+                  minWidth: 'auto',
+                  '&:hover': { bgcolor: 'transparent', color: 'text.primary' }
+                }}
+              >
+                {t('polymarket.back')}
+              </Button>
 
-              <Stack direction='row' alignItems='center' spacing={2} sx={{ flexShrink: 0 }}>
-                <Typography variant='body2' color='text.secondary'>
-                  {t('polymarket.vol')} <strong>${fNumber(totalVolume)}</strong>
-                </Typography>
-                {earliestEnd && (
-                  <Typography variant='body2' color='text.secondary'>
-                    {t('polymarket.ends-label')}{' '}
-                    <strong>
-                      {new Date(earliestEnd).toLocaleDateString(undefined, {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric'
-                      })}
-                    </strong>
-                  </Typography>
-                )}
-                {event.description && (
-                  <Button
-                    size='small'
-                    variant='outlined'
-                    color='inherit'
-                    startIcon={<HugeiconsIcon icon={InformationCircleIcon} size={16} />}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setAboutOpen(true)
-                    }}
-                    sx={{
-                      textTransform: 'none',
-                      fontWeight: 600,
-                      fontSize: '0.8rem',
-                      borderColor: alpha(theme.palette.grey[500], 0.24),
-                      borderRadius: 50,
-                      px: 2
-                    }}
+              <Stack
+                direction={{ xs: 'column', md: 'row' }}
+                alignItems={{ xs: 'flex-start', md: 'center' }}
+                justifyContent='space-between'
+                spacing={2}
+              >
+                <Stack
+                  direction='row'
+                  alignItems='center'
+                  spacing={2}
+                  sx={{ flex: 1, minWidth: 0 }}
+                >
+                  {(event.image || event.icon || event.markets[0]?.image) && (
+                    <Box
+                      component='img'
+                      src={event.image || event.icon || event.markets[0]?.image}
+                      alt={event.title}
+                      sx={{
+                        width: 56,
+                        height: 56,
+                        borderRadius: 1.5,
+                        objectFit: 'cover',
+                        bgcolor: 'grey.200',
+                        flexShrink: 0
+                      }}
+                    />
+                  )}
+                  <Typography
+                    variant='h4'
+                    sx={{ fontWeight: 700, color: 'text.primary', fontSize: { xs: 22, md: 28 } }}
                   >
-                    {t('polymarket.about')}
-                  </Button>
-                )}
+                    {event.title}
+                  </Typography>
+                </Stack>
+
+                <Stack direction='row' alignItems='center' spacing={2} sx={{ flexShrink: 0 }}>
+                  <Typography variant='body2' color='text.secondary'>
+                    {t('polymarket.vol')} <strong>${fNumber(totalVolume)}</strong>
+                  </Typography>
+                  {earliestEnd && (
+                    <Typography variant='body2' color='text.secondary'>
+                      {t('polymarket.ends-label')}{' '}
+                      <strong>
+                        {new Date(earliestEnd).toLocaleDateString(undefined, {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric'
+                        })}
+                      </strong>
+                    </Typography>
+                  )}
+                  {event.description && (
+                    <Button
+                      size='small'
+                      variant='outlined'
+                      color='inherit'
+                      startIcon={<HugeiconsIcon icon={InformationCircleIcon} size={16} />}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setAboutOpen(true)
+                      }}
+                      sx={{
+                        textTransform: 'none',
+                        fontWeight: 600,
+                        fontSize: '0.8rem',
+                        borderColor: alpha(theme.palette.grey[500], 0.24),
+                        borderRadius: 50,
+                        px: 2
+                      }}
+                    >
+                      {t('polymarket.about')}
+                    </Button>
+                  )}
+                </Stack>
               </Stack>
             </Stack>
-          </Stack>
 
-          {/* About dialog */}
-          {event.description && (
-            <Dialog
-              open={aboutOpen}
-              onClose={() => setAboutOpen(false)}
-              maxWidth='sm'
-              fullWidth
-              PaperProps={{ sx: { borderRadius: 3 } }}
-            >
-              <DialogTitle sx={{ fontWeight: 700 }}>{t('polymarket.about-event')}</DialogTitle>
-              <DialogContent>
-                <Typography variant='body2' sx={{ lineHeight: 1.8, whiteSpace: 'pre-line' }}>
-                  {event.description}
-                </Typography>
-              </DialogContent>
-              <DialogActions sx={{ px: 3, pb: 2.5 }}>
-                <Button
-                  onClick={() => setAboutOpen(false)}
-                  variant='contained'
-                  color='primary'
-                  sx={{ borderRadius: 50, textTransform: 'none', fontWeight: 600 }}
-                >
-                  {t('polymarket.got-it')}
-                </Button>
-              </DialogActions>
-            </Dialog>
-          )}
-
-          {/* Markets Grid */}
-          <Box component={m.div} variants={fadeInUp} transition={{ duration: 0.4 }}>
-            {(() => {
-              const visibleMarkets = event.markets.filter((m) => {
-                const hasVolume = (m.volume || 0) > 0
-                const hasPrices = (m.outcome_prices || []).some((p) => Number(p) > 0)
-                return hasVolume || hasPrices
-              })
-
-              return (
-                <>
-                  <Typography variant='h5' sx={{ mb: 3, fontWeight: 700, color: 'text.primary' }}>
-                    {t('polymarket.predict-on')} ({visibleMarkets.length})
+            {/* About dialog */}
+            {event.description && (
+              <Dialog
+                open={aboutOpen}
+                onClose={() => setAboutOpen(false)}
+                maxWidth='sm'
+                fullWidth
+                PaperProps={{ sx: { borderRadius: 3 } }}
+              >
+                <DialogTitle sx={{ fontWeight: 700 }}>{t('polymarket.about-event')}</DialogTitle>
+                <DialogContent>
+                  <Typography variant='body2' sx={{ lineHeight: 1.8, whiteSpace: 'pre-line' }}>
+                    {event.description}
                   </Typography>
+                </DialogContent>
+                <DialogActions sx={{ px: 3, pb: 2.5 }}>
+                  <Button
+                    onClick={() => setAboutOpen(false)}
+                    variant='contained'
+                    color='primary'
+                    sx={{ borderRadius: 50, textTransform: 'none', fontWeight: 600 }}
+                  >
+                    {t('polymarket.got-it')}
+                  </Button>
+                </DialogActions>
+              </Dialog>
+            )}
 
-                  <Grid container spacing={3}>
-                    {visibleMarkets.map((market) => (
-                      <Grid xs={12} sm={6} md={4} key={market.condition_id || market.slug}>
-                        <PolymarketMarketCard market={market} inlineImage />
-                      </Grid>
-                    ))}
-                  </Grid>
-                </>
-              )
-            })()}
-          </Box>
-        </Stack>
-      </Container>
-    </Box>
+            {/* Markets Grid */}
+            <Box component={m.div} variants={fadeInUp} transition={{ duration: 0.4 }}>
+              {(() => {
+                const visibleMarkets = event.markets.filter((m) => {
+                  const hasVolume = (m.volume || 0) > 0
+                  const hasPrices = (m.outcome_prices || []).some((p) => Number(p) > 0)
+                  return hasVolume || hasPrices
+                })
+
+                return (
+                  <>
+                    <Typography variant='h5' sx={{ mb: 3, fontWeight: 700, color: 'text.primary' }}>
+                      {t('polymarket.predict-on')} ({visibleMarkets.length})
+                    </Typography>
+
+                    <Grid container spacing={3}>
+                      {visibleMarkets.map((market) => (
+                        <Grid xs={12} sm={6} md={4} key={market.condition_id || market.slug}>
+                          <PolymarketMarketCard market={market} inlineImage />
+                        </Grid>
+                      ))}
+                    </Grid>
+                  </>
+                )
+              })()}
+            </Box>
+          </Stack>
+        </Container>
+      </Box>
+    </>
   )
 }
