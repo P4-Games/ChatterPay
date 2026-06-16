@@ -323,6 +323,8 @@ function BankingRecentTransitionsRow({
           component='img'
           src={tokenLogo}
           alt={row.token}
+          loading='lazy'
+          decoding='async'
           sx={{
             width: 24,
             height: 24,

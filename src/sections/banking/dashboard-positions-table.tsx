@@ -384,6 +384,8 @@ export default function DashboardPositionsTable({ positions, orders, isLoading }
                                 component='img'
                                 src={pos.icon || pos.market?.image}
                                 alt=''
+                                loading='lazy'
+                                decoding='async'
                                 sx={{
                                   width: 40,
                                   height: 40,
@@ -735,6 +737,8 @@ export default function DashboardPositionsTable({ positions, orders, isLoading }
                                 component='img'
                                 src={pos.icon || pos.market?.image}
                                 alt=''
+                                loading='lazy'
+                                decoding='async'
                                 sx={{
                                   width: 36,
                                   height: 36,

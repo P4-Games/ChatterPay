@@ -1,5 +1,6 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { useState, useEffect, useMemo } from 'react'
 
 import Box from '@mui/material/Box'
@@ -31,15 +32,20 @@ import { useSnackbar } from 'src/components/snackbar'
 import type { IToken, IBalances, ITransaction } from 'src/types/wallet'
 import type { TokenPriceData } from 'src/app/api/services/coingecko/coingecko-service'
 
-import PolymarketPNLWidget from 'src/sections/polymarket/polymarket-pnl-widget'
-
 import BankingRecentTransitions from '../banking-recent-transitions'
-import DashboardDepositModal from '../dashboard-deposit-modal'
-import DashboardWithdrawModal from '../dashboard-withdraw-modal'
-import DashboardSwapModal from '../dashboard-swap-modal'
 import DashboardPortfolioBalance from '../dashboard-portfolio-balance'
 import DashboardPositionsTable from '../dashboard-positions-table'
 import DashboardDrawer from '../dashboard-drawer'
+
+// ----------------------------------------------------------------------
+
+// Code-split on-demand / heavy components so they stay out of the initial dashboard bundle.
+const PolymarketPNLWidget = dynamic(() => import('src/sections/polymarket/polymarket-pnl-widget'), {
+  ssr: false
+})
+const DashboardDepositModal = dynamic(() => import('../dashboard-deposit-modal'), { ssr: false })
+const DashboardWithdrawModal = dynamic(() => import('../dashboard-withdraw-modal'), { ssr: false })
+const DashboardSwapModal = dynamic(() => import('../dashboard-swap-modal'), { ssr: false })
 
 // ----------------------------------------------------------------------
 

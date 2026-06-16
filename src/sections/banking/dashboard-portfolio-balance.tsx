@@ -1,5 +1,7 @@
 'use client'
 
+import { useMemo } from 'react'
+
 import {
   Box,
   Card,
@@ -56,10 +58,14 @@ function StackedTokenIcons({
   tokenLogos: Record<string, string>
   isDark: boolean
 }) {
-  const topTokens = [...balances]
-    .sort((a, b) => (b.balance_conv?.usd ?? 0) - (a.balance_conv?.usd ?? 0))
-    .slice(0, 3)
-    .filter((b) => tokenLogos[b.token])
+  const topTokens = useMemo(
+    () =>
+      [...balances]
+        .sort((a, b) => (b.balance_conv?.usd ?? 0) - (a.balance_conv?.usd ?? 0))
+        .slice(0, 3)
+        .filter((b) => tokenLogos[b.token]),
+    [balances, tokenLogos]
+  )
 
   if (topTokens.length === 0) {
     return (
@@ -97,6 +103,8 @@ function StackedTokenIcons({
           component='img'
           src={tokenLogos[token.token]}
           alt={token.token}
+          loading='lazy'
+          decoding='async'
           sx={{
             position: 'absolute',
             left: index * (iconSize - overlap),
@@ -160,6 +168,8 @@ function CryptoAssetRow({
             component='img'
             src={logoUrl}
             alt={balance.token}
+            loading='lazy'
+            decoding='async'
             sx={{ width: 36, height: 36, borderRadius: '50%', flexShrink: 0 }}
           />
         ) : (
@@ -263,8 +273,9 @@ export default function DashboardPortfolioBalance({
   const cryptoOnly = combinedTotal - polymarketConverted
 
   // Sort balances by USD value for dropdown
-  const sortedBalances = [...balances].sort(
-    (a, b) => (b.balance_conv?.usd ?? 0) - (a.balance_conv?.usd ?? 0)
+  const sortedBalances = useMemo(
+    () => [...balances].sort((a, b) => (b.balance_conv?.usd ?? 0) - (a.balance_conv?.usd ?? 0)),
+    [balances]
   )
 
   return (
@@ -414,6 +425,8 @@ export default function DashboardPortfolioBalance({
               component='img'
               src='/assets/icons/polymarket/logo.svg'
               alt='Polymarket'
+              loading='lazy'
+              decoding='async'
               sx={{
                 width: 28,
                 height: 28,

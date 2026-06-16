@@ -256,6 +256,8 @@ export default function BankingBalances({
                 component='img'
                 src='https://storage.googleapis.com/chatbot-multimedia/chatterpay/images/tokens/scr.svg'
                 alt='Scroll Network'
+                loading='lazy'
+                decoding='async'
                 sx={{
                   width: 32,
                   height: 32,
