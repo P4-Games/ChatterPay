@@ -105,6 +105,8 @@ export const notificationsRefreshInterval = 5000
 
 // Polymarket / External Configurations
 export const POLYMARKET_POLL_INTERVAL_MS = 4000
+// Minimum order value (USD) enforced by the Polymarket backend
+export const POLYMARKET_MIN_ORDER_USD = 1.5
 export const TRANSACTION_FEE_USD = 0.08
 export const LIFI_CHAINS_URL = 'https://li.quest/v1/chains?chainTypes=EVM,SVM'
 export const ENS_LOGO = 'https://cryptofonts.com/img/SVG/ens.svg'

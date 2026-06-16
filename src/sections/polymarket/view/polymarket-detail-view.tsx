@@ -60,6 +60,7 @@ import { useAuthContext } from 'src/auth/hooks'
 import { useSettingsContext } from 'src/components/settings'
 import Iconify from 'src/components/iconify'
 import Chart, { useChart } from 'src/components/chart'
+import { POLYMARKET_MIN_ORDER_USD } from 'src/config-global'
 
 import { fNumber } from 'src/utils/format-number'
 
@@ -75,7 +76,7 @@ import type { AuthUserType } from 'src/auth/types'
 
 // ----------------------------------------------------------------------
 
-const PRESET_AMOUNTS = [1, 5, 10, 50, 100]
+const PRESET_AMOUNTS = [POLYMARKET_MIN_ORDER_USD, 5, 10, 50, 100]
 
 const OUTCOME_COLORS_LIGHT = [
   '#1B1B1B', // Black
@@ -239,10 +240,10 @@ export default function PolymarketDetailView({ slug }: Props) {
 
   // Trade state
   const [selectedOutcome, setSelectedOutcome] = useState<number>(0)
-  const [amount, setAmount] = useState<number>(1)
+  const [amount, setAmount] = useState<number>(POLYMARKET_MIN_ORDER_USD)
   const [cancellingId, setCancellingId] = useState<string | null>(null)
   const [sellingPos, setSellingPos] = useState<string | null>(null)
-  const [customAmount, setCustomAmount] = useState<string>('1')
+  const [customAmount, setCustomAmount] = useState<string>(String(POLYMARKET_MIN_ORDER_USD))
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
@@ -284,6 +285,7 @@ export default function PolymarketDetailView({ slug }: Props) {
   const selectedPrice = prices[selectedOutcome] || 0
   const estimatedReturn = selectedPrice > 0 ? amount / selectedPrice : 0
   const estimatedProfit = estimatedReturn - amount
+  const belowMinimum = amount > 0 && amount < POLYMARKET_MIN_ORDER_USD
   const tokenId = market?.tokens?.[selectedOutcome]?.token_id || ''
 
   // Chart data (memoised on market id)
@@ -498,6 +500,10 @@ export default function PolymarketDetailView({ slug }: Props) {
 
   const handleSubmit = async () => {
     if (amount <= 0 || !tokenId || selectedPrice <= 0) return
+    if (amount < POLYMARKET_MIN_ORDER_USD) {
+      setError(t('polymarket.minimum-order', { amount: fNumber(POLYMARKET_MIN_ORDER_USD) }))
+      return
+    }
     setIsSubmitting(true)
     setError(null)
     setSuccess(null)
@@ -918,7 +924,7 @@ export default function PolymarketDetailView({ slug }: Props) {
                 value={customAmount}
                 onChange={handleCustomAmountChange}
                 type='number'
-                min={1}
+                min={POLYMARKET_MIN_ORDER_USD}
                 sx={{
                   border: 'none',
                   outline: 'none',
@@ -1003,6 +1009,13 @@ export default function PolymarketDetailView({ slug }: Props) {
                 </MenuItem>
               ))}
             </Menu>
+
+            {/* Below minimum order */}
+            {belowMinimum && (
+              <Alert severity='warning' sx={{ mt: 1.5, py: 0.75 }}>
+                {t('polymarket.minimum-order', { amount: fNumber(POLYMARKET_MIN_ORDER_USD) })}
+              </Alert>
+            )}
 
             {/* Insufficient balance */}
             {amount > selectedTokenBalance && selectedTokenBalance >= 0 && amount > 0 && (
@@ -1169,7 +1182,10 @@ export default function PolymarketDetailView({ slug }: Props) {
           color='primary'
           size='large'
           onClick={orderSuccess ? closeOrderSuccess : handleSubmit}
-          disabled={!orderSuccess && (amount <= 0 || isSubmitting || amount > selectedTokenBalance)}
+          disabled={
+            !orderSuccess &&
+            (amount <= 0 || belowMinimum || isSubmitting || amount > selectedTokenBalance)
+          }
           startIcon={
             isSubmitting ? (
               <CircularProgress size={18} color='inherit' />
