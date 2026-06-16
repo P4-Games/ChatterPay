@@ -101,12 +101,26 @@ export default function OverviewBankingView() {
     isLoading: isLoadingTrxs
   }: { data: ITransaction[]; isLoading: boolean } = useGetWalletTransactions(walletAddress)
 
-  // Polymarket data (pre-loaded for drawer)
-  const { data: positions = [], isLoading: isLoadingPositions } =
-    useGetPolymarketPositionsSWR(10000)
-  const { data: orders = [], isLoading: isLoadingOrders } = useGetPolymarketOrdersSWR(10000)
-  const { data: portfolioData, isLoading: isLoadingPortfolio } = useGetPolymarketPortfolioSWR(10000)
-  const { data: trades = [], isLoading: isLoadingTrades } = useGetPolymarketTradesSWR(30000)
+  // Polymarket data — only fetch/poll while the drawer is open (data is only shown there).
+  // SWR keeps the cache per key, so re-opening shows data instantly and revalidates in background.
+  const isPolymarketDrawerOpen = polymarketDrawer.value
+  const { data: positions = [], isLoading: isLoadingPositions } = useGetPolymarketPositionsSWR(
+    10000,
+    isPolymarketDrawerOpen
+  )
+  const { data: orders = [], isLoading: isLoadingOrders } = useGetPolymarketOrdersSWR(
+    10000,
+    isPolymarketDrawerOpen
+  )
+  const { data: portfolioData, isLoading: isLoadingPortfolio } = useGetPolymarketPortfolioSWR(
+    10000,
+    isPolymarketDrawerOpen
+  )
+  const { data: trades = [], isLoading: isLoadingTrades } = useGetPolymarketTradesSWR(
+    30000,
+    undefined,
+    isPolymarketDrawerOpen
+  )
 
   // Fetch CoinGecko price data for crypto dropdown
   useEffect(() => {

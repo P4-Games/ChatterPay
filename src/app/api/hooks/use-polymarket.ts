@@ -128,9 +128,9 @@ const postFetcher = async (args: [string, any, any]) => {
   return post(url, data, config)
 }
 
-export function useGetPolymarketPositionsSWR(refreshInterval = 10000) {
+export function useGetPolymarketPositionsSWR(refreshInterval = 10000, enabled = true) {
   const { data, error, isLoading, isValidating, mutate } = useSWR(
-    [endpoints.polymarket.positions(), {}, { headers: getAuthorizationHeader() }],
+    enabled ? [endpoints.polymarket.positions(), {}, { headers: getAuthorizationHeader() }] : null,
     postFetcher,
     { refreshInterval }
   )
@@ -150,9 +150,9 @@ export function useGetPolymarketPositionsSWR(refreshInterval = 10000) {
   )
 }
 
-export function useGetPolymarketOrdersSWR(refreshInterval = 10000) {
+export function useGetPolymarketOrdersSWR(refreshInterval = 10000, enabled = true) {
   const { data, error, isLoading, isValidating, mutate } = useSWR(
-    [endpoints.polymarket.orders(), {}, { headers: getAuthorizationHeader() }],
+    enabled ? [endpoints.polymarket.orders(), {}, { headers: getAuthorizationHeader() }] : null,
     postFetcher,
     { refreshInterval }
   )
@@ -169,9 +169,9 @@ export function useGetPolymarketOrdersSWR(refreshInterval = 10000) {
   )
 }
 
-export function useGetPolymarketPortfolioSWR(refreshInterval = 10000) {
+export function useGetPolymarketPortfolioSWR(refreshInterval = 10000, enabled = true) {
   const { data, error, isLoading, isValidating, mutate } = useSWR(
-    [endpoints.polymarket.portfolio(), {}, { headers: getAuthorizationHeader() }],
+    enabled ? [endpoints.polymarket.portfolio(), {}, { headers: getAuthorizationHeader() }] : null,
     postFetcher,
     { refreshInterval }
   )
@@ -331,13 +331,19 @@ export async function polymarketGetPnlHistory(limit?: number): Promise<{
   })
 }
 
-export function useGetPolymarketTradesSWR(refreshInterval = 30000, market?: string) {
+export function useGetPolymarketTradesSWR(
+  refreshInterval = 30000,
+  market?: string,
+  enabled = true
+) {
   const { data, error, isLoading, isValidating, mutate } = useSWR(
-    [
-      endpoints.polymarket.trades(),
-      market ? { market } : {},
-      { headers: getAuthorizationHeader() }
-    ],
+    enabled
+      ? [
+          endpoints.polymarket.trades(),
+          market ? { market } : {},
+          { headers: getAuthorizationHeader() }
+        ]
+      : null,
     postFetcher,
     { refreshInterval }
   )
