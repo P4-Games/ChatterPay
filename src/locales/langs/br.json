@@ -868,6 +868,7 @@
     "agree-continue": "Concordar e Continuar",
     "accepting": "Aceitando...",
     "insufficient-balance": "Saldo insuficiente",
+    "minimum-order": "O valor mínimo de previsão é ${{amount}}",
     "deposit": "Depositar",
     "pay-with": "Pagar com",
     "sell-all": "Vender tudo",

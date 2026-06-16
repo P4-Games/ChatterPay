@@ -881,6 +881,7 @@
     "agree-continue": "Agree & Continue",
     "accepting": "Accepting...",
     "insufficient-balance": "Insufficient balance",
+    "minimum-order": "The minimum prediction amount is ${{amount}}",
     "deposit": "Deposit",
     "pay-with": "Pay with",
     "place-another": "Place another order",
