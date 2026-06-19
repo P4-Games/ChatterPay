@@ -493,33 +493,50 @@ export default function DashboardPositionsTable({ positions, orders, isLoading }
                         </TableCell>
 
                         <TableCell align='right'>
-                          <ButtonGroup
-                            size='small'
-                            color='error'
-                            variant='contained'
-                            disabled={sellingPos === posKey}
-                          >
+                          {currentPrice >= 1 ? (
                             <Button
+                              size='small'
+                              color='success'
+                              variant='contained'
+                              disabled={sellingPos === posKey}
                               onClick={() => handleSellPosition(pos)}
-                              sx={{ whiteSpace: 'nowrap', minWidth: 76 }}
+                              sx={{ whiteSpace: 'nowrap' }}
                             >
                               {sellingPos === posKey ? (
                                 <CircularProgress size={14} color='inherit' />
                               ) : (
-                                t('polymarket.sell-all')
+                                t('polymarket.claim-amount', { amount: fNumber(valueUsd) })
                               )}
                             </Button>
-                            <Button
-                              sx={{ px: 0.5, minWidth: 28 }}
-                              onClick={(e) => {
-                                setPartialSellPos(pos)
-                                setPartialSellAmount(String(Math.floor(pos.size * 1e6) / 1e6))
-                                setPartialSellAnchor(e.currentTarget)
-                              }}
+                          ) : (
+                            <ButtonGroup
+                              size='small'
+                              color='error'
+                              variant='contained'
+                              disabled={sellingPos === posKey}
                             >
-                              <Iconify icon='eva:chevron-down-fill' width={16} />
-                            </Button>
-                          </ButtonGroup>
+                              <Button
+                                onClick={() => handleSellPosition(pos)}
+                                sx={{ whiteSpace: 'nowrap', minWidth: 76 }}
+                              >
+                                {sellingPos === posKey ? (
+                                  <CircularProgress size={14} color='inherit' />
+                                ) : (
+                                  t('polymarket.sell-all')
+                                )}
+                              </Button>
+                              <Button
+                                sx={{ px: 0.5, minWidth: 28 }}
+                                onClick={(e) => {
+                                  setPartialSellPos(pos)
+                                  setPartialSellAmount(String(Math.floor(pos.size * 1e6) / 1e6))
+                                  setPartialSellAnchor(e.currentTarget)
+                                }}
+                              >
+                                <Iconify icon='eva:chevron-down-fill' width={16} />
+                              </Button>
+                            </ButtonGroup>
+                          )}
                         </TableCell>
                       </TableRow>
                     )
