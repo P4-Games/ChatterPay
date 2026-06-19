@@ -538,7 +538,7 @@ export default function DashboardPortfolioBalance({
               }
             }}
           >
-            {isClaiming ? 'Claiming...' : `Claim Settlements: $${fNumber(idleUsdc)}`}
+            {isClaiming ? t('polymarket.claiming') : t('polymarket.claim-settlements', { amount: fNumber(idleUsdc) })}
           </Button>
         )}
       </Stack>

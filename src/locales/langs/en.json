@@ -809,6 +809,8 @@
     "available-in-polygon": "available in Polygon Safe",
     "claim-all-scroll": "Claim All to Scroll",
     "claiming": "Claiming...",
+    "claim-settlements": "Claim Settlements: ${{amount}}",
+    "claim-amount": "Claim ${{amount}}",
     "trade-history": "Trade History",
     "odds-time": "Odds over time (%)",
     "current-odds": "Current odds",

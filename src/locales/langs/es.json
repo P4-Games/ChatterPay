@@ -809,6 +809,8 @@
     "available-in-polygon": "disponible en Polygon Safe",
     "claim-all-scroll": "Reclamar todo a Scroll",
     "claiming": "Reclamando...",
+    "claim-settlements": "Reclamar liquidaciones: ${{amount}}",
+    "claim-amount": "Reclamar ${{amount}}",
     "trade-history": "Historial de Operaciones",
     "odds-time": "Probabilidades en el tiempo (%)",
     "current-odds": "Probabilidades actuales",
