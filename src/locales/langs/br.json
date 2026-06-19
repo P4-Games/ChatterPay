@@ -466,6 +466,7 @@
     "polymarket-copy-error": "Copiar erro",
     "polymarket-error-copied": "Erro copiado para a área de transferência",
     "polymarket-purchase-details": "Detalhes da Compra",
+    "polymarket-order-details": "Detalhes da Ordem",
     "polymarket-status": "Status",
     "polymarket-market": "Mercado",
     "polymarket-date": "Data",
@@ -479,6 +480,8 @@
     "polymarket-view-event": "Ver evento",
     "polymarket-bridge-order-detail": "Detalhes de Bridge e Ordem",
     "polymarket-bridge-step": "Bridge (Scroll → Polygon)",
+    "polymarket-bridge-step-in": "Bridge (Scroll → Polygon)",
+    "polymarket-bridge-step-out": "Bridge (Polygon → Scroll)",
     "polymarket-order-step": "Ordem CLOB",
     "polymarket-predicted-amount": "Valor da previsão"
   },

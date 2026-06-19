@@ -334,6 +334,7 @@ function PolymarketPurchaseDrawer({
   const txStatus = (details?.status || transaction.status || '').toLowerCase()
   const isCompleted = txStatus === 'completed'
   const isFailed = txStatus === 'failed' || txStatus === 'cancelled'
+  const isSell = transaction.type.toLowerCase().includes('sell')
 
   const statusLabelColor: 'success' | 'error' | 'warning' = isCompleted
     ? 'success'
@@ -351,7 +352,11 @@ function PolymarketPurchaseDrawer({
     <DashboardDrawer
       open={open}
       onClose={onClose}
-      title={t('transactions.polymarket-purchase-details')}
+      title={
+        isSell
+          ? t('transactions.polymarket-order-details')
+          : t('transactions.polymarket-purchase-details')
+      }
     >
       {isFetching ? (
         <Stack spacing={2}>
@@ -452,7 +457,7 @@ function PolymarketPurchaseDrawer({
             })()}
           </Stack>
 
-          {/* Bridge & Order detail — only on unified polymarket_buy records */}
+          {/* Bridge & Order detail — only on unified polymarket_buy/sell records */}
           {(transaction.polymarket_bridge_tx_hash ||
             transaction.polymarket_bridge_amount ||
             transaction.polymarket_order_id) && (
@@ -477,7 +482,11 @@ function PolymarketPurchaseDrawer({
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
                         <Iconify icon='eva:swap-outline' width={16} sx={{ color: 'info.main' }} />
                         <Typography variant='caption' color='text.secondary' fontWeight={600}>
-                          {t('transactions.polymarket-bridge-step') || 'Bridge (Scroll → Polygon)'}
+                          {isSell
+                            ? t('transactions.polymarket-bridge-step-out') ||
+                              'Bridge (Polygon → Scroll)'
+                            : t('transactions.polymarket-bridge-step-in') ||
+                              'Bridge (Scroll → Polygon)'}
                         </Typography>
                       </Box>
                       {transaction.polymarket_bridge_amount != null && (
@@ -856,7 +865,13 @@ function BankingRecentTransitionsRow({
       <TableCell align='right' sx={{ py: 2, pr: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 0.5 }}>
           {hasPurchaseDetails && (
-            <Tooltip title={t('transactions.polymarket-purchase-details')}>
+            <Tooltip
+              title={
+                polymarketSide === 'sell'
+                  ? t('transactions.polymarket-order-details')
+                  : t('transactions.polymarket-purchase-details')
+              }
+            >
               <IconButton size='small' onClick={() => setPurchaseDrawerOpen(true)}>
                 <Iconify icon='eva:info-outline' />
               </IconButton>
@@ -949,7 +964,13 @@ function BankingRecentTransitionsRow({
       <TableCell align='right' sx={{ py: 2, pr: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 0.5 }}>
           {hasPurchaseDetails && (
-            <Tooltip title={t('transactions.polymarket-purchase-details')}>
+            <Tooltip
+              title={
+                polymarketSide === 'sell'
+                  ? t('transactions.polymarket-order-details')
+                  : t('transactions.polymarket-purchase-details')
+              }
+            >
               <IconButton size='small' onClick={() => setPurchaseDrawerOpen(true)}>
                 <Iconify icon='eva:info-outline' />
               </IconButton>
