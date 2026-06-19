@@ -77,6 +77,14 @@ export type ITransaction = {
   status: string
   user_notes?: string
   chain_id?: number
+  polymarket_market_slug?: string
+  polymarket_purchase_id?: string
+  polymarket_order_id?: string
+  polymarket_size?: number
+  // Unified polymarket_buy — bridge data embedded in the same record
+  polymarket_bridge_tx_hash?: string
+  polymarket_bridge_amount?: number
+  polymarket_bridge_token?: string
 }
 
 export type IToken = {

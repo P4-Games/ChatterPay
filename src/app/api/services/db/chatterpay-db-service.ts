@@ -535,7 +535,15 @@ export async function getUserTransactions(wallet: string): Promise<ITransaction[
           type: 1,
           status: 1,
           trx_hash: 1,
-          user_notes: 1
+          user_notes: 1,
+          chain_id: 1,
+          polymarket_market_slug: 1,
+          polymarket_purchase_id: 1,
+          polymarket_order_id: 1,
+          polymarket_size: 1,
+          polymarket_bridge_tx_hash: 1,
+          polymarket_bridge_amount: 1,
+          polymarket_bridge_token: 1
         }
       },
       {
