@@ -83,6 +83,13 @@ export default function BankingRecentTransitions({
   const { t } = useTranslate()
   const table = useTable()
 
+  // Cap how many rows we mount at once — the history can be very long and
+  // rendering every row is the main source of memory pressure on this page.
+  const [showAll, setShowAll] = useState(false)
+  const MAX_VISIBLE = 20
+  const visibleData = showAll ? tableData : (tableData || []).slice(0, MAX_VISIBLE)
+  const hasMore = (tableData?.length || 0) > MAX_VISIBLE
+
   const denseHeight = table.dense ? 56 : 56 + 20
   const notFound = !tableData || !tableData.length
 
@@ -100,7 +107,7 @@ export default function BankingRecentTransitions({
 
           <TableBody>
             {!notFound &&
-              tableData.map((row) => (
+              visibleData.map((row) => (
                 <BankingRecentTransitionsRow
                   key={row.id}
                   userWallet={userWallet}
@@ -171,14 +178,21 @@ export default function BankingRecentTransitions({
       </Scrollbar>
     </TableContainer>
   )
-  const renderActions = (
+  const renderActions = hasMore && (
     <Box sx={{ p: 2, textAlign: 'right' }}>
       <Button
         size='small'
         color='inherit'
-        endIcon={<Iconify icon='eva:arrow-ios-forward-fill' width={18} sx={{ ml: -0.5 }} />}
+        onClick={() => setShowAll((prev) => !prev)}
+        endIcon={
+          <Iconify
+            icon={showAll ? 'eva:arrow-ios-upward-fill' : 'eva:arrow-ios-downward-fill'}
+            width={18}
+            sx={{ ml: -0.5 }}
+          />
+        }
       >
-        {t('transactions.table-view-all')}
+        {showAll ? t('transactions.table-view-less') : t('transactions.table-view-all')}
       </Button>
     </Box>
   )
@@ -189,8 +203,12 @@ export default function BankingRecentTransitions({
 
       {isLoading ? renderContentSkeleton : renderConent}
 
-      <Divider sx={{ borderStyle: 'dashed' }} />
-      {renderActions}
+      {hasMore && (
+        <>
+          <Divider sx={{ borderStyle: 'dashed' }} />
+          {renderActions}
+        </>
+      )}
     </Card>
   )
 }
@@ -662,7 +680,12 @@ function BankingRecentTransitionsRow({
     const hasEnrichedNotes =
       row.user_notes && (row.user_notes.startsWith('BUY: ') || row.user_notes.startsWith('SELL: '))
 
-    if (isFailed && (polymarketSide === 'buy' || polymarketSide === 'sell')) {
+    if (polymarketSide === 'claim' || polymarketSide === 'withdraw') {
+      message = isFailed
+        ? t('transactions.polymarket-claim-failed')
+        : t('transactions.polymarket-claim-msg')
+      if (isFailed) errorMessageToCopy = row.user_notes || 'Unknown error'
+    } else if (isFailed && (polymarketSide === 'buy' || polymarketSide === 'sell')) {
       message =
         polymarketSide === 'buy'
           ? t('transactions.polymarket-failed-buy', { market: formattedSlug })
@@ -700,6 +723,11 @@ function BankingRecentTransitionsRow({
       : `${explorerBase}/tx/${row.trx_hash}`
   const marketLink = row.polymarket_market_slug
     ? paths.dashboard.polymarket.detail(row.polymarket_market_slug)
+    : null
+
+  // Live step label for optimistic (in-flight) records.
+  const pendingStepLabel = row.polymarket_pending_step
+    ? formatStepName(row.polymarket_pending_step)
     : null
 
   const popover = usePopover()
@@ -843,7 +871,14 @@ function BankingRecentTransitionsRow({
     <TableRow sx={{ opacity: isPending ? 0.6 : isFailed ? 0.5 : 1 }}>
       <TableCell sx={{ display: 'flex', alignItems: 'center', py: 2, pl: 3 }}>
         {renderAvatar}
-        <ListItemText primary={message} secondary={contactIdentifier} sx={{ minWidth: 0 }} />
+        <ListItemText
+          primary={message}
+          secondary={pendingStepLabel || contactIdentifier}
+          secondaryTypographyProps={
+            pendingStepLabel ? { color: 'warning.main', fontWeight: 600 } : undefined
+          }
+          sx={{ minWidth: 0 }}
+        />
       </TableCell>
 
       <TableCell sx={{ py: 2 }}>
@@ -935,7 +970,13 @@ function BankingRecentTransitionsRow({
           primary={message}
           secondary={
             <>
-              {contactIdentifier}
+              {pendingStepLabel ? (
+                <Box component='span' sx={{ color: 'warning.main', fontWeight: 600 }}>
+                  {pendingStepLabel}
+                </Box>
+              ) : (
+                contactIdentifier
+              )}
               <Box component='span' sx={{ display: 'block', mt: 0.5 }}>
                 {`${fDate(new Date(row.date))} ${fTime(new Date(row.date))}`}
               </Box>
