@@ -467,17 +467,44 @@ export async function getWalletNft(wallet: string, nftId: string): Promise<INFT 
   return result
 }
 
-export async function getUserTransactions(wallet: string): Promise<ITransaction[] | undefined> {
+export async function getUserTransactions(
+  wallet: string,
+  opts?: { limit?: number; since?: string | number | Date }
+): Promise<ITransaction[] | undefined> {
   const client = await getClientPromise()
   const db = client.db(DB_CHATTERPAY_NAME)
+
+  // Base ownership filter
+  const match: Record<string, any> = {
+    $or: [{ wallet_from: wallet }, { wallet_to: wallet }]
+  }
+
+  // Incremental fetch: only return records newer than `since`. The bot writes `date`
+  // as a BSON Date, but tolerate epoch-ms / ISO inputs by coercing to a Date.
+  if (opts?.since != null) {
+    const sinceDate =
+      opts.since instanceof Date
+        ? opts.since
+        : typeof opts.since === 'number'
+          ? new Date(opts.since)
+          : new Date(String(opts.since))
+    if (!Number.isNaN(sinceDate.getTime())) {
+      match.date = { $gt: sinceDate }
+    }
+  }
+
+  // Bound the result set. Callers fetch a small "head" (newest N) instead of the
+  // entire history; old records don't change so the client merges them from cache.
+  const limit =
+    opts?.limit != null && Number.isFinite(opts.limit) && opts.limit > 0
+      ? Math.min(Math.floor(opts.limit), 500)
+      : undefined
 
   const cursor: ITransactionDB[] | null = await db
     .collection(SCHEMA_TRANSACTIONS)
     .aggregate([
       {
-        $match: {
-          $or: [{ wallet_from: wallet }, { wallet_to: wallet }]
-        }
+        $match: match
       },
       {
         $lookup: {
@@ -548,7 +575,8 @@ export async function getUserTransactions(wallet: string): Promise<ITransaction[
       },
       {
         $sort: { date: -1 }
-      }
+      },
+      ...(limit != null ? [{ $limit: limit }] : [])
     ])
     .toArray()
 

@@ -81,6 +81,8 @@ export type ITransaction = {
   polymarket_purchase_id?: string
   polymarket_order_id?: string
   polymarket_size?: number
+  // Client-only: live step label for an optimistic (in-flight) record
+  polymarket_pending_step?: string
   // Unified polymarket_buy — bridge data embedded in the same record
   polymarket_bridge_tx_hash?: string
   polymarket_bridge_amount?: number

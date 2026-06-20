@@ -290,7 +290,7 @@ export async function polymarketPurchaseStatus(purchaseId: string): Promise<{
 
 export async function polymarketBridgeWithdraw(amount: string): Promise<{
   ok: boolean
-  data?: { success: boolean; hash?: string }
+  data?: { success: boolean; hash?: string; withdrawal_pending?: boolean }
   message?: string
 }> {
   return post(
