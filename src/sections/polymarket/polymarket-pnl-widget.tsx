@@ -133,26 +133,38 @@ export default function PolymarketPNLWidget({
 
   const loading = isLoadingExternal ?? isLoading
 
-  // Compute P&L from portfolio data, with positions fallback
-  const portfolioPnl = portfolio?.total_pnl ?? portfolio?.totalPnl ?? 0
-  const positionsPnl =
-    resolvedPositions?.reduce((sum, p) => sum + (p.pnl ?? p.cashPnl ?? 0), 0) ?? 0
-  const pnl = portfolioPnl !== 0 ? portfolioPnl : positionsPnl
+  // Derive all portfolio stats in one memo — only re-runs when source data changes
+  const { pnl, totalValue, totalVolume, isPositive, pnlPercent } = useMemo(() => {
+    const portfolioPnl = portfolio?.total_pnl ?? portfolio?.totalPnl ?? 0
+    const positionsPnl =
+      resolvedPositions?.reduce((sum, p) => sum + (p.pnl ?? p.cashPnl ?? 0), 0) ?? 0
+    const computedPnl = portfolioPnl !== 0 ? portfolioPnl : positionsPnl
 
-  const portfolioValue = portfolio?.total_value ?? portfolio?.totalValue ?? 0
-  const positionsValue =
-    resolvedPositions?.reduce(
-      (sum, p) => sum + (p.currentValue ?? p.size * (p.current_price ?? p.curPrice ?? 0)),
+    const portfolioValue = portfolio?.total_value ?? portfolio?.totalValue ?? 0
+    const positionsValue =
+      resolvedPositions?.reduce(
+        (sum, p) => sum + (p.currentValue ?? p.size * (p.current_price ?? p.curPrice ?? 0)),
+        0
+      ) ?? 0
+    const computedTotalValue = portfolioValue > 0 ? portfolioValue : positionsValue
+
+    const computedTotalVolume = resolvedTrades.reduce(
+      (sum, t) => sum + (t.size || 0) * (t.price || 0),
       0
-    ) ?? 0
-  const totalValue = portfolioValue > 0 ? portfolioValue : positionsValue
+    )
 
-  // Total volume from ALL trades: sum(trade.size * trade.price)
-  const totalVolume = resolvedTrades.reduce((sum, t) => sum + (t.size || 0) * (t.price || 0), 0)
+    const computedIsPositive = computedPnl >= 0
+    const invested = computedTotalValue - computedPnl
+    const computedPnlPercent = invested > 0 ? (computedPnl / invested) * 100 : 0
 
-  const isPositive = pnl >= 0
-  const invested = totalValue - pnl
-  const pnlPercent = invested > 0 ? (pnl / invested) * 100 : 0
+    return {
+      pnl: computedPnl,
+      totalValue: computedTotalValue,
+      totalVolume: computedTotalVolume,
+      isPositive: computedIsPositive,
+      pnlPercent: computedPnlPercent
+    }
+  }, [portfolio, resolvedPositions, resolvedTrades])
 
   // Chart data filtered by time range
   const filteredHistory = useMemo(

@@ -1,20 +1,25 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
-import { useTheme } from '@mui/material/styles'
+import { alpha, useTheme } from '@mui/material/styles'
+import { fCurrency } from 'src/utils/format-number'
 import { useTranslate } from 'src/locales'
 import { useAuthContext } from 'src/auth/hooks'
 import {
   useGetPolymarketEvents,
   useGetPolymarketEventsInfinite,
+  useGetPolymarketPositionsSWR,
+  useGetPolymarketOrdersSWR,
+  useGetPolymarketPortfolioSWR,
   polymarketAccountStatus
 } from 'src/app/api/hooks'
 
+import { useBoolean } from 'src/hooks/use-boolean'
 import { useSettingsContext } from 'src/components/settings'
 
 import type { IPolymarketEvent, IPolymarketAccountStatus } from 'src/types/polymarket'
@@ -26,6 +31,8 @@ import PolymarketPNLWidget from '../polymarket-pnl-widget'
 import PolymarketTermsOverlay from '../polymarket-terms-overlay'
 import Marquee from 'src/components/marquee'
 import Iconify from 'src/components/iconify'
+import DashboardDrawer from 'src/sections/banking/dashboard-drawer'
+import DashboardPositionsTable from 'src/sections/banking/dashboard-positions-table'
 
 // ----------------------------------------------------------------------
 
@@ -38,6 +45,9 @@ export default function PolymarketHubView() {
 
   const [category, setCategory] = useState('All')
   const [sortBy, setSortBy] = useState('recommended')
+
+  const portfolioDrawer = useBoolean()
+  const isDrawerOpen = portfolioDrawer.value
 
   // Account status for terms check
   const [accountStatus, setAccountStatus] = useState<IPolymarketAccountStatus | null>(null)
@@ -63,6 +73,33 @@ export default function PolymarketHubView() {
       setStatusLoading(false)
     }
   }, [user?.id, checkAccountStatus])
+
+  // Portfolio + positions — always fetched when logged in so the button value matches the drawer
+  const { data: portfolio, isLoading: isPortfolioLoading } = useGetPolymarketPortfolioSWR(
+    30000,
+    !!user?.id
+  )
+  const { data: positions = [], isLoading: isPositionsLoading } = useGetPolymarketPositionsSWR(
+    30000,
+    !!user?.id
+  )
+
+  // Orders — lazy, only fetched while drawer is open
+  const { data: orders = [], isLoading: isOrdersLoading } = useGetPolymarketOrdersSWR(
+    10000,
+    isDrawerOpen
+  )
+
+  // Mirror the PNL widget logic: use portfolio total, fall back to summing positions
+  const displayValue = useMemo(() => {
+    const fromPortfolio = portfolio?.total_value ?? portfolio?.totalValue ?? 0
+    const fromPositions = positions.reduce(
+      (sum, p) => sum + (p.currentValue ?? p.size * (p.current_price ?? p.curPrice ?? 0)),
+      0
+    )
+    return fromPortfolio > 0 ? fromPortfolio : fromPositions
+  }, [portfolio, positions])
+  const isValueLoading = isPortfolioLoading || isPositionsLoading
 
   // Events with infinite scroll
   const { events, isLoading, isLoadingMore, hasMore, loadMore } = useGetPolymarketEventsInfinite(
@@ -110,7 +147,8 @@ export default function PolymarketHubView() {
                 justifyContent='space-between'
                 spacing={4}
               >
-                <Box sx={{ maxWidth: 480 }}>
+                {/* Left: heading + optional portfolio trigger button */}
+                <Box sx={{ maxWidth: 480, width: '100%' }}>
                   <Typography
                     variant='h1'
                     sx={{
@@ -135,8 +173,74 @@ export default function PolymarketHubView() {
                   >
                     {t('polymarket.just-with-whatsapp')}
                   </Typography>
+
+                  {/* Portfolio trigger — prominent button in the free space below the heading */}
+                  {user?.id && (
+                    <Box
+                      onClick={portfolioDrawer.onTrue}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: 2,
+                        cursor: 'pointer',
+                        bgcolor: 'background.paper',
+                        borderRadius: 2,
+                        px: 2.5,
+                        py: 2,
+                        boxShadow: theme.customShadows.card,
+                        border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}`,
+                        width: { xs: '100%', sm: 'auto' },
+                        minWidth: { sm: 300 },
+                        transition: 'all 0.18s ease',
+                        '&:hover': {
+                          transform: 'translateY(-2px)',
+                          boxShadow: theme.customShadows.z20
+                        },
+                        '&:active': { transform: 'translateY(0)' }
+                      }}
+                    >
+                      <Stack direction='row' alignItems='center' spacing={2}>
+                        <Box
+                          sx={{
+                            width: 44,
+                            height: 44,
+                            borderRadius: 1.5,
+                            bgcolor: alpha(theme.palette.primary.main, 0.08),
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0
+                          }}
+                        >
+                          <Iconify
+                            icon='solar:wallet-bold-duotone'
+                            width={24}
+                            sx={{ color: 'primary.main' }}
+                          />
+                        </Box>
+                        <Box>
+                          <Typography
+                            variant='caption'
+                            sx={{ display: 'block', color: 'text.secondary', fontWeight: 600 }}
+                          >
+                            {t('polymarket.portfolio-title')}
+                          </Typography>
+                          <Typography variant='subtitle2' fontWeight={700}>
+                            {isValueLoading ? '—' : fCurrency(displayValue)}
+                          </Typography>
+                        </Box>
+                      </Stack>
+                      <Iconify
+                        icon='eva:arrow-ios-forward-fill'
+                        width={20}
+                        sx={{ color: 'text.secondary', flexShrink: 0 }}
+                      />
+                    </Box>
+                  )}
                 </Box>
 
+                {/* Right: compact P&L sparkline (informational) */}
                 <PolymarketPNLWidget />
               </Stack>
 
@@ -205,6 +309,28 @@ export default function PolymarketHubView() {
           />
         </Container>
       </Box>
+
+      {/* Portfolio Drawer — same pattern as dashboard, opens on compact widget click */}
+      <DashboardDrawer
+        open={isDrawerOpen}
+        onClose={portfolioDrawer.onFalse}
+        title={t('polymarket.portfolio-title')}
+        width='50vw'
+      >
+        <Stack spacing={3}>
+          <PolymarketPNLWidget
+            variant='expanded'
+            portfolioData={portfolio ?? null}
+            positions={positions}
+            isLoadingExternal={isPortfolioLoading}
+          />
+          <DashboardPositionsTable
+            positions={positions}
+            orders={orders}
+            isLoading={isPositionsLoading || isOrdersLoading}
+          />
+        </Stack>
+      </DashboardDrawer>
     </>
   )
 }
