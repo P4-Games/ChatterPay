@@ -14,7 +14,7 @@ import { useAuthContext } from 'src/auth/hooks'
 import {
   useGetTokens,
   useGetWalletBalance,
-  useGetWalletTransactions,
+  useGetWalletTransactionsCached,
   useGetPolymarketPositionsSWR,
   useGetPolymarketOrdersSWR,
   useGetPolymarketPortfolioSWR,
@@ -22,7 +22,6 @@ import {
   polymarketBridgeWithdraw
 } from 'src/app/api/hooks'
 import { getTokenPricesWithChange } from 'src/app/api/services/coingecko/coingecko-service'
-import { useSWRConfig } from 'swr'
 
 import { useBoolean } from 'src/hooks/use-boolean'
 
@@ -36,6 +35,11 @@ import BankingRecentTransitions from '../banking-recent-transitions'
 import DashboardPortfolioBalance from '../dashboard-portfolio-balance'
 import DashboardPositionsTable from '../dashboard-positions-table'
 import DashboardDrawer from '../dashboard-drawer'
+import {
+  usePolymarketActivity,
+  pendingOpToTransaction,
+  PolymarketActivityProvider
+} from '../polymarket-activity-context'
 
 // ----------------------------------------------------------------------
 
@@ -49,14 +53,13 @@ const DashboardSwapModal = dynamic(() => import('../dashboard-swap-modal'), { ss
 
 // ----------------------------------------------------------------------
 
-export default function OverviewBankingView() {
+function BankingDashboardContent() {
   const { t } = useTranslate()
   const theme = useTheme()
   const isDark = theme.palette.mode === 'dark'
   const settings = useSettingsContext()
   const { user }: { user: AuthUserType } = useAuthContext()
   const { enqueueSnackbar } = useSnackbar()
-  const { mutate } = useSWRConfig()
 
   const [walletAddress, setWalletAddress] = useState<string>('')
   const [hideValues, setHideValues] = useState(false)
@@ -105,7 +108,9 @@ export default function OverviewBankingView() {
   const {
     data: transactions,
     isLoading: isLoadingTrxs
-  }: { data: ITransaction[]; isLoading: boolean } = useGetWalletTransactions(walletAddress)
+  }: { data: ITransaction[]; isLoading: boolean } = useGetWalletTransactionsCached(walletAddress)
+
+  const { pendingOps, addClaim, failOp, completeOp } = usePolymarketActivity()
 
   // Polymarket data — only fetch/poll while the drawer is open (data is only shown there).
   // SWR keeps the cache per key, so re-opening shows data instantly and revalidates in background.
@@ -160,39 +165,87 @@ export default function OverviewBankingView() {
 
   const safeTransactions: ITransaction[] = !walletAddress || isLoadingTrxs ? [] : transactions
 
+  // Merge optimistic (in-flight) records on top of the real history. A synthetic
+  // row is dropped once its real backend counterpart shows up: by purchase_id for
+  // sells, or by a matching claim/withdraw record dated after the claim started.
+  const mergedTransactions = useMemo<ITransaction[]>(() => {
+    if (!pendingOps.length) return safeTransactions
+
+    const realPurchaseIds = new Set(
+      safeTransactions.map((tx) => tx.polymarket_purchase_id).filter(Boolean) as string[]
+    )
+
+    const txMs = (tx: ITransaction): number => {
+      const d = tx.date
+      if (typeof d === 'number') return d
+      const ms = new Date(d as string | Date).getTime()
+      return Number.isNaN(ms) ? 0 : ms
+    }
+
+    const visibleOps = pendingOps.filter((op) => {
+      if (op.purchaseId && realPurchaseIds.has(op.purchaseId)) return false
+      if (op.kind === 'claim') {
+        const supersededBy = safeTransactions.some(
+          (tx) =>
+            (tx.type === 'polymarket_claim' || tx.type === 'polymarket_withdraw') &&
+            txMs(tx) >= op.createdAt - 5000
+        )
+        if (supersededBy) return false
+      }
+      return true
+    })
+
+    if (!visibleOps.length) return safeTransactions
+
+    const synthetic = visibleOps
+      .slice()
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .map((op) => pendingOpToTransaction(op, walletAddress))
+
+    return [...synthetic, ...safeTransactions]
+  }, [pendingOps, safeTransactions, walletAddress])
+
   const idleUsdc = safeBalances.polymarket?.idle_usdc ?? 0
   const polymarketTotalUsd = safeBalances.polymarket?.total_usd ?? 0
 
-  // Claim handler
+  // A claim keeps processing in the background (~45 s) after the API responds, while
+  // the on-chain balance hasn't refreshed yet. Keep the button disabled for the whole
+  // in-flight window — driven by the persisted op, so it survives reloads too.
+  const claimInProgress = useMemo(
+    () => pendingOps.some((op) => op.kind === 'claim' && op.status === 'processing'),
+    [pendingOps]
+  )
+
+  // Claim handler — drops an optimistic record immediately; the activity context
+  // owns its lifecycle (status tracking + balance/portfolio revalidation), so it
+  // stays visible in the history even after this view's button resets.
   const handleClaimSubmit = async () => {
     if (idleUsdc <= 0) {
       enqueueSnackbar('No idle funds to claim', { variant: 'warning' })
       return
     }
 
+    const opId = addClaim(idleUsdc)
     setIsClaiming(true)
     try {
       const result = await polymarketBridgeWithdraw(idleUsdc.toString())
       if (result.ok) {
-        enqueueSnackbar('Funds Claiming... This may take a minute.', { variant: 'info' })
-        setTimeout(() => {
-          mutate(
-            (key: any) =>
-              Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance')
-          )
-          mutate(
-            (key: any) =>
-              Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/portfolio')
-          )
-          enqueueSnackbar('Scroll Wallet Balance Updated', { variant: 'success' })
-          setIsClaiming(false)
-        }, 40000)
+        if (result.data?.hash) {
+          // Bridge completed synchronously — close the op now, don't wait 45 s.
+          completeOp(opId)
+          enqueueSnackbar('Funds transferred to Scroll!', { variant: 'success' })
+        } else {
+          // Background claim triggered — auto-resolves after CLAIM_RESOLVE_MS.
+          enqueueSnackbar('Funds Claiming... This may take a minute.', { variant: 'info' })
+        }
       } else {
+        failOp(opId, result.message)
         enqueueSnackbar(result.message || 'Error claiming funds', { variant: 'error' })
-        setIsClaiming(false)
       }
     } catch {
+      failOp(opId)
       enqueueSnackbar('Error claiming funds', { variant: 'error' })
+    } finally {
       setIsClaiming(false)
     }
   }
@@ -230,7 +283,7 @@ export default function OverviewBankingView() {
           onClaimClick={handleClaimSubmit}
           onCryptoClick={() => setCryptoExpanded((prev) => !prev)}
           onPolymarketClick={polymarketDrawer.onTrue}
-          isClaiming={isClaiming}
+          isClaiming={isClaiming || claimInProgress}
           selectedCurrency={selectedCurrency}
           onCurrencyChange={handleCurrencyChange}
           totals={safeBalances.totals}
@@ -246,7 +299,7 @@ export default function OverviewBankingView() {
           <BankingRecentTransitions
             title={t('transactions.title')}
             isLoading={isLoadingTrxs || !walletAddress}
-            tableData={safeTransactions}
+            tableData={mergedTransactions}
             tableLabels={[
               { id: 'description', label: t('transactions.table-transaction') },
               { id: 'amount', label: t('transactions.table-amount') },
@@ -313,5 +366,22 @@ export default function OverviewBankingView() {
         selectedCurrency={selectedCurrency}
       />
     </>
+  )
+}
+
+// ----------------------------------------------------------------------
+
+export default function OverviewBankingView() {
+  const { user }: { user: AuthUserType } = useAuthContext()
+  const [wallet, setWallet] = useState<string>('')
+
+  useEffect(() => {
+    if (user?.wallet) setWallet(user.wallet)
+  }, [user])
+
+  return (
+    <PolymarketActivityProvider wallet={wallet}>
+      <BankingDashboardContent />
+    </PolymarketActivityProvider>
   )
 }
