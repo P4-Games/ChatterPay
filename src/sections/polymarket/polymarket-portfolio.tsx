@@ -149,28 +149,44 @@ export default function PolymarketPortfolio() {
         bridge_amount: '0'
       })
       if (res.ok) {
-        const purchaseId = res.data?.purchase_id || tempId
+        const purchaseId = res.data?.purchase_id
         setSoldPositionKeys((prev) => new Set(prev).add(posKey))
-        setActivePurchases((prev) =>
-          prev.map((p) =>
-            p.purchase_id === tempId
-              ? { ...p, purchase_id: purchaseId, current_step: 'order_placement' }
-              : p
-          )
-        )
 
-        const poll = async () => {
-          try {
-            const statusRes = await polymarketPurchaseStatus(purchaseId)
-            if (statusRes.ok && statusRes.data) {
-              const st = statusRes.data.status
-              const step = statusRes.data.current_step || ''
-              setActivePurchases((prev) =>
-                prev.map((p) =>
-                  p.purchase_id === purchaseId ? { ...p, current_step: step, status: st } : p
-                )
-              )
-              if (st === 'completed') {
+        // No purchase_id → backend completed the operation synchronously (e.g. claim).
+        if (!purchaseId) {
+          setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== tempId))
+          enqueueSnackbar(t('polymarket.sell-completed'), { variant: 'success' })
+          mutate(
+            (key: any) =>
+              Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/positions')
+          )
+          mutate(
+            (key: any) =>
+              Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/portfolio')
+          )
+          mutate(
+            (key: any) =>
+              Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance')
+          )
+          setSoldPositionKeys((prev) => {
+            const n = new Set(prev)
+            n.delete(posKey)
+            return n
+          })
+        } else {
+          setActivePurchases((prev) =>
+            prev.map((p) =>
+              p.purchase_id === tempId
+                ? { ...p, purchase_id: purchaseId, current_step: 'order_placement' }
+                : p
+            )
+          )
+
+          const poll = async () => {
+            try {
+              const statusRes = await polymarketPurchaseStatus(purchaseId)
+              if (!statusRes.ok) {
+                // Purchase not found or backend error — stop polling to avoid infinite loop.
                 clearInterval(pollInterval)
                 setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
                 enqueueSnackbar(t('polymarket.sell-completed'), { variant: 'success' })
@@ -179,10 +195,6 @@ export default function PolymarketPortfolio() {
                     Array.isArray(key) &&
                     typeof key[0] === 'string' &&
                     key[0].includes('/positions')
-                )
-                mutate(
-                  (key: any) =>
-                    Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders')
                 )
                 mutate(
                   (key: any) =>
@@ -199,25 +211,67 @@ export default function PolymarketPortfolio() {
                   n.delete(posKey)
                   return n
                 })
-              } else if (st === 'failed') {
-                clearInterval(pollInterval)
-                setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
-                enqueueSnackbar(statusRes.data.error || t('polymarket.sell-failed'), {
-                  variant: 'error'
-                })
-                setSoldPositionKeys((prev) => {
-                  const n = new Set(prev)
-                  n.delete(posKey)
-                  return n
-                })
+                return
               }
+              if (statusRes.data) {
+                const st = statusRes.data.status
+                const step = statusRes.data.current_step || ''
+                setActivePurchases((prev) =>
+                  prev.map((p) =>
+                    p.purchase_id === purchaseId ? { ...p, current_step: step, status: st } : p
+                  )
+                )
+                if (st === 'completed') {
+                  clearInterval(pollInterval)
+                  setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
+                  enqueueSnackbar(t('polymarket.sell-completed'), { variant: 'success' })
+                  mutate(
+                    (key: any) =>
+                      Array.isArray(key) &&
+                      typeof key[0] === 'string' &&
+                      key[0].includes('/positions')
+                  )
+                  mutate(
+                    (key: any) =>
+                      Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders')
+                  )
+                  mutate(
+                    (key: any) =>
+                      Array.isArray(key) &&
+                      typeof key[0] === 'string' &&
+                      key[0].includes('/portfolio')
+                  )
+                  mutate(
+                    (key: any) =>
+                      Array.isArray(key) &&
+                      typeof key[0] === 'string' &&
+                      key[0].includes('/balance')
+                  )
+                  setSoldPositionKeys((prev) => {
+                    const n = new Set(prev)
+                    n.delete(posKey)
+                    return n
+                  })
+                } else if (st === 'failed') {
+                  clearInterval(pollInterval)
+                  setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
+                  enqueueSnackbar(statusRes.data.error || t('polymarket.sell-failed'), {
+                    variant: 'error'
+                  })
+                  setSoldPositionKeys((prev) => {
+                    const n = new Set(prev)
+                    n.delete(posKey)
+                    return n
+                  })
+                }
+              }
+            } catch (e) {
+              console.error(e)
             }
-          } catch (e) {
-            console.error(e)
           }
+          poll()
+          const pollInterval = setInterval(poll, 4000)
         }
-        poll()
-        const pollInterval = setInterval(poll, 4000)
       } else {
         setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== tempId))
         enqueueSnackbar(res.message || t('polymarket.error-executing-sell'), { variant: 'error' })

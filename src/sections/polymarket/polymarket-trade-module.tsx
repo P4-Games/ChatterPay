@@ -124,7 +124,15 @@ export default function PolymarketTradeModule({ market, accountStatus }: Props) 
           pollRef.current = setInterval(async () => {
             try {
               const statusRes = await polymarketPurchaseStatus(purchaseId)
-              if (statusRes.ok && statusRes.data) {
+              if (!statusRes.ok) {
+                // Purchase not found or backend error — stop polling to avoid infinite loop.
+                if (pollRef.current) clearInterval(pollRef.current)
+                pollRef.current = null
+                enqueueSnackbar(t('polymarket.order-placed'), { variant: 'success' })
+                invalidateKeys('/balance', '/positions', '/orders', '/portfolio')
+                return
+              }
+              if (statusRes.data) {
                 const st = statusRes.data.status
                 if (st === 'completed') {
                   if (pollRef.current) clearInterval(pollRef.current)
