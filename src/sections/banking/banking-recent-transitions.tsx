@@ -36,6 +36,14 @@ import { paths } from 'src/routes/paths'
 
 const POLYGON_EXPLORER_URL = 'https://polygonscan.com'
 
+import { HugeiconsIcon } from '@hugeicons/react'
+import {
+  Dollar01Icon,
+  ArrowUpRight01Icon,
+  ArrowDownLeft01Icon,
+  Cancel01Icon
+} from '@hugeicons/core-free-icons'
+
 import Label from 'src/components/label'
 import Iconify from 'src/components/iconify'
 import Scrollbar from 'src/components/scrollbar'
@@ -803,28 +811,33 @@ function BankingRecentTransitionsRow({
   )
 
   let badgeColor: 'success' | 'error' | 'info' = trxReceive ? 'success' : 'error'
-  let badgeIcon = trxReceive
-    ? 'eva:diagonal-arrow-left-down-fill'
-    : 'eva:diagonal-arrow-right-up-fill'
+  const badgeIcon = ''
+  let badgeIconNode: React.ReactNode = trxReceive ? (
+    <HugeiconsIcon icon={ArrowDownLeft01Icon} size={14} color='white' strokeWidth={2} />
+  ) : (
+    <HugeiconsIcon icon={ArrowUpRight01Icon} size={14} color='white' strokeWidth={2} />
+  )
 
   if (isPolymarket) {
     if (polymarketSide === 'bridge' || polymarketSide === 'withdraw') {
       badgeColor = trxReceive ? 'success' : 'error'
-      badgeIcon = trxReceive
-        ? 'eva:diagonal-arrow-left-down-fill'
-        : 'eva:diagonal-arrow-right-up-fill'
+      badgeIconNode = trxReceive ? (
+        <HugeiconsIcon icon={ArrowDownLeft01Icon} size={14} color='white' />
+      ) : (
+        <HugeiconsIcon icon={ArrowUpRight01Icon} size={14} color='white' />
+      )
     } else if (polymarketSide === 'claim') {
       badgeColor = 'success'
-      badgeIcon = 'eva:diagonal-arrow-left-down-fill'
+      badgeIconNode = <HugeiconsIcon icon={ArrowDownLeft01Icon} size={14} color='white' />
     } else {
       badgeColor = polymarketSide === 'sell' ? 'error' : 'success'
-      badgeIcon = 'solar:dollar-minimalistic-bold'
+      badgeIconNode = <HugeiconsIcon icon={Dollar01Icon} size={14} color='white' strokeWidth={2} />
     }
   }
 
   if (isFailed) {
     badgeColor = 'error'
-    badgeIcon = 'eva:close-fill'
+    badgeIconNode = <HugeiconsIcon icon={Cancel01Icon} size={14} color='white' strokeWidth={2} />
   }
 
   const renderAvatar = (
@@ -837,13 +850,16 @@ function BankingRecentTransitionsRow({
           isPending ? (
             <CircularProgress size={12} sx={{ color: 'inherit' }} />
           ) : (
-            <Iconify icon={badgeIcon} width={16} />
+            (badgeIconNode ?? <Iconify icon={badgeIcon} width={16} />)
           )
         }
         sx={{
           [`& .${badgeClasses.badge}`]: {
             p: 0,
-            width: 20
+            width: 20,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
           }
         }}
       >
@@ -938,7 +954,7 @@ function BankingRecentTransitionsRow({
               isPending ? (
                 <CircularProgress size={12} sx={{ color: 'inherit' }} />
               ) : (
-                <Iconify icon={badgeIcon} width={16} />
+                (badgeIconNode ?? <Iconify icon={badgeIcon} width={16} />)
               )
             }
             sx={{
