@@ -442,7 +442,8 @@
     "hide-small-balances": "Ocultar <$1",
     "no-balance": "Sem saldo",
     "no-balances-above": "Sem saldos acima de $1",
-    "view-on-explorer": "Ver no Explorer"
+    "view-on-explorer": "Ver no Explorer",
+    "no-polymarket-cta": "Configurar Polymarket"
   },
   "transactions": {
     "title": "Histórico",

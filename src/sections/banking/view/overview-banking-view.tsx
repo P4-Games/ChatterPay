@@ -19,7 +19,8 @@ import {
   useGetPolymarketOrdersSWR,
   useGetPolymarketPortfolioSWR,
   useGetPolymarketTradesSWR,
-  polymarketBridgeWithdraw
+  polymarketBridgeWithdraw,
+  polymarketAccountStatus
 } from 'src/app/api/hooks'
 import { getTokenPricesWithChange } from 'src/app/api/services/coingecko/coingecko-service'
 
@@ -61,6 +62,8 @@ function BankingDashboardContent() {
   const { user }: { user: AuthUserType } = useAuthContext()
   const { enqueueSnackbar } = useSnackbar()
 
+  const [polymarketReady, setPolymarketReady] = useState<boolean | null>(null)
+
   const [walletAddress, setWalletAddress] = useState<string>('')
   const [hideValues, setHideValues] = useState(false)
   const [selectedCurrency, setSelectedCurrency] = useState<'usd' | 'ars' | 'brl' | 'uyu'>('usd')
@@ -100,6 +103,14 @@ function BankingDashboardContent() {
       setWalletAddress(user.wallet)
     }
   }, [user])
+
+  useEffect(() => {
+    if (!user?.id) return
+    polymarketAccountStatus().then((res) => {
+      const ready = !!res.data?.account?.has_account && !!res.data.account.terms_accepted
+      setPolymarketReady(ready)
+    })
+  }, [user?.id])
 
   // Wallet data
   const { data: balances, isLoading: isLoadingBalances }: { data: IBalances; isLoading: boolean } =
@@ -292,6 +303,7 @@ function BankingDashboardContent() {
           cryptoExpanded={cryptoExpanded}
           onCryptoToggle={() => setCryptoExpanded((prev) => !prev)}
           priceData={priceData}
+          polymarketReady={polymarketReady}
         />
 
         {/* Full-width History */}
