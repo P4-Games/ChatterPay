@@ -206,14 +206,30 @@ export default function PolymarketDetailView({ slug }: Props) {
   const showTermsOverlay =
     !statusLoading && !!user?.id && accountStatus && !accountStatus.account?.terms_accepted
 
-  const { data, isLoading } = useGetPolymarketMarket(slug)
-  const { events } = useGetPolymarketEventsInfinite()
+  const { data, isLoading, isValidating } = useGetPolymarketMarket(slug)
+  const {
+    events,
+    isLoading: eventsLoading,
+    isLoadingMore: eventsLoadingMore
+  } = useGetPolymarketEventsInfinite(undefined, user?.id)
   const marketFromApi: IPolymarketMarket | null = data?.data || null
-  const marketFromCache: IPolymarketMarket | null =
-    !marketFromApi && !isLoading
-      ? (events.flatMap((e) => e.markets).find((m) => m.slug === slug) ?? null)
-      : null
+  // Fall back to the markets already cached from the hub/events list. This is the page's
+  // instant-render path when navigating from /polymarket, and — crucially — the only source
+  // for closed/resolved markets, which the by-slug endpoint 404s on even though they're still
+  // listed in the hub. (We deliberately do NOT auto-paginate the events feed here: the backend
+  // returns a full page for every offset, so `hasMore` is never false and a paginate-until-found
+  // loop would never terminate. The detail view shares the hub's SWR cache, so any page the user
+  // has already scrolled is available without re-fetching.)
+  const marketFromCache: IPolymarketMarket | null = !marketFromApi
+    ? (events.flatMap((e) => e.markets).find((m) => m.slug === slug) ?? null)
+    : null
   const market: IPolymarketMarket | null = marketFromApi || marketFromCache
+
+  // Only treat the market as "not found" once every source has settled. While the by-slug
+  // request is loading or revalidating (including SWR's silent error retries), or the events
+  // cache is still loading, keep the skeleton up so the transition stays smooth.
+  const isResolvingMarket =
+    !market && (isLoading || isValidating || eventsLoading || eventsLoadingMore)
 
   // Wallet balance
   const walletAddress = user?.wallet || ''
@@ -719,7 +735,7 @@ export default function PolymarketDetailView({ slug }: Props) {
   }
 
   // ── Loading skeleton ──
-  if (isLoading) {
+  if (isResolvingMarket) {
     return (
       <Box
         sx={{
@@ -787,6 +803,11 @@ export default function PolymarketDetailView({ slug }: Props) {
     )
   }
 
+  // Closed / resolved markets are read-only: still viewable, but no new predictions.
+  // Key off `closed` only — the backend also flags some live placeholder markets as
+  // `active: false`, so that field would wrongly mark them as closed.
+  const isMarketClosed = !!market.closed
+
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   //  RENDER SECTIONS
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -823,9 +844,11 @@ export default function PolymarketDetailView({ slug }: Props) {
                 fontSize: '0.7rem'
               }}
             >
-              {outcomes.length === 2
-                ? t('polymarket.predict-question-yn')
-                : t('polymarket.predict-question-header')}
+              {isMarketClosed
+                ? t('polymarket.final-result')
+                : outcomes.length === 2
+                  ? t('polymarket.predict-question-yn')
+                  : t('polymarket.predict-question-header')}
             </Typography>
 
             <Stack spacing={0}>
@@ -894,230 +917,257 @@ export default function PolymarketDetailView({ slug }: Props) {
             </Stack>
           </Box>
 
-          <Divider />
-
-          {/* HOW MUCH DO YOU WANT TO PREDICT? */}
-          <Box sx={{ p: 3 }}>
-            <Typography
-              variant='overline'
-              sx={{
-                mb: 2.5,
-                display: 'block',
-                color: 'text.secondary',
-                letterSpacing: 1.5,
-                fontSize: '0.7rem'
-              }}
-            >
-              {t('polymarket.predict-amount-header')}
-            </Typography>
-
-            {/* Preset pills */}
-            <Stack direction='row' spacing={1} sx={{ mb: 2.5 }} flexWrap='wrap' useFlexGap>
-              {PRESET_AMOUNTS.map((preset) => {
-                const isActive = amount === preset
-                return (
-                  <Button
-                    key={preset}
-                    variant={isActive ? 'contained' : 'outlined'}
-                    onClick={() => handlePresetClick(preset)}
-                    sx={{
-                      minWidth: 64,
-                      fontWeight: 700,
-                      fontSize: '0.85rem',
-                      borderRadius: 50,
-                      textTransform: 'none',
-                      px: 2.5,
-                      py: 1,
-                      ...(isActive
-                        ? {
-                            bgcolor: isDark ? theme.palette.grey[200] : '#1B1B1B',
-                            color: isDark ? theme.palette.grey[900] : '#fff',
-                            boxShadow: 'none',
-                            '&:hover': {
-                              bgcolor: isDark ? theme.palette.grey[300] : '#333',
-                              boxShadow: 'none'
-                            }
-                          }
-                        : {
-                            borderColor: alpha(theme.palette.grey[500], 0.24),
-                            color: 'text.primary',
-                            '&:hover': {
-                              borderColor: theme.palette.grey[400],
-                              bgcolor: alpha(theme.palette.grey[500], 0.08)
-                            }
-                          })
-                    }}
-                  >
-                    ${preset}
-                  </Button>
-                )
-              })}
-            </Stack>
-
-            {/* Custom amount input */}
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                border: `1px solid ${amount > selectedTokenBalance && selectedTokenBalance > 0 ? theme.palette.warning.main : alpha(theme.palette.grey[500], 0.2)}`,
-                borderRadius: 1.5,
-                px: 2,
-                py: 1.25,
-                maxWidth: { xs: '100%', md: 200 }
-              }}
-            >
-              <Typography variant='body2' sx={{ fontWeight: 600, color: 'text.secondary', mr: 1 }}>
-                $
-              </Typography>
-              <Box
-                component='input'
-                value={customAmount}
-                onChange={handleCustomAmountChange}
-                type='number'
-                min={POLYMARKET_MIN_ORDER_USD}
-                sx={{
-                  border: 'none',
-                  outline: 'none',
-                  bgcolor: 'transparent',
-                  fontSize: 15,
-                  fontWeight: 500,
-                  width: '100%',
-                  fontFamily: 'inherit',
-                  color: 'text.primary',
-                  '&::-webkit-inner-spin-button, &::-webkit-outer-spin-button': {
-                    WebkitAppearance: 'none',
-                    margin: 0
-                  }
-                }}
-              />
-            </Box>
-
-            <Typography
-              variant='caption'
-              color='text.secondary'
-              sx={{ mt: 1.5, display: 'flex', alignItems: 'center', gap: 0.5 }}
-            >
-              {t('polymarket.available')}: ${fNumber(selectedTokenBalance)}
-              <Box
-                component='span'
-                onClick={
-                  availableTokens.length > 1
-                    ? (e: any) => setTokenMenuAnchor(e.currentTarget)
-                    : undefined
-                }
-                sx={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 0.25,
-                  px: 0.75,
-                  py: 0.125,
-                  borderRadius: 0.5,
-                  bgcolor: alpha(theme.palette.primary.main, 0.08),
-                  color: theme.palette.primary.main,
-                  fontWeight: 700,
-                  fontSize: '0.65rem',
-                  letterSpacing: 0.5,
-                  cursor: availableTokens.length > 1 ? 'pointer' : 'default',
-                  userSelect: 'none',
-                  '&:hover':
-                    availableTokens.length > 1
-                      ? { bgcolor: alpha(theme.palette.primary.main, 0.16) }
-                      : {}
-                }}
-              >
-                {effectiveToken || balanceTokenSymbol}
-                {availableTokens.length > 1 && <Iconify icon='eva:chevron-down-fill' width={10} />}
-              </Box>
-            </Typography>
-
-            <Menu
-              anchorEl={tokenMenuAnchor}
-              open={Boolean(tokenMenuAnchor)}
-              onClose={() => setTokenMenuAnchor(null)}
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-              transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-              slotProps={{ paper: { sx: { minWidth: 180, mt: 0.5 } } }}
-            >
-              {availableTokens.map((tok) => (
-                <MenuItem
-                  key={tok.token}
-                  selected={effectiveToken === tok.token}
-                  onClick={() => {
-                    setSelectedToken(tok.token)
-                    setTokenMenuAnchor(null)
-                  }}
-                  sx={{ fontSize: '0.85rem' }}
-                >
-                  <Stack direction='row' justifyContent='space-between' width='100%' spacing={2}>
-                    <Typography variant='body2' fontWeight={600}>
-                      {tok.token}
-                    </Typography>
-                    <Typography variant='caption' color='text.secondary'>
-                      ${fNumber(tok.balance_conv.usd)}
-                    </Typography>
-                  </Stack>
-                </MenuItem>
-              ))}
-            </Menu>
-
-            {/* Below minimum order */}
-            {belowMinimum && (
-              <Alert severity='warning' sx={{ mt: 1.5, py: 0.75 }}>
-                {t('polymarket.minimum-order', { amount: fNumber(POLYMARKET_MIN_ORDER_USD) })}
-              </Alert>
-            )}
-
-            {/* Insufficient balance */}
-            {amount > selectedTokenBalance && selectedTokenBalance >= 0 && amount > 0 && (
-              <Alert
-                severity='warning'
-                sx={{ mt: 1.5, py: 0.75 }}
-                action={
-                  <Button
-                    size='small'
-                    href={depositUrl}
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    sx={{ fontWeight: 700, whiteSpace: 'nowrap' }}
-                  >
-                    {t('polymarket.deposit')}
-                  </Button>
-                }
-              >
-                {t('polymarket.insufficient-balance')}
-              </Alert>
-            )}
-          </Box>
-
-          {/* Return estimate */}
-          {amount > 0 && selectedPrice > 0 && (
+          {isMarketClosed ? (
             <>
               <Divider />
-              <Box sx={{ p: 3, bgcolor: alpha(theme.palette.primary.main, 0.06) }}>
+              <Box sx={{ p: 3 }}>
+                <Alert
+                  severity='info'
+                  icon={false}
+                  sx={{ justifyContent: 'center', fontWeight: 600 }}
+                >
+                  {t('polymarket.market-closed-notice')}
+                </Alert>
+              </Box>
+            </>
+          ) : (
+            <>
+              <Divider />
+
+              {/* HOW MUCH DO YOU WANT TO PREDICT? */}
+              <Box sx={{ p: 3 }}>
+                <Typography
+                  variant='overline'
+                  sx={{
+                    mb: 2.5,
+                    display: 'block',
+                    color: 'text.secondary',
+                    letterSpacing: 1.5,
+                    fontSize: '0.7rem'
+                  }}
+                >
+                  {t('polymarket.predict-amount-header')}
+                </Typography>
+
+                {/* Preset pills */}
+                <Stack direction='row' spacing={1} sx={{ mb: 2.5 }} flexWrap='wrap' useFlexGap>
+                  {PRESET_AMOUNTS.map((preset) => {
+                    const isActive = amount === preset
+                    return (
+                      <Button
+                        key={preset}
+                        variant={isActive ? 'contained' : 'outlined'}
+                        onClick={() => handlePresetClick(preset)}
+                        sx={{
+                          minWidth: 64,
+                          fontWeight: 700,
+                          fontSize: '0.85rem',
+                          borderRadius: 50,
+                          textTransform: 'none',
+                          px: 2.5,
+                          py: 1,
+                          ...(isActive
+                            ? {
+                                bgcolor: isDark ? theme.palette.grey[200] : '#1B1B1B',
+                                color: isDark ? theme.palette.grey[900] : '#fff',
+                                boxShadow: 'none',
+                                '&:hover': {
+                                  bgcolor: isDark ? theme.palette.grey[300] : '#333',
+                                  boxShadow: 'none'
+                                }
+                              }
+                            : {
+                                borderColor: alpha(theme.palette.grey[500], 0.24),
+                                color: 'text.primary',
+                                '&:hover': {
+                                  borderColor: theme.palette.grey[400],
+                                  bgcolor: alpha(theme.palette.grey[500], 0.08)
+                                }
+                              })
+                        }}
+                      >
+                        ${preset}
+                      </Button>
+                    )
+                  })}
+                </Stack>
+
+                {/* Custom amount input */}
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    border: `1px solid ${amount > selectedTokenBalance && selectedTokenBalance > 0 ? theme.palette.warning.main : alpha(theme.palette.grey[500], 0.2)}`,
+                    borderRadius: 1.5,
+                    px: 2,
+                    py: 1.25,
+                    maxWidth: { xs: '100%', md: 200 }
+                  }}
+                >
+                  <Typography
+                    variant='body2'
+                    sx={{ fontWeight: 600, color: 'text.secondary', mr: 1 }}
+                  >
+                    $
+                  </Typography>
+                  <Box
+                    component='input'
+                    value={customAmount}
+                    onChange={handleCustomAmountChange}
+                    type='number'
+                    min={POLYMARKET_MIN_ORDER_USD}
+                    sx={{
+                      border: 'none',
+                      outline: 'none',
+                      bgcolor: 'transparent',
+                      fontSize: 15,
+                      fontWeight: 500,
+                      width: '100%',
+                      fontFamily: 'inherit',
+                      color: 'text.primary',
+                      '&::-webkit-inner-spin-button, &::-webkit-outer-spin-button': {
+                        WebkitAppearance: 'none',
+                        margin: 0
+                      }
+                    }}
+                  />
+                </Box>
+
                 <Typography
                   variant='caption'
                   color='text.secondary'
-                  sx={{ display: 'block', mb: 0.5 }}
+                  sx={{ mt: 1.5, display: 'flex', alignItems: 'center', gap: 0.5 }}
                 >
-                  {t('polymarket.if-outcome-wins', {
-                    outcome:
-                      outcomes[selectedOutcome] === 'Yes'
-                        ? t('common.yes')
-                        : outcomes[selectedOutcome] === 'No'
-                          ? t('common.no')
-                          : outcomes[selectedOutcome]
-                  })}
+                  {t('polymarket.available')}: ${fNumber(selectedTokenBalance)}
+                  <Box
+                    component='span'
+                    onClick={
+                      availableTokens.length > 1
+                        ? (e: any) => setTokenMenuAnchor(e.currentTarget)
+                        : undefined
+                    }
+                    sx={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 0.25,
+                      px: 0.75,
+                      py: 0.125,
+                      borderRadius: 0.5,
+                      bgcolor: alpha(theme.palette.primary.main, 0.08),
+                      color: theme.palette.primary.main,
+                      fontWeight: 700,
+                      fontSize: '0.65rem',
+                      letterSpacing: 0.5,
+                      cursor: availableTokens.length > 1 ? 'pointer' : 'default',
+                      userSelect: 'none',
+                      '&:hover':
+                        availableTokens.length > 1
+                          ? { bgcolor: alpha(theme.palette.primary.main, 0.16) }
+                          : {}
+                    }}
+                  >
+                    {effectiveToken || balanceTokenSymbol}
+                    {availableTokens.length > 1 && (
+                      <Iconify icon='eva:chevron-down-fill' width={10} />
+                    )}
+                  </Box>
                 </Typography>
-                <Typography variant='h4' sx={{ fontWeight: 800, color: 'text.primary' }}>
-                  {t('polymarket.you-get-back', { amount: fNumber(estimatedReturn) })}
-                </Typography>
-                <Typography variant='caption' color='text.secondary'>
-                  {t('polymarket.prediction-summary', {
-                    amount: fNumber(amount),
-                    profit: fNumber(estimatedProfit)
-                  })}
-                </Typography>
+
+                <Menu
+                  anchorEl={tokenMenuAnchor}
+                  open={Boolean(tokenMenuAnchor)}
+                  onClose={() => setTokenMenuAnchor(null)}
+                  anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+                  transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+                  slotProps={{ paper: { sx: { minWidth: 180, mt: 0.5 } } }}
+                >
+                  {availableTokens.map((tok) => (
+                    <MenuItem
+                      key={tok.token}
+                      selected={effectiveToken === tok.token}
+                      onClick={() => {
+                        setSelectedToken(tok.token)
+                        setTokenMenuAnchor(null)
+                      }}
+                      sx={{ fontSize: '0.85rem' }}
+                    >
+                      <Stack
+                        direction='row'
+                        justifyContent='space-between'
+                        width='100%'
+                        spacing={2}
+                      >
+                        <Typography variant='body2' fontWeight={600}>
+                          {tok.token}
+                        </Typography>
+                        <Typography variant='caption' color='text.secondary'>
+                          ${fNumber(tok.balance_conv.usd)}
+                        </Typography>
+                      </Stack>
+                    </MenuItem>
+                  ))}
+                </Menu>
+
+                {/* Below minimum order */}
+                {belowMinimum && (
+                  <Alert severity='warning' sx={{ mt: 1.5, py: 0.75 }}>
+                    {t('polymarket.minimum-order', { amount: fNumber(POLYMARKET_MIN_ORDER_USD) })}
+                  </Alert>
+                )}
+
+                {/* Insufficient balance */}
+                {amount > selectedTokenBalance && selectedTokenBalance >= 0 && amount > 0 && (
+                  <Alert
+                    severity='warning'
+                    sx={{ mt: 1.5, py: 0.75 }}
+                    action={
+                      <Button
+                        size='small'
+                        href={depositUrl}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        sx={{ fontWeight: 700, whiteSpace: 'nowrap' }}
+                      >
+                        {t('polymarket.deposit')}
+                      </Button>
+                    }
+                  >
+                    {t('polymarket.insufficient-balance')}
+                  </Alert>
+                )}
               </Box>
+
+              {/* Return estimate */}
+              {amount > 0 && selectedPrice > 0 && (
+                <>
+                  <Divider />
+                  <Box sx={{ p: 3, bgcolor: alpha(theme.palette.primary.main, 0.06) }}>
+                    <Typography
+                      variant='caption'
+                      color='text.secondary'
+                      sx={{ display: 'block', mb: 0.5 }}
+                    >
+                      {t('polymarket.if-outcome-wins', {
+                        outcome:
+                          outcomes[selectedOutcome] === 'Yes'
+                            ? t('common.yes')
+                            : outcomes[selectedOutcome] === 'No'
+                              ? t('common.no')
+                              : outcomes[selectedOutcome]
+                      })}
+                    </Typography>
+                    <Typography variant='h4' sx={{ fontWeight: 800, color: 'text.primary' }}>
+                      {t('polymarket.you-get-back', { amount: fNumber(estimatedReturn) })}
+                    </Typography>
+                    <Typography variant='caption' color='text.secondary'>
+                      {t('polymarket.prediction-summary', {
+                        amount: fNumber(amount),
+                        profit: fNumber(estimatedProfit)
+                      })}
+                    </Typography>
+                  </Box>
+                </>
+              )}
             </>
           )}
         </Card>
@@ -1233,8 +1283,9 @@ export default function PolymarketDetailView({ slug }: Props) {
           size='large'
           onClick={orderSuccess ? closeOrderSuccess : handleSubmit}
           disabled={
-            !orderSuccess &&
-            (amount <= 0 || belowMinimum || isSubmitting || amount > selectedTokenBalance)
+            isMarketClosed ||
+            (!orderSuccess &&
+              (amount <= 0 || belowMinimum || isSubmitting || amount > selectedTokenBalance))
           }
           startIcon={
             isSubmitting ? (
@@ -1251,19 +1302,21 @@ export default function PolymarketDetailView({ slug }: Props) {
             textTransform: 'none'
           }}
         >
-          {orderSuccess
-            ? t('polymarket.place-another')
-            : isSubmitting
-              ? t('polymarket.placing-prediction')
-              : t('polymarket.predict-cta', {
-                  amount: fNumber(amount),
-                  outcome:
-                    outcomes[selectedOutcome] === 'Yes'
-                      ? t('common.yes')
-                      : outcomes[selectedOutcome] === 'No'
-                        ? t('common.no')
-                        : outcomes[selectedOutcome]
-                })}
+          {isMarketClosed
+            ? t('polymarket.market-closed-cta')
+            : orderSuccess
+              ? t('polymarket.place-another')
+              : isSubmitting
+                ? t('polymarket.placing-prediction')
+                : t('polymarket.predict-cta', {
+                    amount: fNumber(amount),
+                    outcome:
+                      outcomes[selectedOutcome] === 'Yes'
+                        ? t('common.yes')
+                        : outcomes[selectedOutcome] === 'No'
+                          ? t('common.no')
+                          : outcomes[selectedOutcome]
+                  })}
         </Button>
       </Box>
     </Stack>
@@ -1512,6 +1565,21 @@ export default function PolymarketDetailView({ slug }: Props) {
                       sx={{
                         bgcolor: alpha(theme.palette.primary.main, 0.12),
                         color: theme.palette.primary.main,
+                        fontWeight: 600,
+                        fontSize: '0.7rem',
+                        height: 24,
+                        borderRadius: 0.75,
+                        flexShrink: 0
+                      }}
+                    />
+                  )}
+                  {isMarketClosed && (
+                    <Chip
+                      label={t('polymarket.closed')}
+                      size='small'
+                      sx={{
+                        bgcolor: alpha(theme.palette.text.disabled, 0.16),
+                        color: 'text.secondary',
                         fontWeight: 600,
                         fontSize: '0.7rem',
                         height: 24,
