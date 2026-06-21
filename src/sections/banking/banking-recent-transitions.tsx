@@ -817,11 +817,8 @@ function BankingRecentTransitionsRow({
       badgeColor = 'success'
       badgeIcon = 'eva:diagonal-arrow-left-down-fill'
     } else {
-      badgeColor = 'info'
-      badgeIcon =
-        polymarketSide === 'sell'
-          ? 'eva:diagonal-arrow-right-up-fill'
-          : 'eva:diagonal-arrow-left-down-fill'
+      badgeColor = polymarketSide === 'sell' ? 'error' : 'success'
+      badgeIcon = 'solar:dollar-minimalistic-bold'
     }
   }
 
