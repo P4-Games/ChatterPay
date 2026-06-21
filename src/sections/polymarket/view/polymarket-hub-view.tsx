@@ -240,8 +240,10 @@ export default function PolymarketHubView() {
                   )}
                 </Box>
 
-                {/* Right: compact P&L sparkline (informational) */}
-                <PolymarketPNLWidget />
+                {/* Right: compact P&L sparkline (informational).
+                    Hidden on mobile to save vertical space — the same P&L is
+                    available expanded inside the portfolio drawer. */}
+                <PolymarketPNLWidget sx={{ display: { xs: 'none', md: 'flex' } }} />
               </Stack>
 
               {/* Trending */}
