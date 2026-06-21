@@ -33,10 +33,11 @@ import Marquee from 'src/components/marquee'
 import Iconify from 'src/components/iconify'
 import DashboardDrawer from 'src/sections/banking/dashboard-drawer'
 import DashboardPositionsTable from 'src/sections/banking/dashboard-positions-table'
+import { PolymarketActivityProvider } from 'src/sections/banking/polymarket-activity-context'
 
 // ----------------------------------------------------------------------
 
-export default function PolymarketHubView() {
+function PolymarketHubContent() {
   const { t } = useTranslate()
   const theme = useTheme()
   const isDark = theme.palette.mode === 'dark'
@@ -334,5 +335,19 @@ export default function PolymarketHubView() {
         </Stack>
       </DashboardDrawer>
     </>
+  )
+}
+
+// ----------------------------------------------------------------------
+
+export default function PolymarketHubView() {
+  const { user } = useAuthContext()
+
+  // Provide the optimistic-activity context the positions table relies on, so
+  // selling/claiming from the portfolio drawer works here just like on /dashboard.
+  return (
+    <PolymarketActivityProvider wallet={user?.wallet ?? ''}>
+      <PolymarketHubContent />
+    </PolymarketActivityProvider>
   )
 }
