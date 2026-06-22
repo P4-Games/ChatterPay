@@ -142,7 +142,15 @@ export function PolymarketActivityProvider({
   }, [])
 
   const revalidateAfterTrade = useCallback(() => {
-    const keys = ['/positions', '/orders', '/portfolio', '/balance', '/trades', '/transactions']
+    const keys = [
+      '/positions',
+      '/orders',
+      '/portfolio',
+      '/balance',
+      '/trades',
+      '/transactions',
+      '/markets'
+    ]
     for (const sub of keys) {
       mutate(
         (key: any) =>

@@ -21,7 +21,7 @@ import { useTranslate } from 'src/locales'
 import { polymarketPurchase, polymarketPurchaseStatus } from 'src/app/api/hooks'
 
 import Iconify from 'src/components/iconify'
-import { POLYMARKET_POLL_INTERVAL_MS } from 'src/config-global'
+import { POLYMARKET_REFRESH } from 'src/config-global'
 
 import type { IPolymarketMarket, IPolymarketAccountStatus } from 'src/types/polymarket'
 
@@ -151,7 +151,7 @@ export default function PolymarketTradeModule({ market, accountStatus }: Props) 
             } catch (e) {
               console.error(e)
             }
-          }, POLYMARKET_POLL_INTERVAL_MS)
+          }, POLYMARKET_REFRESH.ORDER_STATUS_MS)
         }
       } else {
         setError(result.message || t('polymarket.order-error'))

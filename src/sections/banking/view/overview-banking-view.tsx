@@ -9,6 +9,7 @@ import Container from '@mui/material/Container'
 import { useTheme } from '@mui/material/styles'
 
 import { useTranslate } from 'src/locales'
+import { POLYMARKET_REFRESH } from 'src/config-global'
 import type { AuthUserType } from 'src/auth/types'
 import { useAuthContext } from 'src/auth/hooks'
 import {
@@ -127,19 +128,19 @@ function BankingDashboardContent() {
   // SWR keeps the cache per key, so re-opening shows data instantly and revalidates in background.
   const isPolymarketDrawerOpen = polymarketDrawer.value
   const { data: positions = [], isLoading: isLoadingPositions } = useGetPolymarketPositionsSWR(
-    10000,
+    POLYMARKET_REFRESH.LIVE_MS,
     isPolymarketDrawerOpen
   )
   const { data: orders = [], isLoading: isLoadingOrders } = useGetPolymarketOrdersSWR(
-    10000,
+    POLYMARKET_REFRESH.LIVE_MS,
     isPolymarketDrawerOpen
   )
   const { data: portfolioData, isLoading: isLoadingPortfolio } = useGetPolymarketPortfolioSWR(
-    10000,
+    POLYMARKET_REFRESH.LIVE_MS,
     isPolymarketDrawerOpen
   )
   const { data: trades = [], isLoading: isLoadingTrades } = useGetPolymarketTradesSWR(
-    30000,
+    POLYMARKET_REFRESH.HISTORY_MS,
     undefined,
     isPolymarketDrawerOpen
   )

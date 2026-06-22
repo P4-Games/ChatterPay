@@ -60,7 +60,7 @@ import { useAuthContext } from 'src/auth/hooks'
 import { useSettingsContext } from 'src/components/settings'
 import Iconify from 'src/components/iconify'
 import Chart, { useChart } from 'src/components/chart'
-import { POLYMARKET_MIN_ORDER_USD } from 'src/config-global'
+import { POLYMARKET_REFRESH, POLYMARKET_MIN_ORDER_USD } from 'src/config-global'
 
 import { fNumber } from 'src/utils/format-number'
 
@@ -280,9 +280,12 @@ export default function PolymarketDetailView({ slug }: Props) {
     setError(null)
   }
 
-  const { data: positions = [] } = useGetPolymarketPositionsSWR(10000)
-  const { data: orders = [] } = useGetPolymarketOrdersSWR(10000)
-  const { data: marketTrades = [] } = useGetPolymarketTradesSWR(30000, market?.condition_id)
+  const { data: positions = [] } = useGetPolymarketPositionsSWR(POLYMARKET_REFRESH.LIVE_MS)
+  const { data: orders = [] } = useGetPolymarketOrdersSWR(POLYMARKET_REFRESH.LIVE_MS)
+  const { data: marketTrades = [] } = useGetPolymarketTradesSWR(
+    POLYMARKET_REFRESH.HISTORY_MS,
+    market?.condition_id
+  )
 
   const realMarketPositions = positions.filter((p) => {
     if (p.conditionId !== market?.condition_id && p.market?.condition_id !== market?.condition_id)

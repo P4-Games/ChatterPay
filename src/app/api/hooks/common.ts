@@ -6,8 +6,10 @@ import { fetcher } from 'src/app/api/hooks/api-resolver'
 
 // ----------------------------------------------------------------------
 
-export function useGetCommon(endpoint: any, options: {} = {}, shouldRefresh: boolean = false) {
-  const { data, error, isLoading, isValidating } = useSWR([endpoint, options], fetcher)
+export function useGetCommon(endpoint: any, options: {} = {}, refreshInterval: number = 0) {
+  const { data, error, isLoading, isValidating } = useSWR([endpoint, options], fetcher, {
+    refreshInterval
+  })
 
   const memoizedValue = useMemo(
     () => ({

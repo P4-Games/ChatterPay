@@ -9,6 +9,7 @@ import Typography from '@mui/material/Typography'
 import { alpha, useTheme } from '@mui/material/styles'
 import { fCurrency } from 'src/utils/format-number'
 import { useTranslate } from 'src/locales'
+import { POLYMARKET_REFRESH } from 'src/config-global'
 import { useAuthContext } from 'src/auth/hooks'
 import {
   useGetPolymarketEvents,
@@ -77,17 +78,17 @@ function PolymarketHubContent() {
 
   // Portfolio + positions — always fetched when logged in so the button value matches the drawer
   const { data: portfolio, isLoading: isPortfolioLoading } = useGetPolymarketPortfolioSWR(
-    30000,
+    POLYMARKET_REFRESH.LIVE_MS,
     !!user?.id
   )
   const { data: positions = [], isLoading: isPositionsLoading } = useGetPolymarketPositionsSWR(
-    30000,
+    POLYMARKET_REFRESH.LIVE_MS,
     !!user?.id
   )
 
   // Orders — lazy, only fetched while drawer is open
   const { data: orders = [], isLoading: isOrdersLoading } = useGetPolymarketOrdersSWR(
-    10000,
+    POLYMARKET_REFRESH.LIVE_MS,
     isDrawerOpen
   )
 
@@ -244,7 +245,12 @@ function PolymarketHubContent() {
                 {/* Right: compact P&L sparkline (informational).
                     Hidden on mobile to save vertical space — the same P&L is
                     available expanded inside the portfolio drawer. */}
-                <PolymarketPNLWidget sx={{ display: { xs: 'none', md: 'flex' } }} />
+                <PolymarketPNLWidget
+                  sx={{ display: { xs: 'none', md: 'flex' } }}
+                  portfolioData={portfolio ?? null}
+                  positions={positions}
+                  isLoadingExternal={isPortfolioLoading}
+                />
               </Stack>
 
               {/* Trending */}

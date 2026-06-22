@@ -23,6 +23,7 @@ import InputAdornment from '@mui/material/InputAdornment'
 import { alpha, useTheme } from '@mui/material/styles'
 
 import { useTranslate } from 'src/locales'
+import { POLYMARKET_REFRESH } from 'src/config-global'
 import {
   useGetPolymarketPositionsSWR,
   useGetPolymarketOrdersSWR,
@@ -72,10 +73,12 @@ export default function PolymarketPortfolio() {
   const theme = useTheme()
 
   const { user } = useAuthContext()
-  const { data: portfolio } = useGetPolymarketPortfolioSWR(10000)
-  const { data: positions = [] } = useGetPolymarketPositionsSWR(10000)
-  const { data: orders = [], isLoading: isOrdersLoading } = useGetPolymarketOrdersSWR(10000)
-  const { data: trades = [] } = useGetPolymarketTradesSWR(30000)
+  const { data: portfolio } = useGetPolymarketPortfolioSWR(POLYMARKET_REFRESH.LIVE_MS)
+  const { data: positions = [] } = useGetPolymarketPositionsSWR(POLYMARKET_REFRESH.LIVE_MS)
+  const { data: orders = [], isLoading: isOrdersLoading } = useGetPolymarketOrdersSWR(
+    POLYMARKET_REFRESH.LIVE_MS
+  )
+  const { data: trades = [] } = useGetPolymarketTradesSWR(POLYMARKET_REFRESH.HISTORY_MS)
   const { data: balanceData, isLoading: isBalanceLoading } = useGetWalletBalance(user?.wallet || '')
 
   const polyBalance = balanceData?.polymarket

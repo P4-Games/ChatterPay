@@ -25,6 +25,7 @@ import InputAdornment from '@mui/material/InputAdornment'
 import { alpha, useTheme } from '@mui/material/styles'
 
 import { useTranslate } from 'src/locales'
+import { POLYMARKET_REFRESH } from 'src/config-global'
 import {
   polymarketCancelOrder,
   polymarketPurchase,
@@ -81,9 +82,9 @@ export default function DashboardPositionsTable({ positions, orders, isLoading }
   )
 
   // Fetch trade history and closed positions
-  const { data: trades = [] } = useGetPolymarketTradesSWR(30000)
+  const { data: trades = [] } = useGetPolymarketTradesSWR(POLYMARKET_REFRESH.HISTORY_MS)
   const { data: closedPositions = [], isLoading: isClosedLoading } =
-    useGetPolymarketClosedPositionsSWR(30000)
+    useGetPolymarketClosedPositionsSWR(POLYMARKET_REFRESH.HISTORY_MS)
 
   const handleCancelOrder = async (orderId: string) => {
     setCancellingId(orderId)
