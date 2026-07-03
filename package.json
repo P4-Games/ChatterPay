@@ -40,6 +40,7 @@
     "@hugeicons/core-free-icons": "^4.0.0",
     "@hugeicons/react": "^1.1.5",
     "@iconify/react": "6.0.2",
+    "@lottiefiles/dotlottie-react": "^0.19.4",
     "@mui/lab": "^5.0.0-alpha.155",
     "@mui/material": "^5.14.20",
     "@mui/system": "^5.14.20",

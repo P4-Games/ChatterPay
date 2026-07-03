@@ -144,11 +144,29 @@ export type IPolymarketPurchaseResponse = {
   purchase_id: string
 }
 
+export type IPolymarketPurchaseStep = {
+  name: string
+  status: 'pending' | 'completed' | 'failed' | string
+  started_at?: string
+  completed_at?: string
+  tx_hash?: string
+  error?: string
+}
+
 export type IPolymarketPurchaseStatus = {
   purchase_id: string
   status: 'pending' | 'completed' | 'failed'
   current_step: 'account_creation' | 'bridge' | 'order_placement' | 'done' | string
   error?: string
+  // Extended fields returned by the backend
+  price?: number
+  size?: number
+  side?: 'BUY' | 'SELL'
+  token_id?: string
+  bridge_amount?: string
+  steps?: IPolymarketPurchaseStep[]
+  created_at?: string
+  updated_at?: string
 }
 
 export type IPolymarketCategory = {

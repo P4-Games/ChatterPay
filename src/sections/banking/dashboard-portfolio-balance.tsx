@@ -1,5 +1,10 @@
 'use client'
 
+import { useMemo } from 'react'
+
+import { useRouter } from 'src/routes/hooks'
+import { paths } from 'src/routes/paths'
+
 import {
   Box,
   Card,
@@ -44,6 +49,7 @@ type Props = {
   cryptoExpanded: boolean
   onCryptoToggle: () => void
   priceData: Record<string, TokenPriceData>
+  polymarketReady: boolean | null
 }
 
 // Show up to 3 stacked token logos
@@ -56,10 +62,14 @@ function StackedTokenIcons({
   tokenLogos: Record<string, string>
   isDark: boolean
 }) {
-  const topTokens = [...balances]
-    .sort((a, b) => (b.balance_conv?.usd ?? 0) - (a.balance_conv?.usd ?? 0))
-    .slice(0, 3)
-    .filter((b) => tokenLogos[b.token])
+  const topTokens = useMemo(
+    () =>
+      [...balances]
+        .sort((a, b) => (b.balance_conv?.usd ?? 0) - (a.balance_conv?.usd ?? 0))
+        .slice(0, 3)
+        .filter((b) => tokenLogos[b.token]),
+    [balances, tokenLogos]
+  )
 
   if (topTokens.length === 0) {
     return (
@@ -97,6 +107,8 @@ function StackedTokenIcons({
           component='img'
           src={tokenLogos[token.token]}
           alt={token.token}
+          loading='lazy'
+          decoding='async'
           sx={{
             position: 'absolute',
             left: index * (iconSize - overlap),
@@ -160,6 +172,8 @@ function CryptoAssetRow({
             component='img'
             src={logoUrl}
             alt={balance.token}
+            loading='lazy'
+            decoding='async'
             sx={{ width: 36, height: 36, borderRadius: '50%', flexShrink: 0 }}
           />
         ) : (
@@ -238,10 +252,14 @@ export default function DashboardPortfolioBalance({
   balances,
   cryptoExpanded,
   onCryptoToggle,
-  priceData
+  priceData,
+  polymarketReady
 }: Props) {
   const { t } = useTranslate()
   const theme = useTheme()
+  const router = useRouter()
+
+  const needsSetup = polymarketReady === false
   const isDark = theme.palette.mode === 'dark'
 
   const headingColor = isDark ? '#B8F6C9' : '#173F35'
@@ -263,8 +281,9 @@ export default function DashboardPortfolioBalance({
   const cryptoOnly = combinedTotal - polymarketConverted
 
   // Sort balances by USD value for dropdown
-  const sortedBalances = [...balances].sort(
-    (a, b) => (b.balance_conv?.usd ?? 0) - (a.balance_conv?.usd ?? 0)
+  const sortedBalances = useMemo(
+    () => [...balances].sort((a, b) => (b.balance_conv?.usd ?? 0) - (a.balance_conv?.usd ?? 0)),
+    [balances]
   )
 
   return (
@@ -397,44 +416,88 @@ export default function DashboardPortfolioBalance({
       </Card>
 
       {/* Polymarket Row */}
-      <Card
-        onClick={onPolymarketClick}
-        sx={{
-          px: 3,
-          py: 1.5,
-          cursor: 'pointer',
-          border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}`,
-          '&:hover': { bgcolor: alpha(theme.palette.grey[500], 0.04) },
-          transition: theme.transitions.create('background-color', { duration: 200 })
-        }}
-      >
-        <Stack direction='row' alignItems='center' justifyContent='space-between'>
-          <Stack direction='row' alignItems='center' spacing={1.5}>
-            <Box
-              component='img'
-              src='/assets/icons/polymarket/logo.svg'
-              alt='Polymarket'
-              sx={{
-                width: 28,
-                height: 28,
-                borderRadius: '50%',
-                flexShrink: 0
-              }}
-            />
-            <Typography variant='subtitle1' fontWeight={600}>
-              Polymarket
-            </Typography>
+      <Box sx={{ position: 'relative' }}>
+        <Card
+          onClick={!needsSetup ? onPolymarketClick : undefined}
+          sx={{
+            px: 3,
+            py: 1.5,
+            cursor: needsSetup ? 'default' : 'pointer',
+            border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}`,
+            opacity: needsSetup ? 0.4 : 1,
+            pointerEvents: needsSetup ? 'none' : undefined,
+            transition: theme.transitions.create(['background-color', 'opacity'], {
+              duration: 200
+            }),
+            ...(!needsSetup && {
+              '&:hover': { bgcolor: alpha(theme.palette.grey[500], 0.04) }
+            })
+          }}
+        >
+          <Stack direction='row' alignItems='center' justifyContent='space-between'>
+            <Stack direction='row' alignItems='center' spacing={1.5}>
+              <Box
+                component='img'
+                src='/assets/icons/polymarket/logo.svg'
+                alt='Polymarket'
+                loading='lazy'
+                decoding='async'
+                sx={{ width: 28, height: 28, borderRadius: '50%', flexShrink: 0 }}
+              />
+              <Typography variant='subtitle1' fontWeight={600}>
+                Polymarket
+              </Typography>
+            </Stack>
+            <Stack direction='row' alignItems='center' spacing={1}>
+              <Typography variant='subtitle1' fontWeight={600}>
+                {hideValues
+                  ? '********'
+                  : `$${fNumber(polymarketConverted)} ${selectedCurrency.toUpperCase()}`}
+              </Typography>
+              <Iconify icon='eva:chevron-right-fill' width={20} sx={{ color: 'text.secondary' }} />
+            </Stack>
           </Stack>
-          <Stack direction='row' alignItems='center' spacing={1}>
-            <Typography variant='subtitle1' fontWeight={600}>
-              {hideValues
-                ? '********'
-                : `$${fNumber(polymarketConverted)} ${selectedCurrency.toUpperCase()}`}
-            </Typography>
-            <Iconify icon='eva:chevron-right-fill' width={20} sx={{ color: 'text.secondary' }} />
+        </Card>
+
+        {needsSetup && (
+          <Stack
+            direction='row'
+            alignItems='center'
+            justifyContent='space-between'
+            sx={{
+              position: 'absolute',
+              inset: 0,
+              px: 3,
+              borderRadius: 1,
+              bgcolor: 'background.paper',
+              border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}`
+            }}
+          >
+            <Stack direction='row' alignItems='center' spacing={1.5}>
+              <Box
+                component='img'
+                src='/assets/icons/polymarket/logo.svg'
+                alt='Polymarket'
+                loading='lazy'
+                decoding='async'
+                sx={{ width: 28, height: 28, borderRadius: '50%', flexShrink: 0 }}
+              />
+              <Typography variant='subtitle1' fontWeight={600}>
+                Polymarket
+              </Typography>
+            </Stack>
+
+            <Button
+              size='small'
+              variant='contained'
+              onClick={() => router.push(paths.dashboard.polymarket.root)}
+              sx={{ flexShrink: 0 }}
+            >
+              {t('balances.no-polymarket-cta')}
+            </Button>
           </Stack>
-        </Stack>
-      </Card>
+        )}
+      </Box>
 
       {/* Action Buttons */}
       <Stack direction='row' spacing={1.5} useFlexGap sx={{ flexWrap: 'wrap' }}>
@@ -525,7 +588,9 @@ export default function DashboardPortfolioBalance({
               }
             }}
           >
-            {isClaiming ? 'Claiming...' : `Claim Settlements: $${fNumber(idleUsdc)}`}
+            {isClaiming
+              ? t('polymarket.claiming')
+              : t('polymarket.claim-settlements', { amount: fNumber(idleUsdc) })}
           </Button>
         )}
       </Stack>

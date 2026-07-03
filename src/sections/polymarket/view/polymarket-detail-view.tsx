@@ -1,7 +1,11 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import { m } from 'framer-motion'
+import { useState, useMemo, useEffect, useCallback } from 'react'
+import { m, AnimatePresence } from 'framer-motion'
+
+import { DotLottieReact, setWasmUrl } from '@lottiefiles/dotlottie-react'
+
+setWasmUrl('/dotlottie-player.wasm')
 
 import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
@@ -40,6 +44,7 @@ import { useResponsive } from 'src/hooks/use-responsive'
 import {
   useGetPolymarketMarket,
   useGetPolymarketEventsInfinite,
+  polymarketAccountStatus,
   polymarketPurchase,
   useGetWalletBalance,
   polymarketPurchaseStatus,
@@ -55,17 +60,24 @@ import { useAuthContext } from 'src/auth/hooks'
 import { useSettingsContext } from 'src/components/settings'
 import Iconify from 'src/components/iconify'
 import Chart, { useChart } from 'src/components/chart'
+import { POLYMARKET_REFRESH, POLYMARKET_MIN_ORDER_USD } from 'src/config-global'
 
 import { fNumber } from 'src/utils/format-number'
 import { toEpochMs } from 'src/utils/format-time'
 
-import type { IPolymarketMarket, IPolymarketPosition } from 'src/types/polymarket'
+import PolymarketTermsOverlay from '../polymarket-terms-overlay'
+
+import type {
+  IPolymarketMarket,
+  IPolymarketPosition,
+  IPolymarketAccountStatus
+} from 'src/types/polymarket'
 import type { IBalances } from 'src/types/wallet'
 import type { AuthUserType } from 'src/auth/types'
 
 // ----------------------------------------------------------------------
 
-const PRESET_AMOUNTS = [1, 5, 10, 50, 100]
+const PRESET_AMOUNTS = [POLYMARKET_MIN_ORDER_USD, 5, 10, 50, 100]
 
 const OUTCOME_COLORS_LIGHT = [
   '#1B1B1B', // Black
@@ -166,14 +178,59 @@ export default function PolymarketDetailView({ slug }: Props) {
   const { enqueueSnackbar } = useSnackbar()
   const { mutate } = useSWRConfig()
 
-  const { data, isLoading } = useGetPolymarketMarket(slug)
-  const { events } = useGetPolymarketEventsInfinite()
+  // Account status for terms check
+  const [accountStatus, setAccountStatus] = useState<IPolymarketAccountStatus | null>(null)
+  const [statusLoading, setStatusLoading] = useState(true)
+
+  const checkAccountStatus = useCallback(async () => {
+    try {
+      const result = await polymarketAccountStatus()
+      if (result.ok && result.data) {
+        setAccountStatus(result.data)
+      }
+    } catch {
+      // Silently fail — don't block the market
+    } finally {
+      setStatusLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (user?.id) {
+      checkAccountStatus()
+    } else {
+      setStatusLoading(false)
+    }
+  }, [user?.id, checkAccountStatus])
+
+  // Show terms overlay if logged in + terms not accepted
+  const showTermsOverlay =
+    !statusLoading && !!user?.id && accountStatus && !accountStatus.account?.terms_accepted
+
+  const { data, isLoading, isValidating } = useGetPolymarketMarket(slug)
+  const {
+    events,
+    isLoading: eventsLoading,
+    isLoadingMore: eventsLoadingMore
+  } = useGetPolymarketEventsInfinite(undefined, user?.id)
   const marketFromApi: IPolymarketMarket | null = data?.data || null
-  const marketFromCache: IPolymarketMarket | null =
-    !marketFromApi && !isLoading
-      ? (events.flatMap((e) => e.markets).find((m) => m.slug === slug) ?? null)
-      : null
+  // Fall back to the markets already cached from the hub/events list. This is the page's
+  // instant-render path when navigating from /polymarket, and — crucially — the only source
+  // for closed/resolved markets, which the by-slug endpoint 404s on even though they're still
+  // listed in the hub. (We deliberately do NOT auto-paginate the events feed here: the backend
+  // returns a full page for every offset, so `hasMore` is never false and a paginate-until-found
+  // loop would never terminate. The detail view shares the hub's SWR cache, so any page the user
+  // has already scrolled is available without re-fetching.)
+  const marketFromCache: IPolymarketMarket | null = !marketFromApi
+    ? (events.flatMap((e) => e.markets).find((m) => m.slug === slug) ?? null)
+    : null
   const market: IPolymarketMarket | null = marketFromApi || marketFromCache
+
+  // Only treat the market as "not found" once every source has settled. While the by-slug
+  // request is loading or revalidating (including SWR's silent error retries), or the events
+  // cache is still loading, keep the skeleton up so the transition stays smooth.
+  const isResolvingMarket =
+    !market && (isLoading || isValidating || eventsLoading || eventsLoadingMore)
 
   // Wallet balance
   const walletAddress = user?.wallet || ''
@@ -200,10 +257,10 @@ export default function PolymarketDetailView({ slug }: Props) {
 
   // Trade state
   const [selectedOutcome, setSelectedOutcome] = useState<number>(0)
-  const [amount, setAmount] = useState<number>(1)
+  const [amount, setAmount] = useState<number>(POLYMARKET_MIN_ORDER_USD)
   const [cancellingId, setCancellingId] = useState<string | null>(null)
   const [sellingPos, setSellingPos] = useState<string | null>(null)
-  const [customAmount, setCustomAmount] = useState<string>('1')
+  const [customAmount, setCustomAmount] = useState<string>(String(POLYMARKET_MIN_ORDER_USD))
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
@@ -215,10 +272,21 @@ export default function PolymarketDetailView({ slug }: Props) {
   const [partialSellPos, setPartialSellPos] = useState<IPolymarketPosition | null>(null)
   const [partialSellAmount, setPartialSellAmount] = useState('')
   const [optimisticPositions, setOptimisticPositions] = useState<IPolymarketPosition[]>([])
+  const [orderSuccess, setOrderSuccess] = useState<{ side: 'BUY' | 'SELL' } | null>(null)
 
-  const { data: positions = [] } = useGetPolymarketPositionsSWR(10000)
-  const { data: orders = [] } = useGetPolymarketOrdersSWR(10000)
-  const { data: marketTrades = [] } = useGetPolymarketTradesSWR(30000, market?.condition_id)
+  const closeOrderSuccess = () => {
+    setOrderSuccess(null)
+    setAmount(0)
+    setCustomAmount('0')
+    setError(null)
+  }
+
+  const { data: positions = [] } = useGetPolymarketPositionsSWR(POLYMARKET_REFRESH.LIVE_MS)
+  const { data: orders = [] } = useGetPolymarketOrdersSWR(POLYMARKET_REFRESH.LIVE_MS)
+  const { data: marketTrades = [] } = useGetPolymarketTradesSWR(
+    POLYMARKET_REFRESH.HISTORY_MS,
+    market?.condition_id
+  )
 
   const realMarketPositions = positions.filter((p) => {
     if (p.conditionId !== market?.condition_id && p.market?.condition_id !== market?.condition_id)
@@ -237,6 +305,7 @@ export default function PolymarketDetailView({ slug }: Props) {
   const selectedPrice = prices[selectedOutcome] || 0
   const estimatedReturn = selectedPrice > 0 ? amount / selectedPrice : 0
   const estimatedProfit = estimatedReturn - amount
+  const belowMinimum = amount > 0 && amount < POLYMARKET_MIN_ORDER_USD
   const tokenId = market?.tokens?.[selectedOutcome]?.token_id || ''
 
   // Chart data (memoised on market id)
@@ -342,65 +411,64 @@ export default function PolymarketDetailView({ slug }: Props) {
         bridge_amount: '0'
       })
       if (res.ok) {
-        const purchaseId = res.data?.purchase_id || tempId
+        const purchaseId = res.data?.purchase_id
         setSoldPositionKeys((prev) => new Set(prev).add(posKey))
-        setActivePurchases((prev) =>
-          prev.map((p) =>
-            p.purchase_id === tempId
-              ? { ...p, purchase_id: purchaseId, current_step: 'order_placement' }
-              : p
-          )
-        )
 
-        const poll = async () => {
-          try {
-            const statusRes = await polymarketPurchaseStatus(purchaseId)
-            if (statusRes.ok && statusRes.data) {
-              const st = statusRes.data.status
-              const step = statusRes.data.current_step || ''
-              setActivePurchases((prev) =>
-                prev.map((p) =>
-                  p.purchase_id === purchaseId ? { ...p, current_step: step, status: st } : p
-                )
-              )
-              if (st === 'completed') {
+        const revalidateSell = () => {
+          mutate(
+            (key: any) =>
+              Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/positions'),
+            undefined,
+            { revalidate: true }
+          )
+          mutate(
+            (key: any) =>
+              Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders'),
+            undefined,
+            { revalidate: true }
+          )
+          mutate(
+            (key: any) =>
+              Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/portfolio'),
+            undefined,
+            { revalidate: true }
+          )
+          mutate(
+            (key: any) =>
+              Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance'),
+            undefined,
+            { revalidate: true }
+          )
+        }
+
+        // No purchase_id → backend completed the operation synchronously (e.g. claim).
+        if (!purchaseId) {
+          setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== tempId))
+          enqueueSnackbar(t('polymarket.sell-completed'), { variant: 'success' })
+          revalidateSell()
+          setTimeout(revalidateSell, 3000)
+          setSoldPositionKeys((prev) => {
+            const n = new Set(prev)
+            n.delete(posKey)
+            return n
+          })
+        } else {
+          setActivePurchases((prev) =>
+            prev.map((p) =>
+              p.purchase_id === tempId
+                ? { ...p, purchase_id: purchaseId, current_step: 'order_placement' }
+                : p
+            )
+          )
+
+          const poll = async () => {
+            try {
+              const statusRes = await polymarketPurchaseStatus(purchaseId)
+              if (!statusRes.ok) {
+                // Purchase not found or backend error — stop polling to avoid infinite loop.
                 clearInterval(pollInterval)
                 setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
                 enqueueSnackbar(t('polymarket.sell-completed'), { variant: 'success' })
-                const revalidateSell = () => {
-                  mutate(
-                    (key: any) =>
-                      Array.isArray(key) &&
-                      typeof key[0] === 'string' &&
-                      key[0].includes('/positions'),
-                    undefined,
-                    { revalidate: true }
-                  )
-                  mutate(
-                    (key: any) =>
-                      Array.isArray(key) &&
-                      typeof key[0] === 'string' &&
-                      key[0].includes('/orders'),
-                    undefined,
-                    { revalidate: true }
-                  )
-                  mutate(
-                    (key: any) =>
-                      Array.isArray(key) &&
-                      typeof key[0] === 'string' &&
-                      key[0].includes('/portfolio'),
-                    undefined,
-                    { revalidate: true }
-                  )
-                  mutate(
-                    (key: any) =>
-                      Array.isArray(key) &&
-                      typeof key[0] === 'string' &&
-                      key[0].includes('/balance'),
-                    undefined,
-                    { revalidate: true }
-                  )
-                }
                 revalidateSell()
                 setTimeout(revalidateSell, 3000)
                 setSoldPositionKeys((prev) => {
@@ -408,25 +476,47 @@ export default function PolymarketDetailView({ slug }: Props) {
                   n.delete(posKey)
                   return n
                 })
-              } else if (st === 'failed') {
-                clearInterval(pollInterval)
-                setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
-                enqueueSnackbar(statusRes.data.error || t('polymarket.sell-failed'), {
-                  variant: 'error'
-                })
-                setSoldPositionKeys((prev) => {
-                  const n = new Set(prev)
-                  n.delete(posKey)
-                  return n
-                })
+                return
               }
+              if (statusRes.data) {
+                const st = statusRes.data.status
+                const step = statusRes.data.current_step || ''
+                setActivePurchases((prev) =>
+                  prev.map((p) =>
+                    p.purchase_id === purchaseId ? { ...p, current_step: step, status: st } : p
+                  )
+                )
+                if (st === 'completed') {
+                  clearInterval(pollInterval)
+                  setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
+                  enqueueSnackbar(t('polymarket.sell-completed'), { variant: 'success' })
+                  revalidateSell()
+                  setTimeout(revalidateSell, 3000)
+                  setSoldPositionKeys((prev) => {
+                    const n = new Set(prev)
+                    n.delete(posKey)
+                    return n
+                  })
+                } else if (st === 'failed') {
+                  clearInterval(pollInterval)
+                  setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
+                  enqueueSnackbar(statusRes.data.error || t('polymarket.sell-failed'), {
+                    variant: 'error'
+                  })
+                  setSoldPositionKeys((prev) => {
+                    const n = new Set(prev)
+                    n.delete(posKey)
+                    return n
+                  })
+                }
+              }
+            } catch (e) {
+              console.error(e)
             }
-          } catch (e) {
-            console.error(e)
           }
+          poll()
+          const pollInterval = setInterval(poll, 4000)
         }
-        poll()
-        const pollInterval = setInterval(poll, 4000)
       } else {
         setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== tempId))
         enqueueSnackbar(res.message || t('polymarket.error-executing-sell'), { variant: 'error' })
@@ -451,6 +541,10 @@ export default function PolymarketDetailView({ slug }: Props) {
 
   const handleSubmit = async () => {
     if (amount <= 0 || !tokenId || selectedPrice <= 0) return
+    if (amount < POLYMARKET_MIN_ORDER_USD) {
+      setError(t('polymarket.minimum-order', { amount: fNumber(POLYMARKET_MIN_ORDER_USD) }))
+      return
+    }
     setIsSubmitting(true)
     setError(null)
     setSuccess(null)
@@ -468,7 +562,7 @@ export default function PolymarketDetailView({ slug }: Props) {
       })
 
       if (result.ok) {
-        enqueueSnackbar('Transaction in Progress: Bridging & Placing Order...', { variant: 'info' })
+        setOrderSuccess({ side: 'BUY' })
 
         mutate(
           (key: any) =>
@@ -514,6 +608,35 @@ export default function PolymarketDetailView({ slug }: Props) {
           const pollInterval = setInterval(async () => {
             try {
               const statusRes = await polymarketPurchaseStatus(purchaseId)
+              if (!statusRes.ok) {
+                // Purchase not found or backend error — stop polling to avoid an
+                // infinite loop. A 404 here most likely means the order already
+                // settled without a status record.
+                clearInterval(pollInterval)
+                setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
+                enqueueSnackbar(t('polymarket.order-placed'), { variant: 'success' })
+                mutate(
+                  (key: any) =>
+                    Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance')
+                )
+                mutate(
+                  (key: any) =>
+                    Array.isArray(key) &&
+                    typeof key[0] === 'string' &&
+                    key[0].includes('/positions')
+                )
+                mutate(
+                  (key: any) =>
+                    Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders')
+                )
+                mutate(
+                  (key: any) =>
+                    Array.isArray(key) &&
+                    typeof key[0] === 'string' &&
+                    key[0].includes('/portfolio')
+                )
+                return
+              }
               if (statusRes.ok && statusRes.data) {
                 const st = statusRes.data.status
                 const step = statusRes.data.current_step || ''
@@ -528,7 +651,6 @@ export default function PolymarketDetailView({ slug }: Props) {
                 if (st === 'completed') {
                   clearInterval(pollInterval)
                   setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
-                  enqueueSnackbar(t('polymarket.order-placed'), { variant: 'success' })
 
                   // Add optimistic position immediately so the user sees it
                   if (market) {
@@ -617,7 +739,7 @@ export default function PolymarketDetailView({ slug }: Props) {
   }
 
   // ── Loading skeleton ──
-  if (isLoading) {
+  if (isResolvingMarket) {
     return (
       <Box
         sx={{
@@ -685,6 +807,11 @@ export default function PolymarketDetailView({ slug }: Props) {
     )
   }
 
+  // Closed / resolved markets are read-only: still viewable, but no new predictions.
+  // Key off `closed` only — the backend also flags some live placeholder markets as
+  // `active: false`, so that field would wrongly mark them as closed.
+  const isMarketClosed = !!market.closed
+
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   //  RENDER SECTIONS
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -698,319 +825,442 @@ export default function PolymarketDetailView({ slug }: Props) {
       initial='initial'
       animate='animate'
     >
-      <Card
-        component={m.div}
-        variants={fadeInUp}
-        transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-        sx={{
-          border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}`,
-          boxShadow: 'none',
-          overflow: 'visible'
-        }}
-      >
-        {/* WHO DO YOU THINK WINS? */}
-        <Box sx={{ p: 3 }}>
-          <Typography
-            variant='overline'
-            sx={{
-              mb: 2,
-              display: 'block',
-              color: 'text.secondary',
-              letterSpacing: 1.5,
-              fontSize: '0.7rem'
-            }}
-          >
-            {outcomes.length === 2
-              ? t('polymarket.predict-question-yn')
-              : t('polymarket.predict-question-header')}
-          </Typography>
+      <Box sx={{ position: 'relative', borderRadius: 2, overflow: 'hidden' }}>
+        <Card
+          component={m.div}
+          variants={fadeInUp}
+          transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+          sx={{
+            border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}`,
+            boxShadow: 'none',
+            overflow: 'visible'
+          }}
+        >
+          {/* WHO DO YOU THINK WINS? */}
+          <Box sx={{ p: 3 }}>
+            <Typography
+              variant='overline'
+              sx={{
+                mb: 2,
+                display: 'block',
+                color: 'text.secondary',
+                letterSpacing: 1.5,
+                fontSize: '0.7rem'
+              }}
+            >
+              {isMarketClosed
+                ? t('polymarket.final-result')
+                : outcomes.length === 2
+                  ? t('polymarket.predict-question-yn')
+                  : t('polymarket.predict-question-header')}
+            </Typography>
 
-          <Stack spacing={0}>
-            {outcomes.map((outcome, idx) => {
-              const price = prices[idx] || 0
-              const percent = Math.round(price * 100)
-              const isSelected = selectedOutcome === idx
-              const dotColor = getOutcomeColor(idx, isDark)
+            <Stack spacing={0}>
+              {outcomes.map((outcome, idx) => {
+                const price = prices[idx] || 0
+                const percent = Math.round(price * 100)
+                const isSelected = selectedOutcome === idx
+                const dotColor = getOutcomeColor(idx, isDark)
 
-              return (
-                <Box
-                  key={outcome}
-                  onClick={() => {
-                    setSelectedOutcome(idx)
-                    setError(null)
-                    setSuccess(null)
+                return (
+                  <Box
+                    key={outcome}
+                    onClick={() => {
+                      setSelectedOutcome(idx)
+                      setError(null)
+                      setSuccess(null)
+                    }}
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      px: 2,
+                      py: 1.75,
+                      borderRadius: 1.5,
+                      cursor: 'pointer',
+                      border: `2px solid ${isSelected ? theme.palette.primary.main : 'transparent'}`,
+                      bgcolor: isSelected ? alpha(theme.palette.primary.main, 0.04) : 'transparent',
+                      transition: 'border-color 0.1s ease, background-color 0.1s ease',
+                      '&:hover': { bgcolor: alpha(theme.palette.grey[500], 0.06) }
+                    }}
+                  >
+                    <Stack direction='row' alignItems='center' spacing={1.5}>
+                      <Box
+                        sx={{
+                          width: 12,
+                          height: 12,
+                          borderRadius: '50%',
+                          bgcolor: dotColor,
+                          flexShrink: 0
+                        }}
+                      />
+                      <Typography variant='subtitle2' sx={{ fontWeight: 600 }}>
+                        {outcome === 'Yes'
+                          ? t('common.yes')
+                          : outcome === 'No'
+                            ? t('common.no')
+                            : outcome}
+                      </Typography>
+                    </Stack>
+
+                    <Stack direction='row' alignItems='center' spacing={1}>
+                      <Typography variant='body2' color='text.secondary'>
+                        {percent}% {t('polymarket.chance')}
+                      </Typography>
+                      {isSelected && (
+                        <HugeiconsIcon
+                          icon={Tick02Icon}
+                          size={18}
+                          style={{ color: theme.palette.primary.main }}
+                        />
+                      )}
+                    </Stack>
+                  </Box>
+                )
+              })}
+            </Stack>
+          </Box>
+
+          {isMarketClosed ? (
+            <>
+              <Divider />
+              <Box sx={{ p: 3 }}>
+                <Alert
+                  severity='info'
+                  icon={false}
+                  sx={{ justifyContent: 'center', fontWeight: 600 }}
+                >
+                  {t('polymarket.market-closed-notice')}
+                </Alert>
+              </Box>
+            </>
+          ) : (
+            <>
+              <Divider />
+
+              {/* HOW MUCH DO YOU WANT TO PREDICT? */}
+              <Box sx={{ p: 3 }}>
+                <Typography
+                  variant='overline'
+                  sx={{
+                    mb: 2.5,
+                    display: 'block',
+                    color: 'text.secondary',
+                    letterSpacing: 1.5,
+                    fontSize: '0.7rem'
                   }}
+                >
+                  {t('polymarket.predict-amount-header')}
+                </Typography>
+
+                {/* Preset pills */}
+                <Stack direction='row' spacing={1} sx={{ mb: 2.5 }} flexWrap='wrap' useFlexGap>
+                  {PRESET_AMOUNTS.map((preset) => {
+                    const isActive = amount === preset
+                    return (
+                      <Button
+                        key={preset}
+                        variant={isActive ? 'contained' : 'outlined'}
+                        onClick={() => handlePresetClick(preset)}
+                        sx={{
+                          minWidth: 64,
+                          fontWeight: 700,
+                          fontSize: '0.85rem',
+                          borderRadius: 50,
+                          textTransform: 'none',
+                          px: 2.5,
+                          py: 1,
+                          ...(isActive
+                            ? {
+                                bgcolor: isDark ? theme.palette.grey[200] : '#1B1B1B',
+                                color: isDark ? theme.palette.grey[900] : '#fff',
+                                boxShadow: 'none',
+                                '&:hover': {
+                                  bgcolor: isDark ? theme.palette.grey[300] : '#333',
+                                  boxShadow: 'none'
+                                }
+                              }
+                            : {
+                                borderColor: alpha(theme.palette.grey[500], 0.24),
+                                color: 'text.primary',
+                                '&:hover': {
+                                  borderColor: theme.palette.grey[400],
+                                  bgcolor: alpha(theme.palette.grey[500], 0.08)
+                                }
+                              })
+                        }}
+                      >
+                        ${preset}
+                      </Button>
+                    )
+                  })}
+                </Stack>
+
+                {/* Custom amount input */}
+                <Box
                   sx={{
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'space-between',
-                    px: 2,
-                    py: 1.75,
+                    border: `1px solid ${amount > selectedTokenBalance && selectedTokenBalance > 0 ? theme.palette.warning.main : alpha(theme.palette.grey[500], 0.2)}`,
                     borderRadius: 1.5,
-                    cursor: 'pointer',
-                    border: `2px solid ${isSelected ? theme.palette.primary.main : 'transparent'}`,
-                    bgcolor: isSelected ? alpha(theme.palette.primary.main, 0.04) : 'transparent',
-                    transition: 'border-color 0.1s ease, background-color 0.1s ease',
-                    '&:hover': { bgcolor: alpha(theme.palette.grey[500], 0.06) }
+                    px: 2,
+                    py: 1.25,
+                    maxWidth: { xs: '100%', md: 200 }
                   }}
                 >
-                  <Stack direction='row' alignItems='center' spacing={1.5}>
-                    <Box
-                      sx={{
-                        width: 12,
-                        height: 12,
-                        borderRadius: '50%',
-                        bgcolor: dotColor,
-                        flexShrink: 0
-                      }}
-                    />
-                    <Typography variant='subtitle2' sx={{ fontWeight: 600 }}>
-                      {outcome === 'Yes'
-                        ? t('common.yes')
-                        : outcome === 'No'
-                          ? t('common.no')
-                          : outcome}
-                    </Typography>
-                  </Stack>
-
-                  <Stack direction='row' alignItems='center' spacing={1}>
-                    <Typography variant='body2' color='text.secondary'>
-                      {percent}% {t('polymarket.chance')}
-                    </Typography>
-                    {isSelected && (
-                      <HugeiconsIcon
-                        icon={Tick02Icon}
-                        size={18}
-                        style={{ color: theme.palette.primary.main }}
-                      />
-                    )}
-                  </Stack>
-                </Box>
-              )
-            })}
-          </Stack>
-        </Box>
-
-        <Divider />
-
-        {/* HOW MUCH DO YOU WANT TO PREDICT? */}
-        <Box sx={{ p: 3 }}>
-          <Typography
-            variant='overline'
-            sx={{
-              mb: 2.5,
-              display: 'block',
-              color: 'text.secondary',
-              letterSpacing: 1.5,
-              fontSize: '0.7rem'
-            }}
-          >
-            {t('polymarket.predict-amount-header')}
-          </Typography>
-
-          {/* Preset pills */}
-          <Stack direction='row' spacing={1} sx={{ mb: 2.5 }} flexWrap='wrap' useFlexGap>
-            {PRESET_AMOUNTS.map((preset) => {
-              const isActive = amount === preset
-              return (
-                <Button
-                  key={preset}
-                  variant={isActive ? 'contained' : 'outlined'}
-                  onClick={() => handlePresetClick(preset)}
-                  sx={{
-                    minWidth: 64,
-                    fontWeight: 700,
-                    fontSize: '0.85rem',
-                    borderRadius: 50,
-                    textTransform: 'none',
-                    px: 2.5,
-                    py: 1,
-                    ...(isActive
-                      ? {
-                          bgcolor: isDark ? theme.palette.grey[200] : '#1B1B1B',
-                          color: isDark ? theme.palette.grey[900] : '#fff',
-                          boxShadow: 'none',
-                          '&:hover': {
-                            bgcolor: isDark ? theme.palette.grey[300] : '#333',
-                            boxShadow: 'none'
-                          }
-                        }
-                      : {
-                          borderColor: alpha(theme.palette.grey[500], 0.24),
-                          color: 'text.primary',
-                          '&:hover': {
-                            borderColor: theme.palette.grey[400],
-                            bgcolor: alpha(theme.palette.grey[500], 0.08)
-                          }
-                        })
-                  }}
-                >
-                  ${preset}
-                </Button>
-              )
-            })}
-          </Stack>
-
-          {/* Custom amount input */}
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              border: `1px solid ${amount > selectedTokenBalance && selectedTokenBalance > 0 ? theme.palette.warning.main : alpha(theme.palette.grey[500], 0.2)}`,
-              borderRadius: 1.5,
-              px: 2,
-              py: 1.25,
-              maxWidth: { xs: '100%', md: 200 }
-            }}
-          >
-            <Typography variant='body2' sx={{ fontWeight: 600, color: 'text.secondary', mr: 1 }}>
-              $
-            </Typography>
-            <Box
-              component='input'
-              value={customAmount}
-              onChange={handleCustomAmountChange}
-              type='number'
-              min={1}
-              sx={{
-                border: 'none',
-                outline: 'none',
-                bgcolor: 'transparent',
-                fontSize: 15,
-                fontWeight: 500,
-                width: '100%',
-                fontFamily: 'inherit',
-                color: 'text.primary',
-                '&::-webkit-inner-spin-button, &::-webkit-outer-spin-button': {
-                  WebkitAppearance: 'none',
-                  margin: 0
-                }
-              }}
-            />
-          </Box>
-
-          <Typography
-            variant='caption'
-            color='text.secondary'
-            sx={{ mt: 1.5, display: 'flex', alignItems: 'center', gap: 0.5 }}
-          >
-            {t('polymarket.available')}: ${fNumber(selectedTokenBalance)}
-            <Box
-              component='span'
-              onClick={
-                availableTokens.length > 1
-                  ? (e: any) => setTokenMenuAnchor(e.currentTarget)
-                  : undefined
-              }
-              sx={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 0.25,
-                px: 0.75,
-                py: 0.125,
-                borderRadius: 0.5,
-                bgcolor: alpha(theme.palette.primary.main, 0.08),
-                color: theme.palette.primary.main,
-                fontWeight: 700,
-                fontSize: '0.65rem',
-                letterSpacing: 0.5,
-                cursor: availableTokens.length > 1 ? 'pointer' : 'default',
-                userSelect: 'none',
-                '&:hover':
-                  availableTokens.length > 1
-                    ? { bgcolor: alpha(theme.palette.primary.main, 0.16) }
-                    : {}
-              }}
-            >
-              {effectiveToken || balanceTokenSymbol}
-              {availableTokens.length > 1 && <Iconify icon='eva:chevron-down-fill' width={10} />}
-            </Box>
-          </Typography>
-
-          <Menu
-            anchorEl={tokenMenuAnchor}
-            open={Boolean(tokenMenuAnchor)}
-            onClose={() => setTokenMenuAnchor(null)}
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-            transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-            slotProps={{ paper: { sx: { minWidth: 180, mt: 0.5 } } }}
-          >
-            {availableTokens.map((tok) => (
-              <MenuItem
-                key={tok.token}
-                selected={effectiveToken === tok.token}
-                onClick={() => {
-                  setSelectedToken(tok.token)
-                  setTokenMenuAnchor(null)
-                }}
-                sx={{ fontSize: '0.85rem' }}
-              >
-                <Stack direction='row' justifyContent='space-between' width='100%' spacing={2}>
-                  <Typography variant='body2' fontWeight={600}>
-                    {tok.token}
+                  <Typography
+                    variant='body2'
+                    sx={{ fontWeight: 600, color: 'text.secondary', mr: 1 }}
+                  >
+                    $
                   </Typography>
-                  <Typography variant='caption' color='text.secondary'>
-                    ${fNumber(tok.balance_conv.usd)}
+                  <Box
+                    component='input'
+                    value={customAmount}
+                    onChange={handleCustomAmountChange}
+                    type='number'
+                    min={POLYMARKET_MIN_ORDER_USD}
+                    sx={{
+                      border: 'none',
+                      outline: 'none',
+                      bgcolor: 'transparent',
+                      fontSize: 15,
+                      fontWeight: 500,
+                      width: '100%',
+                      fontFamily: 'inherit',
+                      color: 'text.primary',
+                      '&::-webkit-inner-spin-button, &::-webkit-outer-spin-button': {
+                        WebkitAppearance: 'none',
+                        margin: 0
+                      }
+                    }}
+                  />
+                </Box>
+
+                <Typography
+                  variant='caption'
+                  color='text.secondary'
+                  sx={{ mt: 1.5, display: 'flex', alignItems: 'center', gap: 0.5 }}
+                >
+                  {t('polymarket.available')}: ${fNumber(selectedTokenBalance)}
+                  <Box
+                    component='span'
+                    onClick={
+                      availableTokens.length > 1
+                        ? (e: any) => setTokenMenuAnchor(e.currentTarget)
+                        : undefined
+                    }
+                    sx={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 0.25,
+                      px: 0.75,
+                      py: 0.125,
+                      borderRadius: 0.5,
+                      bgcolor: alpha(theme.palette.primary.main, 0.08),
+                      color: theme.palette.primary.main,
+                      fontWeight: 700,
+                      fontSize: '0.65rem',
+                      letterSpacing: 0.5,
+                      cursor: availableTokens.length > 1 ? 'pointer' : 'default',
+                      userSelect: 'none',
+                      '&:hover':
+                        availableTokens.length > 1
+                          ? { bgcolor: alpha(theme.palette.primary.main, 0.16) }
+                          : {}
+                    }}
+                  >
+                    {effectiveToken || balanceTokenSymbol}
+                    {availableTokens.length > 1 && (
+                      <Iconify icon='eva:chevron-down-fill' width={10} />
+                    )}
+                  </Box>
+                </Typography>
+
+                <Menu
+                  anchorEl={tokenMenuAnchor}
+                  open={Boolean(tokenMenuAnchor)}
+                  onClose={() => setTokenMenuAnchor(null)}
+                  anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+                  transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+                  slotProps={{ paper: { sx: { minWidth: 180, mt: 0.5 } } }}
+                >
+                  {availableTokens.map((tok) => (
+                    <MenuItem
+                      key={tok.token}
+                      selected={effectiveToken === tok.token}
+                      onClick={() => {
+                        setSelectedToken(tok.token)
+                        setTokenMenuAnchor(null)
+                      }}
+                      sx={{ fontSize: '0.85rem' }}
+                    >
+                      <Stack
+                        direction='row'
+                        justifyContent='space-between'
+                        width='100%'
+                        spacing={2}
+                      >
+                        <Typography variant='body2' fontWeight={600}>
+                          {tok.token}
+                        </Typography>
+                        <Typography variant='caption' color='text.secondary'>
+                          ${fNumber(tok.balance_conv.usd)}
+                        </Typography>
+                      </Stack>
+                    </MenuItem>
+                  ))}
+                </Menu>
+
+                {/* Below minimum order */}
+                {belowMinimum && (
+                  <Alert severity='warning' sx={{ mt: 1.5, py: 0.75 }}>
+                    {t('polymarket.minimum-order', { amount: fNumber(POLYMARKET_MIN_ORDER_USD) })}
+                  </Alert>
+                )}
+
+                {/* Insufficient balance */}
+                {amount > selectedTokenBalance && selectedTokenBalance >= 0 && amount > 0 && (
+                  <Alert
+                    severity='warning'
+                    sx={{ mt: 1.5, py: 0.75 }}
+                    action={
+                      <Button
+                        size='small'
+                        href={depositUrl}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        sx={{ fontWeight: 700, whiteSpace: 'nowrap' }}
+                      >
+                        {t('polymarket.deposit')}
+                      </Button>
+                    }
+                  >
+                    {t('polymarket.insufficient-balance')}
+                  </Alert>
+                )}
+              </Box>
+
+              {/* Return estimate */}
+              {amount > 0 && selectedPrice > 0 && (
+                <>
+                  <Divider />
+                  <Box sx={{ p: 3, bgcolor: alpha(theme.palette.primary.main, 0.06) }}>
+                    <Typography
+                      variant='caption'
+                      color='text.secondary'
+                      sx={{ display: 'block', mb: 0.5 }}
+                    >
+                      {t('polymarket.if-outcome-wins', {
+                        outcome:
+                          outcomes[selectedOutcome] === 'Yes'
+                            ? t('common.yes')
+                            : outcomes[selectedOutcome] === 'No'
+                              ? t('common.no')
+                              : outcomes[selectedOutcome]
+                      })}
+                    </Typography>
+                    <Typography variant='h4' sx={{ fontWeight: 800, color: 'text.primary' }}>
+                      {t('polymarket.you-get-back', { amount: fNumber(estimatedReturn) })}
+                    </Typography>
+                    <Typography variant='caption' color='text.secondary'>
+                      {t('polymarket.prediction-summary', {
+                        amount: fNumber(amount),
+                        profit: fNumber(estimatedProfit)
+                      })}
+                    </Typography>
+                  </Box>
+                </>
+              )}
+            </>
+          )}
+        </Card>
+
+        {/* ── Success drawer scoped to this card ── */}
+        <AnimatePresence>
+          {orderSuccess && (
+            <>
+              <m.div
+                key='card-backdrop'
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                onClick={closeOrderSuccess}
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  backgroundColor: 'rgba(0,0,0,0.45)',
+                  backdropFilter: 'blur(4px)',
+                  WebkitBackdropFilter: 'blur(4px)',
+                  zIndex: 10,
+                  cursor: 'pointer'
+                }}
+              />
+              <m.div
+                key='card-drawer'
+                initial={{ y: '100%' }}
+                animate={{ y: 0 }}
+                exit={{ y: '100%' }}
+                drag='y'
+                dragConstraints={{ top: 0 }}
+                dragElastic={{ top: 0, bottom: 0.25 }}
+                onDragEnd={(_, { offset, velocity }) => {
+                  if (offset.y > 60 || velocity.y > 400) closeOrderSuccess()
+                }}
+                transition={{ type: 'spring', damping: 38, stiffness: 380 }}
+                style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  height: 320,
+                  backgroundColor: theme.palette.background.paper,
+                  borderRadius: '20px 20px 0 0',
+                  zIndex: 11,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 16,
+                  padding: '36px 24px 32px',
+                  cursor: 'grab',
+                  touchAction: 'none'
+                }}
+              >
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    top: 10,
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: 36,
+                    height: 4,
+                    borderRadius: 2,
+                    bgcolor: alpha(theme.palette.grey[500], 0.24)
+                  }}
+                />
+                <Box sx={{ width: 140, height: 140, flexShrink: 0 }}>
+                  <DotLottieReact
+                    src='/assets/images/illustrations/checkmark_animation.json'
+                    autoplay
+                    loop={false}
+                    style={{ width: 140, height: 140 }}
+                  />
+                </Box>
+                <Stack alignItems='center' spacing={0.5}>
+                  <Typography variant='h5' fontWeight={800} textAlign='center'>
+                    {t('polymarket.order-sent')}
+                  </Typography>
+                  <Typography variant='body2' color='text.secondary' textAlign='center'>
+                    {t('polymarket.order-sent-subtitle')}
                   </Typography>
                 </Stack>
-              </MenuItem>
-            ))}
-          </Menu>
-
-          {/* Insufficient balance */}
-          {amount > selectedTokenBalance && selectedTokenBalance >= 0 && amount > 0 && (
-            <Alert
-              severity='warning'
-              sx={{ mt: 1.5, py: 0.75 }}
-              action={
-                <Button
-                  size='small'
-                  href={depositUrl}
-                  target='_blank'
-                  rel='noopener noreferrer'
-                  sx={{ fontWeight: 700, whiteSpace: 'nowrap' }}
-                >
-                  {t('polymarket.deposit')}
-                </Button>
-              }
-            >
-              {t('polymarket.insufficient-balance')}
-            </Alert>
+              </m.div>
+            </>
           )}
-        </Box>
-
-        {/* Return estimate */}
-        {amount > 0 && selectedPrice > 0 && (
-          <>
-            <Divider />
-            <Box sx={{ p: 3, bgcolor: alpha(theme.palette.primary.main, 0.06) }}>
-              <Typography
-                variant='caption'
-                color='text.secondary'
-                sx={{ display: 'block', mb: 0.5 }}
-              >
-                {t('polymarket.if-outcome-wins', {
-                  outcome:
-                    outcomes[selectedOutcome] === 'Yes'
-                      ? t('common.yes')
-                      : outcomes[selectedOutcome] === 'No'
-                        ? t('common.no')
-                        : outcomes[selectedOutcome]
-                })}
-              </Typography>
-              <Typography variant='h4' sx={{ fontWeight: 800, color: 'text.primary' }}>
-                {t('polymarket.you-get-back', { amount: fNumber(estimatedReturn) })}
-              </Typography>
-              <Typography variant='caption' color='text.secondary'>
-                {t('polymarket.prediction-summary', {
-                  amount: fNumber(amount),
-                  profit: fNumber(estimatedProfit)
-                })}
-              </Typography>
-            </Box>
-          </>
-        )}
-      </Card>
+        </AnimatePresence>
+      </Box>
 
       {/* Alerts */}
       {error && (
@@ -1035,9 +1285,19 @@ export default function PolymarketDetailView({ slug }: Props) {
           variant='contained'
           color='primary'
           size='large'
-          onClick={handleSubmit}
-          disabled={amount <= 0 || isSubmitting || amount > selectedTokenBalance}
-          startIcon={isSubmitting ? <CircularProgress size={18} color='inherit' /> : null}
+          onClick={orderSuccess ? closeOrderSuccess : handleSubmit}
+          disabled={
+            isMarketClosed ||
+            (!orderSuccess &&
+              (amount <= 0 || belowMinimum || isSubmitting || amount > selectedTokenBalance))
+          }
+          startIcon={
+            isSubmitting ? (
+              <CircularProgress size={18} color='inherit' />
+            ) : orderSuccess ? (
+              <Iconify icon='eva:refresh-fill' width={20} />
+            ) : null
+          }
           sx={{
             py: 2,
             fontWeight: 700,
@@ -1046,17 +1306,21 @@ export default function PolymarketDetailView({ slug }: Props) {
             textTransform: 'none'
           }}
         >
-          {isSubmitting
-            ? t('polymarket.placing-prediction')
-            : t('polymarket.predict-cta', {
-                amount: fNumber(amount),
-                outcome:
-                  outcomes[selectedOutcome] === 'Yes'
-                    ? t('common.yes')
-                    : outcomes[selectedOutcome] === 'No'
-                      ? t('common.no')
-                      : outcomes[selectedOutcome]
-              })}
+          {isMarketClosed
+            ? t('polymarket.market-closed-cta')
+            : orderSuccess
+              ? t('polymarket.place-another')
+              : isSubmitting
+                ? t('polymarket.placing-prediction')
+                : t('polymarket.predict-cta', {
+                    amount: fNumber(amount),
+                    outcome:
+                      outcomes[selectedOutcome] === 'Yes'
+                        ? t('common.yes')
+                        : outcomes[selectedOutcome] === 'No'
+                          ? t('common.no')
+                          : outcomes[selectedOutcome]
+                  })}
         </Button>
       </Box>
     </Stack>
@@ -1209,486 +1473,180 @@ export default function PolymarketDetailView({ slug }: Props) {
   //  MAIN RETURN
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   return (
-    <Box
-      sx={{
-        mt: -13,
-        mx: { xs: 0, lg: -2 },
-        flex: 1,
-        minHeight: '100vh',
-        bgcolor: isDark ? '#0A2E1A' : '#B8F6C9',
-        backgroundImage: isDark
-          ? 'linear-gradient(180deg, #161C24 0%, #0A2E1A 600px)'
-          : 'linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 600px)',
-        pb: { xs: 10, md: 15 },
-        mb: { xs: -10, md: -15 } // Buffer to prevent any clipping from parent layout
-      }}
-    >
-      <Container
-        maxWidth={settings.themeStretch ? false : 'xl'}
+    <>
+      {showTermsOverlay && accountStatus?.terms && (
+        <PolymarketTermsOverlay terms={accountStatus.terms} onAccepted={checkAccountStatus} />
+      )}
+      <Box
         sx={{
-          pt: { xs: 11, md: 12 },
-          px: { xs: 2, md: 3 }
+          mt: -13,
+          mx: { xs: 0, lg: -2 },
+          flex: 1,
+          minHeight: '100vh',
+          bgcolor: isDark ? '#0A2E1A' : '#B8F6C9',
+          backgroundImage: isDark
+            ? 'linear-gradient(180deg, #161C24 0%, #0A2E1A 600px)'
+            : 'linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 600px)',
+          pb: { xs: 10, md: 15 },
+          mb: { xs: -10, md: -15 } // Buffer to prevent any clipping from parent layout
         }}
       >
-        <Stack
-          spacing={3}
-          component={m.div}
-          initial='initial'
-          animate='animate'
-          variants={staggerContainer}
+        <Container
+          maxWidth={settings.themeStretch ? false : 'xl'}
+          sx={{
+            pt: { xs: 11, md: 12 },
+            px: { xs: 2, md: 3 }
+          }}
         >
-          {/* ── HEADER ── */}
-          <Stack spacing={1.5} component={m.div} variants={fadeInUp} transition={{ duration: 0.4 }}>
-            <Button
-              onClick={() => router.push(paths.dashboard.polymarket.root)}
-              startIcon={<HugeiconsIcon icon={ArrowLeft01Icon} size={16} />}
-              sx={{
-                alignSelf: 'flex-start',
-                color: 'text.secondary',
-                fontWeight: 500,
-                fontSize: '0.85rem',
-                textTransform: 'none',
-                px: 0,
-                minWidth: 'auto',
-                '&:hover': { bgcolor: 'transparent', color: 'text.primary' }
-              }}
-            >
-              {t('polymarket.back')}
-            </Button>
-
+          <Stack
+            spacing={3}
+            component={m.div}
+            initial='initial'
+            animate='animate'
+            variants={staggerContainer}
+          >
+            {/* ── HEADER ── */}
             <Stack
-              direction={{ xs: 'column', md: 'row' }}
-              alignItems={{ xs: 'flex-start', md: 'center' }}
-              justifyContent='space-between'
-              spacing={2}
+              spacing={1.5}
+              component={m.div}
+              variants={fadeInUp}
+              transition={{ duration: 0.4 }}
             >
-              <Stack direction='row' alignItems='center' spacing={2} sx={{ flex: 1, minWidth: 0 }}>
-                {market.image && (
-                  <Box
-                    component='img'
-                    src={market.image}
-                    alt={market.question}
-                    sx={{
-                      width: 48,
-                      height: 48,
-                      borderRadius: 1.5,
-                      objectFit: 'cover',
-                      bgcolor: 'grey.200',
-                      flexShrink: 0
-                    }}
-                  />
-                )}
-                <Typography
-                  variant='h5'
-                  sx={{ fontWeight: 700, color: 'text.primary', fontSize: { xs: 20, md: 24 } }}
-                >
-                  {market.question}
-                </Typography>
-                {market.category && (
-                  <Chip
-                    label={market.category}
-                    size='small'
-                    sx={{
-                      bgcolor: alpha(theme.palette.primary.main, 0.12),
-                      color: theme.palette.primary.main,
-                      fontWeight: 600,
-                      fontSize: '0.7rem',
-                      height: 24,
-                      borderRadius: 0.75,
-                      flexShrink: 0
-                    }}
-                  />
-                )}
-              </Stack>
+              <Button
+                onClick={() => router.push(paths.dashboard.polymarket.root)}
+                startIcon={<HugeiconsIcon icon={ArrowLeft01Icon} size={16} />}
+                sx={{
+                  alignSelf: 'flex-start',
+                  color: 'text.secondary',
+                  fontWeight: 500,
+                  fontSize: '0.85rem',
+                  textTransform: 'none',
+                  px: 0,
+                  minWidth: 'auto',
+                  '&:hover': { bgcolor: 'transparent', color: 'text.primary' }
+                }}
+              >
+                {t('polymarket.back')}
+              </Button>
 
-              <Stack direction='row' alignItems='center' spacing={3} sx={{ flexShrink: 0 }}>
-                <Typography variant='body2' color='text.secondary'>
-                  {t('polymarket.vol')} <strong>${fNumber(market.volume)}</strong>
-                </Typography>
-                {market.end_date_iso && (
-                  <Typography variant='body2' color='text.secondary'>
-                    {t('polymarket.ends-label')}{' '}
-                    <strong>
-                      {new Date(market.end_date_iso).toLocaleDateString(undefined, {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric'
-                      })}
-                    </strong>
+              <Stack
+                direction={{ xs: 'column', md: 'row' }}
+                alignItems={{ xs: 'flex-start', md: 'center' }}
+                justifyContent='space-between'
+                spacing={2}
+              >
+                <Stack
+                  direction='row'
+                  alignItems='center'
+                  spacing={2}
+                  sx={{ flex: 1, minWidth: 0 }}
+                >
+                  {market.image && (
+                    <Box
+                      component='img'
+                      src={market.image}
+                      alt={market.question}
+                      sx={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: 1.5,
+                        objectFit: 'cover',
+                        bgcolor: 'grey.200',
+                        flexShrink: 0
+                      }}
+                    />
+                  )}
+                  <Typography
+                    variant='h5'
+                    sx={{ fontWeight: 700, color: 'text.primary', fontSize: { xs: 20, md: 24 } }}
+                  >
+                    {market.question}
                   </Typography>
-                )}
+                  {market.category && (
+                    <Chip
+                      label={market.category}
+                      size='small'
+                      sx={{
+                        bgcolor: alpha(theme.palette.primary.main, 0.12),
+                        color: theme.palette.primary.main,
+                        fontWeight: 600,
+                        fontSize: '0.7rem',
+                        height: 24,
+                        borderRadius: 0.75,
+                        flexShrink: 0
+                      }}
+                    />
+                  )}
+                  {isMarketClosed && (
+                    <Chip
+                      label={t('polymarket.closed')}
+                      size='small'
+                      sx={{
+                        bgcolor: alpha(theme.palette.text.disabled, 0.16),
+                        color: 'text.secondary',
+                        fontWeight: 600,
+                        fontSize: '0.7rem',
+                        height: 24,
+                        borderRadius: 0.75,
+                        flexShrink: 0
+                      }}
+                    />
+                  )}
+                </Stack>
+
+                <Stack direction='row' alignItems='center' spacing={3} sx={{ flexShrink: 0 }}>
+                  <Typography variant='body2' color='text.secondary'>
+                    {t('polymarket.vol')} <strong>${fNumber(market.volume)}</strong>
+                  </Typography>
+                  {market.end_date_iso && (
+                    <Typography variant='body2' color='text.secondary'>
+                      {t('polymarket.ends-label')}{' '}
+                      <strong>
+                        {new Date(market.end_date_iso).toLocaleDateString(undefined, {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric'
+                        })}
+                      </strong>
+                    </Typography>
+                  )}
+                </Stack>
               </Stack>
             </Stack>
-          </Stack>
 
-          {/* ── DESKTOP: side-by-side layout ── */}
-          {mdUp && (
-            <Grid container spacing={3}>
-              <Grid xs={12} md={5}>
-                {renderBetModule}
+            {/* ── DESKTOP: side-by-side layout ── */}
+            {mdUp && (
+              <Grid container spacing={3}>
+                <Grid xs={12} md={5}>
+                  {renderBetModule}
+                </Grid>
+                <Grid xs={12} md={7}>
+                  {renderMarketDetails}
+                </Grid>
               </Grid>
-              <Grid xs={12} md={7}>
+            )}
+
+            {/* ── MOBILE: bet module inside gradient ── */}
+            {!mdUp && renderBetModule}
+
+            {/* ── MOBILE: Market Details (also inside gradient) ── */}
+            {!mdUp && (
+              <Box component={m.div} variants={fadeInUp} transition={{ duration: 0.4 }}>
+                <Typography variant='h5' sx={{ mb: 3, fontWeight: 700 }}>
+                  {t('polymarket.market-details')}
+                </Typography>
                 {renderMarketDetails}
-              </Grid>
-            </Grid>
-          )}
+              </Box>
+            )}
 
-          {/* ── MOBILE: bet module inside gradient ── */}
-          {!mdUp && renderBetModule}
-
-          {/* ── MOBILE: Market Details (also inside gradient) ── */}
-          {!mdUp && (
+            {/* ── POSITIONS & ORDERS ── */}
             <Box component={m.div} variants={fadeInUp} transition={{ duration: 0.4 }}>
-              <Typography variant='h5' sx={{ mb: 3, fontWeight: 700 }}>
-                {t('polymarket.market-details')}
+              <Typography variant='h5' sx={{ mb: 3, fontWeight: 700, mt: mdUp ? 5 : 0 }}>
+                {t('polymarket.my-activity')}
               </Typography>
-              {renderMarketDetails}
-            </Box>
-          )}
 
-          {/* ── POSITIONS & ORDERS ── */}
-          <Box component={m.div} variants={fadeInUp} transition={{ duration: 0.4 }}>
-            <Typography variant='h5' sx={{ mb: 3, fontWeight: 700, mt: mdUp ? 5 : 0 }}>
-              {t('polymarket.my-activity')}
-            </Typography>
-
-            <Stack spacing={3}>
-              {/* Active Positions */}
-              <Card sx={{ border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}` }}>
-                <Stack
-                  direction='row'
-                  alignItems='center'
-                  justifyContent='space-between'
-                  sx={{ px: 3, py: 2.5 }}
-                >
-                  <Typography variant='subtitle1' fontWeight={700}>
-                    {t('polymarket.open-positions')}
-                  </Typography>
-                  <Box
-                    sx={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: 22,
-                      height: 22,
-                      borderRadius: '50%',
-                      bgcolor: alpha(theme.palette.primary.main, 0.16),
-                      color: 'primary.main',
-                      fontWeight: 700,
-                      fontSize: 12
-                    }}
-                  >
-                    {marketPositions.length}
-                  </Box>
-                </Stack>
-                {marketPositions.length === 0 ? (
-                  <Stack alignItems='center' spacing={1.5} sx={{ py: 4 }}>
-                    <Typography variant='body2' color='text.secondary'>
-                      {t('polymarket.no-positions-market')}
-                    </Typography>
-                  </Stack>
-                ) : (
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>{t('polymarket.outcome')}</TableCell>
-                        <TableCell align='right'>{t('polymarket.size')}</TableCell>
-                        <TableCell align='right'>{t('polymarket.avg-price')}</TableCell>
-                        <TableCell align='right'>{t('polymarket.current')}</TableCell>
-                        <TableCell align='right'>{t('polymarket.pnl')}</TableCell>
-                        <TableCell align='right'>{t('polymarket.actions')}</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {marketPositions.map((pos, idx) => (
-                        <TableRow key={idx} hover>
-                          <TableCell>
-                            <Chip
-                              label={pos.outcome}
-                              size='small'
-                              sx={{
-                                fontWeight: 600,
-                                bgcolor: alpha(
-                                  pos.outcome?.toLowerCase() === 'yes'
-                                    ? theme.palette.success.main
-                                    : theme.palette.error.main,
-                                  0.1
-                                ),
-                                color:
-                                  pos.outcome?.toLowerCase() === 'yes'
-                                    ? theme.palette.success.dark
-                                    : theme.palette.error.dark
-                              }}
-                            />
-                          </TableCell>
-                          <TableCell align='right'>
-                            <Typography variant='body2' fontWeight={600}>
-                              {fNumber(pos.size)}
-                            </Typography>
-                          </TableCell>
-                          <TableCell align='right'>
-                            <Typography variant='body2'>
-                              {Math.round((pos.avg_price ?? pos.avgPrice ?? 0) * 100)}¢
-                            </Typography>
-                          </TableCell>
-                          <TableCell align='right'>
-                            <Typography variant='body2'>
-                              {Math.round((pos.current_price ?? pos.curPrice ?? 0) * 100)}¢
-                            </Typography>
-                          </TableCell>
-                          <TableCell align='right'>
-                            {(() => {
-                              const pnlVal = pos.pnl ?? pos.cashPnl ?? 0
-                              const pnlRounded =
-                                (Math.floor(Math.abs(pnlVal) * 1e2) / 1e2) * (pnlVal < 0 ? -1 : 1)
-                              return (
-                                <Typography
-                                  variant='body2'
-                                  fontWeight={700}
-                                  color={pnlVal >= 0 ? 'success.main' : 'error.main'}
-                                >
-                                  {pnlRounded === 0
-                                    ? '$0.00'
-                                    : `${pnlVal > 0 ? '+' : ''}$${fNumber(pnlRounded)}`}
-                                </Typography>
-                              )
-                            })()}
-                          </TableCell>
-                          <TableCell align='right' sx={{ whiteSpace: 'nowrap' }}>
-                            {(() => {
-                              const posKey =
-                                (pos.market?.condition_id || pos.conditionId) + pos.outcome
-                              return (
-                                <ButtonGroup
-                                  size='small'
-                                  color='error'
-                                  variant='contained'
-                                  disabled={sellingPos === posKey}
-                                >
-                                  <Button
-                                    sx={{ whiteSpace: 'nowrap' }}
-                                    onClick={() => handleSellPosition(pos)}
-                                  >
-                                    {sellingPos === posKey ? (
-                                      <CircularProgress size={14} color='inherit' />
-                                    ) : (
-                                      t('polymarket.sell-all')
-                                    )}
-                                  </Button>
-                                  <Button
-                                    sx={{ px: 0.5, minWidth: 28 }}
-                                    onClick={(e) => {
-                                      setPartialSellPos(pos)
-                                      setPartialSellAmount(String(Math.floor(pos.size * 1e6) / 1e6))
-                                      setPartialSellAnchor(e.currentTarget)
-                                    }}
-                                  >
-                                    <Iconify icon='eva:chevron-down-fill' width={16} />
-                                  </Button>
-                                </ButtonGroup>
-                              )
-                            })()}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                )}
-              </Card>
-
-              {/* Open Orders */}
-              <Card sx={{ border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}` }}>
-                <Stack
-                  direction='row'
-                  alignItems='center'
-                  justifyContent='space-between'
-                  sx={{ px: 3, py: 2.5 }}
-                >
-                  <Typography variant='subtitle1' fontWeight={700}>
-                    {t('polymarket.open-orders')}
-                  </Typography>
-                  <Box
-                    sx={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: 22,
-                      height: 22,
-                      borderRadius: '50%',
-                      bgcolor: alpha(theme.palette.warning.main, 0.16),
-                      color: 'warning.main',
-                      fontWeight: 700,
-                      fontSize: 12
-                    }}
-                  >
-                    {activePurchases.length + marketOrders.length}
-                  </Box>
-                </Stack>
-                {activePurchases.length === 0 && marketOrders.length === 0 ? (
-                  <Stack alignItems='center' spacing={1.5} sx={{ py: 4 }}>
-                    <Typography variant='body2' color='text.secondary'>
-                      {t('polymarket.no-orders-market')}
-                    </Typography>
-                  </Stack>
-                ) : (
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>{t('polymarket.side')}</TableCell>
-                        <TableCell>{t('polymarket.outcome')}</TableCell>
-                        <TableCell align='right'>{t('polymarket.size')}</TableCell>
-                        <TableCell align='right'>{t('polymarket.price')}</TableCell>
-                        <TableCell align='right'>{t('polymarket.actions')}</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {activePurchases.map((ap) => (
-                        <TableRow
-                          key={ap.purchase_id}
-                          sx={{
-                            '@keyframes softPulse': {
-                              '0%, 100%': { opacity: 1 },
-                              '50%': { opacity: 0.5 }
-                            },
-                            animation: 'softPulse 2s ease-in-out infinite'
-                          }}
-                        >
-                          <TableCell>
-                            <Chip
-                              label={ap.side}
-                              size='small'
-                              sx={{
-                                fontWeight: 600,
-                                bgcolor: alpha(
-                                  ap.side === 'BUY'
-                                    ? theme.palette.success.main
-                                    : theme.palette.error.main,
-                                  0.1
-                                ),
-                                color:
-                                  ap.side === 'BUY'
-                                    ? theme.palette.success.dark
-                                    : theme.palette.error.dark
-                              }}
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Typography variant='body2'>{ap.outcome}</Typography>
-                          </TableCell>
-                          <TableCell align='right'>
-                            <Typography variant='body2' fontWeight={600}>
-                              {fNumber(ap.size)}
-                            </Typography>
-                          </TableCell>
-                          <TableCell align='right'>
-                            <Typography variant='body2'>{fNumber(ap.price)}</Typography>
-                          </TableCell>
-                          <TableCell align='right'>
-                            <Chip
-                              label={
-                                <Box
-                                  component='span'
-                                  sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}
-                                >
-                                  <CircularProgress
-                                    size={10}
-                                    sx={{
-                                      color: 'inherit !important',
-                                      display: 'block',
-                                      mt: '1px'
-                                    }}
-                                  />
-                                  {STEP_LABELS[ap.current_step] || ap.current_step}
-                                </Box>
-                              }
-                              size='small'
-                              sx={{
-                                fontWeight: 600,
-                                bgcolor: theme.palette.text.primary,
-                                color: theme.palette.background.paper,
-                                pointerEvents: 'none'
-                              }}
-                            />
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                      {marketOrders.map((order) => (
-                        <TableRow key={order.id} hover>
-                          <TableCell>
-                            <Chip
-                              label={order.side}
-                              size='small'
-                              sx={{
-                                fontWeight: 600,
-                                bgcolor: alpha(
-                                  order.side === 'BUY'
-                                    ? theme.palette.success.main
-                                    : theme.palette.error.main,
-                                  0.1
-                                ),
-                                color:
-                                  order.side === 'BUY'
-                                    ? theme.palette.success.dark
-                                    : theme.palette.error.dark
-                              }}
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Typography variant='body2'>{order.outcome}</Typography>
-                          </TableCell>
-                          <TableCell align='right'>
-                            <Typography variant='body2' fontWeight={600}>
-                              {fNumber(order.size)}
-                            </Typography>
-                          </TableCell>
-                          <TableCell align='right'>
-                            <Typography variant='body2'>{fNumber(order.price)}</Typography>
-                          </TableCell>
-                          <TableCell align='right'>
-                            {order.status !== 'cancelled' && order.status !== 'filled' && (
-                              <Button
-                                size='small'
-                                variant='outlined'
-                                color='inherit'
-                                disabled={cancellingId === order.id}
-                                onClick={async () => {
-                                  setCancellingId(order.id)
-                                  try {
-                                    const result = await polymarketCancelOrder(order.id)
-                                    if (result.ok) {
-                                      enqueueSnackbar(t('polymarket.order-cancelled'), {
-                                        variant: 'success'
-                                      })
-                                      mutate(
-                                        (key: any) =>
-                                          Array.isArray(key) &&
-                                          typeof key[0] === 'string' &&
-                                          key[0].includes('/orders')
-                                      )
-                                    }
-                                  } catch {
-                                  } finally {
-                                    setCancellingId(null)
-                                  }
-                                }}
-                              >
-                                {cancellingId === order.id ? (
-                                  <CircularProgress size={14} color='inherit' />
-                                ) : (
-                                  t('polymarket.cancel')
-                                )}
-                              </Button>
-                            )}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                )}
-              </Card>
-
-              {/* Trade History */}
-              {marketTrades.length > 0 && (
+              <Stack spacing={3}>
+                {/* Active Positions */}
                 <Card sx={{ border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}` }}>
                   <Stack
                     direction='row'
@@ -1696,156 +1654,491 @@ export default function PolymarketDetailView({ slug }: Props) {
                     justifyContent='space-between'
                     sx={{ px: 3, py: 2.5 }}
                   >
-                    <Stack direction='row' alignItems='center' spacing={1}>
-                      <Typography variant='subtitle1' fontWeight={700}>
-                        {t('polymarket.trade-history')}
-                      </Typography>
-                      <Box
-                        sx={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          width: 22,
-                          height: 22,
-                          borderRadius: '50%',
-                          bgcolor: alpha(theme.palette.info.main, 0.16),
-                          color: 'info.main',
-                          fontWeight: 700,
-                          fontSize: 12
-                        }}
-                      >
-                        {marketTrades.length}
-                      </Box>
-                    </Stack>
+                    <Typography variant='subtitle1' fontWeight={700}>
+                      {t('polymarket.open-positions')}
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: 22,
+                        height: 22,
+                        borderRadius: '50%',
+                        bgcolor: alpha(theme.palette.primary.main, 0.16),
+                        color: 'primary.main',
+                        fontWeight: 700,
+                        fontSize: 12
+                      }}
+                    >
+                      {marketPositions.length}
+                    </Box>
                   </Stack>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>{t('polymarket.side')}</TableCell>
-                        <TableCell>{t('polymarket.outcome')}</TableCell>
-                        <TableCell align='right'>{t('polymarket.size')}</TableCell>
-                        <TableCell align='right'>{t('polymarket.price')}</TableCell>
-                        <TableCell align='right'>{t('polymarket.date')}</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {marketTrades.map((trade) => {
-                        const date = new Date(toEpochMs(trade.timestamp))
-                        const dateStr = date.toLocaleDateString(undefined, {
-                          month: 'short',
-                          day: 'numeric'
-                        })
-                        const timeStr = date.toLocaleTimeString(undefined, {
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })
-
-                        return (
-                          <TableRow key={trade.id} hover>
+                  {marketPositions.length === 0 ? (
+                    <Stack alignItems='center' spacing={1.5} sx={{ py: 4 }}>
+                      <Typography variant='body2' color='text.secondary'>
+                        {t('polymarket.no-positions-market')}
+                      </Typography>
+                    </Stack>
+                  ) : (
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>{t('polymarket.outcome')}</TableCell>
+                          <TableCell align='right'>{t('polymarket.size')}</TableCell>
+                          <TableCell align='right'>{t('polymarket.avg-price')}</TableCell>
+                          <TableCell align='right'>{t('polymarket.current')}</TableCell>
+                          <TableCell align='right'>{t('polymarket.pnl')}</TableCell>
+                          <TableCell align='right'>{t('polymarket.actions')}</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {marketPositions.map((pos, idx) => (
+                          <TableRow key={idx} hover>
                             <TableCell>
                               <Chip
-                                label={trade.side}
+                                label={pos.outcome}
                                 size='small'
                                 sx={{
                                   fontWeight: 600,
                                   bgcolor: alpha(
-                                    trade.side === 'BUY'
+                                    pos.outcome?.toLowerCase() === 'yes'
                                       ? theme.palette.success.main
                                       : theme.palette.error.main,
                                     0.1
                                   ),
                                   color:
-                                    trade.side === 'BUY'
+                                    pos.outcome?.toLowerCase() === 'yes'
+                                      ? theme.palette.success.dark
+                                      : theme.palette.error.dark
+                                }}
+                              />
+                            </TableCell>
+                            <TableCell align='right'>
+                              <Typography variant='body2' fontWeight={600}>
+                                {fNumber(pos.size)}
+                              </Typography>
+                            </TableCell>
+                            <TableCell align='right'>
+                              <Typography variant='body2'>
+                                {Math.round((pos.avg_price ?? pos.avgPrice ?? 0) * 100)}¢
+                              </Typography>
+                            </TableCell>
+                            <TableCell align='right'>
+                              <Typography variant='body2'>
+                                {Math.round((pos.current_price ?? pos.curPrice ?? 0) * 100)}¢
+                              </Typography>
+                            </TableCell>
+                            <TableCell align='right'>
+                              {(() => {
+                                const pnlVal = pos.pnl ?? pos.cashPnl ?? 0
+                                const pnlRounded =
+                                  (Math.floor(Math.abs(pnlVal) * 1e2) / 1e2) * (pnlVal < 0 ? -1 : 1)
+                                return (
+                                  <Typography
+                                    variant='body2'
+                                    fontWeight={700}
+                                    color={pnlVal >= 0 ? 'success.main' : 'error.main'}
+                                  >
+                                    {pnlRounded === 0
+                                      ? '$0.00'
+                                      : `${pnlVal > 0 ? '+' : ''}$${fNumber(pnlRounded)}`}
+                                  </Typography>
+                                )
+                              })()}
+                            </TableCell>
+                            <TableCell align='right'>
+                              {(() => {
+                                const posKey =
+                                  (pos.market?.condition_id || pos.conditionId) + pos.outcome
+                                return (
+                                  <ButtonGroup
+                                    size='small'
+                                    color='error'
+                                    variant='contained'
+                                    disabled={sellingPos === posKey}
+                                  >
+                                    <Button onClick={() => handleSellPosition(pos)}>
+                                      {sellingPos === posKey ? (
+                                        <CircularProgress size={14} color='inherit' />
+                                      ) : (
+                                        t('polymarket.sell-all')
+                                      )}
+                                    </Button>
+                                    <Button
+                                      sx={{ px: 0.5, minWidth: 28 }}
+                                      onClick={(e) => {
+                                        setPartialSellPos(pos)
+                                        setPartialSellAmount(
+                                          String(Math.floor(pos.size * 1e6) / 1e6)
+                                        )
+                                        setPartialSellAnchor(e.currentTarget)
+                                      }}
+                                    >
+                                      <Iconify icon='eva:chevron-down-fill' width={16} />
+                                    </Button>
+                                  </ButtonGroup>
+                                )
+                              })()}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )}
+                </Card>
+
+                {/* Open Orders */}
+                <Card sx={{ border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}` }}>
+                  <Stack
+                    direction='row'
+                    alignItems='center'
+                    justifyContent='space-between'
+                    sx={{ px: 3, py: 2.5 }}
+                  >
+                    <Typography variant='subtitle1' fontWeight={700}>
+                      {t('polymarket.open-orders')}
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: 22,
+                        height: 22,
+                        borderRadius: '50%',
+                        bgcolor: alpha(theme.palette.warning.main, 0.16),
+                        color: 'warning.main',
+                        fontWeight: 700,
+                        fontSize: 12
+                      }}
+                    >
+                      {activePurchases.length + marketOrders.length}
+                    </Box>
+                  </Stack>
+                  {activePurchases.length === 0 && marketOrders.length === 0 ? (
+                    <Stack alignItems='center' spacing={1.5} sx={{ py: 4 }}>
+                      <Typography variant='body2' color='text.secondary'>
+                        {t('polymarket.no-orders-market')}
+                      </Typography>
+                    </Stack>
+                  ) : (
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>{t('polymarket.side')}</TableCell>
+                          <TableCell>{t('polymarket.outcome')}</TableCell>
+                          <TableCell align='right'>{t('polymarket.size')}</TableCell>
+                          <TableCell align='right'>{t('polymarket.price')}</TableCell>
+                          <TableCell align='right'>{t('polymarket.actions')}</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {activePurchases.map((ap) => (
+                          <TableRow
+                            key={ap.purchase_id}
+                            sx={{
+                              '@keyframes softPulse': {
+                                '0%, 100%': { opacity: 1 },
+                                '50%': { opacity: 0.5 }
+                              },
+                              animation: 'softPulse 2s ease-in-out infinite'
+                            }}
+                          >
+                            <TableCell>
+                              <Chip
+                                label={ap.side}
+                                size='small'
+                                sx={{
+                                  fontWeight: 600,
+                                  bgcolor: alpha(
+                                    ap.side === 'BUY'
+                                      ? theme.palette.success.main
+                                      : theme.palette.error.main,
+                                    0.1
+                                  ),
+                                  color:
+                                    ap.side === 'BUY'
                                       ? theme.palette.success.dark
                                       : theme.palette.error.dark
                                 }}
                               />
                             </TableCell>
                             <TableCell>
-                              <Typography variant='body2'>{trade.outcome}</Typography>
+                              <Typography variant='body2'>{ap.outcome}</Typography>
                             </TableCell>
                             <TableCell align='right'>
                               <Typography variant='body2' fontWeight={600}>
-                                {fNumber(trade.size)}
+                                {fNumber(ap.size)}
                               </Typography>
                             </TableCell>
                             <TableCell align='right'>
-                              <Typography variant='body2'>
-                                {Math.round(trade.price * 100)}¢
-                              </Typography>
+                              <Typography variant='body2'>{fNumber(ap.price)}</Typography>
                             </TableCell>
                             <TableCell align='right'>
-                              <Stack alignItems='flex-end'>
-                                <Typography variant='caption' fontWeight={600}>
-                                  {dateStr}
-                                </Typography>
-                                <Typography variant='caption' color='text.secondary'>
-                                  {timeStr}
-                                </Typography>
-                              </Stack>
+                              <Chip
+                                label={
+                                  <Box
+                                    component='span'
+                                    sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}
+                                  >
+                                    <CircularProgress
+                                      size={10}
+                                      sx={{
+                                        color: 'inherit !important',
+                                        display: 'block',
+                                        mt: '1px'
+                                      }}
+                                    />
+                                    {STEP_LABELS[ap.current_step] || ap.current_step}
+                                  </Box>
+                                }
+                                size='small'
+                                sx={{
+                                  fontWeight: 600,
+                                  bgcolor: theme.palette.text.primary,
+                                  color: theme.palette.background.paper,
+                                  pointerEvents: 'none'
+                                }}
+                              />
                             </TableCell>
                           </TableRow>
-                        )
-                      })}
-                    </TableBody>
-                  </Table>
+                        ))}
+                        {marketOrders.map((order) => (
+                          <TableRow key={order.id} hover>
+                            <TableCell>
+                              <Chip
+                                label={order.side}
+                                size='small'
+                                sx={{
+                                  fontWeight: 600,
+                                  bgcolor: alpha(
+                                    order.side === 'BUY'
+                                      ? theme.palette.success.main
+                                      : theme.palette.error.main,
+                                    0.1
+                                  ),
+                                  color:
+                                    order.side === 'BUY'
+                                      ? theme.palette.success.dark
+                                      : theme.palette.error.dark
+                                }}
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Typography variant='body2'>{order.outcome}</Typography>
+                            </TableCell>
+                            <TableCell align='right'>
+                              <Typography variant='body2' fontWeight={600}>
+                                {fNumber(order.size)}
+                              </Typography>
+                            </TableCell>
+                            <TableCell align='right'>
+                              <Typography variant='body2'>{fNumber(order.price)}</Typography>
+                            </TableCell>
+                            <TableCell align='right'>
+                              {order.status !== 'cancelled' && order.status !== 'filled' && (
+                                <Button
+                                  size='small'
+                                  variant='outlined'
+                                  color='inherit'
+                                  disabled={cancellingId === order.id}
+                                  onClick={async () => {
+                                    setCancellingId(order.id)
+                                    try {
+                                      const result = await polymarketCancelOrder(order.id)
+                                      if (result.ok) {
+                                        enqueueSnackbar(t('polymarket.order-cancelled'), {
+                                          variant: 'success'
+                                        })
+                                        mutate(
+                                          (key: any) =>
+                                            Array.isArray(key) &&
+                                            typeof key[0] === 'string' &&
+                                            key[0].includes('/orders')
+                                        )
+                                      }
+                                    } catch {
+                                    } finally {
+                                      setCancellingId(null)
+                                    }
+                                  }}
+                                >
+                                  {cancellingId === order.id ? (
+                                    <CircularProgress size={14} color='inherit' />
+                                  ) : (
+                                    t('polymarket.cancel')
+                                  )}
+                                </Button>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )}
                 </Card>
-              )}
-            </Stack>
-          </Box>
-        </Stack>
-      </Container>
 
-      <Popover
-        open={Boolean(partialSellAnchor)}
-        anchorEl={partialSellAnchor}
-        onClose={() => {
-          setPartialSellAnchor(null)
-          setPartialSellPos(null)
-        }}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        <Stack sx={{ p: 2, width: 220 }} spacing={1.5}>
-          <Typography variant='subtitle2'>{t('polymarket.partial-sell')}</Typography>
-          <TextField
-            label={t('polymarket.amount')}
-            type='number'
-            size='small'
-            value={partialSellAmount}
-            onChange={(e) => setPartialSellAmount(e.target.value)}
-            inputProps={{ min: 0.000001, max: partialSellPos?.size, step: 0.01 }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position='end'>
-                  <Typography variant='caption' color='text.secondary'>
-                    / {partialSellPos ? Math.floor(partialSellPos.size * 1e6) / 1e6 : 0}
-                  </Typography>
-                </InputAdornment>
-              )
-            }}
-            helperText={
-              partialSellAmount && Number(partialSellAmount) > 0 && partialSellPos
-                ? `≈ $${(Number(partialSellAmount) * (partialSellPos.current_price ?? (partialSellPos as any).curPrice ?? 0)).toFixed(2)}`
-                : ' '
-            }
-          />
-          <Button
-            fullWidth
-            size='small'
-            color='error'
-            variant='contained'
-            disabled={
-              !partialSellAmount ||
-              Number(partialSellAmount) <= 0 ||
-              Number(partialSellAmount) > (partialSellPos?.size ?? 0)
-            }
-            onClick={handlePartialSell}
-          >
-            {t('polymarket.sell-x-shares', { amount: partialSellAmount })}
-          </Button>
-        </Stack>
-      </Popover>
-    </Box>
+                {/* Trade History */}
+                {marketTrades.length > 0 && (
+                  <Card sx={{ border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}` }}>
+                    <Stack
+                      direction='row'
+                      alignItems='center'
+                      justifyContent='space-between'
+                      sx={{ px: 3, py: 2.5 }}
+                    >
+                      <Stack direction='row' alignItems='center' spacing={1}>
+                        <Typography variant='subtitle1' fontWeight={700}>
+                          {t('polymarket.trade-history')}
+                        </Typography>
+                        <Box
+                          sx={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: 22,
+                            height: 22,
+                            borderRadius: '50%',
+                            bgcolor: alpha(theme.palette.info.main, 0.16),
+                            color: 'info.main',
+                            fontWeight: 700,
+                            fontSize: 12
+                          }}
+                        >
+                          {marketTrades.length}
+                        </Box>
+                      </Stack>
+                    </Stack>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>{t('polymarket.side')}</TableCell>
+                          <TableCell>{t('polymarket.outcome')}</TableCell>
+                          <TableCell align='right'>{t('polymarket.size')}</TableCell>
+                          <TableCell align='right'>{t('polymarket.price')}</TableCell>
+                          <TableCell align='right'>{t('polymarket.date')}</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {marketTrades.map((trade) => {
+                          const date = new Date(toEpochMs(trade.timestamp))
+                          const dateStr = date.toLocaleDateString(undefined, {
+                            month: 'short',
+                            day: 'numeric'
+                          })
+                          const timeStr = date.toLocaleTimeString(undefined, {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })
+
+                          return (
+                            <TableRow key={trade.id} hover>
+                              <TableCell>
+                                <Chip
+                                  label={trade.side}
+                                  size='small'
+                                  sx={{
+                                    fontWeight: 600,
+                                    bgcolor: alpha(
+                                      trade.side === 'BUY'
+                                        ? theme.palette.success.main
+                                        : theme.palette.error.main,
+                                      0.1
+                                    ),
+                                    color:
+                                      trade.side === 'BUY'
+                                        ? theme.palette.success.dark
+                                        : theme.palette.error.dark
+                                  }}
+                                />
+                              </TableCell>
+                              <TableCell>
+                                <Typography variant='body2'>{trade.outcome}</Typography>
+                              </TableCell>
+                              <TableCell align='right'>
+                                <Typography variant='body2' fontWeight={600}>
+                                  {fNumber(trade.size)}
+                                </Typography>
+                              </TableCell>
+                              <TableCell align='right'>
+                                <Typography variant='body2'>
+                                  {Math.round(trade.price * 100)}¢
+                                </Typography>
+                              </TableCell>
+                              <TableCell align='right'>
+                                <Stack alignItems='flex-end'>
+                                  <Typography variant='caption' fontWeight={600}>
+                                    {dateStr}
+                                  </Typography>
+                                  <Typography variant='caption' color='text.secondary'>
+                                    {timeStr}
+                                  </Typography>
+                                </Stack>
+                              </TableCell>
+                            </TableRow>
+                          )
+                        })}
+                      </TableBody>
+                    </Table>
+                  </Card>
+                )}
+              </Stack>
+            </Box>
+          </Stack>
+        </Container>
+
+        <Popover
+          open={Boolean(partialSellAnchor)}
+          anchorEl={partialSellAnchor}
+          onClose={() => {
+            setPartialSellAnchor(null)
+            setPartialSellPos(null)
+          }}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        >
+          <Stack sx={{ p: 2, width: 220 }} spacing={1.5}>
+            <Typography variant='subtitle2'>{t('polymarket.partial-sell')}</Typography>
+            <TextField
+              label={t('polymarket.amount')}
+              type='number'
+              size='small'
+              value={partialSellAmount}
+              onChange={(e) => setPartialSellAmount(e.target.value)}
+              inputProps={{ min: 0.000001, max: partialSellPos?.size, step: 0.01 }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position='end'>
+                    <Typography variant='caption' color='text.secondary'>
+                      / {partialSellPos ? Math.floor(partialSellPos.size * 1e6) / 1e6 : 0}
+                    </Typography>
+                  </InputAdornment>
+                )
+              }}
+              helperText={
+                partialSellAmount && Number(partialSellAmount) > 0 && partialSellPos
+                  ? `≈ $${(Number(partialSellAmount) * (partialSellPos.current_price ?? (partialSellPos as any).curPrice ?? 0)).toFixed(2)}`
+                  : ' '
+              }
+            />
+            <Button
+              fullWidth
+              size='small'
+              color='error'
+              variant='contained'
+              disabled={
+                !partialSellAmount ||
+                Number(partialSellAmount) <= 0 ||
+                Number(partialSellAmount) > (partialSellPos?.size ?? 0)
+              }
+              onClick={handlePartialSell}
+            >
+              {t('polymarket.sell-x-shares', { amount: partialSellAmount })}
+            </Button>
+          </Stack>
+        </Popover>
+      </Box>
+    </>
   )
 }

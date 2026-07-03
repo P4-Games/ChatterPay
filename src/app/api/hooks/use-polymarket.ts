@@ -3,6 +3,7 @@ import useSWR from 'swr'
 import useSWRInfinite from 'swr/infinite'
 
 import { post, endpoints, fetcher } from 'src/app/api/hooks/api-resolver'
+import { POLYMARKET_REFRESH } from 'src/config-global'
 import { getAuthorizationHeader } from 'src/auth/context/jwt/utils'
 
 import { useGetCommon } from './common'
@@ -109,7 +110,8 @@ export function useGetPolymarketMarkets(params?: string) {
 export function useGetPolymarketMarket(slug: string) {
   return useGetCommon(
     slug ? endpoints.polymarket.marketBySlug(slug) : null,
-    slug ? { headers: getAuthorizationHeader() } : {}
+    slug ? { headers: getAuthorizationHeader() } : {},
+    POLYMARKET_REFRESH.LIVE_MS
   )
 }
 
@@ -129,9 +131,12 @@ const postFetcher = async (args: [string, any, any]) => {
   return post(url, data, config)
 }
 
-export function useGetPolymarketPositionsSWR(refreshInterval = 10000) {
+export function useGetPolymarketPositionsSWR(
+  refreshInterval = POLYMARKET_REFRESH.LIVE_MS,
+  enabled = true
+) {
   const { data, error, isLoading, isValidating, mutate } = useSWR(
-    [endpoints.polymarket.positions(), {}, { headers: getAuthorizationHeader() }],
+    enabled ? [endpoints.polymarket.positions(), {}, { headers: getAuthorizationHeader() }] : null,
     postFetcher,
     { refreshInterval }
   )
@@ -151,9 +156,12 @@ export function useGetPolymarketPositionsSWR(refreshInterval = 10000) {
   )
 }
 
-export function useGetPolymarketOrdersSWR(refreshInterval = 10000) {
+export function useGetPolymarketOrdersSWR(
+  refreshInterval = POLYMARKET_REFRESH.LIVE_MS,
+  enabled = true
+) {
   const { data, error, isLoading, isValidating, mutate } = useSWR(
-    [endpoints.polymarket.orders(), {}, { headers: getAuthorizationHeader() }],
+    enabled ? [endpoints.polymarket.orders(), {}, { headers: getAuthorizationHeader() }] : null,
     postFetcher,
     { refreshInterval }
   )
@@ -170,9 +178,12 @@ export function useGetPolymarketOrdersSWR(refreshInterval = 10000) {
   )
 }
 
-export function useGetPolymarketPortfolioSWR(refreshInterval = 10000) {
+export function useGetPolymarketPortfolioSWR(
+  refreshInterval = POLYMARKET_REFRESH.LIVE_MS,
+  enabled = true
+) {
   const { data, error, isLoading, isValidating, mutate } = useSWR(
-    [endpoints.polymarket.portfolio(), {}, { headers: getAuthorizationHeader() }],
+    enabled ? [endpoints.polymarket.portfolio(), {}, { headers: getAuthorizationHeader() }] : null,
     postFetcher,
     { refreshInterval }
   )
@@ -291,7 +302,7 @@ export async function polymarketPurchaseStatus(purchaseId: string): Promise<{
 
 export async function polymarketBridgeWithdraw(amount: string): Promise<{
   ok: boolean
-  data?: { success: boolean; hash?: string }
+  data?: { success: boolean; hash?: string; withdrawal_pending?: boolean }
   message?: string
 }> {
   return post(
@@ -339,13 +350,19 @@ export async function polymarketGetPnlHistory(
   )
 }
 
-export function useGetPolymarketTradesSWR(refreshInterval = 30000, market?: string) {
+export function useGetPolymarketTradesSWR(
+  refreshInterval = POLYMARKET_REFRESH.HISTORY_MS,
+  market?: string,
+  enabled = true
+) {
   const { data, error, isLoading, isValidating, mutate } = useSWR(
-    [
-      endpoints.polymarket.trades(),
-      market ? { market } : {},
-      { headers: getAuthorizationHeader() }
-    ],
+    enabled
+      ? [
+          endpoints.polymarket.trades(),
+          market ? { market } : {},
+          { headers: getAuthorizationHeader() }
+        ]
+      : null,
     postFetcher,
     { refreshInterval }
   )
@@ -363,7 +380,9 @@ export function useGetPolymarketTradesSWR(refreshInterval = 30000, market?: stri
   )
 }
 
-export function useGetPolymarketClosedPositionsSWR(refreshInterval = 30000) {
+export function useGetPolymarketClosedPositionsSWR(
+  refreshInterval = POLYMARKET_REFRESH.HISTORY_MS
+) {
   const { data, error, isLoading, isValidating, mutate } = useSWR(
     [endpoints.polymarket.closedPositions(), {}, { headers: getAuthorizationHeader() }],
     postFetcher,
