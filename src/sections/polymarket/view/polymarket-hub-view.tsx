@@ -7,7 +7,7 @@ import Stack from '@mui/material/Stack'
 import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
 import { alpha, useTheme } from '@mui/material/styles'
-import { fCurrency } from 'src/utils/format-number'
+import { fNumber } from 'src/utils/format-number'
 import { useTranslate } from 'src/locales'
 import { POLYMARKET_REFRESH } from 'src/config-global'
 import { useAuthContext } from 'src/auth/hooks'
@@ -229,7 +229,7 @@ function PolymarketHubContent() {
                             {t('polymarket.portfolio-title')}
                           </Typography>
                           <Typography variant='subtitle2' fontWeight={700}>
-                            {isValueLoading ? '—' : fCurrency(displayValue)}
+                            {isValueLoading ? '—' : `$${fNumber(displayValue) || '0.00'}`}
                           </Typography>
                         </Box>
                       </Stack>

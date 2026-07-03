@@ -180,8 +180,7 @@ export default function PolymarketPNLWidget({
 
   const isPositive = pnl !== null && pnl >= 0
   // % against lifetime cost basis (stable across ranges, unlike current position value)
-  const pnlPercent =
-    pnl !== null && totalBuyVolume > 0 ? (pnl / totalBuyVolume) * 100 : 0
+  const pnlPercent = pnl !== null && totalBuyVolume > 0 ? (pnl / totalBuyVolume) * 100 : 0
 
   // Intraday ranges label by time, longer ranges by date
   const chartCategories = useMemo(
