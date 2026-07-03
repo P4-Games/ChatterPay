@@ -37,6 +37,7 @@ import { useSWRConfig } from 'swr'
 
 import Iconify from 'src/components/iconify'
 import { fNumber } from 'src/utils/format-number'
+import { toEpochMs } from 'src/utils/format-time'
 
 import type { IPolymarketOrder, IPolymarketPosition } from 'src/types/polymarket'
 
@@ -490,14 +491,17 @@ export default function DashboardPositionsTable({ positions, orders, isLoading }
                           </Stack>
                         </TableCell>
 
-                        <TableCell align='right'>
+                        <TableCell align='right' sx={{ whiteSpace: 'nowrap' }}>
                           <ButtonGroup
                             size='small'
                             color='error'
                             variant='contained'
                             disabled={sellingPos === posKey}
                           >
-                            <Button onClick={() => handleSellPosition(pos)}>
+                            <Button
+                              sx={{ whiteSpace: 'nowrap' }}
+                              onClick={() => handleSellPosition(pos)}
+                            >
                               {sellingPos === posKey ? (
                                 <CircularProgress size={14} color='inherit' />
                               ) : (
@@ -836,14 +840,7 @@ export default function DashboardPositionsTable({ positions, orders, isLoading }
               </TableHead>
               <TableBody>
                 {trades.map((trade, idx) => {
-                  // Handle both Unix epoch seconds (number) and ISO string timestamps
-                  const ts =
-                    typeof trade.timestamp === 'number'
-                      ? trade.timestamp > 1e12
-                        ? trade.timestamp
-                        : trade.timestamp * 1000
-                      : new Date(trade.timestamp).getTime()
-                  const date = new Date(ts)
+                  const date = new Date(toEpochMs(trade.timestamp))
                   const dateStr = date.toLocaleDateString(undefined, {
                     month: 'short',
                     day: 'numeric'

@@ -14,7 +14,8 @@ import type {
   IPolymarketPurchaseStatus,
   IPolymarketCategory,
   IPolymarketTrade,
-  IPolymarketPnlPoint
+  IPolymarketPnlPoint,
+  IPolymarketPnlInterval
 } from 'src/types/polymarket'
 
 // ----------------------------------------------------------------------
@@ -311,11 +312,13 @@ export async function getTradesHistory(
 
 export async function getPnlHistory(
   channelUserId: string,
-  limit?: number
+  limit?: number,
+  interval?: IPolymarketPnlInterval
 ): Promise<ServiceResult<IPolymarketPnlPoint[]>> {
   return request<IPolymarketPnlPoint[]>('post', '/polymarket/pnl/history', {
     channel_user_id: channelUserId,
-    ...(limit ? { limit } : {})
+    ...(limit ? { limit } : {}),
+    ...(interval ? { interval } : {})
   })
 }
 

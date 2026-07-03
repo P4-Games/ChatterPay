@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/web/ChatterPay-Backend/src/**)",
+      "Read(//c/web/ChatterPay-Backend/src/services/polymarket/**)",
+      "Read(//c/web/ChatterPay-Backend/src/controllers/**)",
+      "Read(//c/web/ChatterPay-Backend/src/api/**)",
+      "Read(//c/web/ChatterPay-Backend/src/types/**)",
+      "Bash(cd /c/web/ChatterPay-Backend && rtk tsc --noEmit 2>&1 | tail -20)",
+      "Read(//c/web/ChatterPay-Backend/**)",
+      "Read(//c/web/ChatterPay-Backend/test/services/polymarket/**)",
+      "Read(//c/web/ChatterPay-Backend/test/controllers/**)",
+      "Bash(rtk vitest *)",
+      "Bash(rtk proxy *)"
+    ],
+    "additionalDirectories": [
+      "c:\\web\\ChatterPay-Backend\\src\\config",
+      "c:\\web\\ChatterPay-Backend\\src\\services\\polymarket",
+      "c:\\web\\ChatterPay-Backend\\src\\types",
+      "c:\\web\\ChatterPay-Backend\\src\\controllers",
+      "c:\\web\\ChatterPay-Backend\\test\\services\\polymarket"
+    ]
+  }
+}

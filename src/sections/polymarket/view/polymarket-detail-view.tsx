@@ -57,6 +57,7 @@ import Iconify from 'src/components/iconify'
 import Chart, { useChart } from 'src/components/chart'
 
 import { fNumber } from 'src/utils/format-number'
+import { toEpochMs } from 'src/utils/format-time'
 
 import type { IPolymarketMarket, IPolymarketPosition } from 'src/types/polymarket'
 import type { IBalances } from 'src/types/wallet'
@@ -1453,7 +1454,7 @@ export default function PolymarketDetailView({ slug }: Props) {
                               )
                             })()}
                           </TableCell>
-                          <TableCell align='right'>
+                          <TableCell align='right' sx={{ whiteSpace: 'nowrap' }}>
                             {(() => {
                               const posKey =
                                 (pos.market?.condition_id || pos.conditionId) + pos.outcome
@@ -1464,7 +1465,10 @@ export default function PolymarketDetailView({ slug }: Props) {
                                   variant='contained'
                                   disabled={sellingPos === posKey}
                                 >
-                                  <Button onClick={() => handleSellPosition(pos)}>
+                                  <Button
+                                    sx={{ whiteSpace: 'nowrap' }}
+                                    onClick={() => handleSellPosition(pos)}
+                                  >
                                     {sellingPos === posKey ? (
                                       <CircularProgress size={14} color='inherit' />
                                     ) : (
@@ -1726,7 +1730,7 @@ export default function PolymarketDetailView({ slug }: Props) {
                     </TableHead>
                     <TableBody>
                       {marketTrades.map((trade) => {
-                        const date = new Date(trade.timestamp)
+                        const date = new Date(toEpochMs(trade.timestamp))
                         const dateStr = date.toLocaleDateString(undefined, {
                           month: 'short',
                           day: 'numeric'

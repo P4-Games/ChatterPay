@@ -18,7 +18,8 @@ import type {
   IPolymarketPurchaseStatus,
   IPolymarketActivePurchase,
   IPolymarketTrade,
-  IPolymarketPnlPoint
+  IPolymarketPnlPoint,
+  IPolymarketPnlInterval
 } from 'src/types/polymarket'
 
 // ----------------------------------------------------------------------
@@ -321,14 +322,21 @@ export async function polymarketGetTrades(filters?: {
   })
 }
 
-export async function polymarketGetPnlHistory(limit?: number): Promise<{
+export async function polymarketGetPnlHistory(
+  limit?: number,
+  interval?: IPolymarketPnlInterval
+): Promise<{
   ok: boolean
   data?: IPolymarketPnlPoint[]
   message?: string
 }> {
-  return post(endpoints.polymarket.pnlHistory(), limit ? { limit } : {}, {
-    headers: getAuthorizationHeader()
-  })
+  return post(
+    endpoints.polymarket.pnlHistory(),
+    { ...(limit ? { limit } : {}), ...(interval ? { interval } : {}) },
+    {
+      headers: getAuthorizationHeader()
+    }
+  )
 }
 
 export function useGetPolymarketTradesSWR(refreshInterval = 30000, market?: string) {

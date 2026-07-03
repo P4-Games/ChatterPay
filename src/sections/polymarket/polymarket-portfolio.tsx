@@ -41,6 +41,7 @@ import { useSWRConfig } from 'swr'
 import Iconify from 'src/components/iconify'
 
 import { fNumber } from 'src/utils/format-number'
+import { toEpochMs } from 'src/utils/format-time'
 
 import type { IPolymarketPosition } from 'src/types/polymarket'
 
@@ -447,7 +448,9 @@ export default function PolymarketPortfolio() {
                   <TableCell align='right'>{t('polymarket.avg-price')}</TableCell>
                   <TableCell align='right'>{t('polymarket.current')}</TableCell>
                   <TableCell align='right'>{t('polymarket.pnl')}</TableCell>
-                  <TableCell align='right'>{t('polymarket.actions')}</TableCell>
+                  <TableCell align='right' sx={{ whiteSpace: 'nowrap' }}>
+                    {t('polymarket.actions')}
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -534,7 +537,7 @@ export default function PolymarketPortfolio() {
                           )
                         })()}
                       </TableCell>
-                      <TableCell align='right'>
+                      <TableCell align='right' sx={{ whiteSpace: 'nowrap' }}>
                         {(() => {
                           const posKey = (pos.market?.condition_id || pos.conditionId) + pos.outcome
                           return (
@@ -544,7 +547,10 @@ export default function PolymarketPortfolio() {
                               variant='contained'
                               disabled={sellingPos === posKey}
                             >
-                              <Button onClick={() => handleSellPosition(pos)}>
+                              <Button
+                                sx={{ whiteSpace: 'nowrap' }}
+                                onClick={() => handleSellPosition(pos)}
+                              >
                                 {sellingPos === posKey ? (
                                   <CircularProgress size={14} color='inherit' />
                                 ) : (
@@ -802,13 +808,7 @@ export default function PolymarketPortfolio() {
               </TableHead>
               <TableBody>
                 {trades.map((trade, idx) => {
-                  const ts =
-                    typeof trade.timestamp === 'number'
-                      ? trade.timestamp > 1e12
-                        ? trade.timestamp
-                        : trade.timestamp * 1000
-                      : new Date(trade.timestamp).getTime()
-                  const date = new Date(ts)
+                  const date = new Date(toEpochMs(trade.timestamp))
                   const dateStr = date.toLocaleDateString(undefined, {
                     month: 'short',
                     day: 'numeric'

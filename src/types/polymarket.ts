@@ -188,10 +188,14 @@ export type IPolymarketTrade = {
 }
 
 export type IPolymarketPnlPoint = {
+  /** ISO 8601 timestamp */
   timestamp: string
+  /** Mark-to-market P&L in USD (realized + unrealized) */
   cumulativePnl: number
-  totalInvested: number
-  totalProceeds: number
+  totalInvested?: number
+  totalProceeds?: number
 }
+
+export type IPolymarketPnlInterval = '1d' | '1w' | '1m' | 'all'
 
 // ----------------------------------------------------------------------
