@@ -492,6 +492,13 @@
   "nfts": {
     "view-trx": "Ver detalles de la transacción",
     "mint": "Hey, mira mi NFT:",
+    "hero": {
+      "title": "Tus momentos, minteados",
+      "subtitle": "Cada certificado que minteás con ChatterPay vive acá en la blockchain, y podés compartirlo.",
+      "total-label": "NFTs en billetera"
+    },
+    "empty-title": "Sin NFTs todavía",
+    "empty-description": "Minteá tu primer certificado desde WhatsApp y aparecerá en esta galería.",
     "item": {
       "metadata": "Metadatos",
       "maps": "Ver en Google Maps",

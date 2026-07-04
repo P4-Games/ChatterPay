@@ -16,7 +16,11 @@
       "PowerShell(npx biome lint src/sections/chatterpoints src/locales/langs/en.json src/locales/langs/es.json src/locales/langs/br.json)",
       "PowerShell(npx biome format src/sections/chatterpoints src/locales/langs/en.json src/locales/langs/es.json src/locales/langs/br.json)",
       "PowerShell(npx biome format --write src/sections/chatterpoints src/locales/langs/en.json src/locales/langs/es.json src/locales/langs/br.json)",
-      "PowerShell(npx biome lint src/sections/chatterpoints)"
+      "PowerShell(npx biome lint src/sections/chatterpoints)",
+      "PowerShell(npx biome format --write src/sections/nfts src/locales/langs/en.json src/locales/langs/es.json src/locales/langs/br.json)",
+      "PowerShell(npx biome lint src/sections/nfts)",
+      "PowerShell(npx tsc --noEmit)",
+      "PowerShell(npx biome format --write src/sections/nfts/nfts-hero.tsx)"
     ],
     "additionalDirectories": [
       "c:\\web\\ChatterPay-Backend\\src\\config",

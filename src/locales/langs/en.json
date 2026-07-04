@@ -492,6 +492,13 @@
   "nfts": {
     "view-trx": "View Transacton Details",
     "mint": "Hey, check out my NFT:",
+    "hero": {
+      "title": "Your moments, minted",
+      "subtitle": "Every certificate you mint through ChatterPay lives here on-chain, shareable and yours.",
+      "total-label": "NFTs in wallet"
+    },
+    "empty-title": "No NFTs yet",
+    "empty-description": "Mint your first certificate from WhatsApp and it will appear in this gallery.",
     "item": {
       "metadata": "Metadata",
       "maps": "View on Google Maps",
