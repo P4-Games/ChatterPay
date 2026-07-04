@@ -11,7 +11,12 @@
       "Read(//c/web/ChatterPay-Backend/test/services/polymarket/**)",
       "Read(//c/web/ChatterPay-Backend/test/controllers/**)",
       "Bash(rtk vitest *)",
-      "Bash(rtk proxy *)"
+      "Bash(rtk proxy *)",
+      "PowerShell($pkg = Get-Content package.json -Raw | ConvertFrom-Json; $pkg.scripts | Format-List; $pkg.devDependencies.eslint)",
+      "PowerShell(npx biome lint src/sections/chatterpoints src/locales/langs/en.json src/locales/langs/es.json src/locales/langs/br.json)",
+      "PowerShell(npx biome format src/sections/chatterpoints src/locales/langs/en.json src/locales/langs/es.json src/locales/langs/br.json)",
+      "PowerShell(npx biome format --write src/sections/chatterpoints src/locales/langs/en.json src/locales/langs/es.json src/locales/langs/br.json)",
+      "PowerShell(npx biome lint src/sections/chatterpoints)"
     ],
     "additionalDirectories": [
       "c:\\web\\ChatterPay-Backend\\src\\config",

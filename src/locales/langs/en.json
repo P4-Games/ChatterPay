@@ -510,11 +510,32 @@
     }
   },
   "chatterpoints": {
-    "totals": {
-      "total": "Total Points",
-      "games": "In Games",
-      "operations": "In Operations",
-      "social": "In Social Networks"
+    "hero": {
+      "title": "Get rewarded for every move",
+      "subtitle": "Every game you play, operation you make and social action you take earns Chatterpoints toward cycle prizes.",
+      "total-label": "Total points"
+    },
+    "categories": {
+      "games": "Games",
+      "operations": "Operations",
+      "social": "Social"
+    },
+    "breakdown": {
+      "title": "Points by category",
+      "empty": "Your breakdown appears once you earn points"
+    },
+    "activity": {
+      "title": "Recent activity",
+      "empty-title": "No activity yet",
+      "empty-description": "Points from games, operations and social actions will show up here.",
+      "won": "Won",
+      "played": "Played"
+    },
+    "prizes": {
+      "title": "Prizes",
+      "rank": "Top {{rank}} finish",
+      "empty-title": "No prizes yet",
+      "empty-description": "Finish a cycle in the top 3 to earn prizes."
     }
   },
   "account": {

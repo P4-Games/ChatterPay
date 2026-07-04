@@ -510,11 +510,32 @@
     }
   },
   "chatterpoints": {
-    "totals": {
-      "total": "Puntos Total",
-      "games": "En Juegos",
-      "operations": "En Operaciones",
-      "social": "En Redes Sociales"
+    "hero": {
+      "title": "Ganá recompensas por cada movimiento",
+      "subtitle": "Cada juego que jugás, operación que hacés y acción social que realizás suma Chatterpoints para los premios del ciclo.",
+      "total-label": "Puntos totales"
+    },
+    "categories": {
+      "games": "Juegos",
+      "operations": "Operaciones",
+      "social": "Redes"
+    },
+    "breakdown": {
+      "title": "Puntos por categoría",
+      "empty": "Tu desglose aparecerá cuando ganes puntos"
+    },
+    "activity": {
+      "title": "Actividad reciente",
+      "empty-title": "Sin actividad todavía",
+      "empty-description": "Los puntos de juegos, operaciones y acciones sociales aparecerán acá.",
+      "won": "Ganado",
+      "played": "Jugado"
+    },
+    "prizes": {
+      "title": "Premios",
+      "rank": "Puesto {{rank}}",
+      "empty-title": "Sin premios todavía",
+      "empty-description": "Terminá un ciclo entre los 3 primeros para ganar premios."
     }
   },
   "account": {
