@@ -22,7 +22,13 @@
       "PowerShell(npx tsc --noEmit)",
       "PowerShell(npx biome format --write src/sections/nfts/nfts-hero.tsx)",
       "PowerShell(npx biome format --write src/sections/account)",
-      "PowerShell(npx biome lint src/sections/account)"
+      "PowerShell(npx biome lint src/sections/account)",
+      "Bash(rtk npm *)",
+      "Bash(netstat -ano)",
+      "PowerShell(Get-CimInstance Win32_Process -Filter \"name='node.exe'\")",
+      "Bash(taskkill //F //T //PID 15380)",
+      "Read(//c/web/T9J-Capacitaciones-Frontend/**)",
+      "Bash(rtk find *)"
     ],
     "additionalDirectories": [
       "c:\\web\\ChatterPay-Backend\\src\\config",

@@ -1,4 +1,5 @@
 import Box, { type BoxProps } from '@mui/material/Box'
+import { useTheme } from '@mui/material/styles'
 
 import { useResponsive } from 'src/hooks/use-responsive'
 
@@ -11,6 +12,8 @@ import { NAV, HEADER } from '../config-layout'
 const SPACING = 8
 
 export default function Main({ children, sx, ...other }: BoxProps) {
+  const theme = useTheme()
+
   const settings = useSettingsContext()
 
   const lgUp = useResponsive('up', 'lg')
@@ -53,6 +56,9 @@ export default function Main({ children, sx, ...other }: BoxProps) {
           px: 2,
           py: `${HEADER.H_DESKTOP + SPACING}px`,
           width: `calc(100% - ${NAV.W_VERTICAL}px)`,
+          transition: theme.transitions.create('width', {
+            duration: theme.transitions.duration.standard
+          }),
           ...(isNavMini && {
             width: `calc(100% - ${NAV.W_MINI}px)`
           })

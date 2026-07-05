@@ -1,4 +1,6 @@
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
+
+import { m } from 'framer-motion'
 
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
@@ -12,12 +14,12 @@ import { useAuthContext } from 'src/auth/hooks'
 
 import Logo from 'src/components/logo'
 import Scrollbar from 'src/components/scrollbar'
+import { useSettingsContext } from 'src/components/settings'
 import { NavSectionVertical } from 'src/components/nav-section'
 
 import { NAV } from '../config-layout'
 import NavUpgrade from '../common/nav-upgrade'
 import { useNavData } from './config-navigation'
-import NavToggleButton from '../common/nav-toggle-button'
 
 // ----------------------------------------------------------------------
 
@@ -33,7 +35,15 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
 
   const lgUp = useResponsive('up', 'lg')
 
+  const settings = useSettingsContext()
+
   const navData = useNavData()
+
+  const [hovered, setHovered] = useState(false)
+
+  const isMini = settings.themeLayout === 'mini'
+
+  const collapsed = lgUp && isMini && !hovered
 
   useEffect(() => {
     if (openNav) {
@@ -53,18 +63,29 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
         }
       }}
     >
-      <Logo sx={{ mt: 3, ml: 4, mb: 1 }} />
+      <Box
+        sx={{
+          height: 80,
+          pl: '16px',
+          display: 'flex',
+          alignItems: 'center',
+          flexShrink: 0
+        }}
+      >
+        <Logo />
+      </Box>
 
       <NavSectionVertical
         data={navData}
         slotProps={{
-          currentRole: user?.role
+          currentRole: user?.role,
+          collapsed
         }}
       />
 
       <Box sx={{ flexGrow: 1 }} />
 
-      <NavUpgrade />
+      <NavUpgrade collapsed={collapsed} />
     </Scrollbar>
   )
 
@@ -72,22 +93,28 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
     <Box
       sx={{
         flexShrink: { lg: 0 },
-        width: { lg: NAV.W_VERTICAL }
+        width: { lg: isMini ? NAV.W_MINI : NAV.W_VERTICAL }
       }}
     >
-      <NavToggleButton />
-
       {lgUp ? (
         <Stack
+          component={m.div}
+          animate={{ width: collapsed ? NAV.W_MINI : NAV.W_VERTICAL }}
+          transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
           sx={{
             height: 1,
             position: 'fixed',
             top: 0,
             left: 0,
-            width: NAV.W_VERTICAL,
-            bgcolor: (theme) =>
-              theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[800],
-            borderRight: (theme) => `dashed 1px ${theme.palette.divider}`
+            zIndex: (theme) => theme.zIndex.appBar + 2,
+            overflow: 'hidden',
+            bgcolor: (t) =>
+              t.palette.mode === 'light' ? t.palette.grey[100] : t.palette.grey[800],
+            borderRight: (t) => `dashed 1px ${t.palette.divider}`,
+            // Expands over the content instead of pushing it — no page reflow on hover.
+            boxShadow: (t) => (isMini && hovered ? t.customShadows.z24 : 'none')
           }}
         >
           {renderContent}
@@ -99,8 +126,8 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
           PaperProps={{
             sx: {
               width: NAV.W_VERTICAL,
-              bgcolor: (theme) =>
-                theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[800]
+              bgcolor: (t) =>
+                t.palette.mode === 'light' ? t.palette.grey[100] : t.palette.grey[800]
             }
           }}
         >

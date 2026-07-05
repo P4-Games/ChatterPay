@@ -8,37 +8,53 @@ import { useAuthContext } from 'src/auth/hooks'
 
 // ----------------------------------------------------------------------
 
-export default function NavUpgrade() {
+type Props = {
+  collapsed?: boolean
+}
+
+export default function NavUpgrade({ collapsed }: Props) {
   const { user } = useAuthContext()
 
   return (
     <Stack
+      direction='row'
+      alignItems='center'
+      spacing={1.5}
       sx={{
-        px: 2,
-        py: 5,
-        textAlign: 'center'
+        px: '16px',
+        py: 2.5,
+        flexShrink: 0,
+        overflow: 'hidden'
       }}
     >
-      <Stack alignItems='center'>
-        <Box sx={{ position: 'relative' }}>
-          <Avvvatars
-            value={user?.phoneNumber || user?.displayName || ''}
-            displayValue={user?.displayName?.substring(0, 2).toUpperCase()}
-            style='shape'
-            size={48}
-          />
-        </Box>
+      <Box sx={{ flexShrink: 0, display: 'inline-flex' }}>
+        <Avvvatars
+          value={user?.phoneNumber || user?.displayName || ''}
+          displayValue={user?.displayName?.substring(0, 2).toUpperCase()}
+          style='shape'
+          size={40}
+        />
+      </Box>
 
-        <Stack spacing={0.5} sx={{ mb: 2, mt: 1.5, width: 1 }}>
-          <Typography variant='subtitle2' noWrap>
-            {user?.displayName}
-          </Typography>
+      <Box
+        sx={{
+          minWidth: 0,
+          opacity: collapsed ? 0 : 1,
+          transition: (theme) =>
+            theme.transitions.create('opacity', {
+              duration: collapsed ? 100 : 150,
+              delay: collapsed ? 0 : 100
+            })
+        }}
+      >
+        <Typography variant='subtitle2' noWrap>
+          {user?.displayName}
+        </Typography>
 
-          <Typography variant='body2' noWrap sx={{ color: 'text.disabled' }}>
-            {user?.phoneNumber}
-          </Typography>
-        </Stack>
-      </Stack>
+        <Typography variant='body2' noWrap sx={{ color: 'text.disabled' }}>
+          {user?.phoneNumber}
+        </Typography>
+      </Box>
     </Stack>
   )
 }
