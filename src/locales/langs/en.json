@@ -179,7 +179,13 @@
     "hero": {
       "title1": "Send Money",
       "title2": "with a message",
-      "legend": "Transfer crypto easily through WhatsApp using our Web3 platform."
+      "legend": "Transfer crypto easily through WhatsApp using our Web3 platform.",
+      "new": {
+        "title": "Send and receive crypto with WhatsApp",
+        "button": "Create my free account!",
+        "subtitle": "No app, no account, no seed phrase. Your phone number is your wallet, send money like you send a message.",
+        "b2b_link": "ChatterPay for business"
+      }
     },
     "fiat-transfer": {
       "title": "Receive and send #currency# like a pro.",
@@ -758,7 +764,7 @@
     "hero": {
       "tag": "Demo",
       "title": "Playground",
-      "label": "Test the future of crypto payments — safe, free, and on testnet.",
+      "label": "Test the future of crypto payments - safe, free, and on testnet.",
       "description": "Use our testing site to try ChatterPay at no cost. Send, swap, and explore features using testnet tokens. Build confidence and see what’s possible before using it in production.",
       "cta": "Go to testing Site"
     }
@@ -793,7 +799,7 @@
       },
       "telegram": {
         "title": "Telegram",
-        "description": "Access ChatterPay directly from Telegram. Check your wallet and balance without leaving the chat — fast, secure, and private."
+        "description": "Access ChatterPay directly from Telegram. Check your wallet and balance without leaving the chat - fast, secure, and private."
       }
     }
   },
@@ -974,18 +980,18 @@
       "subtitle": "Acquiring a fintech user through the app-store funnel costs ~$100 and most users never repay it. One WhatsApp message replaces the entire funnel.",
       "cac_old_label": "app-store funnel",
       "cac_new_label": "CAC per wallet on WhatsApp rails",
-      "cta_mail": "Contact us",
-      "cta_whatsapp": "See it live on WhatsApp",
-      "mail_subject": "ChatterPay B2B — Integration inquiry",
-      "whatsapp_msg": "Hi! I'd like to learn more about ChatterPay's B2B infrastructure"
+      "cta_mail": "Let's talk",
+      "cta_whatsapp": "Try it live on WhatsApp",
+      "mail_subject": "ChatterPay B2B - Integration inquiry",
+      "whatsapp_msg": "Hi! I want to create an account"
     },
     "loop": {
       "eyebrow": "Distribution",
-      "title": "Onboarding without permission",
-      "description": "Every transfer creates the next user. Distribution compounds organically, transfer by transfer.",
+      "title": "Every transfer onboards your next user",
+      "description": "No app-store funnel, no signup flow. Distribution compounds organically, transfer by transfer.",
       "step1": {
         "title": "A pays B over WhatsApp",
-        "description": "A regular transfer between two contacts — the same chat they already use every day."
+        "description": "A regular transfer between two contacts - the same chat they already use every day."
       },
       "step2": {
         "title": "B's wallet is created on receipt",
@@ -1003,17 +1009,19 @@
       "stat1": {
         "value": "$28T",
         "label": "Global stablecoin payment volume",
-        "note": "133% CAGR since 2023 — real economic activity, trading excluded."
+        "note": "133% CAGR since 2023 - real economic activity, trading excluded."
       },
       "stat2": {
         "value": "$324B",
         "label": "LATAM stablecoin volume",
-        "note": "+89% YoY. 71% is cross-border payments — our exact use case."
+        "note": "+89% YoY. 71% is cross-border payments - our exact use case."
       },
       "stat3": {
         "value": "$1.6B",
-        "label": "Captured via WhatsApp rails by 2029"
-      },
+        "label": "Projected volume on WhatsApp rails by 2029"
+      }
+    },
+    "proof": {
       "proof1": {
         "title": "10,000+ wallets",
         "note": "created in production"
@@ -1049,7 +1057,7 @@
       },
       "security": {
         "title": "Security tools",
-        "description": "Transaction limits, PIN, recovery flows and monitoring — with partner-controlled KYC."
+        "description": "Transaction limits, PIN, recovery flows and monitoring - with partner-controlled KYC."
       },
       "defi": {
         "title": "DeFi & external integrations",
@@ -1058,8 +1066,8 @@
     },
     "cta": {
       "title": "Let's reduce your customer acquisition cost today",
-      "description": "Tell us about your product and volumes — we'll come back with an integration plan. One-time integration fee plus revenue share.",
-      "button": "Write to us"
+      "description": "Tell us about your product and volumes, we'll come back with an integration plan.",
+      "button": "Get your integration plan"
     }
   }
 }

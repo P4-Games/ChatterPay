@@ -764,7 +764,7 @@
     "hero": {
       "tag": "Demo",
       "title": "Sitio de Pruebas",
-      "label": "Prueba el futuro de los pagos cripto — seguro, gratis y en testnet.",
+      "label": "Prueba el futuro de los pagos cripto - seguro, gratis y en testnet.",
       "description": "Usa nuestro entorno de pruebas para experimentar ChatterPay sin costos. Envía, intercambia y explora funciones con tokens de testnet. Gana confianza y descubre lo que es posible antes de usarlo en producción.",
       "cta": "Ir al Sitio de pruebas"
     }
@@ -980,15 +980,15 @@
       "subtitle": "Adquirir un usuario fintech por el embudo de app stores cuesta ~$100 y la mayoría nunca lo repaga. Un mensaje de WhatsApp reemplaza todo el embudo.",
       "cac_old_label": "embudo de app stores",
       "cac_new_label": "CAC por billetera en rieles de WhatsApp",
-      "cta_mail": "Contáctanos",
-      "cta_whatsapp": "Míralo en vivo en WhatsApp",
-      "mail_subject": "ChatterPay B2B — Consulta de integración",
-      "whatsapp_msg": "¡Hola! Quiero saber más sobre la infraestructura B2B de ChatterPay"
+      "cta_mail": "Hablemos",
+      "cta_whatsapp": "Pruébalo en vivo en WhatsApp",
+      "mail_subject": "ChatterPay B2B - Consulta de integración",
+      "whatsapp_msg": "¡Hola! Quiero crear una cuenta"
     },
     "loop": {
       "eyebrow": "Distribución",
-      "title": "Onboarding sin pedir permiso",
-      "description": "Cada transferencia crea al siguiente usuario. La distribución se compone orgánicamente, transferencia a transferencia.",
+      "title": "Cada transferencia trae a tu próximo usuario",
+      "description": "Sin embudo de app stores, sin registro. La distribución se compone orgánicamente, transferencia a transferencia.",
       "step1": {
         "title": "A le paga a B por WhatsApp",
         "description": "Una transferencia común entre dos contactos, en el mismo chat que ya usan todos los días."
@@ -1018,8 +1018,10 @@
       },
       "stat3": {
         "value": "$1.6B",
-        "label": "Capturado vía rieles de WhatsApp para 2029"
-      },
+        "label": "Volumen proyectado en rieles de WhatsApp para 2029"
+      }
+    },
+    "proof": {
       "proof1": {
         "title": "10,000+ billeteras",
         "note": "creadas en producción"
@@ -1064,8 +1066,8 @@
     },
     "cta": {
       "title": "Reduzcamos tu costo de adquisición hoy",
-      "description": "Cuéntanos sobre tu producto y volúmenes y volveremos con un plan de integración. Fee único de integración más revenue share.",
-      "button": "Escríbenos"
+      "description": "Cuéntanos sobre tu producto y volúmenes y volveremos con un plan de integración.",
+      "button": "Solicita tu plan de integración"
     }
   }
 }

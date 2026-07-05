@@ -179,7 +179,13 @@
     "hero": {
       "title1": "Envie Dinheiro",
       "title2": "com uma mensagem",
-      "legend": "Transfira cripto facilmente através do WhatsApp usando nossa plataforma Web3."
+      "legend": "Transfira cripto facilmente através do WhatsApp usando nossa plataforma Web3.",
+      "new": {
+        "title": "Envie e receba cripto com WhatsApp",
+        "button": "Criar minha conta grátis!",
+        "subtitle": "Sem app, sem conta, sem frase semente. Seu número de telefone é sua carteira, envie dinheiro como envia uma mensagem.",
+        "b2b_link": "ChatterPay para empresas"
+      }
     },
     "fiat-transfer": {
       "title": "Receba e envie #currency# como um profissional.",
@@ -758,7 +764,7 @@
     "hero": {
       "tag": "Demo",
       "title": "Playground",
-      "label": "Teste o futuro dos pagamentos cripto — seguro, gratuito e na testnet.",
+      "label": "Teste o futuro dos pagamentos cripto - seguro, gratuito e na testnet.",
       "description": "Use nosso site de testes para experimentar o ChatterPay sem custos. Envie, troque e explore recursos usando tokens de testnet. Ganhe confiança e veja o que é possível antes de usar em produção.",
       "cta": "Ir para o site de testes"
     }
@@ -793,7 +799,7 @@
       },
       "telegram": {
         "title": "Telegram",
-        "description": "Acesse o ChatterPay diretamente pelo Telegram. Verifique sua carteira e saldo sem sair do chat — rápido, seguro e privado."
+        "description": "Acesse o ChatterPay diretamente pelo Telegram. Verifique sua carteira e saldo sem sair do chat - rápido, seguro e privado."
       }
     }
   },
@@ -974,18 +980,18 @@
       "subtitle": "Adquirir um usuário fintech pelo funil das app stores custa ~$100 e a maioria nunca o compensa. Uma mensagem de WhatsApp substitui o funil inteiro.",
       "cac_old_label": "funil das app stores",
       "cac_new_label": "CAC por carteira em trilhos de WhatsApp",
-      "cta_mail": "Fale conosco",
-      "cta_whatsapp": "Veja ao vivo no WhatsApp",
-      "mail_subject": "ChatterPay B2B — Consulta de integração",
-      "whatsapp_msg": "Olá! Quero saber mais sobre a infraestrutura B2B da ChatterPay"
+      "cta_mail": "Vamos conversar",
+      "cta_whatsapp": "Teste ao vivo no WhatsApp",
+      "mail_subject": "ChatterPay B2B - Consulta de integração",
+      "whatsapp_msg": "Oi! Quero criar uma conta"
     },
     "loop": {
       "eyebrow": "Distribuição",
-      "title": "Onboarding sem pedir permissão",
-      "description": "Cada transferência cria o próximo usuário. A distribuição se compõe organicamente, transferência a transferência.",
+      "title": "Cada transferência traz seu próximo usuário",
+      "description": "Sem funil de app stores, sem cadastro. A distribuição se compõe organicamente, transferência a transferência.",
       "step1": {
         "title": "A paga B pelo WhatsApp",
-        "description": "Uma transferência comum entre dois contatos — no mesmo chat que já usam todos os dias."
+        "description": "Uma transferência comum entre dois contatos - no mesmo chat que já usam todos os dias."
       },
       "step2": {
         "title": "A carteira de B é criada ao receber",
@@ -1003,18 +1009,19 @@
       "stat1": {
         "value": "$28T",
         "label": "Volume global de pagamentos com stablecoins",
-        "note": "133% CAGR desde 2023 — atividade econômica real, sem trading."
+        "note": "133% CAGR desde 2023 - atividade econômica real, sem trading."
       },
       "stat2": {
         "value": "$324B",
         "label": "Volume de stablecoins na LATAM",
-        "note": "+89% ao ano. 71% são pagamentos internacionais — nosso caso de uso exato."
+        "note": "+89% ao ano. 71% são pagamentos internacionais - nosso caso de uso exato."
       },
       "stat3": {
         "value": "$1.6B",
-        "label": "Capturado via trilhos de WhatsApp até 2029",
-        "note": "12 fintechs parceiras."
-      },
+        "label": "Volume projetado em trilhos de WhatsApp até 2029"
+      }
+    },
+    "proof": {
       "proof1": {
         "title": "10.000+ carteiras",
         "note": "criadas em produção"
@@ -1050,7 +1057,7 @@
       },
       "security": {
         "title": "Ferramentas de segurança",
-        "description": "Limites de transação, PIN, fluxos de recuperação e monitoramento — com KYC controlado pelo parceiro."
+        "description": "Limites de transação, PIN, fluxos de recuperação e monitoramento - com KYC controlado pelo parceiro."
       },
       "defi": {
         "title": "DeFi e integrações externas",
@@ -1059,8 +1066,8 @@
     },
     "cta": {
       "title": "Vamos reduzir seu custo de aquisição hoje",
-      "description": "Conte sobre seu produto e volumes — voltaremos com um plano de integração. Taxa única de integração mais revenue share.",
-      "button": "Escreva para nós"
+      "description": "Conte sobre seu produto e volumes e voltaremos com um plano de integração.",
+      "button": "Solicite seu plano de integração"
     }
   }
 }

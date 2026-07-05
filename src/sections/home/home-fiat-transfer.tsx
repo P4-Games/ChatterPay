@@ -1,5 +1,4 @@
-import { useRef, useState, useEffect } from 'react'
-import { m, animate, useInView, useReducedMotion } from 'framer-motion'
+import { m } from 'framer-motion'
 
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -26,75 +25,6 @@ const StyledRoot = styled('div')(({ theme }) => ({
   borderRadius: '0 0 32px 32px'
 }))
 
-const formatCac = (value: number) => (value >= 10 ? `$${value.toFixed(0)}` : `$${value.toFixed(2)}`)
-
-const CacCounter = () => {
-  const { t } = useTranslate()
-  const shouldReduceMotion = useReducedMotion()
-
-  const ref = useRef<HTMLDivElement>(null)
-  const isInView = useInView(ref, { once: true, amount: 0.5 })
-  const [value, setValue] = useState(100)
-
-  useEffect(() => {
-    if (!isInView) return undefined
-
-    if (shouldReduceMotion) {
-      setValue(0.3)
-      return undefined
-    }
-
-    const controls = animate(100, 0.3, {
-      duration: 2.2,
-      ease: [0.16, 1, 0.3, 1],
-      onUpdate: (latest) => setValue(latest)
-    })
-    return () => controls.stop()
-  }, [isInView, shouldReduceMotion])
-
-  const settled = value <= 0.31
-
-  return (
-    <Box ref={ref} sx={{ textAlign: 'center' }}>
-      <Typography
-        sx={{
-          fontSize: { xs: 20, md: 24 },
-          fontWeight: 600,
-          color: alpha('#FFFFFF', 0.35),
-          textDecoration: 'line-through',
-          textDecorationThickness: 2,
-          mb: 1
-        }}
-      >
-        $100 · {t('home.b2b-banner.cac_old')}
-      </Typography>
-
-      <Typography
-        component='div'
-        sx={{
-          fontSize: { xs: 88, sm: 120, md: 140 },
-          fontWeight: 800,
-          lineHeight: 1,
-          letterSpacing: '-0.04em',
-          fontVariantNumeric: 'tabular-nums',
-          color: settled ? CHAT_GREEN : alpha('#FFFFFF', 0.9),
-          transition: 'color 0.4s ease',
-          textShadow: settled ? `0 0 80px ${alpha(CHAT_GREEN, 0.5)}` : 'none'
-        }}
-      >
-        {formatCac(value)}
-      </Typography>
-
-      <Typography
-        variant='overline'
-        sx={{ color: alpha('#FFFFFF', 0.6), letterSpacing: 2, display: 'block', mt: 2 }}
-      >
-        {t('home.b2b-banner.cac_new')}
-      </Typography>
-    </Box>
-  )
-}
-
 export default function HomeFiatTransfer() {
   const { t } = useTranslate()
 
@@ -109,16 +39,16 @@ export default function HomeFiatTransfer() {
           container
           spacing={{ xs: 5, md: 3 }}
           alignItems='center'
-          justifyContent='space-between'
+          justifyContent='center'
           sx={{ position: 'relative' }}
         >
           <Grid
             xs={12}
-            md={6}
+            md={8}
             sx={{
-              textAlign: { xs: 'center', md: 'left' },
-              pt: { xs: 8, md: 15 },
-              pb: { xs: 2, md: 15 },
+              textAlign: 'center',
+              pt: { xs: 10, md: 18 },
+              pb: { xs: 10, md: 18 },
               px: { xs: 2, md: 4 }
             }}
           >
@@ -166,7 +96,8 @@ export default function HomeFiatTransfer() {
             <Box
               sx={{
                 display: 'flex',
-                justifyContent: { xs: 'center', md: 'flex-start' }
+                justifyContent: 'center',
+                mt: 2
               }}
             >
               <m.div
@@ -216,30 +147,6 @@ export default function HomeFiatTransfer() {
                 </Button>
               </m.div>
             </Box>
-          </Grid>
-
-          <Grid
-            xs={12}
-            md={6}
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              pt: { xs: 2, md: 15 },
-              pb: { xs: 8, md: 15 },
-              px: { xs: 2, md: 4 },
-              minHeight: { xs: 200, md: 'auto' }
-            }}
-          >
-            <m.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.7, ease: 'easeOut' }}
-              viewport={{ once: false, margin: '-100px' }}
-              style={{ width: '100%' }}
-            >
-              <CacCounter />
-            </m.div>
           </Grid>
         </Grid>
       </Container>

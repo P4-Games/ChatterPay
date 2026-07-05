@@ -9,7 +9,7 @@ import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
 
 import { useTranslate } from 'src/locales'
-import { CONTACT_EMAIL } from 'src/config-global'
+import { CONTACT_EMAIL, CHATIZALO_PHONE_NUMBER } from 'src/config-global'
 
 import Iconify from 'src/components/iconify'
 import { MotionViewport } from 'src/components/animate'
@@ -37,6 +37,7 @@ export default function B2BCta() {
   const { t } = useTranslate()
 
   const mailHref = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(t('b2b.hero.mail_subject'))}`
+  const whatsappHref = `https://wa.me/${CHATIZALO_PHONE_NUMBER}?text=${encodeURIComponent(t('b2b.hero.whatsapp_msg'))}`
 
   return (
     <Box
@@ -68,25 +69,51 @@ export default function B2BCta() {
               {t('b2b.cta.description')}
             </Typography>
 
-            <Button
-              component='a'
-              href={mailHref}
-              variant='contained'
-              size='large'
-              startIcon={<Iconify icon='solar:letter-bold-duotone' />}
-              sx={{
-                mt: 1,
-                px: 5,
-                py: 1.75,
-                fontSize: '1rem',
-                fontWeight: 700,
-                bgcolor: CHAT_GREEN,
-                color: JUNGLE,
-                '&:hover': { bgcolor: '#1FBF5B' }
-              }}
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={2}
+              alignItems='center'
+              sx={{ mt: 1 }}
             >
-              {t('b2b.cta.button')}
-            </Button>
+              <Button
+                component='a'
+                href={mailHref}
+                variant='contained'
+                size='large'
+                startIcon={<Iconify icon='solar:letter-bold-duotone' />}
+                sx={{
+                  px: 5,
+                  py: 1.75,
+                  fontSize: '1rem',
+                  fontWeight: 700,
+                  bgcolor: CHAT_GREEN,
+                  color: JUNGLE,
+                  '&:hover': { bgcolor: '#1FBF5B' }
+                }}
+              >
+                {t('b2b.cta.button')}
+              </Button>
+
+              <Button
+                component='a'
+                href={whatsappHref}
+                target='_blank'
+                rel='noopener'
+                variant='outlined'
+                size='large'
+                sx={{
+                  px: 4,
+                  py: 1.75,
+                  fontSize: '1rem',
+                  fontWeight: 600,
+                  color: CHAT_GREEN,
+                  borderColor: alpha(CHAT_GREEN, 0.5),
+                  '&:hover': { borderColor: CHAT_GREEN, bgcolor: alpha(CHAT_GREEN, 0.08) }
+                }}
+              >
+                {t('b2b.hero.cta_whatsapp')}
+              </Button>
+            </Stack>
           </Stack>
         </m.div>
       </Container>
