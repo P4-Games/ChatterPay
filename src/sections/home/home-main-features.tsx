@@ -63,7 +63,7 @@ const CARD_CONFIG = [
     darkModeBgColor: COLORS.dark.green
   },
   {
-    icon: `${IMG_BASE_URL}/certificate.webp`,
+    icon: `/assets/icons/polymarket/logo.svg`,
     bgColor: COLORS.light.green,
     darkModeBgColor: COLORS.dark.card
   }

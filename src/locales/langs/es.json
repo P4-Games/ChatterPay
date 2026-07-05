@@ -148,7 +148,8 @@
       "about-us": "Sobre Nosotros",
       "products": "Productos",
       "roadmap": "Roadmap",
-      "development": "Demo"
+      "development": "Demo",
+      "b2b": "Para empresas"
     },
     "help": {
       "need-help": "¿Necesitas ayuda?"
@@ -181,7 +182,9 @@
       "legend": "Transfiere criptomonedas fácilmente a través de WhatsApp utilizando nuestra plataforma Web3.",
       "new": {
         "title": "Envía y recibe cripto con WhatsApp",
-        "button": "Crear mi cuenta gratis!"
+        "button": "Crear mi cuenta gratis!",
+        "subtitle": "Sin app, sin cuenta, sin frase semilla. Tu número de teléfono es tu billetera,envía dinero como envías un mensaje.",
+        "b2b_link": "ChatterPay para empresas"
       }
     },
     "fiat-transfer": {
@@ -212,8 +215,8 @@
         "description": "Compra, vende y mantén criptomonedas como Bitcoin, Ethereum o Stablecoins con solo un mensaje de texto o audio."
       },
       "card-3": {
-        "title": "Emite certificados con solo una foto",
-        "description": "Crea certificados fotográficos donde puedes certificar la fecha de emisión, y no pueden ser eliminados ni modificados."
+        "title": "Predice el futuro con Polymarket",
+        "description": "Negocia sobre el resultado de eventos del mundo real. Política, deportes, cripto, directamente desde tu chat."
       },
       "card-4": {
         "title": "La forma más económica de enviar dinero al extranjero",
@@ -269,6 +272,14 @@
       "description": "Sin nuevas apps. Sin curvas de aprendizaje. Solo envía unos mensajes y toma el control de tus finanzas. Como ya lo hicieron Martín y más de 150 usuarios.",
       "button": "Comenzar a chatear ahora",
       "whatsapp_message": "¡Hola! Quiero crear una cuenta"
+    },
+    "b2b-banner": {
+      "eyebrow": "Para fintechs",
+      "title": "Adquiere usuarios por $0.30, no por $100.",
+      "description": "Rieles de pago por WhatsApp marca blanca para tu fintech. Cada transferencia que envían tus usuarios crea la siguiente billetera: sin app store, sin embudo.",
+      "button": "Conoce la infraestructura",
+      "cac_old": "CAC en app stores",
+      "cac_new": "CAC en rieles de WhatsApp"
     }
   },
   "terms": {
@@ -960,6 +971,101 @@
       "title": "Solicitud inválida",
       "missingAddress": "Se requiere una dirección de billetera. Proporciónala en la URL (?address=0x...).",
       "invalidAddress": "La dirección de billetera proporcionada no es una dirección Ethereum válida."
+    }
+  },
+  "b2b": {
+    "hero": {
+      "eyebrow": "Infraestructura de pagos por WhatsApp",
+      "title": "Tus usuarios ya están en WhatsApp. Encuéntralos ahí.",
+      "subtitle": "Adquirir un usuario fintech por el embudo de app stores cuesta ~$100 y la mayoría nunca lo repaga. Un mensaje de WhatsApp reemplaza todo el embudo.",
+      "cac_old_label": "embudo de app stores",
+      "cac_new_label": "CAC por billetera en rieles de WhatsApp",
+      "cta_mail": "Contáctanos",
+      "cta_whatsapp": "Míralo en vivo en WhatsApp",
+      "mail_subject": "ChatterPay B2B — Consulta de integración",
+      "whatsapp_msg": "¡Hola! Quiero saber más sobre la infraestructura B2B de ChatterPay"
+    },
+    "loop": {
+      "eyebrow": "Distribución",
+      "title": "Onboarding sin pedir permiso",
+      "description": "Cada transferencia crea al siguiente usuario. La distribución se compone orgánicamente, transferencia a transferencia.",
+      "step1": {
+        "title": "A le paga a B por WhatsApp",
+        "description": "Una transferencia común entre dos contactos, en el mismo chat que ya usan todos los días."
+      },
+      "step2": {
+        "title": "La billetera de B se crea al recibir",
+        "description": "Sin app, sin cuenta, sin registro. B ni siquiera necesita conocer la fintech todavía."
+      },
+      "step3": {
+        "title": "B les paga a C y D",
+        "description": "El ciclo se compone: cada billetera nueva se convierte en un canal de distribución."
+      },
+      "tag": "Exponencial por diseño"
+    },
+    "market": {
+      "eyebrow": "Mercado",
+      "title": "El riel de pagos de mayor crecimiento",
+      "stat1": {
+        "value": "$28T",
+        "label": "Volumen global de pagos con stablecoins",
+        "note": "133% CAGR desde 2023: actividad económica real, sin trading."
+      },
+      "stat2": {
+        "value": "$324B",
+        "label": "Volumen de stablecoins en LATAM",
+        "note": "+89% interanual. El 71% son pagos transfronterizos: nuestro caso de uso exacto."
+      },
+      "stat3": {
+        "value": "$1.6B",
+        "label": "Capturado vía rieles de WhatsApp para 2029"
+      },
+      "proof1": {
+        "title": "10,000+ billeteras",
+        "note": "creadas en producción"
+      },
+      "proof2": {
+        "title": "114 países",
+        "note": "con usuarios activos"
+      },
+      "proof3": {
+        "title": "3 años en producción",
+        "note": "probada con e-commerce de alto volumen"
+      }
+    },
+    "offer": {
+      "eyebrow": "Qué obtienes",
+      "title": "Infraestructura, no otra app",
+      "description": "Una API marca blanca sobre 60+ blockchains, con KYC controlado por el socio. Todo lo que tu producto necesita para mover dinero por WhatsApp.",
+      "payments": {
+        "title": "Pagos por WhatsApp",
+        "description": "Envía, recibe e intercambia stablecoins desde un chat. Cualquier número puede recibir fondos."
+      },
+      "agents": {
+        "title": "Agentes de IA a medida",
+        "description": "Agentes conversacionales que entienden texto y audio, con la voz de tu marca."
+      },
+      "crm": {
+        "title": "CRM de WhatsApp",
+        "description": "Gestiona cada conversación y transacción de tus clientes desde un CRM propio."
+      },
+      "marketing": {
+        "title": "Herramientas de marketing",
+        "description": "Campañas, difusiones y ciclos de referidos donde tus usuarios ya conversan."
+      },
+      "security": {
+        "title": "Herramientas de seguridad",
+        "description": "Límites de transacción, PIN, flujos de recuperación y monitoreo, con KYC controlado por el socio."
+      },
+      "defi": {
+        "title": "DeFi e integraciones externas",
+        "description": "Swaps, rendimiento y contratos DeFi en 60+ blockchains, listos para tu producto."
+      }
+    },
+    "cta": {
+      "title": "Reduzcamos tu costo de adquisición hoy",
+      "description": "Cuéntanos sobre tu producto y volúmenes y volveremos con un plan de integración. Fee único de integración más revenue share.",
+      "button": "Escríbenos"
     }
   }
 }

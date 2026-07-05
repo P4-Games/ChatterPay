@@ -148,7 +148,8 @@
       "about-us": "About Us",
       "products": "Products",
       "roadmap": "Roadmap",
-      "development": "Demo"
+      "development": "Demo",
+      "b2b": "For business"
     },
     "help": {
       "need-help": "Need help?"
@@ -178,11 +179,7 @@
     "hero": {
       "title1": "Send Money",
       "title2": "with a message",
-      "legend": "Transfer crypto easily through WhatsApp using our Web3 platform.",
-      "new": {
-        "title": "Send and receive crypto with WhatsApp",
-        "button": "Create my account for free!"
-      }
+      "legend": "Transfer crypto easily through WhatsApp using our Web3 platform."
     },
     "fiat-transfer": {
       "title": "Receive and send #currency# like a pro.",
@@ -212,8 +209,8 @@
         "description": "Buy, Sell and Hold crypto such as Bitcoin, Ethereum or Stablecoins with just one text or audio message."
       },
       "card-3": {
-        "title": "Issue certificates with just a photo",
-        "description": "Create photo certificates where you can certify the date of issuing, and cannot be deleted or modified."
+        "title": "Predict the future with Polymarket",
+        "description": "Trade on the outcome of real-world events. Politics, sports, crypto, directly from your chat."
       },
       "card-4": {
         "title": "The cheapest way to send money abroad",
@@ -269,6 +266,14 @@
       "description": "No new apps. No learning curves. Just send a few messages and take control of your finance. Like Martín and more than 150 chatters already did.",
       "button": "Start chatting now",
       "whatsapp_message": "Hi! I want to create an account"
+    },
+    "b2b-banner": {
+      "eyebrow": "For fintechs",
+      "title": "Acquire users for $0.30, not $100.",
+      "description": "White-label WhatsApp payment rails for your fintech. Every transfer your users send creates the next wallet: no app store, no funnel.",
+      "button": "Explore the infrastructure",
+      "cac_old": "app-store CAC",
+      "cac_new": "CAC on WhatsApp rails"
     }
   },
   "terms": {
@@ -960,6 +965,101 @@
       "title": "Invalid Request",
       "missingAddress": "A wallet address is required. Please provide your address in the URL (?address=0x...).",
       "invalidAddress": "The wallet address provided is not a valid Ethereum address."
+    }
+  },
+  "b2b": {
+    "hero": {
+      "eyebrow": "WhatsApp infrastructure for payments",
+      "title": "Your users are already on WhatsApp. Meet them there.",
+      "subtitle": "Acquiring a fintech user through the app-store funnel costs ~$100 and most users never repay it. One WhatsApp message replaces the entire funnel.",
+      "cac_old_label": "app-store funnel",
+      "cac_new_label": "CAC per wallet on WhatsApp rails",
+      "cta_mail": "Contact us",
+      "cta_whatsapp": "See it live on WhatsApp",
+      "mail_subject": "ChatterPay B2B — Integration inquiry",
+      "whatsapp_msg": "Hi! I'd like to learn more about ChatterPay's B2B infrastructure"
+    },
+    "loop": {
+      "eyebrow": "Distribution",
+      "title": "Onboarding without permission",
+      "description": "Every transfer creates the next user. Distribution compounds organically, transfer by transfer.",
+      "step1": {
+        "title": "A pays B over WhatsApp",
+        "description": "A regular transfer between two contacts — the same chat they already use every day."
+      },
+      "step2": {
+        "title": "B's wallet is created on receipt",
+        "description": "No app, no account, no signup. B doesn't even need to know the fintech yet."
+      },
+      "step3": {
+        "title": "B pays C and D",
+        "description": "The loop compounds: every new wallet becomes a distribution channel."
+      },
+      "tag": "Exponential by design"
+    },
+    "market": {
+      "eyebrow": "Market",
+      "title": "The fastest-growing payment rail",
+      "stat1": {
+        "value": "$28T",
+        "label": "Global stablecoin payment volume",
+        "note": "133% CAGR since 2023 — real economic activity, trading excluded."
+      },
+      "stat2": {
+        "value": "$324B",
+        "label": "LATAM stablecoin volume",
+        "note": "+89% YoY. 71% is cross-border payments — our exact use case."
+      },
+      "stat3": {
+        "value": "$1.6B",
+        "label": "Captured via WhatsApp rails by 2029"
+      },
+      "proof1": {
+        "title": "10,000+ wallets",
+        "note": "created in production"
+      },
+      "proof2": {
+        "title": "114 countries",
+        "note": "with active users"
+      },
+      "proof3": {
+        "title": "3 years in production",
+        "note": "battle-tested with high-volume e-commerce"
+      }
+    },
+    "offer": {
+      "eyebrow": "What you get",
+      "title": "Infrastructure, not another app",
+      "description": "A white-label API over 60+ chains, with partner-controlled KYC. Everything your product needs to move money over WhatsApp.",
+      "payments": {
+        "title": "WhatsApp payments",
+        "description": "Send, receive and swap stablecoins from a chat. Any phone number can receive funds."
+      },
+      "agents": {
+        "title": "Custom AI agents",
+        "description": "Conversational agents that understand text and audio, tuned to your brand's voice."
+      },
+      "crm": {
+        "title": "WhatsApp CRM",
+        "description": "Manage every customer conversation and transaction from one in-house CRM."
+      },
+      "marketing": {
+        "title": "Marketing tools",
+        "description": "Campaigns, broadcasts and referral loops that run where your users already talk."
+      },
+      "security": {
+        "title": "Security tools",
+        "description": "Transaction limits, PIN, recovery flows and monitoring — with partner-controlled KYC."
+      },
+      "defi": {
+        "title": "DeFi & external integrations",
+        "description": "Swaps, yield and DeFi contracts across 60+ chains, ready to plug into your product."
+      }
+    },
+    "cta": {
+      "title": "Let's reduce your customer acquisition cost today",
+      "description": "Tell us about your product and volumes — we'll come back with an integration plan. One-time integration fee plus revenue share.",
+      "button": "Write to us"
     }
   }
 }
