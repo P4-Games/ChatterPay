@@ -821,6 +821,8 @@
     "trending": "Mercados em Tendência Hoje",
     "all-markets": "Todas as Previsões",
     "no-markets": "Nenhuma previsão disponível",
+    "search-placeholder": "Buscar mercados...",
+    "no-search-results": "Nenhum mercado encontrado para \"{{query}}\"",
     "market-detail": "Detalhes do Mercado",
     "market-not-found": "Mercado não encontrado",
     "closed": "Encerrado",

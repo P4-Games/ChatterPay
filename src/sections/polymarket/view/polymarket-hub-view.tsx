@@ -14,6 +14,7 @@ import { useAuthContext } from 'src/auth/hooks'
 import {
   useGetPolymarketEvents,
   useGetPolymarketEventsInfinite,
+  useSearchPolymarkets,
   useGetPolymarketPositionsSWR,
   useGetPolymarketOrdersSWR,
   useGetPolymarketPortfolioSWR,
@@ -21,6 +22,7 @@ import {
 } from 'src/app/api/hooks'
 
 import { useBoolean } from 'src/hooks/use-boolean'
+import { useDebounce } from 'src/hooks/use-debounce'
 import { useSettingsContext } from 'src/components/settings'
 
 import type { IPolymarketEvent, IPolymarketAccountStatus } from 'src/types/polymarket'
@@ -47,6 +49,10 @@ function PolymarketHubContent() {
 
   const [category, setCategory] = useState('All')
   const [sortBy, setSortBy] = useState('recommended')
+  const [searchQuery, setSearchQuery] = useState('')
+  const debouncedSearchQuery = useDebounce(searchQuery, 300)
+  const trimmedSearchQuery = debouncedSearchQuery.trim()
+  const isSearching = trimmedSearchQuery.length > 0
 
   const portfolioDrawer = useBoolean()
   const isDrawerOpen = portfolioDrawer.value
@@ -107,6 +113,15 @@ function PolymarketHubContent() {
   const { events, isLoading, isLoadingMore, hasMore, loadMore } = useGetPolymarketEventsInfinite(
     category,
     user?.id
+  )
+
+  // Search — separate fetch, no pagination support server-side, so it fully
+  // replaces the infinite-scroll list while active instead of augmenting it.
+  const { data: searchResult, isLoading: isSearchLoading } =
+    useSearchPolymarkets(trimmedSearchQuery)
+  const searchEvents: IPolymarketEvent[] = useMemo(
+    () => (searchResult?.ok && Array.isArray(searchResult.data) ? searchResult.data : []),
+    [searchResult]
   )
 
   // Trending: separate fetch without category filter (first 4)
@@ -305,16 +320,19 @@ function PolymarketHubContent() {
           </Typography>
 
           <PolymarketMarketList
-            events={events}
+            events={isSearching ? searchEvents : events}
             trendingEvents={trendingEvents}
-            isLoading={isLoading}
+            isLoading={isSearching ? isSearchLoading : isLoading}
             category={category}
             onChangeCategory={setCategory}
             sortBy={sortBy}
             onChangeSortBy={setSortBy}
-            hasMore={hasMore}
-            isLoadingMore={!!isLoadingMore}
+            hasMore={isSearching ? false : hasMore}
+            isLoadingMore={isSearching ? false : !!isLoadingMore}
             onLoadMore={loadMore}
+            searchQuery={searchQuery}
+            onChangeSearchQuery={setSearchQuery}
+            isSearching={isSearching}
           />
         </Container>
       </Box>

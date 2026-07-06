@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react'
+import { useMemo, useEffect, useCallback } from 'react'
 import useSWR from 'swr'
 import useSWRInfinite from 'swr/infinite'
 
@@ -61,6 +61,13 @@ export function useGetPolymarketEventsInfinite(category?: string, userId?: strin
     revalidateOnFocus: false,
     revalidateOnReconnect: false
   })
+
+  // Reset to page 1 whenever the category changes so switching filters doesn't
+  // instantly re-request every previously scrolled-to page under the new category.
+  useEffect(() => {
+    setSize(1)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [category])
 
   const allEvents: IPolymarketEvent[] = useMemo(() => {
     const map = new Map<string, IPolymarketEvent>()

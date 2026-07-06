@@ -167,14 +167,14 @@ export async function getMarketBySlug(slug: string): Promise<ServiceResult<IPoly
   return { ok: true, data: normalizeMarket(rawData?.market || rawData) }
 }
 
-export async function searchMarkets(query: string): Promise<ServiceResult<IPolymarketMarket[]>> {
-  const result = await request<IPolymarketMarket[]>(
+export async function searchMarkets(query: string): Promise<ServiceResult<IPolymarketEvent[]>> {
+  const result = await request<IPolymarketEvent[]>(
     'get',
     `/polymarket/search?query=${encodeURIComponent(query)}`
   )
   if (!result.ok) return result
-  const raw = extractArray<any>(result.data, 'markets')
-  return { ok: true, data: raw.map(normalizeMarket) }
+  const raw = extractArray<any>(result.data, 'events')
+  return { ok: true, data: raw.map(normalizeEvent) }
 }
 
 export async function getCategories(): Promise<ServiceResult<IPolymarketCategory[]>> {

@@ -1,11 +1,13 @@
 'use client'
 
 import { useRef, useEffect, useCallback, useMemo, useState } from 'react'
+import { m, AnimatePresence } from 'framer-motion'
 
 import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
 import Stack from '@mui/material/Stack'
 import Select from '@mui/material/Select'
+import TextField from '@mui/material/TextField'
 import MenuItem from '@mui/material/MenuItem'
 import Skeleton from '@mui/material/Skeleton'
 import Typography from '@mui/material/Typography'
@@ -17,12 +19,15 @@ import { alpha, useTheme } from '@mui/material/styles'
 
 import Iconify from 'src/components/iconify'
 import { useTranslate } from 'src/locales'
+import { useBoolean } from 'src/hooks/use-boolean'
 
 import PolymarketMarketCard from './polymarket-market-card'
 import PolymarketEventCard from './polymarket-event-card'
 
 import type { IPolymarketEvent } from 'src/types/polymarket'
 // ----------------------------------------------------------------------
+const FILTER_CONTROL_HEIGHT = 40
+
 const SORT_OPTIONS = [
   { value: 'recommended', label: 'polymarket.recommended' },
   { value: 'volume', label: 'polymarket.volume' },
@@ -41,6 +46,9 @@ type Props = {
   hasMore: boolean
   isLoadingMore: boolean
   onLoadMore: () => void
+  searchQuery: string
+  onChangeSearchQuery: (query: string) => void
+  isSearching: boolean
 }
 
 export default function PolymarketMarketList({
@@ -53,7 +61,10 @@ export default function PolymarketMarketList({
   onChangeSortBy,
   hasMore,
   isLoadingMore,
-  onLoadMore
+  onLoadMore,
+  searchQuery,
+  onChangeSearchQuery,
+  isSearching
 }: Props) {
   const { t } = useTranslate()
   const theme = useTheme()
@@ -187,6 +198,97 @@ export default function PolymarketMarketList({
     []
   )
 
+  const searchOpen = useBoolean()
+  const searchInputRef = useRef<HTMLInputElement>(null)
+  const isSearchExpanded = searchOpen.value || !!searchQuery
+
+  const handleOpenSearch = useCallback(() => {
+    searchOpen.onTrue()
+    requestAnimationFrame(() => searchInputRef.current?.focus())
+  }, [searchOpen])
+
+  const handleCloseSearch = useCallback(() => {
+    onChangeSearchQuery('')
+    searchOpen.onFalse()
+  }, [onChangeSearchQuery, searchOpen])
+
+  const handleBlurSearch = useCallback(() => {
+    if (!searchQuery) searchOpen.onFalse()
+  }, [searchQuery, searchOpen])
+
+  const pillBgcolor = isDark ? alpha(theme.palette.grey[500], 0.12) : '#ebebeb'
+
+  const renderSearch = (
+    <AnimatePresence mode='wait' initial={false}>
+      {isSearchExpanded ? (
+        <Box
+          key='search-field'
+          component={m.div}
+          initial={{ width: 0, opacity: 0 }}
+          animate={{ width: 220, opacity: 1 }}
+          exit={{ width: 0, opacity: 0 }}
+          transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+          sx={{ overflow: 'hidden', flexShrink: 0 }}
+        >
+          <TextField
+            inputRef={searchInputRef}
+            size='small'
+            value={searchQuery}
+            onChange={(e) => onChangeSearchQuery(e.target.value)}
+            onBlur={handleBlurSearch}
+            placeholder={t('polymarket.search-placeholder')}
+            sx={{
+              width: 220,
+              '& .MuiOutlinedInput-root': {
+                height: FILTER_CONTROL_HEIGHT,
+                borderRadius: 50,
+                bgcolor: pillBgcolor,
+                '& fieldset': { border: 'none' }
+              },
+              '& .MuiOutlinedInput-input': { py: 0 }
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position='start'>
+                  <Iconify icon='eva:search-fill' width={20} sx={{ color: 'text.secondary' }} />
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position='end'>
+                  <IconButton size='small' onClick={handleCloseSearch}>
+                    <Iconify icon='eva:close-fill' width={18} />
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
+          />
+        </Box>
+      ) : (
+        <Box
+          key='search-icon'
+          component={m.div}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.15 }}
+          sx={{ flexShrink: 0 }}
+        >
+          <IconButton
+            onClick={handleOpenSearch}
+            sx={{
+              width: FILTER_CONTROL_HEIGHT,
+              height: FILTER_CONTROL_HEIGHT,
+              bgcolor: pillBgcolor,
+              '&:hover': { bgcolor: isDark ? alpha(theme.palette.grey[500], 0.2) : '#ddd' }
+            }}
+          >
+            <Iconify icon='eva:search-fill' width={20} sx={{ color: 'text.secondary' }} />
+          </IconButton>
+        </Box>
+      )}
+    </AnimatePresence>
+  )
+
   const renderFilters = (
     <Stack
       direction='row'
@@ -195,7 +297,18 @@ export default function PolymarketMarketList({
       spacing={2}
       sx={{ mb: 3 }}
     >
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flex: 1, minWidth: 0 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
+          flex: 1,
+          minWidth: 0,
+          opacity: isSearching ? 0.5 : 1,
+          pointerEvents: isSearching ? 'none' : 'auto',
+          transition: theme.transitions.create('opacity')
+        }}
+      >
         {canScrollLeft && (
           <IconButton
             size='small'
@@ -277,41 +390,56 @@ export default function PolymarketMarketList({
         )}
       </Box>
 
-      <Select
-        size='small'
-        value={sortBy}
-        onChange={(e) => onChangeSortBy(e.target.value)}
-        startAdornment={
-          <InputAdornment position='start'>
-            <Iconify
-              icon='solar:sort-vertical-bold'
-              width={18}
-              sx={{ color: 'text.secondary', ml: 0.5 }}
-            />
-          </InputAdornment>
-        }
-        sx={{
-          minWidth: 150,
-          flexShrink: 0,
-          borderRadius: 50,
-          bgcolor: isDark ? alpha(theme.palette.grey[500], 0.12) : '#ebebeb',
-          '& .MuiSelect-select': {
-            py: 1,
-            pl: '0 !important',
-            fontSize: '0.85rem',
-            fontWeight: 600
-          },
-          '& .MuiOutlinedInput-notchedOutline': {
-            border: 'none'
+      <Stack direction='row' alignItems='center' spacing={1} sx={{ flexShrink: 0 }}>
+        {renderSearch}
+
+        <Select
+          size='small'
+          value={sortBy}
+          onChange={(e) => onChangeSortBy(e.target.value)}
+          renderValue={(value) => {
+            const option = SORT_OPTIONS.find((o) => o.value === value)
+            return (
+              <Box component='span' sx={{ display: { xs: 'none', sm: 'inline' } }}>
+                {option ? t(option.label) : ''}
+              </Box>
+            )
+          }}
+          startAdornment={
+            <InputAdornment position='start'>
+              <Iconify
+                icon='solar:sort-vertical-bold'
+                width={18}
+                sx={{ color: 'text.secondary', ml: 0.5 }}
+              />
+            </InputAdornment>
           }
-        }}
-      >
-        {SORT_OPTIONS.map((option) => (
-          <MenuItem key={option.value} value={option.value}>
-            {t(option.label)}
-          </MenuItem>
-        ))}
-      </Select>
+          sx={{
+            minWidth: { xs: 0, sm: 150 },
+            height: FILTER_CONTROL_HEIGHT,
+            flexShrink: 0,
+            borderRadius: 50,
+            bgcolor: isDark ? alpha(theme.palette.grey[500], 0.12) : '#ebebeb',
+            '& .MuiSelect-select': {
+              py: 0,
+              pl: '0 !important',
+              fontSize: '0.85rem',
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center'
+            },
+            '& .MuiOutlinedInput-notchedOutline': {
+              border: 'none'
+            }
+          }}
+        >
+          {SORT_OPTIONS.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              {t(option.label)}
+            </MenuItem>
+          ))}
+        </Select>
+      </Stack>
     </Stack>
   )
 
@@ -328,7 +456,9 @@ export default function PolymarketMarketList({
   const renderEmpty = (
     <Stack alignItems='center' justifyContent='center' sx={{ py: 10 }}>
       <Typography variant='h6' color='text.secondary'>
-        {t('polymarket.no-markets')}
+        {isSearching
+          ? t('polymarket.no-search-results', { query: searchQuery.trim() })
+          : t('polymarket.no-markets')}
       </Typography>
     </Stack>
   )
