@@ -73,7 +73,7 @@ export default function Header() {
     {
       title: t('home.header.sign-in'),
       icon: <Iconify icon='solar:wallet-bold-duotone' />,
-      path: paths.dashboard.root
+      path: paths.auth.jwt.login
     }
   ]
 

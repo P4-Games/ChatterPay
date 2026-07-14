@@ -11,14 +11,17 @@ export const StyledNotistack = styled(MaterialDesignContent)(({ theme }) => {
     '& #notistack-snackbar': {
       ...theme.typography.subtitle2,
       padding: 0,
-      flexGrow: 1
+      flexGrow: 1,
+      wordBreak: 'break-word'
     },
     '&.notistack-MuiContent': {
       color: theme.palette.text.primary,
       boxShadow: theme.customShadows.z8,
       borderRadius: theme.shape.borderRadius,
       padding: theme.spacing(0.5, 2, 0.5, 0.5),
-      backgroundColor: theme.palette.background.paper
+      backgroundColor: theme.palette.background.paper,
+      flexWrap: 'nowrap',
+      alignItems: 'center'
     },
     '&.notistack-MuiContent-default': {
       padding: theme.spacing(1, 2, 1, 1),

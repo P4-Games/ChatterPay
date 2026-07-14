@@ -9,10 +9,12 @@ import Grid from '@mui/material/Unstable_Grid2'
 import Typography from '@mui/material/Typography'
 import { styled, useTheme } from '@mui/material/styles'
 
+import { paths } from 'src/routes/paths'
+import { RouterLink } from 'src/routes/components'
+
 import { useResponsive } from 'src/hooks/use-responsive'
 
 import { useLocales, useTranslate } from 'src/locales'
-import { CHATIZALO_PHONE_NUMBER } from 'src/config-global'
 
 import { SingleWordHighlight } from 'src/components/highlight'
 import { varFade, MotionContainer } from 'src/components/animate'
@@ -250,14 +252,6 @@ export default function HomeHero() {
   // Get localized mockup image path
   const mockupImagePath = getLanguageMockupPath(currentLang.value)
 
-  // Handle WhatsApp chat start
-  const handleChatStart = () => {
-    const message = encodeURIComponent(
-      t('home.cta.whatsapp_message') || 'Hi! I want to create an account'
-    )
-    window.open(`https://wa.me/${CHATIZALO_PHONE_NUMBER}?text=${message}`, '_blank')
-  }
-
   // Find the word "WhatsApp" in the title
   const titleWords = t('home.hero.new.title').split(' ')
   const whatsAppIndex = titleWords.findIndex((word) => word.toLowerCase().includes('whatsapp'))
@@ -357,6 +351,8 @@ export default function HomeHero() {
 
             <m.div variants={varFade().in}>
               <StyledCreateButton
+                component={RouterLink}
+                href={paths.auth.jwt.login}
                 variant='contained'
                 endIcon={
                   <Box
@@ -367,7 +363,6 @@ export default function HomeHero() {
                     sx={{ width: 24, height: 24 }}
                   />
                 }
-                onClick={handleChatStart}
               >
                 {t('home.hero.new.button')}
               </StyledCreateButton>

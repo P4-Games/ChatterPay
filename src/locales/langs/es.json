@@ -144,7 +144,7 @@
   },
   "home": {
     "header": {
-      "sign-in": "Dashboard",
+      "sign-in": "Web App",
       "about-us": "Sobre Nosotros",
       "products": "Productos",
       "roadmap": "Roadmap",
@@ -182,7 +182,7 @@
       "legend": "Transfiere criptomonedas fácilmente a través de WhatsApp utilizando nuestra plataforma Web3.",
       "new": {
         "title": "Envía y recibe cripto con WhatsApp",
-        "button": "Crear mi cuenta gratis!",
+        "button": "Ir a la app",
         "subtitle": "Sin app, sin cuenta, sin frase semilla. Tu número de teléfono es tu billetera,envía dinero como envías un mensaje.",
         "b2b_link": "ChatterPay para empresas"
       }
@@ -372,6 +372,7 @@
     "sign-in": "Iniciar sesión",
     "create-account": "Crear cuenta",
     "create-account-bot": "Crear cuenta desde WhatsApp",
+    "whatsapp-note": "Puedes usar ChatterPay completamente desde WhatsApp. Vuelve a chatterpay.net cuando quieras para gestionar tu cuenta desde la web o usar los mercados de predicción.",
     "terms-of-service": "Términos de Servicio",
     "privacy-policy": "Política de Privacidad",
     "by-signing": "Al registrarme, acepto los",
