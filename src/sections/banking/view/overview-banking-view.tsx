@@ -7,6 +7,9 @@ import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import { useTheme } from '@mui/material/styles'
 
+import { useRouter } from 'src/routes/hooks'
+import { paths } from 'src/routes/paths'
+
 import { useTranslate } from 'src/locales'
 import type { AuthUserType } from 'src/auth/types'
 import { useAuthContext } from 'src/auth/hooks'
@@ -49,6 +52,7 @@ function BankingDashboardContent() {
   const settings = useSettingsContext()
   const { user }: { user: AuthUserType } = useAuthContext()
   const { enqueueSnackbar } = useSnackbar()
+  const router = useRouter()
 
   const [polymarketReady, setPolymarketReady] = useState<boolean | null>(null)
 
@@ -233,6 +237,7 @@ function BankingDashboardContent() {
           onClaimClick={handleClaimSubmit}
           onCryptoClick={() => setCryptoExpanded((prev) => !prev)}
           onPolymarketClick={polymarketDrawer.onTrue}
+          onPredictClick={() => router.push(paths.dashboard.polymarket.root)}
           isClaiming={isClaiming || claimInProgress}
           selectedCurrency={selectedCurrency}
           onCurrencyChange={handleCurrencyChange}

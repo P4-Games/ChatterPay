@@ -50,7 +50,7 @@
     "email": "Email Change",
     "notifications": "Notifications",
     "security": "Security",
-    "polymarket": "Markets"
+    "polymarket": "Predict"
   },
   "user": {
     "account": {
@@ -455,7 +455,9 @@
     "no-balance": "No balance",
     "no-balances-above": "No balances above $1",
     "view-on-explorer": "View on Explorer",
-    "no-polymarket-cta": "Set up Polymarket"
+    "no-polymarket-cta": "Start Predicting",
+    "predict": "Predict",
+    "predict-subtitle": "Predict outcomes"
   },
   "transactions": {
     "title": "History",
@@ -907,8 +909,8 @@
     "about": "About",
     "about-event": "About this event",
     "predict-on": "Predict on",
-    "making-predictions": "Make your predictions on Polymarket",
-    "just-with-whatsapp": "just with WhatsApp!",
+    "making-predictions": "Predict. Win. Repeat.",
+    "just-with-whatsapp": "Pick the right outcome and get paid. Powered by Polymarket, simple as a text.",
     "trending-today": "Trending Today:",
     "creating-account": "Creating account",
     "submitting": "Submitting",

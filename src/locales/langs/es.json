@@ -50,7 +50,7 @@
     "email": "Cambiar Correo",
     "notifications": "Notificaciones",
     "security": "Seguridad",
-    "polymarket": "Mercados"
+    "polymarket": "Predecir"
   },
   "user": {
     "account": {
@@ -455,7 +455,9 @@
     "no-balance": "Sin balance",
     "no-balances-above": "No hay balances mayores a $1",
     "view-on-explorer": "Ver en Explorador",
-    "no-polymarket-cta": "Configurar Polymarket"
+    "no-polymarket-cta": "Empezar a Predecir",
+    "predict": "Predecir",
+    "predict-subtitle": "Predice resultados"
   },
   "transactions": {
     "title": "Historial",
@@ -907,8 +909,8 @@
     "about": "Sobre",
     "about-event": "Sobre este evento",
     "predict-on": "Predecir en",
-    "making-predictions": "Haz tus predicciones en Polymarket",
-    "just-with-whatsapp": "¡Solo con WhatsApp!",
+    "making-predictions": "Predecí. Ganá. Repetí.",
+    "just-with-whatsapp": "Elegí el resultado correcto y cobrá. Con Polymarket, simple como un mensaje.",
     "trending-today": "Tendencia de Hoy:",
     "creating-account": "Creando cuenta",
     "submitting": "Enviando",

@@ -54,7 +54,7 @@ export function useNavData() {
             icon: ICONS.banking
           },
           {
-            title: 'Polymarket',
+            title: t('menu.polymarket'),
             path: paths.dashboard.polymarket.root,
             icon: ICONS.polymarket
           },
