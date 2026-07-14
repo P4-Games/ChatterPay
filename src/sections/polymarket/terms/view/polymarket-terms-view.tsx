@@ -76,10 +76,12 @@ export default function PolymarketTermsView({ data, error }: Props) {
               </Typography>
               <Typography variant='body2' color='text.secondary'>
                 Effective:{' '}
-                {new Date(data.effective_date).toLocaleDateString(undefined, {
+                {/* Explicit locale + timeZone so server and browser render identical text (page copy is English). */}
+                {new Date(data.effective_date).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'long',
-                  day: 'numeric'
+                  day: 'numeric',
+                  timeZone: 'UTC'
                 })}
               </Typography>
             </Box>

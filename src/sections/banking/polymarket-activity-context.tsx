@@ -7,8 +7,6 @@ import { useSWRConfig } from 'swr'
 
 import { polymarketPurchaseStatus } from 'src/app/api/hooks/use-polymarket'
 
-import type { ITransaction } from 'src/types/wallet'
-
 // ----------------------------------------------------------------------
 // Tracks in-flight Polymarket operations (sells / claims) so the dashboard can
 // show an optimistic, status-tracked record the instant the user acts — and keep
@@ -120,8 +118,11 @@ export function PolymarketActivityProvider({
   const [pendingOps, setPendingOps] = useState<PendingOp[]>([])
 
   // Keep a ref in sync so the polling loop reads the latest ops without resubscribing.
+  // Synced in an effect (not during render) because React may replay or discard renders.
   const opsRef = useRef<PendingOp[]>([])
-  opsRef.current = pendingOps
+  useEffect(() => {
+    opsRef.current = pendingOps
+  }, [pendingOps])
 
   // Hydrate from storage when the wallet becomes known / changes.
   useEffect(() => {
@@ -361,42 +362,3 @@ export function usePolymarketActivity(): ActivityContextValue {
   return ctx
 }
 
-// ----------------------------------------------------------------------
-// Convert a pending op into a synthetic transaction row for the history list.
-// ----------------------------------------------------------------------
-
-export function pendingOpToTransaction(op: PendingOp, wallet: string): ITransaction {
-  const type =
-    op.kind === 'claim'
-      ? 'polymarket_claim'
-      : op.side === 'SELL'
-        ? 'polymarket_sell'
-        : 'polymarket_buy'
-
-  const status = op.status === 'processing' ? 'pending' : op.status
-  // Inbound funds (sell proceeds / claim) land in the user's wallet.
-  const inbound = op.kind === 'claim' || op.side === 'SELL'
-
-  return {
-    id: `pending-${op.id}`,
-    trx_hash: '',
-    date: op.createdAt,
-    wallet_from: inbound ? '' : wallet,
-    contact_from_phone: '',
-    contact_from_name: null,
-    contact_from_avatar_url: null,
-    wallet_to: inbound ? wallet : '',
-    contact_to_phone: '',
-    contact_to_name: null,
-    contact_to_avatar_url: null,
-    token: op.token,
-    amount: op.amount,
-    fee: 0,
-    type,
-    status,
-    user_notes: op.status === 'failed' ? op.error : undefined,
-    polymarket_market_slug: op.marketSlug,
-    polymarket_size: op.size,
-    polymarket_pending_step: op.status === 'processing' ? op.step : undefined
-  }
-}

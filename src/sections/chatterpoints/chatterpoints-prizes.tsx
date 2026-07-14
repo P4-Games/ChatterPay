@@ -83,12 +83,12 @@ export default function ChatterpointsPrizes({ prizes, loading }: Props) {
         </Stack>
       ) : (
         <Stack sx={{ px: 1.5, pb: 2 }}>
-          {sorted.map((prize, index) => {
+          {sorted.map((prize) => {
             const medalColor = RANK_COLORS[prize.rank - 1] ?? RANK_COLORS[2]
 
             return (
               <Stack
-                key={`${prize.cycleId}-${index}`}
+                key={`${prize.cycleId}-${prize.rank}`}
                 direction='row'
                 alignItems='center'
                 spacing={2}

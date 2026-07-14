@@ -37,11 +37,8 @@ import BankingRecentTransitions from '../banking-recent-transitions'
 import DashboardPortfolioBalance from '../dashboard-portfolio-balance'
 import DashboardPositionsTable from '../dashboard-positions-table'
 import DashboardDrawer from '../dashboard-drawer'
-import {
-  usePolymarketActivity,
-  pendingOpToTransaction,
-  PolymarketActivityProvider
-} from '../polymarket-activity-context'
+import { pendingOpToTransaction } from '../pending-op-transaction'
+import { usePolymarketActivity, PolymarketActivityProvider } from '../polymarket-activity-context'
 
 // ----------------------------------------------------------------------
 
@@ -97,7 +94,9 @@ function BankingDashboardContent() {
 
   // Fetch tokens from database
   const { data: tokensData } = useGetTokens()
-  const tokens: IToken[] = tokensData?.data || []
+  // Stable reference: the `[]` fallback would otherwise be a new array every
+  // render and invalidate the tokenLogos memo below on each update.
+  const tokens = useMemo<IToken[]>(() => tokensData?.data || [], [tokensData])
 
   useEffect(() => {
     if (user?.wallet) {
@@ -175,7 +174,12 @@ function BankingDashboardContent() {
       ? { wallet: '', balances: [], totals: { usd: 0, ars: 0, brl: 0, uyu: 0 } }
       : balances || { wallet: '', balances: [], totals: { usd: 0, ars: 0, brl: 0, uyu: 0 } }
 
-  const safeTransactions: ITransaction[] = !walletAddress || isLoadingTrxs ? [] : transactions
+  // Stable reference: the `[]` fallback would otherwise be a new array every
+  // render and invalidate the merge memo below on each update.
+  const safeTransactions = useMemo<ITransaction[]>(
+    () => (!walletAddress || isLoadingTrxs ? [] : transactions),
+    [walletAddress, isLoadingTrxs, transactions]
+  )
 
   // Merge optimistic (in-flight) records on top of the real history. A synthetic
   // row is dropped once its real backend counterpart shows up: by purchase_id for
@@ -184,7 +188,9 @@ function BankingDashboardContent() {
     if (!pendingOps.length) return safeTransactions
 
     const realPurchaseIds = new Set(
-      safeTransactions.map((tx) => tx.polymarket_purchase_id).filter(Boolean) as string[]
+      safeTransactions.flatMap((tx) =>
+        tx.polymarket_purchase_id ? [tx.polymarket_purchase_id] : []
+      )
     )
 
     const txMs = (tx: ITransaction): number => {

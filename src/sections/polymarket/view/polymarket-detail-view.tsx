@@ -79,6 +79,25 @@ import type { AuthUserType } from 'src/auth/types'
 
 const PRESET_AMOUNTS = [POLYMARKET_MIN_ORDER_USD, 5, 10, 50, 100]
 
+// Static part of the order-success bottom drawer style (backgroundColor stays inline — it's theme-dependent).
+const ORDER_SUCCESS_DRAWER_STYLE = {
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  right: 0,
+  height: 320,
+  borderRadius: '20px 20px 0 0',
+  zIndex: 11,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: 16,
+  padding: '36px 24px 32px',
+  cursor: 'grab',
+  touchAction: 'none'
+} as const
+
 const OUTCOME_COLORS_LIGHT = [
   '#1B1B1B', // Black
   '#2196F3', // Blue
@@ -1210,22 +1229,8 @@ export default function PolymarketDetailView({ slug }: Props) {
                 }}
                 transition={{ type: 'spring', damping: 38, stiffness: 380 }}
                 style={{
-                  position: 'absolute',
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  height: 320,
-                  backgroundColor: theme.palette.background.paper,
-                  borderRadius: '20px 20px 0 0',
-                  zIndex: 11,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 16,
-                  padding: '36px 24px 32px',
-                  cursor: 'grab',
-                  touchAction: 'none'
+                  ...ORDER_SUCCESS_DRAWER_STYLE,
+                  backgroundColor: theme.palette.background.paper
                 }}
               >
                 <Box

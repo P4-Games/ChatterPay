@@ -23,9 +23,29 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover'
 
 import type { INFT } from 'src/types/wallet'
 
-import { getNftImageUrl } from './nfts-hero'
+import { getNftImageUrl } from './utils'
 
 // ----------------------------------------------------------------------
+
+const renderExternalLink = (url: string, name: string) => (
+  <Link href={url} target='_blank' rel='noopener noreferrer' color='primary.main'>
+    {name}
+  </Link>
+)
+
+// Glassy overlay chip used on top of the artwork
+const overlayChipSx = {
+  px: 1,
+  py: 0.25,
+  borderRadius: 0.75,
+  bgcolor: 'rgba(0, 0, 0, 0.56)',
+  backdropFilter: 'blur(6px)',
+  color: 'common.white',
+  typography: 'caption',
+  fontWeight: 700,
+  lineHeight: 1.6,
+  zIndex: 1
+} as const
 
 type Props = {
   nft: INFT
@@ -84,12 +104,6 @@ export default function NftItem({ nft }: Props) {
     setOpenMetadata(true)
   }
 
-  const renderExternalLink = (url: string, name: string) => (
-    <Link href={url} target='_blank' rel='noopener noreferrer' color='primary.main'>
-      {name}
-    </Link>
-  )
-
   const renderMapLink = (lng: string, lat: string) => {
     if (lng && lat) {
       const mapsUrl = `https://www.google.com/maps/@${lat},${lng},15z`
@@ -99,20 +113,6 @@ export default function NftItem({ nft }: Props) {
     }
     return <Typography variant='body2'>{t('nfts.item.geo-no-data')}</Typography>
   }
-
-  // Glassy overlay chip used on top of the artwork
-  const overlayChipSx = {
-    px: 1,
-    py: 0.25,
-    borderRadius: 0.75,
-    bgcolor: 'rgba(0, 0, 0, 0.56)',
-    backdropFilter: 'blur(6px)',
-    color: 'common.white',
-    typography: 'caption',
-    fontWeight: 700,
-    lineHeight: 1.6,
-    zIndex: 1
-  } as const
 
   const renderModalMetadata = (
     <Dialog open={openMetadata} onClose={() => setOpenMetadata(false)} fullWidth maxWidth='xs'>

@@ -30,7 +30,8 @@
     "pre-commit": "yarn run lint:fix && yarn run type-check && yarn run commitlint-check-comit-msg",
     "inspect": "cross-env NODE_OPTIONS=\"--inspect --trace-warnings\" next dev",
     "docker:build": "bash ./scripts/docker-build.sh",
-    "docker:run": "bash docker run -d -p 3000:3000 --name my-nextjs-container my-nextjs-app"
+    "docker:run": "bash docker run -d -p 3000:3000 --name my-nextjs-container my-nextjs-app",
+    "doctor": "npx react-doctor@latest"
   },
   "dependencies": {
     "@emotion/cache": "^11.10.5",

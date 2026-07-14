@@ -54,7 +54,7 @@ const CacCounter = () => {
     const controls = animate(100, 0.3, {
       duration: 2.2,
       ease: [0.16, 1, 0.3, 1],
-      onUpdate: (latest) => setValue(latest)
+      onUpdate: setValue
     })
     return () => controls.stop()
   }, [isInView, shouldReduceMotion])

@@ -581,12 +581,12 @@ function PolymarketPurchaseDrawer({
                 <Stack spacing={1}>
                   {(() => {
                     let foundFailed = false
-                    return details.steps.map((step, idx) => {
+                    return details.steps.map((step) => {
                       if (foundFailed) return null
                       if (step.status === 'failed') foundFailed = true
                       return (
                         <Box
-                          key={idx}
+                          key={step.name}
                           sx={{
                             display: 'flex',
                             alignItems: 'center',

@@ -101,7 +101,9 @@ export function useGetWalletTransactionsCached(walletId: string) {
     }
   )
 
-  const fresh: ITransaction[] = Array.isArray(data) ? data : []
+  // Stable reference: without useMemo the `[]` fallback is a new array every
+  // render, which invalidates the merge memo below on each update.
+  const fresh = useMemo<ITransaction[]>(() => (Array.isArray(data) ? data : []), [data])
 
   const merged = useMemo(() => mergeTransactions(initialCache, fresh), [initialCache, fresh])
 

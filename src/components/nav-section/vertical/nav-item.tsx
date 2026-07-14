@@ -8,7 +8,7 @@ import ListItemButton from '@mui/material/ListItemButton'
 
 import { RouterLink } from 'src/routes/components'
 
-import Iconify from '../../iconify'
+import Iconify from '../../iconify/iconify'
 import type { NavItemProps, NavItemStateProps } from '../types'
 
 // ----------------------------------------------------------------------
