@@ -5,14 +5,13 @@ import Card from '@mui/material/Card'
 import Stack from '@mui/material/Stack'
 import Chip from '@mui/material/Chip'
 import Typography from '@mui/material/Typography'
-import LinearProgress from '@mui/material/LinearProgress'
 import { alpha, useTheme } from '@mui/material/styles'
 
 import { m } from 'framer-motion'
 import { useRouter } from 'src/routes/hooks'
 import { paths } from 'src/routes/paths'
 
-import { fNumber, fPercent } from 'src/utils/format-number'
+import { fNumber } from 'src/utils/format-number'
 
 import { HugeiconsIcon } from '@hugeicons/react'
 import { ArrowRight01Icon } from '@hugeicons/core-free-icons'
@@ -46,6 +45,7 @@ export default function PolymarketMarketCard({
   const noPrice = Number(market.outcome_prices?.[1] || 0)
   const yesPercent = Math.round(yesPrice * 100)
   const noPercent = Math.round(noPrice * 100)
+  const spreadPercent = 100 - yesPercent - noPercent
   const resolvedYes = isMarketResolvedYes(market)
 
   const handleClick = () => {
@@ -240,75 +240,58 @@ export default function PolymarketMarketCard({
             </Typography>
           </Stack>
         ) : (
-          <Stack spacing={1}>
+          <Stack spacing={0.75}>
             <Stack direction='row' alignItems='center' justifyContent='space-between'>
-              <Stack direction='row' alignItems='center' spacing={0.5}>
-                <Box
-                  sx={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: '50%',
-                    bgcolor: theme.palette.success.main
-                  }}
-                />
-                <Typography variant='caption' fontWeight={600}>
-                  {t('common.yes')}
-                </Typography>
-              </Stack>
               <Typography variant='caption' fontWeight={700} color='success.main'>
-                {yesPercent}¢
+                {t('common.yes')} {yesPercent}%
+              </Typography>
+              <Typography variant='caption' fontWeight={700} color='error.main'>
+                {noPercent}% {t('common.no')}
               </Typography>
             </Stack>
-            <LinearProgress
-              variant='determinate'
-              value={yesPercent}
+            {/* Unified Yes / spread / No bar with slash-angled dividers */}
+            <Box
               sx={{
-                height: 6,
-                borderRadius: 3,
-                bgcolor: alpha(theme.palette.success.main, 0.12),
-                '& .MuiLinearProgress-bar': {
-                  borderRadius: 3,
-                  bgcolor: theme.palette.success.main
-                }
+                display: 'flex',
+                height: 18,
+                borderRadius: '5px',
+                overflow: 'hidden',
+                gap: '3px'
               }}
-            />
-
-            <Stack
-              direction='row'
-              alignItems='center'
-              justifyContent='space-between'
-              sx={{ mt: 0.5 }}
             >
-              <Stack direction='row' alignItems='center' spacing={0.5}>
+              <Box
+                sx={{
+                  width: `${yesPercent}%`,
+                  flexShrink: 0,
+                  ml: '-8px',
+                  bgcolor: alpha(theme.palette.success.main, 0.85),
+                  transform: 'skewX(-16deg)',
+                  boxShadow: `inset 0 2px 3px ${alpha(theme.palette.common.white, 0.25)}, inset 0 -2px 3px ${alpha(theme.palette.common.black, 0.15)}`
+                }}
+              />
+              {spreadPercent > 0 && (
                 <Box
                   sx={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: '50%',
-                    bgcolor: theme.palette.error.main
+                    flex: 1,
+                    minWidth: 0,
+                    bgcolor: alpha(theme.palette.grey[500], 0.24),
+                    transform: 'skewX(-16deg)',
+                    boxShadow: `inset 0 2px 3px ${alpha(theme.palette.common.black, 0.08)}`
                   }}
                 />
-                <Typography variant='caption' fontWeight={600}>
-                  {t('common.no')}
-                </Typography>
-              </Stack>
-              <Typography variant='caption' fontWeight={700} color='error.main'>
-                {noPercent}¢
-              </Typography>
-            </Stack>
-            <LinearProgress
-              variant='determinate'
-              value={noPercent}
-              sx={{
-                height: 6,
-                borderRadius: 3,
-                bgcolor: alpha(theme.palette.error.main, 0.12),
-                '& .MuiLinearProgress-bar': {
-                  borderRadius: 3,
-                  bgcolor: theme.palette.error.main
-                }
-              }}
-            />
+              )}
+              <Box
+                sx={{
+                  width: `${noPercent}%`,
+                  flexShrink: 0,
+                  mr: '-8px',
+                  bgcolor: alpha(theme.palette.error.main, 0.85),
+                  transform: 'skewX(-16deg)',
+                  boxShadow: `inset 0 2px 3px ${alpha(theme.palette.common.white, 0.25)}, inset 0 -2px 3px ${alpha(theme.palette.common.black, 0.15)}`,
+                  ...(spreadPercent <= 0 && { ml: 'auto' })
+                }}
+              />
+            </Box>
           </Stack>
         )}
 

@@ -216,7 +216,7 @@
       },
       "card-3": {
         "title": "Predice el futuro con Polymarket",
-        "description": "Negocia sobre el resultado de eventos del mundo real. Política, deportes, cripto, directamente desde tu chat."
+        "description": "Negocia sobre el resultado de eventos del mundo real. Política, deportes, cripto y más, desde tu cuenta ChatterPay."
       },
       "card-4": {
         "title": "La forma más económica de enviar dinero al extranjero",
@@ -909,8 +909,8 @@
     "about": "Sobre",
     "about-event": "Sobre este evento",
     "predict-on": "Predecir en",
-    "making-predictions": "Predecí. Ganá. Repetí.",
-    "just-with-whatsapp": "Elegí el resultado correcto y cobrá. Con Polymarket, simple como un mensaje.",
+    "making-predictions": "Predecí eventos del mundo real",
+    "just-with-whatsapp": "Operá sobre resultados de política, deportes, cripto y más. Impulsado por Polymarket.",
     "trending-today": "Tendencia de Hoy:",
     "creating-account": "Creando cuenta",
     "submitting": "Enviando",

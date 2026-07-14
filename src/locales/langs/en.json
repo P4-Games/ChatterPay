@@ -216,7 +216,7 @@
       },
       "card-3": {
         "title": "Predict the future with Polymarket",
-        "description": "Trade on the outcome of real-world events. Politics, sports, crypto, directly from your chat."
+        "description": "Trade on the outcome of real-world events. Politics, sports, crypto and more, from your ChatterPay account."
       },
       "card-4": {
         "title": "The cheapest way to send money abroad",
@@ -909,8 +909,8 @@
     "about": "About",
     "about-event": "About this event",
     "predict-on": "Predict on",
-    "making-predictions": "Predict. Win. Repeat.",
-    "just-with-whatsapp": "Pick the right outcome and get paid. Powered by Polymarket, simple as a text.",
+    "making-predictions": "Predict real-world events",
+    "just-with-whatsapp": "Trade on outcomes in politics, sports, crypto and more. Powered by Polymarket.",
     "trending-today": "Trending Today:",
     "creating-account": "Creating account",
     "submitting": "Submitting",
