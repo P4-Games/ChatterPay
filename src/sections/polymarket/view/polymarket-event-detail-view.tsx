@@ -25,6 +25,7 @@ import { fNumber } from 'src/utils/format-number'
 
 import PolymarketMarketCard from '../polymarket-market-card'
 import PolymarketTermsOverlay from '../polymarket-terms-overlay'
+import { sortMarketOptions } from '../polymarket-market-sort'
 import { usePolymarketAccountStatus } from '../use-polymarket-account-status'
 import {
   EventDetailSkeleton,
@@ -90,11 +91,13 @@ export default function PolymarketEventDetailView({ eventId }: Props) {
     return <EventDetailNotFound />
   }
 
-  const visibleMarkets = event.markets.filter((m) => {
-    const hasVolume = (m.volume || 0) > 0
-    const hasPrices = (m.outcome_prices || []).some((p) => Number(p) > 0)
-    return hasVolume || hasPrices
-  })
+  const visibleMarkets = sortMarketOptions(
+    event.markets.filter((m) => {
+      const hasVolume = (m.volume || 0) > 0
+      const hasPrices = (m.outcome_prices || []).some((p) => Number(p) > 0)
+      return hasVolume || hasPrices
+    })
+  )
 
   return (
     <>

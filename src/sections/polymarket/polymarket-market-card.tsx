@@ -20,6 +20,8 @@ import { ArrowRight01Icon } from '@hugeicons/core-free-icons'
 import Iconify from 'src/components/iconify'
 import { useTranslate } from 'src/locales'
 
+import { isMarketResolvedYes } from './polymarket-market-sort'
+
 import type { IPolymarketMarket } from 'src/types/polymarket'
 
 // ----------------------------------------------------------------------
@@ -44,6 +46,7 @@ export default function PolymarketMarketCard({
   const noPrice = Number(market.outcome_prices?.[1] || 0)
   const yesPercent = Math.round(yesPrice * 100)
   const noPercent = Math.round(noPrice * 100)
+  const resolvedYes = isMarketResolvedYes(market)
 
   const handleClick = () => {
     router.push(paths.dashboard.polymarket.detail(market.slug))
@@ -207,77 +210,107 @@ export default function PolymarketMarketCard({
           />
         </Stack>
 
-        {/* Yes / No bars */}
-        <Stack spacing={1}>
-          <Stack direction='row' alignItems='center' justifyContent='space-between'>
-            <Stack direction='row' alignItems='center' spacing={0.5}>
-              <Box
-                sx={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: '50%',
-                  bgcolor: theme.palette.success.main
-                }}
-              />
-              <Typography variant='caption' fontWeight={600}>
-                {t('common.yes')}
-              </Typography>
-            </Stack>
-            <Typography variant='caption' fontWeight={700} color='success.main'>
-              {yesPercent}¢
-            </Typography>
-          </Stack>
-          <LinearProgress
-            variant='determinate'
-            value={yesPercent}
-            sx={{
-              height: 6,
-              borderRadius: 3,
-              bgcolor: alpha(theme.palette.success.main, 0.12),
-              '& .MuiLinearProgress-bar': {
-                borderRadius: 3,
-                bgcolor: theme.palette.success.main
-              }
-            }}
-          />
-
+        {/* Resolved badge (closed market) or Yes / No bars (live market) */}
+        {market.closed ? (
           <Stack
             direction='row'
             alignItems='center'
-            justifyContent='space-between'
-            sx={{ mt: 0.5 }}
+            spacing={1}
+            sx={{
+              px: 1.5,
+              py: 1,
+              borderRadius: 1,
+              bgcolor: alpha(
+                resolvedYes ? theme.palette.success.main : theme.palette.error.main,
+                0.08
+              )
+            }}
           >
-            <Stack direction='row' alignItems='center' spacing={0.5}>
-              <Box
-                sx={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: '50%',
-                  bgcolor: theme.palette.error.main
-                }}
-              />
-              <Typography variant='caption' fontWeight={600}>
-                {t('common.no')}
-              </Typography>
-            </Stack>
-            <Typography variant='caption' fontWeight={700} color='error.main'>
-              {noPercent}¢
+            <Iconify
+              icon={resolvedYes ? 'solar:check-circle-bold' : 'solar:close-circle-bold'}
+              width={18}
+              sx={{ color: resolvedYes ? 'success.main' : 'error.main' }}
+            />
+            <Typography
+              variant='subtitle2'
+              fontWeight={700}
+              sx={{ color: resolvedYes ? 'success.main' : 'error.main' }}
+            >
+              {resolvedYes ? t('common.yes') : t('common.no')}
             </Typography>
           </Stack>
-          <LinearProgress
-            variant='determinate'
-            value={noPercent}
-            sx={{
-              height: 6,
-              borderRadius: 3,
-              bgcolor: alpha(theme.palette.error.main, 0.12),
-              '& .MuiLinearProgress-bar': {
+        ) : (
+          <Stack spacing={1}>
+            <Stack direction='row' alignItems='center' justifyContent='space-between'>
+              <Stack direction='row' alignItems='center' spacing={0.5}>
+                <Box
+                  sx={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: '50%',
+                    bgcolor: theme.palette.success.main
+                  }}
+                />
+                <Typography variant='caption' fontWeight={600}>
+                  {t('common.yes')}
+                </Typography>
+              </Stack>
+              <Typography variant='caption' fontWeight={700} color='success.main'>
+                {yesPercent}¢
+              </Typography>
+            </Stack>
+            <LinearProgress
+              variant='determinate'
+              value={yesPercent}
+              sx={{
+                height: 6,
                 borderRadius: 3,
-                bgcolor: theme.palette.error.main
-              }
-            }}
-          />
-        </Stack>
+                bgcolor: alpha(theme.palette.success.main, 0.12),
+                '& .MuiLinearProgress-bar': {
+                  borderRadius: 3,
+                  bgcolor: theme.palette.success.main
+                }
+              }}
+            />
+
+            <Stack
+              direction='row'
+              alignItems='center'
+              justifyContent='space-between'
+              sx={{ mt: 0.5 }}
+            >
+              <Stack direction='row' alignItems='center' spacing={0.5}>
+                <Box
+                  sx={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: '50%',
+                    bgcolor: theme.palette.error.main
+                  }}
+                />
+                <Typography variant='caption' fontWeight={600}>
+                  {t('common.no')}
+                </Typography>
+              </Stack>
+              <Typography variant='caption' fontWeight={700} color='error.main'>
+                {noPercent}¢
+              </Typography>
+            </Stack>
+            <LinearProgress
+              variant='determinate'
+              value={noPercent}
+              sx={{
+                height: 6,
+                borderRadius: 3,
+                bgcolor: alpha(theme.palette.error.main, 0.12),
+                '& .MuiLinearProgress-bar': {
+                  borderRadius: 3,
+                  bgcolor: theme.palette.error.main
+                }
+              }}
+            />
+          </Stack>
+        )}
 
         {/* Volume & End Date */}
         <Stack

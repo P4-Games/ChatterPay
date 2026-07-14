@@ -18,6 +18,8 @@ import { ArrowRight01Icon } from '@hugeicons/core-free-icons'
 import Iconify from 'src/components/iconify'
 import { useTranslate } from 'src/locales'
 
+import { sortMarketOptions, isMarketResolvedYes } from './polymarket-market-sort'
+
 import type { IPolymarketEvent } from 'src/types/polymarket'
 
 // ----------------------------------------------------------------------
@@ -36,7 +38,8 @@ export default function PolymarketEventCard({ event, compact = false }: Props) {
 
   const firstMarket = event.markets[0]
   const optionCount = event.markets.length
-  const visibleOptions = event.markets.slice(0, MAX_VISIBLE_OPTIONS)
+  const sortedMarkets = sortMarketOptions(event.markets)
+  const visibleOptions = sortedMarkets.slice(0, MAX_VISIBLE_OPTIONS)
   const hiddenCount = optionCount - MAX_VISIBLE_OPTIONS
 
   const totalVolume = event.markets.reduce((sum, m) => sum + (m.volume || 0), 0)
@@ -184,6 +187,7 @@ export default function PolymarketEventCard({ event, compact = false }: Props) {
           {visibleOptions.map((market) => {
             const yesPrice = Number(market.outcome_prices?.[0] || 0)
             const yesPercent = Math.round(yesPrice * 100)
+            const resolvedYes = isMarketResolvedYes(market)
 
             return (
               <Stack
@@ -212,16 +216,35 @@ export default function PolymarketEventCard({ event, compact = false }: Props) {
                 >
                   {getOptionLabel(market)}
                 </Typography>
-                <Typography
-                  variant='caption'
-                  sx={{
-                    fontWeight: 700,
-                    color: theme.palette.success.main,
-                    flexShrink: 0
-                  }}
-                >
-                  {yesPercent}%
-                </Typography>
+                {market.closed ? (
+                  <Stack direction='row' alignItems='center' spacing={0.5} sx={{ flexShrink: 0 }}>
+                    <Iconify
+                      icon={resolvedYes ? 'solar:check-circle-bold' : 'solar:close-circle-bold'}
+                      width={14}
+                      sx={{ color: resolvedYes ? 'success.main' : 'error.main' }}
+                    />
+                    <Typography
+                      variant='caption'
+                      sx={{
+                        fontWeight: 700,
+                        color: resolvedYes ? 'success.main' : 'error.main'
+                      }}
+                    >
+                      {resolvedYes ? t('common.yes') : t('common.no')}
+                    </Typography>
+                  </Stack>
+                ) : (
+                  <Typography
+                    variant='caption'
+                    sx={{
+                      fontWeight: 700,
+                      color: theme.palette.success.main,
+                      flexShrink: 0
+                    }}
+                  >
+                    {yesPercent}%
+                  </Typography>
+                )}
               </Stack>
             )
           })}
