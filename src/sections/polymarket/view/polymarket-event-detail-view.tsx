@@ -24,13 +24,14 @@ import { useSettingsContext } from 'src/components/settings'
 import { fNumber } from 'src/utils/format-number'
 
 import PolymarketMarketCard from '../polymarket-market-card'
+import PolymarketTeamLogos, { matchTeamLogo } from '../polymarket-team-logos'
 import PolymarketTermsOverlay from '../polymarket-terms-overlay'
 import { sortMarketOptions } from '../polymarket-market-sort'
 import { usePolymarketAccountStatus } from '../use-polymarket-account-status'
 import {
   EventDetailSkeleton,
   EventDetailNotFound,
-  EventAboutDialog
+  EventRulesDrawer
 } from './polymarket-event-detail-sections'
 
 import type { IPolymarketEvent } from 'src/types/polymarket'
@@ -165,20 +166,24 @@ export default function PolymarketEventDetailView({ eventId }: Props) {
                   spacing={2}
                   sx={{ flex: 1, minWidth: 0 }}
                 >
-                  {(event.image || event.icon || event.markets[0]?.image) && (
-                    <Box
-                      component='img'
-                      src={event.image || event.icon || event.markets[0]?.image}
-                      alt={event.title}
-                      sx={{
-                        width: 56,
-                        height: 56,
-                        borderRadius: 1.5,
-                        objectFit: 'cover',
-                        bgcolor: 'grey.200',
-                        flexShrink: 0
-                      }}
-                    />
+                  {(event.teams?.length ?? 0) >= 2 ? (
+                    <PolymarketTeamLogos teams={event.teams!} size={56} />
+                  ) : (
+                    (event.image || event.icon || event.markets[0]?.image) && (
+                      <Box
+                        component='img'
+                        src={event.image || event.icon || event.markets[0]?.image}
+                        alt={event.title}
+                        sx={{
+                          width: 56,
+                          height: 56,
+                          borderRadius: 1.5,
+                          objectFit: 'cover',
+                          bgcolor: 'grey.200',
+                          flexShrink: 0
+                        }}
+                      />
+                    )
                   )}
                   <Typography
                     variant='h4'
@@ -204,7 +209,7 @@ export default function PolymarketEventDetailView({ eventId }: Props) {
                       </strong>
                     </Typography>
                   )}
-                  {event.description && (
+                  {(event.description || visibleMarkets.some((m) => m.description)) && (
                     <Button
                       size='small'
                       variant='outlined'
@@ -223,21 +228,20 @@ export default function PolymarketEventDetailView({ eventId }: Props) {
                         px: 2
                       }}
                     >
-                      {t('polymarket.about')}
+                      {t('polymarket.market-rules')}
                     </Button>
                   )}
                 </Stack>
               </Stack>
             </Stack>
 
-            {/* About dialog */}
-            {event.description && (
-              <EventAboutDialog
-                open={aboutOpen}
-                onClose={() => setAboutOpen(false)}
-                description={event.description}
-              />
-            )}
+            {/* Rules drawer — event description + every market's resolution rules */}
+            <EventRulesDrawer
+              open={aboutOpen}
+              onClose={() => setAboutOpen(false)}
+              description={event.description}
+              markets={visibleMarkets}
+            />
 
             {/* Markets Grid */}
             <Box component={m.div} variants={fadeInUp} transition={{ duration: 0.4 }}>
@@ -248,7 +252,14 @@ export default function PolymarketEventDetailView({ eventId }: Props) {
               <Grid container spacing={3}>
                 {visibleMarkets.map((market) => (
                   <Grid xs={12} sm={6} md={4} key={market.condition_id || market.slug}>
-                    <PolymarketMarketCard market={market} inlineImage />
+                    <PolymarketMarketCard
+                      market={market}
+                      inlineImage
+                      imageOverride={matchTeamLogo(
+                        event.teams,
+                        market.group_item_title || market.question
+                      )}
+                    />
                   </Grid>
                 ))}
               </Grid>

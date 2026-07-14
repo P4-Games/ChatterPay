@@ -6,6 +6,7 @@ import type {
   IPolymarketOrder,
   IPolymarketMarket,
   IPolymarketEvent,
+  IPolymarketTeam,
   IPolymarketPosition,
   IPolymarketPortfolio,
   IPolymarketAccountStatus,
@@ -128,6 +129,16 @@ function normalizeMarket(raw: any): IPolymarketMarket {
   }
 }
 
+function normalizeTeam(raw: any): IPolymarketTeam {
+  return {
+    name: raw.name ?? '',
+    logo: raw.logo ?? '',
+    abbreviation: raw.abbreviation ?? '',
+    color: raw.color ?? '',
+    ordering: raw.ordering ?? ''
+  }
+}
+
 function normalizeEvent(raw: any): IPolymarketEvent {
   return {
     id: raw.id ?? '',
@@ -136,7 +147,12 @@ function normalizeEvent(raw: any): IPolymarketEvent {
     description: raw.description ?? '',
     image: raw.image ?? '',
     icon: raw.icon ?? '',
-    markets: Array.isArray(raw.markets) ? raw.markets.map(normalizeMarket) : []
+    markets: Array.isArray(raw.markets) ? raw.markets.map(normalizeMarket) : [],
+    // Sports events: team flags/crests (the event-level image is a generic sport image)
+    ...(Array.isArray(raw.teams) && raw.teams.length > 0
+      ? { teams: raw.teams.map(normalizeTeam) }
+      : {}),
+    ...(raw.showMarketImages !== undefined ? { show_market_images: !!raw.showMarketImages } : {})
   }
 }
 

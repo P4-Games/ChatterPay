@@ -14,6 +14,7 @@ import { useTranslate } from 'src/locales'
 import PolymarketMarketToolbar from './polymarket-market-toolbar'
 import PolymarketMarketCard from './polymarket-market-card'
 import PolymarketEventCard from './polymarket-event-card'
+import { matchTeamLogo } from './polymarket-team-logos'
 
 import type { IPolymarketEvent } from 'src/types/polymarket'
 
@@ -157,7 +158,14 @@ export default function PolymarketMarketList({
         return (
           <Grid xs={12} sm={6} md={4} lg={3} key={key} sx={{ display: 'flex' }}>
             {isSingleMarket ? (
-              <PolymarketMarketCard market={event.markets[0]} inlineImage />
+              <PolymarketMarketCard
+                market={event.markets[0]}
+                inlineImage
+                imageOverride={matchTeamLogo(
+                  event.teams,
+                  event.markets[0].group_item_title || event.markets[0].question
+                )}
+              />
             ) : (
               <PolymarketEventCard event={event} />
             )}

@@ -29,18 +29,25 @@ type Props = {
   market: IPolymarketMarket
   compact?: boolean
   inlineImage?: boolean
+  /**
+   * Replaces the market's own image (e.g. a team flag on sports events, where
+   * market images are generic placeholders).
+   */
+  imageOverride?: string
 }
 
 export default function PolymarketMarketCard({
   market,
   compact = false,
-  inlineImage = false
+  inlineImage = false,
+  imageOverride
 }: Props) {
   const { t } = useTranslate()
   const theme = useTheme()
   const router = useRouter()
 
   const displayTitle = market.group_item_title || market.question
+  const displayImage = imageOverride || market.image
   const yesPrice = Number(market.outcome_prices?.[0] || 0)
   const noPrice = Number(market.outcome_prices?.[1] || 0)
   const yesPercent = Math.round(yesPrice * 100)
@@ -69,10 +76,10 @@ export default function PolymarketMarketCard({
         }}
       >
         <Stack direction='row' alignItems='center' spacing={2}>
-          {market.image && (
+          {displayImage && (
             <Box
               component='img'
-              src={market.image}
+              src={displayImage}
               alt={displayTitle}
               sx={{
                 width: 63,
@@ -132,10 +139,10 @@ export default function PolymarketMarketCard({
       }}
     >
       {/* Image — hero banner (default) or hidden (inlineImage mode) */}
-      {!inlineImage && market.image && (
+      {!inlineImage && displayImage && (
         <Box
           component='img'
-          src={market.image}
+          src={displayImage}
           alt={displayTitle}
           sx={{
             width: '100%',
@@ -170,10 +177,10 @@ export default function PolymarketMarketCard({
           justifyContent='space-between'
           spacing={inlineImage ? 1.5 : 2}
         >
-          {inlineImage && market.image && (
+          {inlineImage && displayImage && (
             <Box
               component='img'
-              src={market.image}
+              src={displayImage}
               alt={displayTitle}
               sx={{
                 width: 44,

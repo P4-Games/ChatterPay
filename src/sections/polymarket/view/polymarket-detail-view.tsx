@@ -66,6 +66,8 @@ import { fNumber } from 'src/utils/format-number'
 import { toEpochMs } from 'src/utils/format-time'
 
 import PolymarketTermsOverlay from '../polymarket-terms-overlay'
+import { matchTeamLogo } from '../polymarket-team-logos'
+import { EventRulesDrawer } from './polymarket-event-detail-sections'
 
 import type {
   IPolymarketMarket,
@@ -292,6 +294,7 @@ export default function PolymarketDetailView({ slug }: Props) {
   const [partialSellAmount, setPartialSellAmount] = useState('')
   const [optimisticPositions, setOptimisticPositions] = useState<IPolymarketPosition[]>([])
   const [orderSuccess, setOrderSuccess] = useState<{ side: 'BUY' | 'SELL' } | null>(null)
+  const [rulesOpen, setRulesOpen] = useState(false)
 
   const closeOrderSuccess = () => {
     setOrderSuccess(null)
@@ -830,6 +833,14 @@ export default function PolymarketDetailView({ slug }: Props) {
   // Key off `closed` only — the backend also flags some live placeholder markets as
   // `active: false`, so that field would wrongly mark them as closed.
   const isMarketClosed = !!market.closed
+
+  // Sports markets carry a generic sport image (e.g. a soccer ball); the team
+  // flag lives on the parent event. Resolve it from the cached events feed.
+  const parentEvent = events.find((e) =>
+    e.markets.some((m) => m.condition_id === market.condition_id)
+  )
+  const headerImage =
+    matchTeamLogo(parentEvent?.teams, market.group_item_title || market.question) || market.image
 
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   //  RENDER SECTIONS
@@ -1482,6 +1493,10 @@ export default function PolymarketDetailView({ slug }: Props) {
       {showTermsOverlay && accountStatus?.terms && (
         <PolymarketTermsOverlay terms={accountStatus.terms} onAccepted={checkAccountStatus} />
       )}
+
+      {/* Market rules drawer */}
+      <EventRulesDrawer open={rulesOpen} onClose={() => setRulesOpen(false)} markets={[market]} />
+
       <Box
         sx={{
           mt: -13,
@@ -1546,10 +1561,10 @@ export default function PolymarketDetailView({ slug }: Props) {
                   spacing={2}
                   sx={{ flex: 1, minWidth: 0 }}
                 >
-                  {market.image && (
+                  {headerImage && (
                     <Box
                       component='img'
-                      src={market.image}
+                      src={headerImage}
                       alt={market.question}
                       sx={{
                         width: 48,
@@ -1617,6 +1632,28 @@ export default function PolymarketDetailView({ slug }: Props) {
                   )}
                 </Stack>
               </Stack>
+
+              {/* Market rules — always visible below the title */}
+              {market.description && (
+                <Button
+                  size='small'
+                  variant='outlined'
+                  color='inherit'
+                  startIcon={<Iconify icon='eva:info-outline' width={16} />}
+                  onClick={() => setRulesOpen(true)}
+                  sx={{
+                    alignSelf: 'flex-start',
+                    textTransform: 'none',
+                    fontWeight: 600,
+                    fontSize: '0.8rem',
+                    borderColor: alpha(theme.palette.grey[500], 0.24),
+                    borderRadius: 50,
+                    px: 2
+                  }}
+                >
+                  {t('polymarket.market-rules')}
+                </Button>
+              )}
             </Stack>
 
             {/* ── DESKTOP: side-by-side layout ── */}

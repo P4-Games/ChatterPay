@@ -9,6 +9,7 @@ import Iconify from 'src/components/iconify'
 
 import PolymarketMarketCard from './polymarket-market-card'
 import PolymarketEventCard from './polymarket-event-card'
+import { matchTeamLogo } from './polymarket-team-logos'
 
 import type { IPolymarketEvent } from 'src/types/polymarket'
 
@@ -58,7 +59,14 @@ export default function PolymarketTrendingMarquee({ events }: Props) {
             return (
               <Box key={event.id || event.slug} sx={{ width: 361, flexShrink: 0 }}>
                 {isSingleMarket ? (
-                  <PolymarketMarketCard market={topMarket} compact />
+                  <PolymarketMarketCard
+                    market={topMarket}
+                    compact
+                    imageOverride={matchTeamLogo(
+                      event.teams,
+                      topMarket.group_item_title || topMarket.question
+                    )}
+                  />
                 ) : (
                   <PolymarketEventCard event={event} compact />
                 )}

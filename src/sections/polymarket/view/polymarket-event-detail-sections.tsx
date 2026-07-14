@@ -3,10 +3,9 @@
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
-import DialogTitle from '@mui/material/DialogTitle'
-import DialogContent from '@mui/material/DialogContent'
-import DialogActions from '@mui/material/DialogActions'
+import Drawer from '@mui/material/Drawer'
+import IconButton from '@mui/material/IconButton'
+import Divider from '@mui/material/Divider'
 import Skeleton from '@mui/material/Skeleton'
 import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
@@ -18,6 +17,8 @@ import { paths } from 'src/routes/paths'
 import { useTranslate } from 'src/locales'
 import { useSettingsContext } from 'src/components/settings'
 import Iconify from 'src/components/iconify'
+
+import type { IPolymarketMarket } from 'src/types/polymarket'
 
 // ----------------------------------------------------------------------
 
@@ -109,44 +110,81 @@ export function EventDetailNotFound() {
 
 // ----------------------------------------------------------------------
 
-type AboutDialogProps = {
+type RulesDrawerProps = {
   open: boolean
   onClose: VoidFunction
-  description: string
+  /** Event-level description shown at the top (optional) */
+  description?: string
+  markets: IPolymarketMarket[]
 }
 
 /**
- * "About this event" dialog showing the event description.
- * @param {AboutDialogProps} props - Open state, close handler and description text.
- * @returns {JSX.Element} The dialog.
+ * Side drawer with the event description and every market's resolution rules
+ * (e.g. sports: result within the first 90 minutes of regular play). Single
+ * entry point for all event/market conditions — neutral styling so it stays
+ * available without competing with the trading UI.
+ * @param {RulesDrawerProps} props - Open state, close handler, event description and markets.
+ * @returns {JSX.Element} The drawer.
  */
-export function EventAboutDialog({ open, onClose, description }: AboutDialogProps) {
+export function EventRulesDrawer({ open, onClose, description, markets }: RulesDrawerProps) {
   const { t } = useTranslate()
 
+  const marketsWithRules = markets.filter((m) => m.description)
+
   return (
-    <Dialog
+    <Drawer
+      anchor='right'
       open={open}
       onClose={onClose}
-      maxWidth='sm'
-      fullWidth
-      PaperProps={{ sx: { borderRadius: 3 } }}
+      PaperProps={{ sx: { width: { xs: '100%', sm: 420 } } }}
     >
-      <DialogTitle sx={{ fontWeight: 700 }}>{t('polymarket.about-event')}</DialogTitle>
-      <DialogContent>
-        <Typography variant='body2' sx={{ lineHeight: 1.8, whiteSpace: 'pre-line' }}>
-          {description}
+      <Stack
+        direction='row'
+        alignItems='center'
+        justifyContent='space-between'
+        sx={{ px: 3, py: 2 }}
+      >
+        <Typography variant='h6' sx={{ fontWeight: 700 }}>
+          {t('polymarket.market-rules')}
         </Typography>
-      </DialogContent>
-      <DialogActions sx={{ px: 3, pb: 2.5 }}>
-        <Button
-          onClick={onClose}
-          variant='contained'
-          color='primary'
-          sx={{ borderRadius: 50, textTransform: 'none', fontWeight: 600 }}
-        >
-          {t('polymarket.got-it')}
-        </Button>
-      </DialogActions>
-    </Dialog>
+        <IconButton onClick={onClose} edge='end'>
+          <Iconify icon='eva:close-fill' width={20} />
+        </IconButton>
+      </Stack>
+
+      <Divider />
+
+      <Stack spacing={3} sx={{ px: 3, py: 2.5, overflowY: 'auto' }}>
+        {description && (
+          <Box>
+            <Typography variant='subtitle2' sx={{ fontWeight: 700, mb: 0.5 }}>
+              {t('polymarket.about-event')}
+            </Typography>
+            <Typography
+              variant='body2'
+              color='text.secondary'
+              sx={{ lineHeight: 1.7, whiteSpace: 'pre-line' }}
+            >
+              {description}
+            </Typography>
+          </Box>
+        )}
+
+        {marketsWithRules.map((market) => (
+          <Box key={market.condition_id || market.slug}>
+            <Typography variant='subtitle2' sx={{ fontWeight: 700, mb: 0.5 }}>
+              {market.group_item_title || market.question}
+            </Typography>
+            <Typography
+              variant='body2'
+              color='text.secondary'
+              sx={{ lineHeight: 1.7, whiteSpace: 'pre-line' }}
+            >
+              {market.description}
+            </Typography>
+          </Box>
+        ))}
+      </Stack>
+    </Drawer>
   )
 }

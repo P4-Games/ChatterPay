@@ -30,6 +30,21 @@ export type IPolymarketMarket = {
   }>
 }
 
+/**
+ * Team metadata on sports events. `logo` is the flag/crest Polymarket's own UI
+ * composes for the event thumbnail — the event-level image on sports events is
+ * just a generic sport image (e.g. a soccer ball).
+ */
+export type IPolymarketTeam = {
+  name: string
+  logo: string
+  abbreviation: string
+  /** Team accent color (hex) */
+  color: string
+  /** Side within the fixture: 'home' | 'away' */
+  ordering: string
+}
+
 export type IPolymarketEvent = {
   id: string
   title: string
@@ -38,6 +53,10 @@ export type IPolymarketEvent = {
   image: string
   icon: string
   markets: IPolymarketMarket[]
+  /** Present on sports events — team names, flags/crests, colors */
+  teams?: IPolymarketTeam[]
+  /** When false (sports events), per-market images are generic placeholders */
+  show_market_images?: boolean
 }
 
 export type IPolymarketAccountInfo = {
