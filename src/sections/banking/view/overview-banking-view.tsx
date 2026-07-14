@@ -4,22 +4,16 @@ import dynamic from 'next/dynamic'
 import { useState, useEffect, useMemo } from 'react'
 
 import Box from '@mui/material/Box'
-import Stack from '@mui/material/Stack'
 import Container from '@mui/material/Container'
 import { useTheme } from '@mui/material/styles'
 
 import { useTranslate } from 'src/locales'
-import { POLYMARKET_REFRESH } from 'src/config-global'
 import type { AuthUserType } from 'src/auth/types'
 import { useAuthContext } from 'src/auth/hooks'
 import {
   useGetTokens,
   useGetWalletBalance,
   useGetWalletTransactionsCached,
-  useGetPolymarketPositionsSWR,
-  useGetPolymarketOrdersSWR,
-  useGetPolymarketPortfolioSWR,
-  useGetPolymarketTradesSWR,
   polymarketBridgeWithdraw,
   polymarketAccountStatus
 } from 'src/app/api/hooks'
@@ -34,18 +28,14 @@ import type { IToken, IBalances, ITransaction } from 'src/types/wallet'
 import type { TokenPriceData } from 'src/app/api/services/coingecko/coingecko-service'
 
 import BankingRecentTransitions from '../banking-recent-transitions'
+import BankingPolymarketDrawer from '../banking-polymarket-drawer'
 import DashboardPortfolioBalance from '../dashboard-portfolio-balance'
-import DashboardPositionsTable from '../dashboard-positions-table'
-import DashboardDrawer from '../dashboard-drawer'
-import { pendingOpToTransaction } from '../pending-op-transaction'
+import { mergePendingOps } from '../pending-op-transaction'
 import { usePolymarketActivity, PolymarketActivityProvider } from '../polymarket-activity-context'
 
 // ----------------------------------------------------------------------
 
 // Code-split on-demand / heavy components so they stay out of the initial dashboard bundle.
-const PolymarketPNLWidget = dynamic(() => import('src/sections/polymarket/polymarket-pnl-widget'), {
-  ssr: false
-})
 const DashboardDepositModal = dynamic(() => import('../dashboard-deposit-modal'), { ssr: false })
 const DashboardWithdrawModal = dynamic(() => import('../dashboard-withdraw-modal'), { ssr: false })
 const DashboardSwapModal = dynamic(() => import('../dashboard-swap-modal'), { ssr: false })
@@ -123,27 +113,6 @@ function BankingDashboardContent() {
 
   const { pendingOps, addClaim, failOp, completeOp } = usePolymarketActivity()
 
-  // Polymarket data — only fetch/poll while the drawer is open (data is only shown there).
-  // SWR keeps the cache per key, so re-opening shows data instantly and revalidates in background.
-  const isPolymarketDrawerOpen = polymarketDrawer.value
-  const { data: positions = [], isLoading: isLoadingPositions } = useGetPolymarketPositionsSWR(
-    POLYMARKET_REFRESH.LIVE_MS,
-    isPolymarketDrawerOpen
-  )
-  const { data: orders = [], isLoading: isLoadingOrders } = useGetPolymarketOrdersSWR(
-    POLYMARKET_REFRESH.LIVE_MS,
-    isPolymarketDrawerOpen
-  )
-  const { data: portfolioData, isLoading: isLoadingPortfolio } = useGetPolymarketPortfolioSWR(
-    POLYMARKET_REFRESH.LIVE_MS,
-    isPolymarketDrawerOpen
-  )
-  const { data: trades = [], isLoading: isLoadingTrades } = useGetPolymarketTradesSWR(
-    POLYMARKET_REFRESH.HISTORY_MS,
-    undefined,
-    isPolymarketDrawerOpen
-  )
-
   // Fetch CoinGecko price data for crypto dropdown
   useEffect(() => {
     const fetchPrices = async () => {
@@ -181,47 +150,10 @@ function BankingDashboardContent() {
     [walletAddress, isLoadingTrxs, transactions]
   )
 
-  // Merge optimistic (in-flight) records on top of the real history. A synthetic
-  // row is dropped once its real backend counterpart shows up: by purchase_id for
-  // sells, or by a matching claim/withdraw record dated after the claim started.
-  const mergedTransactions = useMemo<ITransaction[]>(() => {
-    if (!pendingOps.length) return safeTransactions
-
-    const realPurchaseIds = new Set(
-      safeTransactions.flatMap((tx) =>
-        tx.polymarket_purchase_id ? [tx.polymarket_purchase_id] : []
-      )
-    )
-
-    const txMs = (tx: ITransaction): number => {
-      const d = tx.date
-      if (typeof d === 'number') return d
-      const ms = new Date(d as string | Date).getTime()
-      return Number.isNaN(ms) ? 0 : ms
-    }
-
-    const visibleOps = pendingOps.filter((op) => {
-      if (op.purchaseId && realPurchaseIds.has(op.purchaseId)) return false
-      if (op.kind === 'claim') {
-        const supersededBy = safeTransactions.some(
-          (tx) =>
-            (tx.type === 'polymarket_claim' || tx.type === 'polymarket_withdraw') &&
-            txMs(tx) >= op.createdAt - 5000
-        )
-        if (supersededBy) return false
-      }
-      return true
-    })
-
-    if (!visibleOps.length) return safeTransactions
-
-    const synthetic = visibleOps
-      .slice()
-      .sort((a, b) => b.createdAt - a.createdAt)
-      .map((op) => pendingOpToTransaction(op, walletAddress))
-
-    return [...synthetic, ...safeTransactions]
-  }, [pendingOps, safeTransactions, walletAddress])
+  const mergedTransactions = useMemo<ITransaction[]>(
+    () => mergePendingOps(pendingOps, safeTransactions, walletAddress),
+    [pendingOps, safeTransactions, walletAddress]
+  )
 
   const idleUsdc = safeBalances.polymarket?.idle_usdc ?? 0
   const polymarketTotalUsd = safeBalances.polymarket?.total_usd ?? 0
@@ -333,27 +265,7 @@ function BankingDashboardContent() {
       </Container>
 
       {/* Polymarket Drawer — PNL + Positions (50% screen width) */}
-      <DashboardDrawer
-        open={polymarketDrawer.value}
-        onClose={polymarketDrawer.onFalse}
-        title='Polymarket'
-        width='50vw'
-      >
-        <Stack spacing={3}>
-          <PolymarketPNLWidget
-            variant='expanded'
-            portfolioData={portfolioData ?? null}
-            positions={positions}
-            trades={trades}
-            isLoadingExternal={isLoadingPortfolio || isLoadingTrades}
-          />
-          <DashboardPositionsTable
-            positions={positions}
-            orders={orders}
-            isLoading={isLoadingPositions || isLoadingOrders}
-          />
-        </Stack>
-      </DashboardDrawer>
+      <BankingPolymarketDrawer open={polymarketDrawer.value} onClose={polymarketDrawer.onFalse} />
 
       {/* Deposit Modal */}
       <DashboardDepositModal

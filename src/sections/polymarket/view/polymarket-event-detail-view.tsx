@@ -1,17 +1,11 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { m } from 'framer-motion'
 
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
-import DialogTitle from '@mui/material/DialogTitle'
-import DialogContent from '@mui/material/DialogContent'
-import DialogActions from '@mui/material/DialogActions'
-import IconButton from '@mui/material/IconButton'
-import Skeleton from '@mui/material/Skeleton'
 import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
 import Grid from '@mui/material/Unstable_Grid2'
@@ -23,18 +17,22 @@ import { useRouter } from 'src/routes/hooks'
 import { paths } from 'src/routes/paths'
 
 import { useTranslate } from 'src/locales'
-import { useAuthContext } from 'src/auth/hooks'
-import { useGetPolymarketEventsInfinite, polymarketAccountStatus } from 'src/app/api/hooks'
+import { useGetPolymarketEventsInfinite } from 'src/app/api/hooks'
 
 import { useSettingsContext } from 'src/components/settings'
-import Iconify from 'src/components/iconify'
 
 import { fNumber } from 'src/utils/format-number'
 
 import PolymarketMarketCard from '../polymarket-market-card'
 import PolymarketTermsOverlay from '../polymarket-terms-overlay'
+import { usePolymarketAccountStatus } from '../use-polymarket-account-status'
+import {
+  EventDetailSkeleton,
+  EventDetailNotFound,
+  EventAboutDialog
+} from './polymarket-event-detail-sections'
 
-import type { IPolymarketEvent, IPolymarketAccountStatus } from 'src/types/polymarket'
+import type { IPolymarketEvent } from 'src/types/polymarket'
 
 // ----------------------------------------------------------------------
 
@@ -60,35 +58,9 @@ export default function PolymarketEventDetailView({ eventId }: Props) {
   const isDark = theme.palette.mode === 'dark'
   const router = useRouter()
   const settings = useSettingsContext()
-  const { user } = useAuthContext()
   const [aboutOpen, setAboutOpen] = useState(false)
 
-  const [accountStatus, setAccountStatus] = useState<IPolymarketAccountStatus | null>(null)
-  const [statusLoading, setStatusLoading] = useState(true)
-
-  const checkAccountStatus = useCallback(async () => {
-    try {
-      const result = await polymarketAccountStatus()
-      if (result.ok && result.data) {
-        setAccountStatus(result.data)
-      }
-    } catch {
-      // Silently fail
-    } finally {
-      setStatusLoading(false)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (user?.id) {
-      checkAccountStatus()
-    } else {
-      setStatusLoading(false)
-    }
-  }, [user?.id, checkAccountStatus])
-
-  const showTermsOverlay =
-    !statusLoading && !!user?.id && accountStatus && !accountStatus.account?.terms_accepted
+  const { accountStatus, showTermsOverlay, checkAccountStatus } = usePolymarketAccountStatus()
 
   // Find the event from the cached events data, auto-loading more pages if needed
   const { events, isLoading, isLoadingMore, hasMore, loadMore } = useGetPolymarketEventsInfinite()
@@ -110,75 +82,19 @@ export default function PolymarketEventDetailView({ eventId }: Props) {
       (a, b) => new Date(a.end_date_iso).getTime() - new Date(b.end_date_iso).getTime()
     )[0]?.end_date_iso
 
-  // Loading skeleton
   if (isLoading || isSearching) {
-    return (
-      <Box
-        sx={{
-          mt: -13,
-          mx: { xs: 0, lg: -2 },
-          flex: 1,
-          background: isDark
-            ? 'linear-gradient(180deg, #161C24 0%, #0A2E1A 100%)'
-            : 'linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 100%)',
-          minHeight: '100vh',
-          pb: 10
-        }}
-      >
-        <Container
-          maxWidth={settings.themeStretch ? false : 'xl'}
-          sx={{ pt: { xs: 11, md: 12 }, px: { xs: 2, md: 3 } }}
-        >
-          <Stack spacing={3}>
-            <Skeleton variant='rounded' height={60} />
-            <Skeleton variant='rounded' height={32} width={200} />
-            <Grid container spacing={3}>
-              {Array.from({ length: 4 }).map((_, i) => (
-                <Grid xs={12} sm={6} md={4} key={i}>
-                  <Skeleton variant='rounded' height={340} sx={{ borderRadius: 2 }} />
-                </Grid>
-              ))}
-            </Grid>
-          </Stack>
-        </Container>
-      </Box>
-    )
+    return <EventDetailSkeleton />
   }
 
-  // Not found
   if (!event) {
-    return (
-      <Box
-        sx={{
-          mt: -13,
-          mx: { xs: 0, lg: -2 },
-          flex: 1,
-          background: isDark
-            ? 'linear-gradient(180deg, #161C24 0%, #0A2E1A 100%)'
-            : 'linear-gradient(180deg, #F4F6F8 0%, #B8F6C9 100%)',
-          minHeight: '100vh'
-        }}
-      >
-        <Container
-          maxWidth={settings.themeStretch ? false : 'xl'}
-          sx={{ pt: { xs: 11, md: 12 }, px: { xs: 2, md: 3 } }}
-        >
-          <Stack alignItems='center' justifyContent='center' sx={{ py: 10 }}>
-            <Typography variant='h6' color='text.secondary'>
-              {t('polymarket.event-not-found')}
-            </Typography>
-            <Button
-              onClick={() => router.push(paths.dashboard.polymarket.root)}
-              startIcon={<Iconify icon='eva:arrow-back-fill' />}
-              sx={{ mt: 2 }}
-            >
-              {t('polymarket.back-to-markets')}
-            </Button>
-          </Stack>
-        </Container>
-      </Box>
-    )
+    return <EventDetailNotFound />
   }
+
+  const visibleMarkets = event.markets.filter((m) => {
+    const hasVolume = (m.volume || 0) > 0
+    const hasPrices = (m.outcome_prices || []).some((p) => Number(p) > 0)
+    return hasVolume || hasPrices
+  })
 
   return (
     <>
@@ -313,57 +229,26 @@ export default function PolymarketEventDetailView({ eventId }: Props) {
 
             {/* About dialog */}
             {event.description && (
-              <Dialog
+              <EventAboutDialog
                 open={aboutOpen}
                 onClose={() => setAboutOpen(false)}
-                maxWidth='sm'
-                fullWidth
-                PaperProps={{ sx: { borderRadius: 3 } }}
-              >
-                <DialogTitle sx={{ fontWeight: 700 }}>{t('polymarket.about-event')}</DialogTitle>
-                <DialogContent>
-                  <Typography variant='body2' sx={{ lineHeight: 1.8, whiteSpace: 'pre-line' }}>
-                    {event.description}
-                  </Typography>
-                </DialogContent>
-                <DialogActions sx={{ px: 3, pb: 2.5 }}>
-                  <Button
-                    onClick={() => setAboutOpen(false)}
-                    variant='contained'
-                    color='primary'
-                    sx={{ borderRadius: 50, textTransform: 'none', fontWeight: 600 }}
-                  >
-                    {t('polymarket.got-it')}
-                  </Button>
-                </DialogActions>
-              </Dialog>
+                description={event.description}
+              />
             )}
 
             {/* Markets Grid */}
             <Box component={m.div} variants={fadeInUp} transition={{ duration: 0.4 }}>
-              {(() => {
-                const visibleMarkets = event.markets.filter((m) => {
-                  const hasVolume = (m.volume || 0) > 0
-                  const hasPrices = (m.outcome_prices || []).some((p) => Number(p) > 0)
-                  return hasVolume || hasPrices
-                })
+              <Typography variant='h5' sx={{ mb: 3, fontWeight: 700, color: 'text.primary' }}>
+                {t('polymarket.predict-on')} ({visibleMarkets.length})
+              </Typography>
 
-                return (
-                  <>
-                    <Typography variant='h5' sx={{ mb: 3, fontWeight: 700, color: 'text.primary' }}>
-                      {t('polymarket.predict-on')} ({visibleMarkets.length})
-                    </Typography>
-
-                    <Grid container spacing={3}>
-                      {visibleMarkets.map((market) => (
-                        <Grid xs={12} sm={6} md={4} key={market.condition_id || market.slug}>
-                          <PolymarketMarketCard market={market} inlineImage />
-                        </Grid>
-                      ))}
-                    </Grid>
-                  </>
-                )
-              })()}
+              <Grid container spacing={3}>
+                {visibleMarkets.map((market) => (
+                  <Grid xs={12} sm={6} md={4} key={market.condition_id || market.slug}>
+                    <PolymarketMarketCard market={market} inlineImage />
+                  </Grid>
+                ))}
+              </Grid>
             </Box>
           </Stack>
         </Container>
