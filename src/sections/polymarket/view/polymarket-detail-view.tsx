@@ -25,7 +25,6 @@ import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 import Alert from '@mui/material/Alert'
 import Grid from '@mui/material/Unstable_Grid2'
-import LinearProgress from '@mui/material/LinearProgress'
 import Table from '@mui/material/Table'
 import TableRow from '@mui/material/TableRow'
 import TableBody from '@mui/material/TableBody'
@@ -68,6 +67,11 @@ import { toEpochMs } from 'src/utils/format-time'
 import PolymarketTermsOverlay from '../polymarket-terms-overlay'
 import { matchTeamLogo } from '../polymarket-team-match'
 import { EventRulesDrawer } from './polymarket-event-detail-sections'
+import {
+  usePolymarketLivePrices,
+  usePolymarketPriceHistory,
+  type PolymarketChartRange
+} from '../use-polymarket-live-prices'
 
 import type {
   IPolymarketMarket,
@@ -123,32 +127,50 @@ function getOutcomeColor(index: number, dark: boolean): string {
   return palette[index % palette.length]
 }
 
-/** Generate deterministic mock price history based on current prices */
+const CHART_RANGES: { value: PolymarketChartRange; label: string }[] = [
+  { value: '1h', label: '1H' },
+  { value: '6h', label: '6H' },
+  { value: '1d', label: '1D' },
+  { value: '1w', label: '1W' },
+  { value: '1m', label: '1M' },
+  { value: 'max', label: 'ALL' }
+]
+
+// Y-axis bounds hugging the data: padded, snapped to multiples of 5, span kept
+// divisible by 20 so the 4 ticks always land on round labels (steps of 5/10/15…)
+function niceYBounds(dataMin: number, dataMax: number): { yMin: number; yMax: number } {
+  const pad = Math.max(2, (dataMax - dataMin) * 0.15)
+  let min = Math.max(0, Math.floor((dataMin - pad) / 5) * 5)
+  let max = Math.min(100, Math.ceil((dataMax + pad) / 5) * 5)
+  const span = Math.max(20, Math.ceil((max - min) / 20) * 20)
+  max = Math.min(100, min + span)
+  min = Math.max(0, max - span)
+  return { yMin: min, yMax: max }
+}
+
+/** Generate deterministic mock price history (fallback while real history is unavailable) */
 function generateMockPriceHistory(outcomes: string[], prices: number[]) {
-  const categories = ['Nov 30', 'Dec 31', 'Jan 14', 'Jan 31', 'Feb 26']
+  const now = Date.now()
+  const timestamps = [-90, -60, -45, -30, 0].map((d) => now + d * 86_400_000)
 
   const series = outcomes.map((name, idx) => {
     const current = (prices[idx] || 0) * 100
     const seed = name.length + idx * 7
     // Start from a mid-range base and converge toward current price
     const startBase = Math.max(5, Math.min(30, current * 0.7 + 5))
-    const data = categories.map((_, i) => {
-      const progress = i / (categories.length - 1)
+    const data = timestamps.map((ts, i) => {
+      const progress = i / (timestamps.length - 1)
       const base = startBase + (current - startBase) * progress
       const wobble = Math.sin(seed * (i + 1) * 0.7) * 3
-      return Math.max(1, Math.round((base + wobble) * 10) / 10)
+      return [ts, Math.max(1, Math.round((base + wobble) * 10) / 10)]
     })
     // Snap last point to actual current price
-    data[data.length - 1] = Math.round(current * 10) / 10
+    data[data.length - 1] = [timestamps[timestamps.length - 1], Math.round(current * 10) / 10]
     return { name, data }
   })
 
-  // Compute dynamic Y-axis max (round up to nearest 5, minimum 35)
-  const allValues = series.flatMap((s) => s.data)
-  const dataMax = Math.max(...allValues, 35)
-  const yMax = Math.ceil(dataMax / 5) * 5
-
-  return { categories, series, yMax }
+  const allValues = series.flatMap((s) => s.data.map((d) => d[1]))
+  return { series, ...niceYBounds(Math.min(...allValues), Math.max(...allValues)) }
 }
 
 // ── Active purchase tracking ──
@@ -323,21 +345,69 @@ export default function PolymarketDetailView({ slug }: Props) {
   const marketOrders = orders.filter((o) => o.market?.condition_id === market?.condition_id)
 
   const outcomes = market?.outcomes || ['Yes', 'No']
-  const prices = (market?.outcome_prices || []).map(Number)
+
+  // Live prices: real history (REST) + streaming ticks (websocket), both
+  // straight from Polymarket's public CLOB — client-side only.
+  const [chartRange, setChartRange] = useState<PolymarketChartRange>('1w')
+  const tokenIds = useMemo(
+    () => (market?.tokens || []).map((tk) => tk.token_id).filter(Boolean),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [market?.condition_id]
+  )
+  const { history } = usePolymarketPriceHistory(tokenIds, chartRange)
+  const { livePrices, livePoints, liveConnected } = usePolymarketLivePrices(tokenIds)
+
+  // Prefer the live streamed price; fall back to the polled snapshot
+  const prices = outcomes.map((_, idx) => {
+    const live = livePrices[market?.tokens?.[idx]?.token_id || '']
+    return live ?? Number(market?.outcome_prices?.[idx] ?? 0)
+  })
   const selectedPrice = prices[selectedOutcome] || 0
   const estimatedReturn = selectedPrice > 0 ? amount / selectedPrice : 0
   const estimatedProfit = estimatedReturn - amount
   const belowMinimum = amount > 0 && amount < POLYMARKET_MIN_ORDER_USD
   const tokenId = market?.tokens?.[selectedOutcome]?.token_id || ''
 
-  // Chart data (memoised on market id)
-  const chartData = useMemo(
-    () => (market ? generateMockPriceHistory(outcomes, prices) : null),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [market?.condition_id]
-  )
+  // Chart data: real history seeded by REST, extended live by websocket ticks.
+  // Falls back to the mock curve only when no real data came back.
+  const chartData = useMemo(() => {
+    if (!market) return null
 
-  const yMax = chartData?.yMax || 35
+    const hists = outcomes.map((_, idx) => history[market.tokens?.[idx]?.token_id || ''] ?? [])
+
+    // Binary markets: the CLOB sometimes returns history for only one token —
+    // the other side is its exact complement, so derive it instead of showing
+    // a broken near-empty line.
+    if (outcomes.length === 2) {
+      if (!hists[0].length && hists[1].length > 1) {
+        hists[0] = hists[1].map((pt) => ({ t: pt.t, p: 1 - pt.p }))
+      } else if (!hists[1].length && hists[0].length > 1) {
+        hists[1] = hists[0].map((pt) => ({ t: pt.t, p: 1 - pt.p }))
+      }
+    }
+
+    const series = outcomes.map((name, idx) => {
+      const tid = market.tokens?.[idx]?.token_id || ''
+      const hist = hists[idx]
+      const lastHistT = hist.length ? hist[hist.length - 1].t : 0
+      const live = (livePoints[tid] ?? []).filter((pt) => pt.t > lastHistT)
+      const data = [...hist, ...live].map(
+        (pt) => [pt.t * 1000, Math.round(pt.p * 1000) / 10] as [number, number]
+      )
+      return { name, data }
+    })
+
+    if (!series.some((s) => s.data.length > 1)) {
+      return generateMockPriceHistory(outcomes, prices)
+    }
+
+    const allValues = series.flatMap((s) => s.data.map((d) => d[1]))
+    return { series, ...niceYBounds(Math.min(...allValues), Math.max(...allValues)) }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [market?.condition_id, history, livePoints])
+
+  const yMin = chartData?.yMin ?? 0
+  const yMax = chartData?.yMax ?? 100
 
   const chartOptions = useChart({
     colors: outcomes.map((_, idx) => getOutcomeColor(idx, isDark)),
@@ -354,13 +424,16 @@ export default function PolymarketDetailView({ slug }: Props) {
       }
     },
     xaxis: {
-      categories: chartData?.categories || [],
+      type: 'datetime' as const,
       axisBorder: { show: false },
       axisTicks: { show: false },
-      labels: { style: { colors: theme.palette.text.disabled, fontSize: '11px' } }
+      labels: {
+        datetimeUTC: false,
+        style: { colors: theme.palette.text.disabled, fontSize: '11px' }
+      }
     },
     yaxis: {
-      min: 0,
+      min: yMin,
       max: yMax,
       tickAmount: 4,
       labels: {
@@ -375,7 +448,11 @@ export default function PolymarketDetailView({ slug }: Props) {
       yaxis: { lines: { show: true } }
     },
     legend: { show: false },
-    tooltip: { theme: 'false' as const, y: { formatter: (val: number) => `${val.toFixed(1)}%` } },
+    tooltip: {
+      theme: 'false' as const,
+      x: { format: 'dd MMM HH:mm' },
+      y: { formatter: (val: number) => `${val.toFixed(1)}%` }
+    },
     markers: { size: 0 }
   })
 
@@ -1354,21 +1431,79 @@ export default function PolymarketDetailView({ slug }: Props) {
     >
       {/* ODDS OVER TIME */}
       <Box sx={{ p: 3 }}>
-        <Typography
-          variant='overline'
-          sx={{
-            mb: 2,
-            display: 'block',
-            color: 'text.secondary',
-            letterSpacing: 1.5,
-            fontSize: '0.7rem'
-          }}
+        <Stack
+          direction='row'
+          alignItems='center'
+          justifyContent='space-between'
+          sx={{ mb: 2, flexWrap: 'wrap', gap: 1 }}
         >
-          {t('polymarket.odds-time')}
-        </Typography>
+          <Stack direction='row' alignItems='center' spacing={1}>
+            <Typography
+              variant='overline'
+              sx={{ color: 'text.secondary', letterSpacing: 1.5, fontSize: '0.7rem' }}
+            >
+              {t('polymarket.odds-time')}
+            </Typography>
+            {liveConnected && (
+              <Stack direction='row' alignItems='center' spacing={0.5}>
+                <Box
+                  sx={{
+                    width: 7,
+                    height: 7,
+                    borderRadius: '50%',
+                    bgcolor: 'error.main',
+                    '@keyframes livePulse': {
+                      '0%': { boxShadow: `0 0 0 0 ${alpha(theme.palette.error.main, 0.5)}` },
+                      '100%': { boxShadow: `0 0 0 6px ${alpha(theme.palette.error.main, 0)}` }
+                    },
+                    animation: 'livePulse 1.6s ease-out infinite'
+                  }}
+                />
+                <Typography
+                  variant='caption'
+                  sx={{ fontSize: '0.65rem', fontWeight: 700, color: 'error.main' }}
+                >
+                  {t('polymarket.live')}
+                </Typography>
+              </Stack>
+            )}
+          </Stack>
+
+          <Stack direction='row' spacing={0.25}>
+            {CHART_RANGES.map((range) => {
+              const active = chartRange === range.value
+              return (
+                <Button
+                  key={range.value}
+                  size='small'
+                  onClick={() => setChartRange(range.value)}
+                  sx={{
+                    minWidth: 0,
+                    px: 1,
+                    py: 0.25,
+                    fontSize: '0.68rem',
+                    fontWeight: 700,
+                    borderRadius: 1,
+                    color: active ? 'text.primary' : 'text.disabled',
+                    bgcolor: active ? alpha(theme.palette.grey[500], 0.16) : 'transparent',
+                    '&:hover': { bgcolor: alpha(theme.palette.grey[500], 0.12) }
+                  }}
+                >
+                  {range.label}
+                </Button>
+              )
+            })}
+          </Stack>
+        </Stack>
 
         {chartData && (
-          <Chart type='area' series={chartData.series} options={chartOptions} height={220} />
+          <Chart
+            key={chartRange}
+            type='area'
+            series={chartData.series}
+            options={chartOptions}
+            height={220}
+          />
         )}
 
         {/* Legend */}
@@ -1389,64 +1524,6 @@ export default function PolymarketDetailView({ slug }: Props) {
               </Typography>
             </Stack>
           ))}
-        </Stack>
-      </Box>
-
-      <Divider />
-
-      {/* CURRENT ODDS */}
-      <Box sx={{ p: 3 }}>
-        <Typography
-          variant='overline'
-          sx={{
-            mb: 2.5,
-            display: 'block',
-            color: 'text.secondary',
-            letterSpacing: 1.5,
-            fontSize: '0.7rem'
-          }}
-        >
-          {t('polymarket.current-odds')}
-        </Typography>
-
-        <Stack spacing={2}>
-          {outcomes.map((outcome, idx) => {
-            const price = prices[idx] || 0
-            const percent = Math.round(price * 100)
-            const color = getOutcomeColor(idx, isDark)
-
-            return (
-              <Stack key={outcome} direction='row' alignItems='center' spacing={2}>
-                <Box
-                  sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: color, flexShrink: 0 }}
-                />
-                <Typography
-                  variant='body2'
-                  sx={{ fontWeight: 600, minWidth: { xs: 60, md: 80 }, flexShrink: 0 }}
-                >
-                  {outcome}
-                </Typography>
-                <Box sx={{ flex: 1 }}>
-                  <LinearProgress
-                    variant='determinate'
-                    value={percent}
-                    sx={{
-                      height: 10,
-                      borderRadius: 5,
-                      bgcolor: alpha(theme.palette.grey[500], 0.08),
-                      '& .MuiLinearProgress-bar': { borderRadius: 5, bgcolor: color }
-                    }}
-                  />
-                </Box>
-                <Typography
-                  variant='body2'
-                  sx={{ fontWeight: 700, minWidth: 36, textAlign: 'right', flexShrink: 0 }}
-                >
-                  {percent}%
-                </Typography>
-              </Stack>
-            )
-          })}
         </Stack>
       </Box>
 

@@ -448,7 +448,14 @@ export default function HomeHero() {
               >
                 <DesktopIcons />
 
-                <Box sx={{ position: 'relative', zIndex: 2, maxWidth: '80%', ml: { md: '30px', lg: '40px' } }}>
+                <Box
+                  sx={{
+                    position: 'relative',
+                    zIndex: 2,
+                    maxWidth: '80%',
+                    ml: { md: '30px', lg: '40px' }
+                  }}
+                >
                   <m.div variants={varFade().in}>
                     <StyledImagePlaceholder
                       sx={{

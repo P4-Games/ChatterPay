@@ -888,7 +888,7 @@
     "claim-amount": "Claim ${{amount}}",
     "trade-history": "Trade History",
     "odds-time": "Odds over time (%)",
-    "current-odds": "Current odds",
+    "live": "Live",
     "how-it-works": "How it works",
     "how-it-works-desc": "Pick who you think will win. If you're right, you get your money back plus your payout. If you're wrong, you don't get anything back.",
     "market-closes": "Market closes on",

@@ -129,7 +129,9 @@ module.exports = {
                 https://www.gstatic.com
                 https://api.iconify.design
                 https://api.simplesvg.com
-                https://api.unisvg.com;
+                https://api.unisvg.com
+                https://clob.polymarket.com
+                wss://ws-subscriptions-clob.polymarket.com;
               
               img-src 'self' data: https:;
               style-src 'self' 'unsafe-inline';

@@ -888,7 +888,7 @@
     "claim-amount": "Resgatar ${{amount}}",
     "trade-history": "Histórico de Negociações",
     "odds-time": "Probabilidades ao longo do tempo (%)",
-    "current-odds": "Probabilidades atuais",
+    "live": "Ao vivo",
     "how-it-works": "Como funciona",
     "how-it-works-desc": "Escolha quem você acha que vai ganhar. Se você acertar, receberá seu dinheiro de volta mais seu retorno. Se errar, não recupera nada.",
     "market-closes": "O mercado fecha em",

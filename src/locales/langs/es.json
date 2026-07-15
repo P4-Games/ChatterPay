@@ -888,7 +888,7 @@
     "claim-amount": "Reclamar ${{amount}}",
     "trade-history": "Historial de Operaciones",
     "odds-time": "Probabilidades en el tiempo (%)",
-    "current-odds": "Probabilidades actuales",
+    "live": "En vivo",
     "how-it-works": "Cómo funciona",
     "how-it-works-desc": "Elige quién crees que ganará. Si aciertas, recuperarás tu dinero más tu retorno. Si te equivocas, no recuperas nada.",
     "market-closes": "El mercado cierra el",
