@@ -227,15 +227,83 @@ export async function checkUserHaveActiveSession(
       (session: any) =>
         getFormattedId(session.id) === jwtToken.sessionId &&
         session.token === jwtToken.accessToken &&
-        session.ip === ip &&
         session.status === 'active'
     )
 
-    return !!matchingSession
+    if (!matchingSession) {
+      return false
+    }
+
+    // IP changes mid-session are expected (carrier NAT, dual-stack, WiFi/mobile switch).
+    // Per OWASP, treat as security signal: log and track, don't terminate the session.
+    const lastKnownIp = matchingSession.lastIp ?? matchingSession.ip
+    if (ip && ip !== lastKnownIp) {
+      console.warn(
+        `session IP changed for user ${userId}, session ${jwtToken.sessionId}: ${lastKnownIp} -> ${ip}`
+      )
+      await updateUserSessionIp(userId, jwtToken.sessionId, ip)
+    }
+
+    return true
   } catch (error) {
     console.error('checkUserHaveActiveSession', userId, error.message)
   }
   return false
+}
+
+/**
+ * Tracks a mid-session client IP change: updates the session's lastIp and
+ * appends the new IP to its ipHistory (capped to the last 20 entries).
+ */
+export async function updateUserSessionIp(
+  userId: string,
+  sessionId: string,
+  newIp: string
+): Promise<boolean> {
+  const result = await updateOneCommon(
+    DB_CHATTERPAY_NAME,
+    SCHEMA_USERS,
+    {
+      _id: getObjectId(userId),
+      'front.sessions.id': getObjectId(sessionId)
+    },
+    {
+      $set: { 'front.sessions.$.lastIp': newIp },
+      $push: {
+        'front.sessions.$.ipHistory': { $each: [{ ip: newIp, at: new Date() }], $slice: -20 }
+      }
+    }
+  )
+
+  return result
+}
+
+/**
+ * Returns the user's session matching the given sessionId, or null if not found.
+ */
+export async function getUserSession(
+  userId: string,
+  sessionId: string
+): Promise<UserSession | null> {
+  try {
+    const user = await findOneCommon(
+      DB_CHATTERPAY_NAME,
+      SCHEMA_USERS,
+      { _id: getObjectId(userId) },
+      { 'front.sessions': 1 }
+    )
+
+    if (!user || !user.front?.sessions) {
+      return null
+    }
+
+    const session = user.front.sessions.find((item: any) => getFormattedId(item.id) === sessionId)
+
+    return session ?? null
+  } catch (error) {
+    console.error('getUserSession', userId, error.message)
+    return null
+  }
 }
 
 export async function updateUser(contact: IAccount): Promise<boolean> {

@@ -73,6 +73,8 @@ export const MS_CLARITY_ID = process.env.NEXT_PUBLIC_MS_CLARITY_ID || ''
 export const STORAGE_OPTION = 'local'
 export const CHP_DSH_NAME = 'chp_dsh_data'
 export const USER_SESSION_EXPIRATION_MINUTES = 60
+// Hard cap for sliding session renewal (NIST 800-63B AAL2: 12 hours)
+export const USER_SESSION_ABSOLUTE_HOURS = 12
 export const PATH_AFTER_LOGIN = `/dashboard`
 export const IS_DEVELOPMENT =
   APP_ENV.toLowerCase() === 'development' || APP_ENV.toLowerCase() === 'testing'

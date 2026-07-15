@@ -90,7 +90,8 @@ export const endpoints = {
   auth: {
     code: () => getFullUIEndpoint(`auth/code`),
     login: () => getFullUIEndpoint(`auth/login`),
-    me: () => getFullUIEndpoint('auth/me')
+    me: () => getFullUIEndpoint('auth/me'),
+    refresh: () => getFullUIEndpoint('auth/refresh')
   },
   nft: {
     id: (id: string) => getFullUIEndpoint(`nft/${id}`)
