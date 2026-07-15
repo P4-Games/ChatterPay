@@ -66,7 +66,7 @@ import { fNumber } from 'src/utils/format-number'
 import { toEpochMs } from 'src/utils/format-time'
 
 import PolymarketTermsOverlay from '../polymarket-terms-overlay'
-import { matchTeamLogo } from '../polymarket-team-logos'
+import { matchTeamLogo } from '../polymarket-team-match'
 import { EventRulesDrawer } from './polymarket-event-detail-sections'
 
 import type {

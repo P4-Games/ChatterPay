@@ -9,7 +9,7 @@ import Iconify from 'src/components/iconify'
 
 import PolymarketMarketCard from './polymarket-market-card'
 import PolymarketEventCard from './polymarket-event-card'
-import { matchTeamLogo } from './polymarket-team-logos'
+import { matchTeamLogo } from './polymarket-team-match'
 
 import type { IPolymarketEvent } from 'src/types/polymarket'
 
