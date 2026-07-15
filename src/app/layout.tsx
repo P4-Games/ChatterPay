@@ -5,8 +5,11 @@ import 'src/locales/i18n'
 
 // ----------------------------------------------------------------------
 
+import { cookies, headers } from 'next/headers'
+
 import ThemeProvider from 'src/theme'
 import { LocalizationProvider } from 'src/locales'
+import { languageCookieKey, resolveInitialLanguage } from 'src/locales/detect-language'
 import { primaryFont } from 'src/theme/typography'
 
 import ProgressBar from 'src/components/progress-bar'
@@ -90,11 +93,19 @@ type Props = {
 }
 
 export default function RootLayout({ children }: Props) {
+  const initialLanguage = resolveInitialLanguage(
+    cookies().get(languageCookieKey)?.value,
+    headers().get('accept-language')
+  )
+
   return (
-    <html lang='en' className={primaryFont.className}>
+    <html
+      lang={initialLanguage === 'br' ? 'pt-BR' : initialLanguage}
+      className={primaryFont.className}
+    >
       <body>
         <AuthProvider>
-          <LocalizationProvider>
+          <LocalizationProvider initialLanguage={initialLanguage}>
             <SettingsProvider
               defaultSettings={{
                 themeMode: 'light', // 'light' | 'dark'
