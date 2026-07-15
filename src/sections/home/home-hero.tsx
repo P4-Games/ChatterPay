@@ -335,8 +335,6 @@ export default function HomeHero() {
         sx={{
           height: mdUp ? '100%' : 'auto',
           py: mdUp ? { md: 2, lg: 0 } : 6,
-          pl: { md: 0 },
-          pr: { md: 0 },
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
@@ -349,6 +347,7 @@ export default function HomeHero() {
           alignItems='center'
           sx={{
             height: 'auto',
+            width: '100%',
             maxWidth: '100%',
             mx: 'auto',
             mt: { xs: 6, md: 0 }
@@ -449,7 +448,7 @@ export default function HomeHero() {
               >
                 <DesktopIcons />
 
-                <Box sx={{ position: 'relative', zIndex: 2, maxWidth: '80%' }}>
+                <Box sx={{ position: 'relative', zIndex: 2, maxWidth: '80%', ml: { md: '30px', lg: '40px' } }}>
                   <m.div variants={varFade().in}>
                     <StyledImagePlaceholder
                       sx={{
