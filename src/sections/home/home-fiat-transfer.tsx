@@ -103,7 +103,8 @@ export default function HomeFiatTransfer() {
                 sx={{
                   mb: 3,
                   color: 'common.white',
-                  fontWeight: 700
+                  fontWeight: 700,
+                  fontFamily: (theme) => theme.typography.fontSecondaryFamily
                 }}
               >
                 {t('home.b2b-banner.title')}
