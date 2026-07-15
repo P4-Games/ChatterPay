@@ -1,5 +1,3 @@
-import { Barlow, Public_Sans } from 'next/font/google'
-
 // ----------------------------------------------------------------------
 
 export function remToPx(value: string) {
@@ -31,39 +29,30 @@ declare module '@mui/material/styles' {
   }
 }
 
-export const primaryFont = Public_Sans({
-  weight: ['400', '500', '600', '700', '800', '900'],
-  subsets: ['latin'],
-  display: 'swap',
-  fallback: ['Helvetica', 'Arial', 'sans-serif']
-})
+// Self-hosted variable fonts declared via @font-face in src/global.css
+// (woff2 + woff + ttf sources for iOS/legacy Safari support)
+export const primaryFont = "'Satoshi-Variable', 'SF Pro', system-ui, Arial, sans-serif"
 
-export const secondaryFont = Barlow({
-  weight: ['400', '500', '600', '700', '800', '900'],
-  subsets: ['latin'],
-  display: 'swap',
-  fallback: ['Helvetica', 'Arial', 'sans-serif']
-})
+export const secondaryFont = "'CabinetGrotesk-Variable', 'SF Pro', system-ui, Arial, sans-serif"
 
 // ----------------------------------------------------------------------
 
-// LEARN MORE
-// https://nextjs.org/docs/basic-features/font-optimization#google-fonts
-
 export const typography = {
-  fontFamily: primaryFont.style.fontFamily,
-  fontSecondaryFamily: secondaryFont.style.fontFamily,
+  fontFamily: primaryFont,
+  fontSecondaryFamily: secondaryFont,
   fontWeightRegular: 400,
   fontWeightMedium: 500,
   fontWeightSemiBold: 600,
   fontWeightBold: 700,
   h1: {
+    fontFamily: secondaryFont,
     fontWeight: 800,
     lineHeight: 80 / 64,
     fontSize: pxToRem(40),
     ...responsiveFontSizes({ sm: 52, md: 58, lg: 64 })
   },
   h2: {
+    fontFamily: secondaryFont,
     fontWeight: 800,
     lineHeight: 64 / 48,
     fontSize: pxToRem(32),

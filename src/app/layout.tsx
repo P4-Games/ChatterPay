@@ -101,7 +101,7 @@ export default function RootLayout({ children }: Props) {
   return (
     <html
       lang={initialLanguage === 'br' ? 'pt-BR' : initialLanguage}
-      className={primaryFont.className}
+      style={{ fontFamily: primaryFont }}
     >
       <body>
         <AuthProvider>

@@ -293,7 +293,6 @@ export default function PolymarketMarketToolbar({
                   px: 0.5,
                   fontWeight: isActive ? 700 : 600,
                   fontSize: '0.85rem',
-                  fontFamily: "'Satoshi Variable', sans-serif",
                   bgcolor: isActive ? 'background.paper' : 'transparent',
                   boxShadow: isActive
                     ? theme.customShadows?.z1 || '0px 6px 17px 0px rgba(0,0,0,0.08)'

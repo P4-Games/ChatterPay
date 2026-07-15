@@ -264,6 +264,7 @@ export default function HomeHero() {
 
   const mdUp = useResponsive('up', 'md')
   const lgUp = useResponsive('up', 'lg')
+  const xlUp = useResponsive('up', 'xl')
   const heroRef = useRef<HTMLDivElement | null>(null)
 
   // Get localized mockup image path
@@ -279,11 +280,13 @@ export default function HomeHero() {
       return t('home.hero.new.title')
     }
 
-    const charWidth = { xs: 20, md: 25, lg: 29 }
+    const charWidth = { xs: 20, md: 25, lg: 25, xl: 27 }
 
     // Calculate width based on screen size
     let highlightWidth = titleWords[whatsAppIndex].length * charWidth.xs
-    if (lgUp) {
+    if (xlUp) {
+      highlightWidth = titleWords[whatsAppIndex].length * charWidth.xl
+    } else if (lgUp) {
       highlightWidth = titleWords[whatsAppIndex].length * charWidth.lg
     } else if (mdUp) {
       highlightWidth = titleWords[whatsAppIndex].length * charWidth.md
@@ -360,9 +363,23 @@ export default function HomeHero() {
             <m.div variants={varFade().in}>
               <Typography
                 variant='h1'
-                sx={{ mb: 3, fontSize: { xs: 32, md: 40, lg: 46 }, fontWeight: 'bold' }}
+                sx={{ mb: 3, fontSize: { xs: 32, md: 40, lg: 40, xl: 42 }, fontWeight: 800 }}
               >
                 {renderTitle()}
+              </Typography>
+            </m.div>
+
+            <m.div variants={varFade().in}>
+              <Typography
+                sx={{
+                  mb: 4,
+                  color: 'text.secondary',
+                  fontSize: { xs: 16, xl: 18 },
+                  maxWidth: 480,
+                  mx: { xs: 'auto', md: 0 }
+                }}
+              >
+                {t('home.hero.new.subtitle')}
               </Typography>
             </m.div>
 
