@@ -7,7 +7,13 @@ import Button from '@mui/material/Button'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Unstable_Grid2'
 import Typography from '@mui/material/Typography'
-import { styled, useTheme } from '@mui/material/styles'
+import { styled, lighten, useTheme } from '@mui/material/styles'
+
+import {
+  buttonSheen,
+  buttonEdgeShadow,
+  buttonPressedShadow
+} from 'src/theme/overrides/components/button'
 
 import { paths } from 'src/routes/paths'
 import { RouterLink } from 'src/routes/components'
@@ -78,13 +84,24 @@ const StyledMobileIcon = styled('img')(({ theme }) => ({
 }))
 
 const StyledCreateButton = styled(Button)(({ theme }) => ({
-  backgroundColor: GREEN_COLOR,
+  background: `${buttonSheen(theme)}, ${GREEN_COLOR}`,
   color: theme.palette.common.white,
   fontWeight: 600,
   fontSize: '1rem',
-  borderRadius: theme.shape.borderRadius * 1.5,
-  '&:hover': {
-    backgroundColor: 'hsla(147, 41%, 16%, 1)'
+  borderRadius: theme.shape.borderRadius,
+  boxShadow: buttonEdgeShadow(theme),
+  transition: theme.transitions.create(['box-shadow', 'transform', 'background-color'], {
+    duration: 200
+  }),
+  '@media (hover: hover)': {
+    '&:hover': {
+      background: `${buttonSheen(theme)}, ${lighten(GREEN_COLOR, 0.08)}`,
+      boxShadow: buttonEdgeShadow(theme)
+    }
+  },
+  '&:active': {
+    boxShadow: buttonPressedShadow(theme),
+    transform: 'scale(0.98)'
   },
   padding: theme.spacing(1.5, 5),
   marginTop: theme.spacing(4),
