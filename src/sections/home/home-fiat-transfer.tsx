@@ -1,7 +1,10 @@
+import type { ElementType } from 'react'
+
 import { m } from 'framer-motion'
 
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
+import type { ButtonProps } from '@mui/material/Button'
 import { alpha, styled } from '@mui/material/styles'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Unstable_Grid2'
@@ -11,6 +14,11 @@ import { paths } from 'src/routes/paths'
 import { RouterLink } from 'src/routes/components'
 
 import { useTranslate } from 'src/locales'
+import {
+  buttonSheen,
+  buttonEdgeShadow,
+  buttonPressedShadow
+} from 'src/theme/overrides/components/button'
 
 // ----------------------------------------------------------------------
 
@@ -23,6 +31,32 @@ const StyledRoot = styled('div')(({ theme }) => ({
   overflow: 'hidden',
   position: 'relative',
   borderRadius: '0 0 32px 32px'
+}))
+
+const StyledButton = styled(Button)<ButtonProps & { component?: ElementType }>(({ theme }) => ({
+  background: `${buttonSheen(theme)}, ${theme.palette.common.white}`,
+  color: GREEN_COLOR,
+  fontWeight: 600,
+  fontSize: '1rem',
+  borderRadius: theme.shape.borderRadius,
+  boxShadow: buttonEdgeShadow(theme),
+  transition: theme.transitions.create(['box-shadow', 'transform', 'background-color'], {
+    duration: 200
+  }),
+  '@media (hover: hover)': {
+    '&:hover': {
+      background: `${buttonSheen(theme)}, ${theme.palette.grey[100]}`,
+      boxShadow: buttonEdgeShadow(theme)
+    }
+  },
+  '&:active': {
+    boxShadow: buttonPressedShadow(theme),
+    transform: 'scale(0.98)'
+  },
+  padding: theme.spacing(1.2, 4),
+  [theme.breakpoints.down('md')]: {
+    fontSize: '0.9rem'
+  }
 }))
 
 export default function HomeFiatTransfer() {
@@ -106,7 +140,7 @@ export default function HomeFiatTransfer() {
                 transition={{ duration: 0.7, ease: 'easeOut', delay: 0.4 }}
                 viewport={{ once: false, margin: '-100px' }}
               >
-                <Button
+                <StyledButton
                   component={RouterLink}
                   href={paths.products.b2b}
                   variant='contained'
@@ -119,32 +153,9 @@ export default function HomeFiatTransfer() {
                       sx={{ width: 18, height: 18 }}
                     />
                   }
-                  sx={{
-                    backgroundColor: 'common.white',
-                    color: GREEN_COLOR,
-                    fontWeight: 600,
-                    fontSize: '1rem',
-                    borderRadius: 1.5,
-                    '&:hover': {
-                      backgroundColor: 'grey.100',
-                      '& .arrow-icon': {
-                        transform: 'translateX(3px)'
-                      }
-                    },
-                    padding: (theme) => theme.spacing(1.2, 4),
-                    '@media (max-width: 900px)': {
-                      fontSize: '0.9rem'
-                    },
-                    '& .MuiButton-endIcon': {
-                      marginLeft: 1
-                    },
-                    '& .arrow-icon': {
-                      transition: 'transform 0.2s ease-in-out'
-                    }
-                  }}
                 >
                   {t('home.b2b-banner.button')}
-                </Button>
+                </StyledButton>
               </m.div>
             </Box>
           </Grid>
