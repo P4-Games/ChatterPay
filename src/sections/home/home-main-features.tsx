@@ -63,7 +63,7 @@ const CARD_CONFIG = [
     darkModeBgColor: COLORS.dark.green
   },
   {
-    icon: `/assets/icons/polymarket/logo.svg`,
+    icon: `${IMG_BASE_URL}/prediction_markets.webp`,
     bgColor: COLORS.light.green,
     darkModeBgColor: COLORS.dark.card
   }
@@ -190,6 +190,33 @@ export default function HomeMainFeatures() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [lastScrollY])
 
+  // Render card title, inserting Polymarket logo before the word "Polymarket"
+  const renderCardTitle = (title: string) => {
+    const idx = title.indexOf('Polymarket')
+    if (idx === -1) return title
+
+    return (
+      <>
+        {title.slice(0, idx)}
+        <Box
+          component='img'
+          src='/assets/icons/polymarket/logo.svg'
+          alt='Polymarket'
+          sx={{
+            width: 22,
+            height: 22,
+            display: 'inline-block',
+            verticalAlign: 'middle',
+            mr: 0.75,
+            mb: 0.5,
+            borderRadius: '6px'
+          }}
+        />
+        {title.slice(idx)}
+      </>
+    )
+  }
+
   // Render a feature card
   const renderCard = (card: CardType, index: number) => {
     const isFullWidth = index === 0 || index === 3
@@ -236,7 +263,7 @@ export default function HomeMainFeatures() {
           }}
         >
           <Typography variant='h5' sx={{ mb: 2, color: titleColor, fontWeight: 'bold' }}>
-            {card.title}
+            {renderCardTitle(card.title)}
           </Typography>
 
           <Typography
@@ -271,8 +298,9 @@ export default function HomeMainFeatures() {
             src={card.icon}
             alt={card.title}
             sx={{
-              width: { xs: CARD_SIZES.mobile, md: imageSize },
               height: { xs: CARD_SIZES.mobile, md: imageSize },
+              width: 'auto',
+              maxWidth: '100%',
               objectFit: 'contain'
             }}
           />
