@@ -968,11 +968,11 @@
   },
   "layerswapDeposit": {
     "title": "Deposit to ChatterPay",
-    "description": "Bridge your assets to Scroll and deposit directly into your ChatterPay wallet.",
+    "description": "Send crypto from any network. It arrives in your ChatterPay account as USDT on Scroll, ready to use.",
     "returnButton": "Return to ChatterPay",
     "whatsappReturnText": "I want to see my balance",
     "actionButton": "Deposit to ChatterPay",
-    "badge": "Powered by Layerswap",
+    "badge": "Powered by",
     "errors": {
       "title": "Invalid Request",
       "missingAddress": "A wallet address is required. Please provide your address in the URL (?address=0x...).",

@@ -3,19 +3,23 @@
 import { useMemo } from 'react'
 
 import Box from '@mui/material/Box'
+import Stack from '@mui/material/Stack'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import { alpha, useTheme } from '@mui/material/styles'
 
+import { HugeiconsIcon } from '@hugeicons/react'
+import { CoinsBitcoinIcon, LinkSquare02Icon } from '@hugeicons/core-free-icons'
+
 import { useTranslate } from 'src/locales'
 import { LAYERSWAP_BASE_URL } from 'src/config-global'
-
-import Iconify from 'src/components/iconify'
 
 // ----------------------------------------------------------------------
 
 type Props = {
   destAddress: string
+  /** Removes the card chrome when rendered inside a container that already has one (e.g. a modal) */
+  plain?: boolean
 }
 
 // ----------------------------------------------------------------------
@@ -33,7 +37,7 @@ type Props = {
 // Layerswap sandbox so no real funds are involved.
 // ----------------------------------------------------------------------
 
-export default function LayerswapWidget({ destAddress }: Props) {
+export default function LayerswapWidget({ destAddress, plain = false }: Props) {
   const { t } = useTranslate()
   const theme = useTheme()
 
@@ -72,13 +76,14 @@ export default function LayerswapWidget({ destAddress }: Props) {
         mx: 'auto',
         p: 4,
         textAlign: 'center',
-        borderRadius: 3,
-        bgcolor: isDark ? 'background.paper' : 'grey.100',
-        border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
-        boxShadow: theme.customShadows.z16
+        ...(!plain && {
+          borderRadius: 3,
+          bgcolor: isDark ? 'background.paper' : 'grey.100',
+          border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+          boxShadow: theme.customShadows.z16
+        })
       }}
     >
-      {/* Wallet icon */}
       <Box
         sx={{
           width: 72,
@@ -92,11 +97,7 @@ export default function LayerswapWidget({ destAddress }: Props) {
           mb: 3
         }}
       >
-        <Iconify
-          icon='solar:wallet-bold-duotone'
-          width={36}
-          sx={{ color: theme.palette.primary.main }}
-        />
+        <HugeiconsIcon icon={CoinsBitcoinIcon} size={36} color={theme.palette.primary.main} />
       </Box>
 
       {/* Description */}
@@ -110,28 +111,40 @@ export default function LayerswapWidget({ destAddress }: Props) {
       >
         {t(
           'layerswapDeposit.description',
-          'Bridge your assets to Scroll and deposit directly into your ChatterPay wallet.'
+          'Send crypto from any network. It arrives in your ChatterPay account as USDT on Scroll, ready to use.'
         )}
       </Typography>
 
       {/* CTA */}
       <Button
         variant='contained'
+        color='primary'
         size='large'
         fullWidth
         href={layerswapUrl}
         target='_blank'
         rel='noopener noreferrer'
-        startIcon={<Iconify icon='eva:external-link-fill' />}
+        startIcon={<HugeiconsIcon icon={LinkSquare02Icon} size={18} />}
         sx={{ mb: 2 }}
       >
         {t('layerswapDeposit.actionButton', 'Deposit to ChatterPay')}
       </Button>
 
       {/* Badge */}
-      <Typography variant='caption' sx={{ display: 'block', color: 'text.disabled' }}>
-        {t('layerswapDeposit.badge', 'Powered by Layerswap')}
-      </Typography>
+      <Stack direction='row' spacing={0.5} alignItems='center' justifyContent='center'>
+        <Typography variant='caption' sx={{ color: 'text.disabled' }}>
+          {t('layerswapDeposit.badge', 'Powered by')}
+        </Typography>
+        <Box
+          component='img'
+          src='/assets/icons/layerswap/logo.svg'
+          alt='Layerswap'
+          sx={{ width: 12, height: 12, filter: 'grayscale(1)', opacity: 0.64 }}
+        />
+        <Typography variant='caption' sx={{ color: 'text.disabled' }}>
+          Layerswap
+        </Typography>
+      </Stack>
     </Box>
   )
 }

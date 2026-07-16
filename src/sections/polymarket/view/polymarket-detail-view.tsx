@@ -296,7 +296,7 @@ export default function PolymarketDetailView({ slug }: Props) {
   const selectedTokenBalance = selectedTokenData?.balance_conv?.usd || 0
 
   const dynamicPresets = PRESET_AMOUNTS.filter((p) => p <= selectedTokenBalance)
-  const depositUrl = `https://chatterpay.net/deposit?address=${walletAddress}`
+  const depositUrl = `/deposit?address=${walletAddress}&from=app`
 
   // Trade state
   const [selectedOutcome, setSelectedOutcome] = useState<number>(0)
@@ -1235,8 +1235,6 @@ export default function PolymarketDetailView({ slug }: Props) {
                       <Button
                         size='small'
                         href={depositUrl}
-                        target='_blank'
-                        rel='noopener noreferrer'
                         sx={{ fontWeight: 700, whiteSpace: 'nowrap' }}
                       >
                         {t('polymarket.deposit')}

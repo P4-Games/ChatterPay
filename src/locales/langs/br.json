@@ -968,11 +968,11 @@
   },
   "layerswapDeposit": {
     "title": "Depositar no ChatterPay",
-    "description": "Transfira seus ativos para Scroll e deposite diretamente na sua carteira ChatterPay.",
+    "description": "Envie cripto de qualquer rede. Chega na sua conta ChatterPay como USDT na Scroll, pronto para usar.",
     "returnButton": "Voltar ao ChatterPay",
     "whatsappReturnText": "Quero ver meu saldo",
     "actionButton": "Depositar no ChatterPay",
-    "badge": "Powered by Layerswap",
+    "badge": "Powered by",
     "errors": {
       "title": "Solicitação inválida",
       "missingAddress": "Um endereço de carteira é necessário. Forneça seu endereço na URL (?address=0x...).",
