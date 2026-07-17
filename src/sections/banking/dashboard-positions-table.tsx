@@ -381,12 +381,11 @@ export default function DashboardPositionsTable({ positions, orders, isLoading }
                               ${fNumber(valueUsd)} USD
                             </Typography>
                             {(() => {
-                              const pctRaw = pos.pnl_percent ?? pos.percentPnl ?? 0
-                              const pctDisplay =
-                                Math.abs(pctRaw) > 1
-                                  ? pctRaw // Already a percentage (e.g. -96.71)
-                                  : pctRaw * 100 // Decimal, convert (e.g. -0.9671 → -96.71)
-                              const pctRounded = Math.round(pctDisplay * 100) / 100
+                              // Compute the % from the cost basis instead of trusting the API's
+                              // percent field, whose units are ambiguous (percent vs. fraction).
+                              const costBasis = pos.initialValue ?? avgPrice * pos.size
+                              const pctRounded =
+                                costBasis > 0 ? Math.round((pnlVal / costBasis) * 10000) / 100 : 0
                               return (
                                 <Typography
                                   variant='caption'
