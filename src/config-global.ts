@@ -114,6 +114,13 @@ export const POLYMARKET_REFRESH = {
 } as const
 // Minimum order value (USD) enforced by the Polymarket backend
 export const POLYMARKET_MIN_ORDER_USD = 1.5
+
+export const POLYMARKET_CLOB_API_URL =
+  process.env.POLYMARKET_CLOB_API_URL || 'https://clob.polymarket.com'
+export const POLYMARKET_ADAPTER_TOKEN = process.env.POLYMARKET_ADAPTER_TOKEN || ''
+export const POLYMARKET_WS_URL =
+  process.env.NEXT_PUBLIC_POLYMARKET_WS_URL ||
+  'wss://ws-subscriptions-clob.polymarket.com/ws/market'
 export const TRANSACTION_FEE_USD = 0.08
 export const LIFI_CHAINS_URL = 'https://li.quest/v1/chains?chainTypes=EVM,SVM'
 export const ENS_LOGO = 'https://cryptofonts.com/img/SVG/ens.svg'

@@ -95,6 +95,17 @@ module.exports = {
   },
   // https://nextjs.org/docs/api-reference/next.config.js/headers
   async headers() {
+    // CSP must allow the same origin the client uses to open the WS.
+    const polymarketWsOrigin = (() => {
+      const url =
+        process.env.NEXT_PUBLIC_POLYMARKET_WS_URL || 'wss://ws-subscriptions-clob.polymarket.com'
+      try {
+        return new URL(url).origin
+      } catch {
+        return 'wss://ws-subscriptions-clob.polymarket.com'
+      }
+    })()
+
     return [
       {
         source: '/:all*(svg|jpg|png|mp3|gif|mp4)',
@@ -130,8 +141,7 @@ module.exports = {
                 https://api.iconify.design
                 https://api.simplesvg.com
                 https://api.unisvg.com
-                https://clob.polymarket.com
-                wss://ws-subscriptions-clob.polymarket.com;
+                ${polymarketWsOrigin};
               
               img-src 'self' data: https:;
               style-src 'self' 'unsafe-inline';

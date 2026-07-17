@@ -4,15 +4,14 @@ import axios from 'axios'
 import useSWR from 'swr'
 import { useState, useEffect } from 'react'
 
+import { POLYMARKET_WS_URL } from 'src/config-global'
+
 // ----------------------------------------------------------------------
-// Live market prices straight from Polymarket's public CLOB (read-only,
-// no auth). REST seeds the chart with real history; the websocket streams
-// price updates. Both run client-side — the browser connects directly, so
-// the backend adapter is not involved (it only handles authed trading).
+// Live market prices for Polymarket. REST history seed goes through a
+// server-side proxy; the websocket connects the browser directly.
 // ----------------------------------------------------------------------
 
-const CLOB_REST_URL = 'https://clob.polymarket.com'
-const CLOB_WS_URL = 'wss://ws-subscriptions-clob.polymarket.com/ws/market'
+const CLOB_WS_URL = POLYMARKET_WS_URL
 
 // Polymarket closes idle sockets (~10s without traffic)
 const PING_INTERVAL_MS = 10_000
@@ -52,7 +51,7 @@ async function fetchPriceHistory(
     tokenIds.map(async (tokenId) => {
       try {
         const { data } = await axios.get<{ history?: IPolymarketPricePoint[] }>(
-          `${CLOB_REST_URL}/prices-history`,
+          '/api/v1/proxy/polymarket/prices-history',
           { params: { market: tokenId, interval: range, fidelity: RANGE_FIDELITY[range] } }
         )
         return [tokenId, Array.isArray(data?.history) ? data.history : []] as const
