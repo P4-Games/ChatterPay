@@ -346,8 +346,7 @@ export default function PolymarketDetailView({ slug }: Props) {
 
   const outcomes = market?.outcomes || ['Yes', 'No']
 
-  // Live prices: real history (REST) + streaming ticks (websocket), both
-  // straight from Polymarket's public CLOB — client-side only.
+  // Live prices: real history (REST) + streaming ticks (websocket).
   const [chartRange, setChartRange] = useState<PolymarketChartRange>('1w')
   const tokenIds = useMemo(
     () => (market?.tokens || []).map((tk) => tk.token_id).filter(Boolean),
@@ -636,6 +635,23 @@ export default function PolymarketDetailView({ slug }: Props) {
     handleSellPosition(partialSellPos, Math.floor(amt * 1e6) / 1e6)
     setPartialSellPos(null)
     setPartialSellAmount('')
+  }
+
+  const handleCancelOrder = async (orderId: string) => {
+    setCancellingId(orderId)
+    try {
+      const result = await polymarketCancelOrder(orderId)
+      if (result.ok) {
+        enqueueSnackbar(t('polymarket.order-cancelled'), { variant: 'success' })
+        mutate(
+          (key: any) =>
+            Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders')
+        )
+      }
+    } catch {
+    } finally {
+      setCancellingId(null)
+    }
   }
 
   const handleSubmit = async () => {
@@ -1797,7 +1813,7 @@ export default function PolymarketDetailView({ slug }: Props) {
                         {t('polymarket.no-positions-market')}
                       </Typography>
                     </Stack>
-                  ) : (
+                  ) : mdUp ? (
                     <Table>
                       <TableHead>
                         <TableRow>
@@ -1902,6 +1918,107 @@ export default function PolymarketDetailView({ slug }: Props) {
                         ))}
                       </TableBody>
                     </Table>
+                  ) : (
+                    <Stack divider={<Divider />}>
+                      {marketPositions.map((pos, idx) => {
+                        const posKey = (pos.market?.condition_id || pos.conditionId) + pos.outcome
+                        const avgPrice = pos.avg_price ?? pos.avgPrice ?? 0
+                        const currentPrice = pos.current_price ?? pos.curPrice ?? 0
+                        const valueUsd = pos.size * currentPrice
+                        const pnlVal = pos.pnl ?? pos.cashPnl ?? 0
+                        const pnlRounded =
+                          (Math.floor(Math.abs(pnlVal) * 1e2) / 1e2) * (pnlVal < 0 ? -1 : 1)
+                        // Compute the % from the cost basis instead of trusting the API's
+                        // percent field, whose units are ambiguous (percent vs. fraction).
+                        const costBasis = pos.initialValue ?? avgPrice * pos.size
+                        const pctRounded =
+                          costBasis > 0 ? Math.round((pnlVal / costBasis) * 10000) / 100 : 0
+                        const isYes = pos.outcome?.toLowerCase() === 'yes'
+                        const pnlColor = pnlVal >= 0 ? 'success.main' : 'error.main'
+                        return (
+                          <Box key={idx} sx={{ px: 2.5, py: 2 }}>
+                            <Stack
+                              direction='row'
+                              alignItems='flex-start'
+                              justifyContent='space-between'
+                              spacing={1}
+                              sx={{ mb: 1.5 }}
+                            >
+                              <Stack spacing={0.75} sx={{ minWidth: 0 }}>
+                                <Stack direction='row' alignItems='center' spacing={1}>
+                                  <Chip
+                                    label={pos.outcome}
+                                    size='small'
+                                    sx={{
+                                      fontWeight: 600,
+                                      height: 22,
+                                      bgcolor: alpha(
+                                        isYes
+                                          ? theme.palette.success.main
+                                          : theme.palette.error.main,
+                                        0.1
+                                      ),
+                                      color: isYes
+                                        ? theme.palette.success.dark
+                                        : theme.palette.error.dark
+                                    }}
+                                  />
+                                  <Typography variant='caption' color='text.secondary'>
+                                    {fNumber(pos.size)} shares
+                                  </Typography>
+                                </Stack>
+                                <Typography variant='caption' color='text.secondary'>
+                                  {t('polymarket.avg-price')} {Math.round(avgPrice * 100)}¢ ·{' '}
+                                  {t('polymarket.current')} {Math.round(currentPrice * 100)}¢
+                                </Typography>
+                              </Stack>
+                              <Stack alignItems='flex-end' spacing={0.25} sx={{ flexShrink: 0 }}>
+                                <Typography variant='subtitle1' fontWeight={700}>
+                                  ${fNumber(valueUsd)}
+                                </Typography>
+                                <Typography
+                                  variant='caption'
+                                  fontWeight={600}
+                                  color={pnlRounded === 0 ? 'text.secondary' : pnlColor}
+                                >
+                                  {pnlRounded === 0
+                                    ? '$0.00'
+                                    : `${pnlVal > 0 ? '+' : '-'}$${fNumber(Math.abs(pnlRounded))} (${pctRounded > 0 ? '+' : ''}${fNumber(pctRounded)}%)`}
+                                </Typography>
+                              </Stack>
+                            </Stack>
+                            <ButtonGroup
+                              size='medium'
+                              color='error'
+                              variant='contained'
+                              disabled={sellingPos === posKey}
+                              sx={{ width: '50%', minWidth: 170, display: 'flex', ml: 'auto' }}
+                            >
+                              <Button
+                                sx={{ flex: 1, minHeight: 44, whiteSpace: 'nowrap' }}
+                                onClick={() => handleSellPosition(pos)}
+                              >
+                                {sellingPos === posKey ? (
+                                  <CircularProgress size={16} color='inherit' />
+                                ) : (
+                                  t('polymarket.sell-all')
+                                )}
+                              </Button>
+                              <Button
+                                sx={{ px: 1, minWidth: 40, minHeight: 44, flex: '0 0 auto' }}
+                                onClick={(e) => {
+                                  setPartialSellPos(pos)
+                                  setPartialSellAmount(String(Math.floor(pos.size * 1e6) / 1e6))
+                                  setPartialSellAnchor(e.currentTarget)
+                                }}
+                              >
+                                <Iconify icon='eva:chevron-down-fill' width={18} />
+                              </Button>
+                            </ButtonGroup>
+                          </Box>
+                        )
+                      })}
+                    </Stack>
                   )}
                 </Card>
 
@@ -1939,7 +2056,7 @@ export default function PolymarketDetailView({ slug }: Props) {
                         {t('polymarket.no-orders-market')}
                       </Typography>
                     </Stack>
-                  ) : (
+                  ) : mdUp ? (
                     <Table>
                       <TableHead>
                         <TableRow>
@@ -2060,26 +2177,7 @@ export default function PolymarketDetailView({ slug }: Props) {
                                   variant='outlined'
                                   color='inherit'
                                   disabled={cancellingId === order.id}
-                                  onClick={async () => {
-                                    setCancellingId(order.id)
-                                    try {
-                                      const result = await polymarketCancelOrder(order.id)
-                                      if (result.ok) {
-                                        enqueueSnackbar(t('polymarket.order-cancelled'), {
-                                          variant: 'success'
-                                        })
-                                        mutate(
-                                          (key: any) =>
-                                            Array.isArray(key) &&
-                                            typeof key[0] === 'string' &&
-                                            key[0].includes('/orders')
-                                        )
-                                      }
-                                    } catch {
-                                    } finally {
-                                      setCancellingId(null)
-                                    }
-                                  }}
+                                  onClick={() => handleCancelOrder(order.id)}
                                 >
                                   {cancellingId === order.id ? (
                                     <CircularProgress size={14} color='inherit' />
@@ -2093,6 +2191,154 @@ export default function PolymarketDetailView({ slug }: Props) {
                         ))}
                       </TableBody>
                     </Table>
+                  ) : (
+                    <Stack divider={<Divider />}>
+                      {activePurchases.map((ap) => (
+                        <Box
+                          key={ap.purchase_id}
+                          sx={{
+                            px: 2.5,
+                            py: 2,
+                            '@keyframes softPulse': {
+                              '0%, 100%': { opacity: 1 },
+                              '50%': { opacity: 0.5 }
+                            },
+                            animation: 'softPulse 2s ease-in-out infinite'
+                          }}
+                        >
+                          <Stack
+                            direction='row'
+                            alignItems='center'
+                            justifyContent='space-between'
+                            spacing={1}
+                            sx={{ mb: 0.75 }}
+                          >
+                            <Stack
+                              direction='row'
+                              alignItems='center'
+                              spacing={1}
+                              sx={{ minWidth: 0 }}
+                            >
+                              <Chip
+                                label={ap.side}
+                                size='small'
+                                sx={{
+                                  fontWeight: 600,
+                                  height: 22,
+                                  bgcolor: alpha(
+                                    ap.side === 'BUY'
+                                      ? theme.palette.success.main
+                                      : theme.palette.error.main,
+                                    0.1
+                                  ),
+                                  color:
+                                    ap.side === 'BUY'
+                                      ? theme.palette.success.dark
+                                      : theme.palette.error.dark
+                                }}
+                              />
+                              <Typography variant='subtitle2' noWrap>
+                                {ap.outcome}
+                              </Typography>
+                            </Stack>
+                            <Chip
+                              label={
+                                <Box
+                                  component='span'
+                                  sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}
+                                >
+                                  <CircularProgress
+                                    size={10}
+                                    sx={{
+                                      color: 'inherit !important',
+                                      display: 'block',
+                                      mt: '1px'
+                                    }}
+                                  />
+                                  {STEP_LABELS[ap.current_step] || ap.current_step}
+                                </Box>
+                              }
+                              size='small'
+                              sx={{
+                                fontWeight: 600,
+                                flexShrink: 0,
+                                bgcolor: theme.palette.text.primary,
+                                color: theme.palette.background.paper,
+                                pointerEvents: 'none'
+                              }}
+                            />
+                          </Stack>
+                          <Typography variant='caption' color='text.secondary'>
+                            {fNumber(ap.size)} shares · {Math.round(ap.price * 100)}¢
+                          </Typography>
+                        </Box>
+                      ))}
+                      {marketOrders.map((order) => (
+                        <Box key={order.id} sx={{ px: 2.5, py: 2 }}>
+                          <Stack
+                            direction='row'
+                            alignItems='flex-start'
+                            justifyContent='space-between'
+                            spacing={1}
+                            sx={{ mb: 1.5 }}
+                          >
+                            <Stack spacing={0.75} sx={{ minWidth: 0 }}>
+                              <Stack direction='row' alignItems='center' spacing={1}>
+                                <Chip
+                                  label={order.side}
+                                  size='small'
+                                  sx={{
+                                    fontWeight: 600,
+                                    height: 22,
+                                    bgcolor: alpha(
+                                      order.side === 'BUY'
+                                        ? theme.palette.success.main
+                                        : theme.palette.error.main,
+                                      0.1
+                                    ),
+                                    color:
+                                      order.side === 'BUY'
+                                        ? theme.palette.success.dark
+                                        : theme.palette.error.dark
+                                  }}
+                                />
+                                <Typography variant='subtitle2' noWrap>
+                                  {order.outcome}
+                                </Typography>
+                              </Stack>
+                              <Typography variant='caption' color='text.secondary'>
+                                {fNumber(order.size)} shares · {Math.round(order.price * 100)}¢
+                              </Typography>
+                            </Stack>
+                            <Typography variant='subtitle1' fontWeight={700} sx={{ flexShrink: 0 }}>
+                              ${fNumber(order.size * order.price)}
+                            </Typography>
+                          </Stack>
+                          {order.status !== 'cancelled' && order.status !== 'filled' && (
+                            <Button
+                              size='medium'
+                              variant='outlined'
+                              color='inherit'
+                              disabled={cancellingId === order.id}
+                              onClick={() => handleCancelOrder(order.id)}
+                              sx={{
+                                minHeight: 44,
+                                width: '50%',
+                                minWidth: 170,
+                                display: 'flex',
+                                ml: 'auto'
+                              }}
+                            >
+                              {cancellingId === order.id ? (
+                                <CircularProgress size={14} color='inherit' />
+                              ) : (
+                                t('polymarket.cancel')
+                              )}
+                            </Button>
+                          )}
+                        </Box>
+                      ))}
+                    </Stack>
                   )}
                 </Card>
 
