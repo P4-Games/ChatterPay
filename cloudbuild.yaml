@@ -123,7 +123,7 @@ steps:
       '--quiet',
       '--allow-unauthenticated',
       '--set-secrets',
-      'BACKEND_API_TOKEN=${_BACKEND_API_TOKEN_SECRET_NAME}:latest,POLYMARKET_ADAPTER_TOKEN=${_POLYMARKET_ADAPTER_TOKEN_SECRET_NAME}:latest',
+      'BACKEND_API_TOKEN=${_BACKEND_API_TOKEN_SECRET_NAME}:latest,POLYMARKET_ADAPTER_TOKEN=${_POLYMARKET_ADAPTER_AUTH_TOKEN_NAME}:latest',
     ]
 
 images:
