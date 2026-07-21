@@ -96,7 +96,7 @@ export default function NftItem({ nft }: Props) {
 
   const handleViewTrx = () => {
     popover.onClose()
-    window.open(linkTrx, '_blank')
+    window.open(linkTrx, '_blank', 'noopener,noreferrer')
   }
 
   const handleViewMetadata = () => {

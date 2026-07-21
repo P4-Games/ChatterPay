@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useEffect, useCallback } from 'react'
+import { useRef, useState, useMemo, useEffect, useCallback } from 'react'
 import { m, AnimatePresence } from 'framer-motion'
 
 import { DotLottieReact, setWasmUrl } from '@lottiefiles/dotlottie-react'
@@ -221,6 +221,17 @@ export default function PolymarketDetailView({ slug }: Props) {
   const { enqueueSnackbar } = useSnackbar()
   const { mutate } = useSWRConfig()
 
+  // Purchase/sell status-poll intervals — cleared on unmount so they don't
+  // keep calling setState after the view is gone.
+  const pollIntervalsRef = useRef<Set<ReturnType<typeof setInterval>>>(new Set())
+  useEffect(
+    () => () => {
+      pollIntervalsRef.current.forEach((id) => clearInterval(id))
+      pollIntervalsRef.current.clear()
+    },
+    []
+  )
+
   // Account status for terms check
   const [accountStatus, setAccountStatus] = useState<IPolymarketAccountStatus | null>(null)
   const [statusLoading, setStatusLoading] = useState(true)
@@ -349,7 +360,7 @@ export default function PolymarketDetailView({ slug }: Props) {
   // Live prices: real history (REST) + streaming ticks (websocket).
   const [chartRange, setChartRange] = useState<PolymarketChartRange>('1w')
   const tokenIds = useMemo(
-    () => (market?.tokens || []).map((tk) => tk.token_id).filter(Boolean),
+    () => (market?.tokens || []).flatMap((tk) => (tk.token_id ? [tk.token_id] : [])),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [market?.condition_id]
   )
@@ -614,6 +625,7 @@ export default function PolymarketDetailView({ slug }: Props) {
           }
           poll()
           const pollInterval = setInterval(poll, 4000)
+          pollIntervalsRef.current.add(pollInterval)
         }
       } else {
         setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== tempId))
@@ -842,6 +854,7 @@ export default function PolymarketDetailView({ slug }: Props) {
               console.error(e)
             }
           }, 4000)
+          pollIntervalsRef.current.add(pollInterval)
         }
       } else {
         setError(result.message || t('polymarket.order-error'))
@@ -1936,7 +1949,7 @@ export default function PolymarketDetailView({ slug }: Props) {
                         const isYes = pos.outcome?.toLowerCase() === 'yes'
                         const pnlColor = pnlVal >= 0 ? 'success.main' : 'error.main'
                         return (
-                          <Box key={idx} sx={{ px: 2.5, py: 2 }}>
+                          <Box key={posKey} sx={{ px: 2.5, py: 2 }}>
                             <Stack
                               direction='row'
                               alignItems='flex-start'

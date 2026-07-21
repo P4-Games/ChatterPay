@@ -25,7 +25,8 @@ export async function GET(req: NextRequest) {
 
   try {
     const res = await fetch(`${baseUrl}/prices-history?${params.toString()}`, {
-      headers: useAdapter ? { Authorization: `Bearer ${POLYMARKET_ADAPTER_TOKEN}` } : {}
+      headers: useAdapter ? { Authorization: `Bearer ${POLYMARKET_ADAPTER_TOKEN}` } : {},
+      cache: 'no-store'
     })
     if (!res.ok) {
       return NextResponse.json(

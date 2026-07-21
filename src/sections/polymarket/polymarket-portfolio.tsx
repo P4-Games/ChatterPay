@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import Link from 'next/link'
 
 import Box from '@mui/material/Box'
@@ -74,6 +74,18 @@ export default function PolymarketPortfolio() {
   const theme = useTheme()
 
   const { user } = useAuthContext()
+
+  // Purchase/sell status-poll intervals — cleared on unmount so they don't
+  // keep calling setState after the view is gone.
+  const pollIntervalsRef = useRef<Set<ReturnType<typeof setInterval>>>(new Set())
+  useEffect(
+    () => () => {
+      pollIntervalsRef.current.forEach((id) => clearInterval(id))
+      pollIntervalsRef.current.clear()
+    },
+    []
+  )
+
   const { data: portfolio } = useGetPolymarketPortfolioSWR(POLYMARKET_REFRESH.LIVE_MS)
   const { data: positions = [] } = useGetPolymarketPositionsSWR(POLYMARKET_REFRESH.LIVE_MS)
   const { data: orders = [], isLoading: isOrdersLoading } = useGetPolymarketOrdersSWR(
@@ -275,6 +287,7 @@ export default function PolymarketPortfolio() {
           }
           poll()
           const pollInterval = setInterval(poll, 4000)
+          pollIntervalsRef.current.add(pollInterval)
         }
       } else {
         setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== tempId))

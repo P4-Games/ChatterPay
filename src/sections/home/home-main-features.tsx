@@ -117,6 +117,33 @@ const ANIMATIONS = {
   }
 }
 
+// Render card title, inserting Polymarket logo before the word "Polymarket"
+function renderCardTitle(title: string) {
+  const idx = title.indexOf('Polymarket')
+  if (idx === -1) return title
+
+  return (
+    <>
+      {title.slice(0, idx)}
+      <Box
+        component='img'
+        src='/assets/icons/polymarket/logo.svg'
+        alt='Polymarket'
+        sx={{
+          width: 22,
+          height: 22,
+          display: 'inline-block',
+          verticalAlign: 'middle',
+          mr: 0.75,
+          mb: 0.5,
+          borderRadius: '6px'
+        }}
+      />
+      {title.slice(idx)}
+    </>
+  )
+}
+
 export default function HomeMainFeatures() {
   const { t } = useTranslate()
   const theme = useTheme()
@@ -189,33 +216,6 @@ export default function HomeMainFeatures() {
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [lastScrollY])
-
-  // Render card title, inserting Polymarket logo before the word "Polymarket"
-  const renderCardTitle = (title: string) => {
-    const idx = title.indexOf('Polymarket')
-    if (idx === -1) return title
-
-    return (
-      <>
-        {title.slice(0, idx)}
-        <Box
-          component='img'
-          src='/assets/icons/polymarket/logo.svg'
-          alt='Polymarket'
-          sx={{
-            width: 22,
-            height: 22,
-            display: 'inline-block',
-            verticalAlign: 'middle',
-            mr: 0.75,
-            mb: 0.5,
-            borderRadius: '6px'
-          }}
-        />
-        {title.slice(idx)}
-      </>
-    )
-  }
 
   // Render a feature card
   const renderCard = (card: CardType, index: number) => {
