@@ -19,9 +19,7 @@ export async function GET(req: NextRequest) {
   }
 
   const useAdapter = Boolean(POLYMARKET_ADAPTER_TOKEN)
-  const baseUrl = useAdapter
-    ? `${POLYMARKET_CLOB_API_URL}/polymarket-clob`
-    : POLYMARKET_CLOB_API_URL
+  const baseUrl = POLYMARKET_CLOB_API_URL
 
   const params = new URLSearchParams({ market, interval, fidelity })
 
