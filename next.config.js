@@ -99,10 +99,14 @@ module.exports = {
     const polymarketWsOrigin = (() => {
       const url =
         process.env.NEXT_PUBLIC_POLYMARKET_WS_URL || 'wss://ws-subscriptions-clob.polymarket.com'
+      // The env value may use either scheme (the WebSocket constructor
+      // auto-upgrades https:// to wss://), but a CSP `https://host` source
+      // does NOT match wss: connections — so allow both schemes explicitly.
       try {
-        return new URL(url).origin
+        const { host } = new URL(url)
+        return `wss://${host} https://${host}`
       } catch {
-        return 'wss://ws-subscriptions-clob.polymarket.com'
+        return 'wss://ws-subscriptions-clob.polymarket.com https://ws-subscriptions-clob.polymarket.com'
       }
     })()
 
