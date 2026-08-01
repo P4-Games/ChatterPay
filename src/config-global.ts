@@ -73,6 +73,8 @@ export const MS_CLARITY_ID = process.env.NEXT_PUBLIC_MS_CLARITY_ID || ''
 export const STORAGE_OPTION = 'local'
 export const CHP_DSH_NAME = 'chp_dsh_data'
 export const USER_SESSION_EXPIRATION_MINUTES = 60
+// Hard cap for sliding session renewal (NIST 800-63B AAL2: 12 hours)
+export const USER_SESSION_ABSOLUTE_HOURS = 12
 export const PATH_AFTER_LOGIN = `/dashboard`
 export const IS_DEVELOPMENT =
   APP_ENV.toLowerCase() === 'development' || APP_ENV.toLowerCase() === 'testing'
@@ -104,7 +106,21 @@ export const NOTIFICATIONS_INTERVAL_TO_FETCH_PAGE: number = Number.isNaN(
 export const notificationsRefreshInterval = 5000
 
 // Polymarket / External Configurations
-export const POLYMARKET_POLL_INTERVAL_MS = 4000
+// Polling intervals for Polymarket data, tuned to how frequently the data updates.
+export const POLYMARKET_REFRESH = {
+  LIVE_MS: 10000,
+  HISTORY_MS: 30000,
+  ORDER_STATUS_MS: 4000
+} as const
+// Minimum order value (USD) enforced by the Polymarket backend
+export const POLYMARKET_MIN_ORDER_USD = 1.5
+
+export const POLYMARKET_CLOB_API_URL =
+  process.env.POLYMARKET_CLOB_API_URL || 'https://clob.polymarket.com'
+export const POLYMARKET_ADAPTER_AUTH_TOKEN = process.env.POLYMARKET_ADAPTER_AUTH_TOKEN || ''
+export const POLYMARKET_WS_URL =
+  process.env.NEXT_PUBLIC_POLYMARKET_WS_URL ||
+  'wss://ws-subscriptions-clob.polymarket.com/ws/market'
 export const TRANSACTION_FEE_USD = 0.08
 export const LIFI_CHAINS_URL = 'https://li.quest/v1/chains?chainTypes=EVM,SVM'
 export const ENS_LOGO = 'https://cryptofonts.com/img/SVG/ens.svg'

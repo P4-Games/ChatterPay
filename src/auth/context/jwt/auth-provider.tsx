@@ -106,6 +106,23 @@ export function AuthProvider({ children }: Props) {
     return () => window.removeEventListener('auth:unauthorized', handleUnauthorized)
   }, [])
 
+  const isAuthenticated = !!(state.user?.id && state.user.id.trim() !== '')
+
+  // Sliding session: renew cookie while user active. Server caps at absolute limit;
+  // failures are handled by the axios interceptor (auth:unauthorized -> logout).
+  useEffect(() => {
+    if (typeof window === 'undefined' || !isAuthenticated) return undefined
+
+    const REFRESH_INTERVAL_MS = 20 * 60 * 1000
+
+    const refreshSession = () => {
+      post(endpoints.auth.refresh(), {}).catch(() => {})
+    }
+
+    const intervalId = setInterval(refreshSession, REFRESH_INTERVAL_MS)
+    return () => clearInterval(intervalId)
+  }, [isAuthenticated])
+
   const generate2faCodeLogin = useCallback(
     async (phone: string, codeMsg: string, recaptchaToken: string) => {
       await post(endpoints.auth.code(), {
@@ -166,8 +183,7 @@ export function AuthProvider({ children }: Props) {
 
   // ----------------------------------------------------------------------
 
-  const checkAuthenticated =
-    state.user?.id && state.user.id.trim() !== '' ? 'authenticated' : 'unauthenticated'
+  const checkAuthenticated = isAuthenticated ? 'authenticated' : 'unauthenticated'
 
   const status = state.loading ? 'loading' : checkAuthenticated
 

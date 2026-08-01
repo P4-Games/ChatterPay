@@ -8,7 +8,7 @@ import { useResponsive } from 'src/hooks/use-responsive'
 import { bgGradient } from 'src/theme/css'
 import { useTranslate } from 'src/locales'
 
-import Logo from 'src/components/logo'
+import { LogoWithName } from 'src/components/logo'
 
 import BaseLayout from '../baseLayout'
 import LanguagePopover from '../common/language-popover'
@@ -26,45 +26,6 @@ export default function AuthClassicLayout({ children, image, title }: Props) {
   const theme = useTheme()
   const mdUp = useResponsive('up', 'md')
 
-  const renderLogo = (
-    <Logo
-      sx={{
-        zIndex: 9,
-        position: 'absolute',
-        mx: { xs: 4, md: 8 },
-        mt: { xs: 2, md: 5 }
-      }}
-    />
-  )
-
-  const renderLanguagePopover = (
-    <Box
-      sx={{
-        zIndex: 9,
-        position: 'absolute',
-        top: 0,
-        mt: { xs: 2, md: 5 },
-
-        ...(!mdUp && {
-          right: 0,
-          mx: 4
-        }),
-
-        ...(mdUp && {
-          width: '50%',
-          maxWidth: 600,
-          mx: 'auto',
-          px: 5,
-          display: 'flex',
-          justifyContent: 'flex-end',
-          left: 0
-        })
-      }}
-    >
-      <LanguagePopover />
-    </Box>
-  )
-
   const renderContent = (
     <Stack
       sx={{
@@ -72,10 +33,20 @@ export default function AuthClassicLayout({ children, image, title }: Props) {
         mx: 'auto',
         maxWidth: 600,
         px: { xs: 2, md: 5 },
-        pt: { xs: 15, md: 20 },
+        pt: { xs: 2, md: 5 },
         pb: { xs: 15, md: 0 }
       }}
     >
+      <Stack
+        direction='row'
+        alignItems='center'
+        justifyContent='space-between'
+        sx={{ mb: { xs: 10, md: 13 } }}
+      >
+        <LogoWithName sx={{ height: { xs: 28, md: 36 } }} />
+        <LanguagePopover />
+      </Stack>
+
       {children}
     </Stack>
   )
@@ -118,13 +89,9 @@ export default function AuthClassicLayout({ children, image, title }: Props) {
           minHeight: '100vh'
         }}
       >
-        {renderLogo}
-
         {renderContent}
 
         {mdUp && renderSection}
-
-        {renderLanguagePopover}
       </Stack>
     </BaseLayout>
   )

@@ -42,7 +42,7 @@
     "overview": "Visión general",
     "_dashboard": "Tablero",
     "nfts": "NFTs",
-    "chatterpoints": "Chatterpoints",
+    "chatterpoints": "Puntos",
     "management": "Gestión",
     "user": "Usuario",
     "account": "Cuenta",
@@ -50,7 +50,7 @@
     "email": "Cambiar Correo",
     "notifications": "Notificaciones",
     "security": "Seguridad",
-    "polymarket": "Mercados"
+    "polymarket": "Predecir"
   },
   "user": {
     "account": {
@@ -144,11 +144,12 @@
   },
   "home": {
     "header": {
-      "sign-in": "Dashboard",
+      "sign-in": "Web App",
       "about-us": "Sobre Nosotros",
       "products": "Productos",
       "roadmap": "Roadmap",
-      "development": "Demo"
+      "development": "Demo",
+      "b2b": "Para empresas"
     },
     "help": {
       "need-help": "¿Necesitas ayuda?"
@@ -181,7 +182,9 @@
       "legend": "Transfiere criptomonedas fácilmente a través de WhatsApp utilizando nuestra plataforma Web3.",
       "new": {
         "title": "Envía y recibe cripto con WhatsApp",
-        "button": "Crear mi cuenta gratis!"
+        "button": "Ir a la app",
+        "subtitle": "Transferencias instantáneas con comisiones mínimas, sin banco. Si tienes WhatsApp, ya tienes una billetera.",
+        "b2b_link": "ChatterPay para empresas"
       }
     },
     "fiat-transfer": {
@@ -212,8 +215,8 @@
         "description": "Compra, vende y mantén criptomonedas como Bitcoin, Ethereum o Stablecoins con solo un mensaje de texto o audio."
       },
       "card-3": {
-        "title": "Emite certificados con solo una foto",
-        "description": "Crea certificados fotográficos donde puedes certificar la fecha de emisión, y no pueden ser eliminados ni modificados."
+        "title": "Predice el futuro con Polymarket",
+        "description": "Negocia sobre el resultado de eventos del mundo real. Política, deportes, cripto y más, desde tu cuenta ChatterPay."
       },
       "card-4": {
         "title": "La forma más económica de enviar dinero al extranjero",
@@ -269,6 +272,14 @@
       "description": "Sin nuevas apps. Sin curvas de aprendizaje. Solo envía unos mensajes y toma el control de tus finanzas. Como ya lo hicieron Martín y más de 150 usuarios.",
       "button": "Comenzar a chatear ahora",
       "whatsapp_message": "¡Hola! Quiero crear una cuenta"
+    },
+    "b2b-banner": {
+      "eyebrow": "Para fintechs",
+      "title": "Adquiere usuarios por $0.30, no por $100.",
+      "description": "Rieles de pago por WhatsApp marca blanca para tu fintech. Cada transferencia que envían tus usuarios crea la siguiente billetera: sin app store, sin embudo.",
+      "button": "Conoce la infraestructura",
+      "cac_old": "CAC en app stores",
+      "cac_new": "CAC en rieles de WhatsApp"
     }
   },
   "terms": {
@@ -361,6 +372,7 @@
     "sign-in": "Iniciar sesión",
     "create-account": "Crear cuenta",
     "create-account-bot": "Crear cuenta desde WhatsApp",
+    "whatsapp-note": "Puedes usar ChatterPay completamente desde WhatsApp. Vuelve a chatterpay.net cuando quieras para gestionar tu cuenta desde la web o usar los mercados de predicción.",
     "terms-of-service": "Términos de Servicio",
     "privacy-policy": "Política de Privacidad",
     "by-signing": "Al registrarme, acepto los",
@@ -442,7 +454,10 @@
     "hide-small-balances": "Ocultar <$1",
     "no-balance": "Sin balance",
     "no-balances-above": "No hay balances mayores a $1",
-    "view-on-explorer": "Ver en Explorador"
+    "view-on-explorer": "Ver en Explorador",
+    "no-polymarket-cta": "Empezar a Predecir",
+    "predict": "Predecir",
+    "predict-subtitle": "Predice resultados"
   },
   "transactions": {
     "title": "Historial",
@@ -452,6 +467,7 @@
     "table-type": "Tipo",
     "table-status": "Estado",
     "table-view-all": "Ver Todo",
+    "table-view-less": "Ver Menos",
     "table-download": "Descargar",
     "table-print": "Imprimir",
     "table-share": "Compartir",
@@ -459,12 +475,44 @@
     "sent-to": "Enviaste a",
     "polymarket-buy": "Polymarket Compra",
     "polymarket-sell": "Polymarket Venta",
+    "polymarket-claim-msg": "Reclamando liquidaciones",
+    "polymarket-claim-failed": "Fallo al reclamar liquidaciones",
     "polymarket-transfer-to": "Transferencia a Polymarket",
-    "polymarket-transfer-from": "Transferencia desde Polymarket"
+    "polymarket-transfer-from": "Transferencia desde Polymarket",
+    "polymarket-failed-buy": "Fallo en Compra: {{market}}",
+    "polymarket-failed-sell": "Fallo en Venta: {{market}}",
+    "polymarket-copy-error": "Copiar error",
+    "polymarket-error-copied": "Error copiado al portapapeles",
+    "polymarket-purchase-details": "Detalles de Compra",
+    "polymarket-order-details": "Detalles de Orden",
+    "polymarket-status": "Estado",
+    "polymarket-market": "Mercado",
+    "polymarket-date": "Fecha",
+    "polymarket-time": "Hora",
+    "polymarket-amount": "Monto",
+    "polymarket-side": "Lado",
+    "polymarket-price-per-share": "Precio por Acción",
+    "polymarket-shares": "Acciones",
+    "polymarket-steps": "Pasos",
+    "polymarket-error-detail": "Error",
+    "polymarket-view-event": "Ver evento",
+    "polymarket-bridge-order-detail": "Detalles de Bridge y Orden",
+    "polymarket-bridge-step": "Bridge (Scroll → Polygon)",
+    "polymarket-bridge-step-in": "Bridge (Scroll → Polygon)",
+    "polymarket-bridge-step-out": "Bridge (Polygon → Scroll)",
+    "polymarket-order-step": "Orden CLOB",
+    "polymarket-predicted-amount": "Monto de predicción"
   },
   "nfts": {
     "view-trx": "Ver detalles de la transacción",
     "mint": "Hey, mira mi NFT:",
+    "hero": {
+      "title": "Tus momentos, minteados",
+      "subtitle": "Cada certificado que minteás con ChatterPay vive acá en la blockchain, y podés compartirlo.",
+      "total-label": "NFTs en billetera"
+    },
+    "empty-title": "Sin NFTs todavía",
+    "empty-description": "Minteá tu primer certificado desde WhatsApp y aparecerá en esta galería.",
     "item": {
       "metadata": "Metadatos",
       "maps": "Ver en Google Maps",
@@ -483,11 +531,32 @@
     }
   },
   "chatterpoints": {
-    "totals": {
-      "total": "Puntos Total",
-      "games": "En Juegos",
-      "operations": "En Operaciones",
-      "social": "En Redes Sociales"
+    "hero": {
+      "title": "Ganá recompensas por cada movimiento",
+      "subtitle": "Cada juego que jugás, operación que hacés y acción social que realizás suma Chatterpoints para los premios del ciclo.",
+      "total-label": "Puntos totales"
+    },
+    "categories": {
+      "games": "Juegos",
+      "operations": "Operaciones",
+      "social": "Redes"
+    },
+    "breakdown": {
+      "title": "Puntos por categoría",
+      "empty": "Tu desglose aparecerá cuando ganes puntos"
+    },
+    "activity": {
+      "title": "Actividad reciente",
+      "empty-title": "Sin actividad todavía",
+      "empty-description": "Los puntos de juegos, operaciones y acciones sociales aparecerán acá.",
+      "won": "Ganado",
+      "played": "Jugado"
+    },
+    "prizes": {
+      "title": "Premios",
+      "rank": "Puesto {{rank}}",
+      "empty-title": "Sin premios todavía",
+      "empty-description": "Terminá un ciclo entre los 3 primeros para ganar premios."
     }
   },
   "account": {
@@ -698,7 +767,7 @@
     "hero": {
       "tag": "Demo",
       "title": "Sitio de Pruebas",
-      "label": "Prueba el futuro de los pagos cripto — seguro, gratis y en testnet.",
+      "label": "Prueba el futuro de los pagos cripto - seguro, gratis y en testnet.",
       "description": "Usa nuestro entorno de pruebas para experimentar ChatterPay sin costos. Envía, intercambia y explora funciones con tokens de testnet. Gana confianza y descubre lo que es posible antes de usarlo en producción.",
       "cta": "Ir al Sitio de pruebas"
     }
@@ -755,8 +824,14 @@
     "trending": "Mercados Tendencia Hoy",
     "all-markets": "Todas las Predicciones",
     "no-markets": "No hay predicciones disponibles",
+    "search-placeholder": "Buscar mercados...",
+    "no-search-results": "No se encontraron mercados para \"{{query}}\"",
     "market-detail": "Detalle del Mercado",
     "market-not-found": "Mercado no encontrado",
+    "closed": "Cerrado",
+    "final-result": "RESULTADO FINAL",
+    "market-closed-notice": "Este mercado está cerrado. Ya no se pueden hacer predicciones.",
+    "market-closed-cta": "Mercado cerrado",
     "back-to-markets": "Volver a Mercados",
     "current-prices": "Precios Actuales",
     "market-stats": "Estadísticas del Mercado",
@@ -778,7 +853,7 @@
     "portfolio-title": "Mi Portafolio",
     "browse-markets": "Explorar Mercados",
     "total-value": "Valor Total",
-    "open-positions": "Posiciones Abiertas",
+    "open-positions": "Mis posiciones",
     "active-positions": "Posiciones Activas",
     "no-positions": "No hay posiciones abiertas",
     "no-positions-market": "No hay posiciones activas para este mercado.",
@@ -809,9 +884,11 @@
     "available-in-polygon": "disponible en Polygon Safe",
     "claim-all-scroll": "Reclamar todo a Scroll",
     "claiming": "Reclamando...",
+    "claim-settlements": "Reclamar liquidaciones: ${{amount}}",
+    "claim-amount": "Reclamar ${{amount}}",
     "trade-history": "Historial de Operaciones",
     "odds-time": "Probabilidades en el tiempo (%)",
-    "current-odds": "Probabilidades actuales",
+    "live": "En vivo",
     "how-it-works": "Cómo funciona",
     "how-it-works-desc": "Elige quién crees que ganará. Si aciertas, recuperarás tu dinero más tu retorno. Si te equivocas, no recuperas nada.",
     "market-closes": "El mercado cierra el",
@@ -819,7 +896,7 @@
     "vol": "Vol:",
     "market-details": "Detalles del Mercado",
     "my-activity": "Mi Actividad",
-    "open-orders": "Órdenes Abiertas",
+    "open-orders": "Órdenes pendientes",
     "no-orders": "No hay órdenes abiertas",
     "no-orders-market": "No hay órdenes activas.",
     "sell-completed": "Venta completada",
@@ -831,9 +908,10 @@
     "got-it": "Entendido",
     "about": "Sobre",
     "about-event": "Sobre este evento",
+    "market-rules": "Reglas del mercado",
     "predict-on": "Predecir en",
-    "making-predictions": "Haz tus predicciones en Polymarket",
-    "just-with-whatsapp": "¡Solo con WhatsApp!",
+    "making-predictions": "Predecí eventos del mundo real",
+    "just-with-whatsapp": "Operá sobre resultados de política, deportes, cripto y más. Impulsado por Polymarket.",
     "trending-today": "Tendencia de Hoy:",
     "creating-account": "Creando cuenta",
     "submitting": "Enviando",
@@ -879,19 +957,123 @@
     "terms-content-3": "ChatterPay actúa como interfaz para Polymarket. Todas las operaciones se ejecutan en la cadena y son irreversibles una vez confirmadas.",
     "terms-error": "No se pudieron aceptar los términos",
     "agree-continue": "Aceptar y Continuar",
-    "accepting": "Aceptando..."
+    "accepting": "Aceptando...",
+    "insufficient-balance": "Balance insuficiente",
+    "minimum-order": "El monto mínimo de predicción es ${{amount}}",
+    "deposit": "Depositar",
+    "pay-with": "Pagar con",
+    "place-another": "Realizar otra orden",
+    "order-sent": "¡Orden enviada!",
+    "order-sent-subtitle": "Seguí el progreso abajo"
   },
   "layerswapDeposit": {
     "title": "Depositar en ChatterPay",
-    "description": "Transfiere tus activos a Scroll y deposita directamente en tu billetera ChatterPay.",
+    "description": "Envía crypto desde cualquier red. Llega a tu cuenta de ChatterPay como USDT en Scroll, listo para usar.",
     "returnButton": "Volver a ChatterPay",
     "whatsappReturnText": "Quiero ver mi balance",
     "actionButton": "Depositar en ChatterPay",
-    "badge": "Impulsado por Layerswap",
+    "badge": "Impulsado por",
     "errors": {
       "title": "Solicitud inválida",
       "missingAddress": "Se requiere una dirección de billetera. Proporciónala en la URL (?address=0x...).",
       "invalidAddress": "La dirección de billetera proporcionada no es una dirección Ethereum válida."
+    }
+  },
+  "b2b": {
+    "hero": {
+      "eyebrow": "Infraestructura de pagos por WhatsApp",
+      "title": "Tus usuarios ya están en WhatsApp. Encuéntralos ahí.",
+      "subtitle": "Adquirir un usuario fintech por el embudo de app stores cuesta ~$100 y la mayoría nunca lo repaga. Un mensaje de WhatsApp reemplaza todo el embudo.",
+      "cac_old_label": "embudo de app stores",
+      "cac_new_label": "CAC por billetera en rieles de WhatsApp",
+      "cta_mail": "Hablemos",
+      "cta_whatsapp": "Pruébalo en vivo en WhatsApp",
+      "mail_subject": "ChatterPay B2B - Consulta de integración",
+      "whatsapp_msg": "¡Hola! Quiero crear una cuenta"
+    },
+    "loop": {
+      "eyebrow": "Distribución",
+      "title": "Cada transferencia trae a tu próximo usuario",
+      "description": "Sin embudo de app stores, sin registro. La distribución se compone orgánicamente, transferencia a transferencia.",
+      "step1": {
+        "title": "A le paga a B por WhatsApp",
+        "description": "Una transferencia común entre dos contactos, en el mismo chat que ya usan todos los días."
+      },
+      "step2": {
+        "title": "La billetera de B se crea al recibir",
+        "description": "Sin app, sin cuenta, sin registro. B ni siquiera necesita conocer la fintech todavía."
+      },
+      "step3": {
+        "title": "B les paga a C y D",
+        "description": "El ciclo se compone: cada billetera nueva se convierte en un canal de distribución."
+      },
+      "tag": "Exponencial por diseño"
+    },
+    "market": {
+      "eyebrow": "Mercado",
+      "title": "El riel de pagos de mayor crecimiento",
+      "stat1": {
+        "value": "$28T",
+        "label": "Volumen global de pagos con stablecoins",
+        "note": "133% CAGR desde 2023: actividad económica real, sin trading."
+      },
+      "stat2": {
+        "value": "$324B",
+        "label": "Volumen de stablecoins en LATAM",
+        "note": "+89% interanual. El 71% son pagos transfronterizos: nuestro caso de uso exacto."
+      },
+      "stat3": {
+        "value": "$1.6B",
+        "label": "Volumen proyectado en rieles de WhatsApp para 2029"
+      }
+    },
+    "proof": {
+      "proof1": {
+        "title": "10,000+ billeteras",
+        "note": "creadas en producción"
+      },
+      "proof2": {
+        "title": "114 países",
+        "note": "con usuarios activos"
+      },
+      "proof3": {
+        "title": "3 años en producción",
+        "note": "probada con e-commerce de alto volumen"
+      }
+    },
+    "offer": {
+      "eyebrow": "Qué obtienes",
+      "title": "Infraestructura, no otra app",
+      "description": "Una API marca blanca sobre 60+ blockchains, con KYC controlado por el socio. Todo lo que tu producto necesita para mover dinero por WhatsApp.",
+      "payments": {
+        "title": "Pagos por WhatsApp",
+        "description": "Envía, recibe e intercambia stablecoins desde un chat. Cualquier número puede recibir fondos."
+      },
+      "agents": {
+        "title": "Agentes de IA a medida",
+        "description": "Agentes conversacionales que entienden texto y audio, con la voz de tu marca."
+      },
+      "crm": {
+        "title": "CRM de WhatsApp",
+        "description": "Gestiona cada conversación y transacción de tus clientes desde un CRM propio."
+      },
+      "marketing": {
+        "title": "Herramientas de marketing",
+        "description": "Campañas, difusiones y ciclos de referidos donde tus usuarios ya conversan."
+      },
+      "security": {
+        "title": "Herramientas de seguridad",
+        "description": "Límites de transacción, PIN, flujos de recuperación y monitoreo, con KYC controlado por el socio."
+      },
+      "defi": {
+        "title": "DeFi e integraciones externas",
+        "description": "Swaps, rendimiento y contratos DeFi en 60+ blockchains, listos para tu producto."
+      }
+    },
+    "cta": {
+      "title": "Reduzcamos tu costo de adquisición hoy",
+      "description": "Cuéntanos sobre tu producto y volúmenes y volveremos con un plan de integración.",
+      "button": "Solicita tu plan de integración"
     }
   }
 }

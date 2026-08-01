@@ -30,6 +30,21 @@ export type IPolymarketMarket = {
   }>
 }
 
+/**
+ * Team metadata on sports events. `logo` is the flag/crest Polymarket's own UI
+ * composes for the event thumbnail — the event-level image on sports events is
+ * just a generic sport image (e.g. a soccer ball).
+ */
+export type IPolymarketTeam = {
+  name: string
+  logo: string
+  abbreviation: string
+  /** Team accent color (hex) */
+  color: string
+  /** Side within the fixture: 'home' | 'away' */
+  ordering: string
+}
+
 export type IPolymarketEvent = {
   id: string
   title: string
@@ -38,6 +53,10 @@ export type IPolymarketEvent = {
   image: string
   icon: string
   markets: IPolymarketMarket[]
+  /** Present on sports events — team names, flags/crests, colors */
+  teams?: IPolymarketTeam[]
+  /** When false (sports events), per-market images are generic placeholders */
+  show_market_images?: boolean
 }
 
 export type IPolymarketAccountInfo = {
@@ -137,10 +156,20 @@ export type IPolymarketOrderPayload = {
   size: number
   price: number
   bridge_amount?: string
+  bridge_token?: string
 }
 
 export type IPolymarketPurchaseResponse = {
   purchase_id: string
+}
+
+export type IPolymarketPurchaseStep = {
+  name: string
+  status: 'pending' | 'completed' | 'failed' | string
+  started_at?: string
+  completed_at?: string
+  tx_hash?: string
+  error?: string
 }
 
 export type IPolymarketPurchaseStatus = {
@@ -148,6 +177,15 @@ export type IPolymarketPurchaseStatus = {
   status: 'pending' | 'completed' | 'failed'
   current_step: 'account_creation' | 'bridge' | 'order_placement' | 'done' | string
   error?: string
+  // Extended fields returned by the backend
+  price?: number
+  size?: number
+  side?: 'BUY' | 'SELL'
+  token_id?: string
+  bridge_amount?: string
+  steps?: IPolymarketPurchaseStep[]
+  created_at?: string
+  updated_at?: string
 }
 
 export type IPolymarketCategory = {
@@ -187,10 +225,14 @@ export type IPolymarketTrade = {
 }
 
 export type IPolymarketPnlPoint = {
+  /** ISO 8601 timestamp */
   timestamp: string
+  /** Mark-to-market P&L in USD (realized + unrealized) */
   cumulativePnl: number
-  totalInvested: number
-  totalProceeds: number
+  totalInvested?: number
+  totalProceeds?: number
 }
+
+export type IPolymarketPnlInterval = '1d' | '1w' | '1m' | 'all'
 
 // ----------------------------------------------------------------------

@@ -30,7 +30,8 @@
     "pre-commit": "yarn run lint:fix && yarn run type-check && yarn run commitlint-check-comit-msg",
     "inspect": "cross-env NODE_OPTIONS=\"--inspect --trace-warnings\" next dev",
     "docker:build": "bash ./scripts/docker-build.sh",
-    "docker:run": "bash docker run -d -p 3000:3000 --name my-nextjs-container my-nextjs-app"
+    "docker:run": "bash docker run -d -p 3000:3000 --name my-nextjs-container my-nextjs-app",
+    "doctor": "npx react-doctor@latest"
   },
   "dependencies": {
     "@emotion/cache": "^11.10.5",
@@ -40,6 +41,7 @@
     "@hugeicons/core-free-icons": "^4.0.0",
     "@hugeicons/react": "^1.1.5",
     "@iconify/react": "6.0.2",
+    "@lottiefiles/dotlottie-react": "^0.19.4",
     "@mui/lab": "^5.0.0-alpha.155",
     "@mui/material": "^5.14.20",
     "@mui/system": "^5.14.20",

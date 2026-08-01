@@ -11,6 +11,7 @@ export {
   useGetWalletNfts,
   useGetWalletBalance,
   useGetWalletTransactions,
+  useGetWalletTransactionsCached,
   useGetWalletNotifications
 } from './use-wallet'
 

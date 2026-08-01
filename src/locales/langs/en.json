@@ -42,7 +42,7 @@
     "overview": "overview",
     "_dashboard": "Dashboard",
     "nfts": "NFTs",
-    "chatterpoints": "Chatterpoints",
+    "chatterpoints": "Points",
     "management": "Management",
     "user": "User",
     "account": "Account",
@@ -50,7 +50,7 @@
     "email": "Email Change",
     "notifications": "Notifications",
     "security": "Security",
-    "polymarket": "Markets"
+    "polymarket": "Predict"
   },
   "user": {
     "account": {
@@ -144,11 +144,12 @@
   },
   "home": {
     "header": {
-      "sign-in": "Dashboard",
+      "sign-in": "Web App",
       "about-us": "About Us",
       "products": "Products",
       "roadmap": "Roadmap",
-      "development": "Demo"
+      "development": "Demo",
+      "b2b": "For business"
     },
     "help": {
       "need-help": "Need help?"
@@ -181,7 +182,9 @@
       "legend": "Transfer crypto easily through WhatsApp using our Web3 platform.",
       "new": {
         "title": "Send and receive crypto with WhatsApp",
-        "button": "Create my account for free!"
+        "button": "Open the app",
+        "subtitle": "Instant transfers with minimal fees, no bank needed. If you have WhatsApp, you already have a wallet.",
+        "b2b_link": "ChatterPay for business"
       }
     },
     "fiat-transfer": {
@@ -212,8 +215,8 @@
         "description": "Buy, Sell and Hold crypto such as Bitcoin, Ethereum or Stablecoins with just one text or audio message."
       },
       "card-3": {
-        "title": "Issue certificates with just a photo",
-        "description": "Create photo certificates where you can certify the date of issuing, and cannot be deleted or modified."
+        "title": "Predict the future with Polymarket",
+        "description": "Trade on the outcome of real-world events. Politics, sports, crypto and more, from your ChatterPay account."
       },
       "card-4": {
         "title": "The cheapest way to send money abroad",
@@ -269,6 +272,14 @@
       "description": "No new apps. No learning curves. Just send a few messages and take control of your finance. Like Martín and more than 150 chatters already did.",
       "button": "Start chatting now",
       "whatsapp_message": "Hi! I want to create an account"
+    },
+    "b2b-banner": {
+      "eyebrow": "For fintechs",
+      "title": "Acquire users for $0.30, not $100.",
+      "description": "White-label WhatsApp payment rails for your fintech. Every transfer your users send creates the next wallet: no app store, no funnel.",
+      "button": "Explore the infrastructure",
+      "cac_old": "app-store CAC",
+      "cac_new": "CAC on WhatsApp rails"
     }
   },
   "terms": {
@@ -360,7 +371,8 @@
     "already-account": "Already have an account?",
     "sign-in": "Sign in",
     "create-account": "Create Account",
-    "create-account-bot": "Create Acount from WhatsApp",
+    "create-account-bot": "Create Account from WhatsApp",
+    "whatsapp-note": "You can use ChatterPay entirely from WhatsApp. Come back to chatterpay.net anytime to manage your account from the web or trade on prediction markets.",
     "terms-of-service": "Terms of Service",
     "privacy-policy": "Privacy Policy",
     "by-signing": "By signing up, I agree to",
@@ -442,7 +454,10 @@
     "hide-small-balances": "Hide <$1",
     "no-balance": "No balance",
     "no-balances-above": "No balances above $1",
-    "view-on-explorer": "View on Explorer"
+    "view-on-explorer": "View on Explorer",
+    "no-polymarket-cta": "Start Predicting",
+    "predict": "Predict",
+    "predict-subtitle": "Predict outcomes"
   },
   "transactions": {
     "title": "History",
@@ -452,6 +467,7 @@
     "table-type": "Tipo",
     "table-status": "Status",
     "table-view-all": "View All",
+    "table-view-less": "View Less",
     "table-download": "Download",
     "table-print": "Print",
     "table-share": "Share",
@@ -459,12 +475,44 @@
     "sent-to": "Sent to",
     "polymarket-buy": "Polymarket Buy",
     "polymarket-sell": "Polymarket Sell",
+    "polymarket-claim-msg": "Claiming settlements",
+    "polymarket-claim-failed": "Failed to claim settlements",
     "polymarket-transfer-to": "Transfer to Polymarket",
-    "polymarket-transfer-from": "Transfer from Polymarket"
+    "polymarket-transfer-from": "Transfer from Polymarket",
+    "polymarket-failed-buy": "Failed to buy: {{market}}",
+    "polymarket-failed-sell": "Failed to sell: {{market}}",
+    "polymarket-copy-error": "Copy Error",
+    "polymarket-error-copied": "Error copied to clipboard",
+    "polymarket-purchase-details": "Purchase Details",
+    "polymarket-order-details": "Order Details",
+    "polymarket-status": "Status",
+    "polymarket-market": "Market",
+    "polymarket-date": "Date",
+    "polymarket-time": "Time",
+    "polymarket-amount": "Amount",
+    "polymarket-side": "Side",
+    "polymarket-price-per-share": "Price per Share",
+    "polymarket-shares": "Shares",
+    "polymarket-steps": "Steps",
+    "polymarket-error-detail": "Error",
+    "polymarket-view-event": "View event",
+    "polymarket-bridge-order-detail": "Bridge & Order Details",
+    "polymarket-bridge-step": "Bridge (Scroll → Polygon)",
+    "polymarket-bridge-step-in": "Bridge (Scroll → Polygon)",
+    "polymarket-bridge-step-out": "Bridge (Polygon → Scroll)",
+    "polymarket-order-step": "CLOB Order",
+    "polymarket-predicted-amount": "Prediction Amount"
   },
   "nfts": {
     "view-trx": "View Transacton Details",
     "mint": "Hey, check out my NFT:",
+    "hero": {
+      "title": "Your moments, minted",
+      "subtitle": "Every certificate you mint through ChatterPay lives here on-chain, shareable and yours.",
+      "total-label": "NFTs in wallet"
+    },
+    "empty-title": "No NFTs yet",
+    "empty-description": "Mint your first certificate from WhatsApp and it will appear in this gallery.",
     "item": {
       "metadata": "Metadata",
       "maps": "View on Google Maps",
@@ -483,11 +531,32 @@
     }
   },
   "chatterpoints": {
-    "totals": {
-      "total": "Total Points",
-      "games": "In Games",
-      "operations": "In Operations",
-      "social": "In Social Networks"
+    "hero": {
+      "title": "Get rewarded for every move",
+      "subtitle": "Every game you play, operation you make and social action you take earns Chatterpoints toward cycle prizes.",
+      "total-label": "Total points"
+    },
+    "categories": {
+      "games": "Games",
+      "operations": "Operations",
+      "social": "Social"
+    },
+    "breakdown": {
+      "title": "Points by category",
+      "empty": "Your breakdown appears once you earn points"
+    },
+    "activity": {
+      "title": "Recent activity",
+      "empty-title": "No activity yet",
+      "empty-description": "Points from games, operations and social actions will show up here.",
+      "won": "Won",
+      "played": "Played"
+    },
+    "prizes": {
+      "title": "Prizes",
+      "rank": "Top {{rank}} finish",
+      "empty-title": "No prizes yet",
+      "empty-description": "Finish a cycle in the top 3 to earn prizes."
     }
   },
   "account": {
@@ -698,7 +767,7 @@
     "hero": {
       "tag": "Demo",
       "title": "Playground",
-      "label": "Test the future of crypto payments — safe, free, and on testnet.",
+      "label": "Test the future of crypto payments - safe, free, and on testnet.",
       "description": "Use our testing site to try ChatterPay at no cost. Send, swap, and explore features using testnet tokens. Build confidence and see what’s possible before using it in production.",
       "cta": "Go to testing Site"
     }
@@ -733,7 +802,7 @@
       },
       "telegram": {
         "title": "Telegram",
-        "description": "Access ChatterPay directly from Telegram. Check your wallet and balance without leaving the chat — fast, secure, and private."
+        "description": "Access ChatterPay directly from Telegram. Check your wallet and balance without leaving the chat - fast, secure, and private."
       }
     }
   },
@@ -755,8 +824,14 @@
     "trending": "Trending Markets Today",
     "all-markets": "All Predictions",
     "no-markets": "No predictions available",
+    "search-placeholder": "Search markets...",
+    "no-search-results": "No markets found for \"{{query}}\"",
     "market-detail": "Market Detail",
     "market-not-found": "Market not found",
+    "closed": "Closed",
+    "final-result": "FINAL RESULT",
+    "market-closed-notice": "This market is closed. Trading is no longer available.",
+    "market-closed-cta": "Market closed",
     "back-to-markets": "Back to Markets",
     "current-prices": "Current Prices",
     "market-stats": "Market Statistics",
@@ -778,7 +853,7 @@
     "portfolio-title": "My Portfolio",
     "browse-markets": "Browse Markets",
     "total-value": "Total Value",
-    "open-positions": "Open Positions",
+    "open-positions": "My positions",
     "active-positions": "Active Positions",
     "no-positions": "No open positions",
     "no-positions-market": "No active positions for this market.",
@@ -809,9 +884,11 @@
     "available-in-polygon": "available in Polygon Safe",
     "claim-all-scroll": "Claim All to Scroll",
     "claiming": "Claiming...",
+    "claim-settlements": "Claim Settlements: ${{amount}}",
+    "claim-amount": "Claim ${{amount}}",
     "trade-history": "Trade History",
     "odds-time": "Odds over time (%)",
-    "current-odds": "Current odds",
+    "live": "Live",
     "how-it-works": "How it works",
     "how-it-works-desc": "Pick who you think will win. If you're right, you get your money back plus your payout. If you're wrong, you don't get anything back.",
     "market-closes": "Market closes on",
@@ -819,7 +896,7 @@
     "vol": "Vol:",
     "market-details": "Market Details",
     "my-activity": "My Activity",
-    "open-orders": "Open Orders",
+    "open-orders": "Pending orders",
     "no-orders": "No open orders",
     "no-orders-market": "No active orders.",
     "sell-completed": "Sell order completed",
@@ -831,9 +908,10 @@
     "got-it": "Got it",
     "about": "About",
     "about-event": "About this event",
+    "market-rules": "Market rules",
     "predict-on": "Predict on",
-    "making-predictions": "Make your predictions on Polymarket",
-    "just-with-whatsapp": "just with WhatsApp!",
+    "making-predictions": "Predict real-world events",
+    "just-with-whatsapp": "Trade on outcomes in politics, sports, crypto and more. Powered by Polymarket.",
     "trending-today": "Trending Today:",
     "creating-account": "Creating account",
     "submitting": "Submitting",
@@ -853,11 +931,12 @@
     "error-claiming": "Error claiming funds",
     "date": "Date",
     "tx": "TX",
-    "you-get-back": "You'll receive back",
+    "you-get-back": "You'll receive back ${{amount}}",
     "prediction-summary": "That's your {{amount}} entry + {{profit}} if you're right",
     "placing-prediction": "Placing prediction...",
     "predict-cta": "Predict {{amount}} on {{outcome}}",
     "predict-question-header": "WHO DO YOU THINK WINS?",
+    "predict-question-yn": "DO YOU THINK IT WILL WIN?",
     "predict-amount-header": "HOW MUCH DO YOU WANT TO PREDICT?",
     "if-outcome-wins": "If {{outcome}} wins...",
     "total-pnl": "Total P&L",
@@ -878,19 +957,123 @@
     "terms-content-3": "ChatterPay acts as an interface to Polymarket. All trades are executed on-chain and are irreversible once confirmed.",
     "terms-error": "Failed to accept terms",
     "agree-continue": "Agree & Continue",
-    "accepting": "Accepting..."
+    "accepting": "Accepting...",
+    "insufficient-balance": "Insufficient balance",
+    "minimum-order": "The minimum prediction amount is ${{amount}}",
+    "deposit": "Deposit",
+    "pay-with": "Pay with",
+    "place-another": "Place another order",
+    "order-sent": "Order sent!",
+    "order-sent-subtitle": "Track your progress below"
   },
   "layerswapDeposit": {
     "title": "Deposit to ChatterPay",
-    "description": "Bridge your assets to Scroll and deposit directly into your ChatterPay wallet.",
+    "description": "Send crypto from any network. It arrives in your ChatterPay account as USDT on Scroll, ready to use.",
     "returnButton": "Return to ChatterPay",
     "whatsappReturnText": "I want to see my balance",
     "actionButton": "Deposit to ChatterPay",
-    "badge": "Powered by Layerswap",
+    "badge": "Powered by",
     "errors": {
       "title": "Invalid Request",
       "missingAddress": "A wallet address is required. Please provide your address in the URL (?address=0x...).",
       "invalidAddress": "The wallet address provided is not a valid Ethereum address."
+    }
+  },
+  "b2b": {
+    "hero": {
+      "eyebrow": "WhatsApp infrastructure for payments",
+      "title": "Your users are already on WhatsApp. Meet them there.",
+      "subtitle": "Acquiring a fintech user through the app-store funnel costs ~$100 and most users never repay it. One WhatsApp message replaces the entire funnel.",
+      "cac_old_label": "app-store funnel",
+      "cac_new_label": "CAC per wallet on WhatsApp rails",
+      "cta_mail": "Let's talk",
+      "cta_whatsapp": "Try it live on WhatsApp",
+      "mail_subject": "ChatterPay B2B - Integration inquiry",
+      "whatsapp_msg": "Hi! I want to create an account"
+    },
+    "loop": {
+      "eyebrow": "Distribution",
+      "title": "Every transfer onboards your next user",
+      "description": "No app-store funnel, no signup flow. Distribution compounds organically, transfer by transfer.",
+      "step1": {
+        "title": "A pays B over WhatsApp",
+        "description": "A regular transfer between two contacts - the same chat they already use every day."
+      },
+      "step2": {
+        "title": "B's wallet is created on receipt",
+        "description": "No app, no account, no signup. B doesn't even need to know the fintech yet."
+      },
+      "step3": {
+        "title": "B pays C and D",
+        "description": "The loop compounds: every new wallet becomes a distribution channel."
+      },
+      "tag": "Exponential by design"
+    },
+    "market": {
+      "eyebrow": "Market",
+      "title": "The fastest-growing payment rail",
+      "stat1": {
+        "value": "$28T",
+        "label": "Global stablecoin payment volume",
+        "note": "133% CAGR since 2023 - real economic activity, trading excluded."
+      },
+      "stat2": {
+        "value": "$324B",
+        "label": "LATAM stablecoin volume",
+        "note": "+89% YoY. 71% is cross-border payments - our exact use case."
+      },
+      "stat3": {
+        "value": "$1.6B",
+        "label": "Projected volume on WhatsApp rails by 2029"
+      }
+    },
+    "proof": {
+      "proof1": {
+        "title": "10,000+ wallets",
+        "note": "created in production"
+      },
+      "proof2": {
+        "title": "114 countries",
+        "note": "with active users"
+      },
+      "proof3": {
+        "title": "3 years in production",
+        "note": "battle-tested with high-volume e-commerce"
+      }
+    },
+    "offer": {
+      "eyebrow": "What you get",
+      "title": "Infrastructure, not another app",
+      "description": "A white-label API over 60+ chains, with partner-controlled KYC. Everything your product needs to move money over WhatsApp.",
+      "payments": {
+        "title": "WhatsApp payments",
+        "description": "Send, receive and swap stablecoins from a chat. Any phone number can receive funds."
+      },
+      "agents": {
+        "title": "Custom AI agents",
+        "description": "Conversational agents that understand text and audio, tuned to your brand's voice."
+      },
+      "crm": {
+        "title": "WhatsApp CRM",
+        "description": "Manage every customer conversation and transaction from one in-house CRM."
+      },
+      "marketing": {
+        "title": "Marketing tools",
+        "description": "Campaigns, broadcasts and referral loops that run where your users already talk."
+      },
+      "security": {
+        "title": "Security tools",
+        "description": "Transaction limits, PIN, recovery flows and monitoring - with partner-controlled KYC."
+      },
+      "defi": {
+        "title": "DeFi & external integrations",
+        "description": "Swaps, yield and DeFi contracts across 60+ chains, ready to plug into your product."
+      }
+    },
+    "cta": {
+      "title": "Let's reduce your customer acquisition cost today",
+      "description": "Tell us about your product and volumes, we'll come back with an integration plan.",
+      "button": "Get your integration plan"
     }
   }
 }

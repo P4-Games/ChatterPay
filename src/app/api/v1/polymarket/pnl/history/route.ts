@@ -27,9 +27,9 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json().catch(() => ({}))
-    const { limit } = body
+    const { limit, interval } = body
 
-    const result = await getPnlHistory(phoneNumber, limit)
+    const result = await getPnlHistory(phoneNumber, limit, interval)
 
     return NextResponse.json(result, {
       headers: { 'Content-Type': 'application/json' }

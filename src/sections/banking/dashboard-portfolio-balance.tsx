@@ -1,5 +1,10 @@
 'use client'
 
+import { useMemo } from 'react'
+
+import { useRouter } from 'src/routes/hooks'
+import { paths } from 'src/routes/paths'
+
 import {
   Box,
   Card,
@@ -11,6 +16,9 @@ import {
   CircularProgress
 } from '@mui/material'
 import { alpha, useTheme } from '@mui/material/styles'
+
+import { HugeiconsIcon } from '@hugeicons/react'
+import { Target02Icon } from '@hugeicons/core-free-icons'
 
 import { useTranslate } from 'src/locales'
 import { fNumber } from 'src/utils/format-number'
@@ -34,6 +42,7 @@ type Props = {
   onClaimClick: () => void
   onCryptoClick: () => void
   onPolymarketClick: () => void
+  onPredictClick: () => void
   isClaiming: boolean
   selectedCurrency: CurrencyKey
   onCurrencyChange: (currency: CurrencyKey) => void
@@ -44,6 +53,7 @@ type Props = {
   cryptoExpanded: boolean
   onCryptoToggle: () => void
   priceData: Record<string, TokenPriceData>
+  polymarketReady: boolean | null
 }
 
 // Show up to 3 stacked token logos
@@ -56,10 +66,14 @@ function StackedTokenIcons({
   tokenLogos: Record<string, string>
   isDark: boolean
 }) {
-  const topTokens = [...balances]
-    .sort((a, b) => (b.balance_conv?.usd ?? 0) - (a.balance_conv?.usd ?? 0))
-    .slice(0, 3)
-    .filter((b) => tokenLogos[b.token])
+  const topTokens = useMemo(
+    () =>
+      [...balances]
+        .sort((a, b) => (b.balance_conv?.usd ?? 0) - (a.balance_conv?.usd ?? 0))
+        .slice(0, 3)
+        .filter((b) => tokenLogos[b.token]),
+    [balances, tokenLogos]
+  )
 
   if (topTokens.length === 0) {
     return (
@@ -97,6 +111,8 @@ function StackedTokenIcons({
           component='img'
           src={tokenLogos[token.token]}
           alt={token.token}
+          loading='lazy'
+          decoding='async'
           sx={{
             position: 'absolute',
             left: index * (iconSize - overlap),
@@ -160,6 +176,8 @@ function CryptoAssetRow({
             component='img'
             src={logoUrl}
             alt={balance.token}
+            loading='lazy'
+            decoding='async'
             sx={{ width: 36, height: 36, borderRadius: '50%', flexShrink: 0 }}
           />
         ) : (
@@ -230,6 +248,7 @@ export default function DashboardPortfolioBalance({
   onClaimClick,
   onCryptoClick,
   onPolymarketClick,
+  onPredictClick,
   isClaiming,
   selectedCurrency,
   onCurrencyChange,
@@ -238,10 +257,14 @@ export default function DashboardPortfolioBalance({
   balances,
   cryptoExpanded,
   onCryptoToggle,
-  priceData
+  priceData,
+  polymarketReady
 }: Props) {
   const { t } = useTranslate()
   const theme = useTheme()
+  const router = useRouter()
+
+  const needsSetup = polymarketReady === false
   const isDark = theme.palette.mode === 'dark'
 
   const headingColor = isDark ? '#B8F6C9' : '#173F35'
@@ -263,8 +286,9 @@ export default function DashboardPortfolioBalance({
   const cryptoOnly = combinedTotal - polymarketConverted
 
   // Sort balances by USD value for dropdown
-  const sortedBalances = [...balances].sort(
-    (a, b) => (b.balance_conv?.usd ?? 0) - (a.balance_conv?.usd ?? 0)
+  const sortedBalances = useMemo(
+    () => [...balances].sort((a, b) => (b.balance_conv?.usd ?? 0) - (a.balance_conv?.usd ?? 0)),
+    [balances]
   )
 
   return (
@@ -397,44 +421,84 @@ export default function DashboardPortfolioBalance({
       </Card>
 
       {/* Polymarket Row */}
-      <Card
-        onClick={onPolymarketClick}
-        sx={{
-          px: 3,
-          py: 1.5,
-          cursor: 'pointer',
-          border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}`,
-          '&:hover': { bgcolor: alpha(theme.palette.grey[500], 0.04) },
-          transition: theme.transitions.create('background-color', { duration: 200 })
-        }}
-      >
-        <Stack direction='row' alignItems='center' justifyContent='space-between'>
-          <Stack direction='row' alignItems='center' spacing={1.5}>
-            <Box
-              component='img'
-              src='/assets/icons/polymarket/logo.svg'
-              alt='Polymarket'
+      <Box sx={{ position: 'relative' }}>
+        <Card
+          sx={{
+            px: 3,
+            py: 1.5,
+            border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}`,
+            transition: theme.transitions.create(['background-color', 'opacity'], {
+              duration: 200
+            })
+          }}
+        >
+          <Stack direction='row' alignItems='center' justifyContent='space-between'>
+            <Stack
+              direction='row'
+              alignItems='center'
+              spacing={1.5}
+              onClick={!needsSetup ? onPolymarketClick : undefined}
               sx={{
-                width: 28,
-                height: 28,
-                borderRadius: '50%',
-                flexShrink: 0
+                cursor: needsSetup ? 'default' : 'pointer',
+                flex: 1,
+                minWidth: 0
               }}
-            />
-            <Typography variant='subtitle1' fontWeight={600}>
-              Polymarket
-            </Typography>
+            >
+              <Box
+                component='img'
+                src='/assets/icons/polymarket/logo.svg'
+                alt='Polymarket'
+                loading='lazy'
+                decoding='async'
+                sx={{ width: 28, height: 28, borderRadius: '50%', flexShrink: 0 }}
+              />
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Typography variant='subtitle1' fontWeight={600}>
+                  Polymarket
+                </Typography>
+                <Typography
+                  variant='caption'
+                  sx={{ color: 'text.secondary', display: 'block', mt: -0.25 }}
+                >
+                  {hideValues
+                    ? '********'
+                    : `$${fNumber(polymarketConverted)} ${selectedCurrency.toUpperCase()}`}
+                </Typography>
+              </Box>
+              {!needsSetup && (
+                <Iconify
+                  icon='eva:chevron-right-fill'
+                  width={20}
+                  sx={{ color: 'text.secondary', flexShrink: 0 }}
+                />
+              )}
+            </Stack>
+
+            <Button
+              size='small'
+              variant='contained'
+              onClick={onPredictClick}
+              startIcon={<HugeiconsIcon icon={Target02Icon} size={16} />}
+              sx={{
+                flexShrink: 0,
+                ml: 2,
+                borderRadius: 50,
+                px: 2,
+                textTransform: 'none',
+                fontWeight: 700,
+                fontSize: '0.8rem',
+                ...(isDark && {
+                  bgcolor: '#1B9C85',
+                  color: '#fff',
+                  '&:hover': { bgcolor: '#22b89a' }
+                })
+              }}
+            >
+              {t('balances.predict')}
+            </Button>
           </Stack>
-          <Stack direction='row' alignItems='center' spacing={1}>
-            <Typography variant='subtitle1' fontWeight={600}>
-              {hideValues
-                ? '********'
-                : `$${fNumber(polymarketConverted)} ${selectedCurrency.toUpperCase()}`}
-            </Typography>
-            <Iconify icon='eva:chevron-right-fill' width={20} sx={{ color: 'text.secondary' }} />
-          </Stack>
-        </Stack>
-      </Card>
+        </Card>
+      </Box>
 
       {/* Action Buttons */}
       <Stack direction='row' spacing={1.5} useFlexGap sx={{ flexWrap: 'wrap' }}>
@@ -525,7 +589,9 @@ export default function DashboardPortfolioBalance({
               }
             }}
           >
-            {isClaiming ? 'Claiming...' : `Claim Settlements: $${fNumber(idleUsdc)}`}
+            {isClaiming
+              ? t('polymarket.claiming')
+              : t('polymarket.claim-settlements', { amount: fNumber(idleUsdc) })}
           </Button>
         )}
       </Stack>

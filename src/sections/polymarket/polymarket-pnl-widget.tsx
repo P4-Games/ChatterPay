@@ -8,7 +8,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import { alpha, useTheme } from '@mui/material/styles'
 import type { SxProps, Theme } from '@mui/material/styles'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import {
   polymarketGetPortfolio,
   polymarketGetPnlHistory,
@@ -23,6 +23,7 @@ import type {
   IPolymarketPortfolio,
   IPolymarketPosition,
   IPolymarketPnlPoint,
+  IPolymarketPnlInterval,
   IPolymarketTrade
 } from 'src/types/polymarket'
 
@@ -31,18 +32,14 @@ import type {
 const TIME_RANGES = ['1D', '1W', '1M', 'All'] as const
 type TimeRange = (typeof TIME_RANGES)[number]
 
-function filterByTimeRange(points: IPolymarketPnlPoint[], range: TimeRange): IPolymarketPnlPoint[] {
-  if (range === 'All' || points.length === 0) return points
-
-  const now = Date.now()
-  const msMap: Record<string, number> = {
-    '1D': 24 * 60 * 60 * 1000,
-    '1W': 7 * 24 * 60 * 60 * 1000,
-    '1M': 30 * 24 * 60 * 60 * 1000
-  }
-  const cutoff = now - (msMap[range] ?? 0)
-  return points.filter((p) => new Date(p.timestamp).getTime() >= cutoff)
+const RANGE_TO_INTERVAL: Record<TimeRange, IPolymarketPnlInterval> = {
+  '1D': '1d',
+  '1W': '1w',
+  '1M': '1m',
+  All: 'all'
 }
+
+const PNL_POINTS_LIMIT = 100
 
 // ----------------------------------------------------------------------
 
@@ -72,7 +69,11 @@ export default function PolymarketPNLWidget({
   const [internalTrades, setInternalTrades] = useState<IPolymarketTrade[]>([])
   const [pnlHistory, setPnlHistory] = useState<IPolymarketPnlPoint[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isPnlLoading, setIsPnlLoading] = useState(true)
   const [selectedRange, setSelectedRange] = useState<TimeRange>('All')
+
+  // Per-range cache so switching tabs back doesn't refetch
+  const pnlCacheRef = useRef<Partial<Record<TimeRange, IPolymarketPnlPoint[]>>>({})
 
   // Resolve: use prop if provided, otherwise use internally fetched
   const resolvedPositions = positions ?? internalPositions
@@ -114,30 +115,53 @@ export default function PolymarketPNLWidget({
     fetchData()
   }, [portfolioData, positions, trades])
 
-  // Fetch PNL history for chart
+  // Fetch PNL history for chart, scoped server-side to the selected range
   useEffect(() => {
+    const cached = pnlCacheRef.current[selectedRange]
+    if (cached) {
+      setPnlHistory(cached)
+      return undefined
+    }
+
+    let active = true
     const fetchPnl = async () => {
+      setIsPnlLoading(true)
       try {
-        const res = await polymarketGetPnlHistory(100)
+        const res = await polymarketGetPnlHistory(
+          PNL_POINTS_LIMIT,
+          RANGE_TO_INTERVAL[selectedRange]
+        )
         if (res.ok && res.data) {
           const raw = res.data as any
           const points = Array.isArray(raw) ? raw : (raw?.points ?? raw?.history ?? [])
-          setPnlHistory(points)
+          pnlCacheRef.current[selectedRange] = points
+          if (active) setPnlHistory(points)
         }
       } catch {
         // Silently fail
+      } finally {
+        if (active) setIsPnlLoading(false)
       }
     }
     fetchPnl()
-  }, [])
+    return () => {
+      active = false
+    }
+  }, [selectedRange])
 
   const loading = isLoadingExternal ?? isLoading
 
-  // Compute P&L from portfolio data, with positions fallback
-  const portfolioPnl = portfolio?.total_pnl ?? portfolio?.totalPnl ?? 0
-  const positionsPnl =
-    resolvedPositions?.reduce((sum, p) => sum + (p.pnl ?? p.cashPnl ?? 0), 0) ?? 0
-  const pnl = portfolioPnl !== 0 ? portfolioPnl : positionsPnl
+  // Headline P&L: the change in cumulative P&L across the selected window
+  // (last point minus first point of that range's series) — same series the
+  // chart plots, so the number always matches what the chart shows for that
+  // tab. No approximated fallback: null until the history is in, so the UI
+  // shows a loading state instead of a number that disagrees with the chart.
+  const pnl: number | null =
+    pnlHistory.length > 1
+      ? pnlHistory[pnlHistory.length - 1].cumulativePnl - pnlHistory[0].cumulativePnl
+      : pnlHistory.length === 1
+        ? pnlHistory[0].cumulativePnl
+        : null
 
   const portfolioValue = portfolio?.total_value ?? portfolio?.totalValue ?? 0
   const positionsValue =
@@ -147,41 +171,49 @@ export default function PolymarketPNLWidget({
     ) ?? 0
   const totalValue = portfolioValue > 0 ? portfolioValue : positionsValue
 
-  // Total volume from ALL trades: sum(trade.size * trade.price)
+  // Total volume and cost basis from ALL trades (independent of open/closed status)
   const totalVolume = resolvedTrades.reduce((sum, t) => sum + (t.size || 0) * (t.price || 0), 0)
+  const totalBuyVolume = resolvedTrades.reduce(
+    (sum, t) => sum + (t.side === 'BUY' ? (t.size || 0) * (t.price || 0) : 0),
+    0
+  )
 
-  const isPositive = pnl >= 0
-  const invested = totalValue - pnl
-  const pnlPercent = invested > 0 ? (pnl / invested) * 100 : 0
+  const isPositive = pnl !== null && pnl >= 0
+  // % against lifetime cost basis (stable across ranges, unlike current position value)
+  const pnlPercent = pnl !== null && totalBuyVolume > 0 ? (pnl / totalBuyVolume) * 100 : 0
 
-  // Chart data filtered by time range
-  const filteredHistory = useMemo(
-    () => filterByTimeRange(pnlHistory, selectedRange),
+  // Intraday ranges label by time, longer ranges by date
+  const chartCategories = useMemo(
+    () =>
+      pnlHistory.map((p) => {
+        const d = new Date(p.timestamp)
+        if (selectedRange === '1D') {
+          return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`
+        }
+        return `${d.getMonth() + 1}/${d.getDate()}`
+      }),
     [pnlHistory, selectedRange]
   )
 
-  const chartCategories = useMemo(
-    () =>
-      filteredHistory.map((p) => {
-        const d = new Date(p.timestamp)
-        return `${d.getMonth() + 1}/${d.getDate()}`
-      }),
-    [filteredHistory]
-  )
-
   const chartSeries = useMemo(
-    () => [
-      { name: 'P&L', data: filteredHistory.map((p) => Number(p.cumulativePnl?.toFixed(2) ?? 0)) }
-    ],
-    [filteredHistory]
+    () => [{ name: 'P&L', data: pnlHistory.map((p) => Number(p.cumulativePnl?.toFixed(2) ?? 0)) }],
+    [pnlHistory]
   )
 
-  const hasChartData = filteredHistory.length > 1
+  const hasChartData = pnlHistory.length > 1
+  const chartLoading = loading || isPnlLoading
+  // The headline P&L comes solely from pnlHistory now, so gate its display on
+  // that fetch too (not just the portfolio/positions `loading` flag).
+  const pnlLoading = chartLoading || pnl === null
 
   const chartColor = isPositive ? theme.palette.success.main : theme.palette.error.main
 
   const pnlDisplay =
-    pnl === 0 ? '$0.00' : `${pnl > 0 ? '+' : '-'}$${fNumber(Math.abs(pnl)) || '0.00'}`
+    pnl === null
+      ? ''
+      : pnl === 0
+        ? '$0.00'
+        : `${pnl > 0 ? '+' : '-'}$${fNumber(Math.abs(pnl)) || '0.00'}`
 
   // ──────────────────────────────────────────────────────────────────
   // COMPACT variant – small sparkline card with P&L overlay
@@ -275,7 +307,7 @@ export default function PolymarketPNLWidget({
         </Stack>
 
         <Box sx={{ position: 'relative', flexGrow: 1, mt: 1.5 }}>
-          {loading ? (
+          {pnlLoading ? (
             <CircularProgress size={24} sx={{ position: 'absolute', top: 0, left: 0 }} />
           ) : (
             <Stack direction='row' alignItems='center' spacing={1}>
@@ -471,7 +503,7 @@ export default function PolymarketPNLWidget({
                 {t('polymarket.profit-loss')}
               </Typography>
             </Stack>
-            {loading ? (
+            {pnlLoading ? (
               <CircularProgress size={20} />
             ) : (
               <Stack spacing={0.25}>
@@ -564,7 +596,7 @@ export default function PolymarketPNLWidget({
         </Stack>
 
         <Box sx={{ flexGrow: 1, position: 'relative', minHeight: 180 }}>
-          {loading ? (
+          {chartLoading ? (
             <Stack alignItems='center' justifyContent='center' sx={{ height: '100%' }}>
               <CircularProgress size={28} />
             </Stack>

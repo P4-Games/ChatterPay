@@ -8,7 +8,7 @@ import ListItemButton from '@mui/material/ListItemButton'
 
 import { RouterLink } from 'src/routes/components'
 
-import Iconify from '../../iconify'
+import Iconify from '../../iconify/iconify'
 import type { NavItemProps, NavItemStateProps } from '../types'
 
 // ----------------------------------------------------------------------
@@ -30,6 +30,7 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
       hasChild,
       externalLink,
       currentRole = 'admin',
+      collapsed,
       ...other
     },
     ref
@@ -44,6 +45,7 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
         depth={depth}
         active={active}
         disabled={disabled}
+        collapsed={collapsed}
         {...other}
       >
         {!subItem && icon && (
@@ -52,16 +54,17 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
           </Box>
         )}
 
-        {subItem && icon ? (
-          <Box component='span' className='icon'>
-            {icon}
-          </Box>
-        ) : (
-          <Box component='span' className='sub-icon' />
-        )}
+        {subItem &&
+          (icon ? (
+            <Box component='span' className='icon'>
+              {icon}
+            </Box>
+          ) : (
+            <Box component='span' className='sub-icon' />
+          ))}
 
         {title && (
-          <Box component='span' sx={{ flex: '1 1 auto', minWidth: 0 }}>
+          <Box component='span' className='texts'>
             <Box component='span' className='label'>
               {title}
             </Box>
@@ -142,8 +145,8 @@ export default NavItem
 // ----------------------------------------------------------------------
 
 const StyledNavItem = styled(ListItemButton, {
-  shouldForwardProp: (prop) => prop !== 'active'
-})<NavItemStateProps>(({ active, open, depth, theme }) => {
+  shouldForwardProp: (prop) => prop !== 'active' && prop !== 'collapsed'
+})<NavItemStateProps>(({ active, open, depth, collapsed, theme }) => {
   const subItem = depth !== 1
 
   const opened = open && !active
@@ -157,6 +160,15 @@ const StyledNavItem = styled(ListItemButton, {
     overflow: 'hidden',
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis'
+  } as const
+
+  // Labels fade only (compositor-friendly): delayed in on expand, instant out on collapse.
+  const fadeStyles = {
+    opacity: collapsed ? 0 : 1,
+    transition: theme.transitions.create('opacity', {
+      duration: collapsed ? 100 : 150,
+      delay: collapsed ? 0 : 100
+    })
   } as const
 
   const baseStyles = {
@@ -194,15 +206,31 @@ const StyledNavItem = styled(ListItemButton, {
   } as const
 
   return {
-    // Root item
+    // Root item: fixed 48px geometry in both states — the rail clips it when
+    // collapsed, so nothing reflows during expand (icon never moves).
     ...(!subItem && {
-      ...baseStyles.item,
-      minHeight: 44,
+      height: 48,
+      minHeight: 48,
+      padding: 0,
+      marginBottom: 8,
+      borderRadius: 10,
+      color: theme.palette.text.secondary,
       '& .icon': {
-        ...baseStyles.icon
+        width: 48,
+        height: 48,
+        flexShrink: 0,
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center'
       },
       '& .sub-icon': {
         display: 'none'
+      },
+      '& .texts': {
+        ...fadeStyles,
+        flex: '1 1 auto',
+        minWidth: 0,
+        paddingRight: theme.spacing(1.5)
       },
       '& .label': {
         ...baseStyles.label
@@ -211,10 +239,14 @@ const StyledNavItem = styled(ListItemButton, {
         ...baseStyles.caption
       },
       '& .info': {
-        ...baseStyles.info
+        ...baseStyles.info,
+        ...fadeStyles,
+        marginRight: theme.spacing(1.5)
       },
       '& .arrow': {
-        ...baseStyles.arrow
+        ...baseStyles.arrow,
+        ...fadeStyles,
+        marginRight: theme.spacing(1.5)
       },
       ...(active && {
         color:
@@ -256,6 +288,10 @@ const StyledNavItem = styled(ListItemButton, {
             backgroundColor: theme.palette.primary.main
           })
         }
+      },
+      '& .texts': {
+        flex: '1 1 auto',
+        minWidth: 0
       },
       '& .label': {
         ...baseStyles.label

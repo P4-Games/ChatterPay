@@ -6,6 +6,7 @@ import type {
   IPolymarketOrder,
   IPolymarketMarket,
   IPolymarketEvent,
+  IPolymarketTeam,
   IPolymarketPosition,
   IPolymarketPortfolio,
   IPolymarketAccountStatus,
@@ -14,7 +15,8 @@ import type {
   IPolymarketPurchaseStatus,
   IPolymarketCategory,
   IPolymarketTrade,
-  IPolymarketPnlPoint
+  IPolymarketPnlPoint,
+  IPolymarketPnlInterval
 } from 'src/types/polymarket'
 
 // ----------------------------------------------------------------------
@@ -127,6 +129,16 @@ function normalizeMarket(raw: any): IPolymarketMarket {
   }
 }
 
+function normalizeTeam(raw: any): IPolymarketTeam {
+  return {
+    name: raw.name ?? '',
+    logo: raw.logo ?? '',
+    abbreviation: raw.abbreviation ?? '',
+    color: raw.color ?? '',
+    ordering: raw.ordering ?? ''
+  }
+}
+
 function normalizeEvent(raw: any): IPolymarketEvent {
   return {
     id: raw.id ?? '',
@@ -135,7 +147,12 @@ function normalizeEvent(raw: any): IPolymarketEvent {
     description: raw.description ?? '',
     image: raw.image ?? '',
     icon: raw.icon ?? '',
-    markets: Array.isArray(raw.markets) ? raw.markets.map(normalizeMarket) : []
+    markets: Array.isArray(raw.markets) ? raw.markets.map(normalizeMarket) : [],
+    // Sports events: team flags/crests (the event-level image is a generic sport image)
+    ...(Array.isArray(raw.teams) && raw.teams.length > 0
+      ? { teams: raw.teams.map(normalizeTeam) }
+      : {}),
+    ...(raw.showMarketImages !== undefined ? { show_market_images: !!raw.showMarketImages } : {})
   }
 }
 
@@ -166,14 +183,14 @@ export async function getMarketBySlug(slug: string): Promise<ServiceResult<IPoly
   return { ok: true, data: normalizeMarket(rawData?.market || rawData) }
 }
 
-export async function searchMarkets(query: string): Promise<ServiceResult<IPolymarketMarket[]>> {
-  const result = await request<IPolymarketMarket[]>(
+export async function searchMarkets(query: string): Promise<ServiceResult<IPolymarketEvent[]>> {
+  const result = await request<IPolymarketEvent[]>(
     'get',
     `/polymarket/search?query=${encodeURIComponent(query)}`
   )
   if (!result.ok) return result
-  const raw = extractArray<any>(result.data, 'markets')
-  return { ok: true, data: raw.map(normalizeMarket) }
+  const raw = extractArray<any>(result.data, 'events')
+  return { ok: true, data: raw.map(normalizeEvent) }
 }
 
 export async function getCategories(): Promise<ServiceResult<IPolymarketCategory[]>> {
@@ -311,11 +328,13 @@ export async function getTradesHistory(
 
 export async function getPnlHistory(
   channelUserId: string,
-  limit?: number
+  limit?: number,
+  interval?: IPolymarketPnlInterval
 ): Promise<ServiceResult<IPolymarketPnlPoint[]>> {
   return request<IPolymarketPnlPoint[]>('post', '/polymarket/pnl/history', {
     channel_user_id: channelUserId,
-    ...(limit ? { limit } : {})
+    ...(limit ? { limit } : {}),
+    ...(interval ? { interval } : {})
   })
 }
 

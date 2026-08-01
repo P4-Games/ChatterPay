@@ -90,7 +90,8 @@ export const endpoints = {
   auth: {
     code: () => getFullUIEndpoint(`auth/code`),
     login: () => getFullUIEndpoint(`auth/login`),
-    me: () => getFullUIEndpoint('auth/me')
+    me: () => getFullUIEndpoint('auth/me'),
+    refresh: () => getFullUIEndpoint('auth/refresh')
   },
   nft: {
     id: (id: string) => getFullUIEndpoint(`nft/${id}`)
@@ -136,7 +137,13 @@ export const endpoints = {
     },
     wallet: {
       balance: (id: string) => getFullUIEndpoint(`wallet/${id}/balance`),
-      transactions: (id: string) => getFullUIEndpoint(`wallet/${id}/transactions`),
+      transactions: (id: string, params?: { limit?: number; since?: string | number }) => {
+        const search = new URLSearchParams()
+        if (params?.limit != null) search.append('limit', String(params.limit))
+        if (params?.since != null) search.append('since', String(params.since))
+        const qs = search.toString()
+        return getFullUIEndpoint(`wallet/${id}/transactions${qs ? `?${qs}` : ''}`)
+      },
       notifications: (id: string, pageIndex: number, pageSize: number) =>
         getFullUIEndpoint(
           `wallet/${id}/notifications?lazy=true&pageIndex=${pageIndex}&pageSize=${pageSize}`

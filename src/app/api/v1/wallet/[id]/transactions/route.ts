@@ -27,7 +27,15 @@ export async function GET(req: NextRequest, { params }: { params: IParams }) {
   if (securityCheckResult instanceof NextResponse) return securityCheckResult
 
   try {
-    const data: ITransaction[] = (await getUserTransactions(walletId)) ?? []
+    const { searchParams } = new URL(req.url)
+    const limitParam = searchParams.get('limit')
+    const sinceParam = searchParams.get('since')
+    const limit = limitParam ? Number(limitParam) : undefined
+    const data: ITransaction[] =
+      (await getUserTransactions(walletId, {
+        limit: limit != null && Number.isFinite(limit) ? limit : undefined,
+        since: sinceParam ?? undefined
+      })) ?? []
     return NextResponse.json(data)
   } catch (ex) {
     console.error(ex)

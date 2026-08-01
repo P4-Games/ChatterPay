@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import Link from 'next/link'
 
 import Box from '@mui/material/Box'
@@ -25,10 +25,10 @@ import InputAdornment from '@mui/material/InputAdornment'
 import { alpha, useTheme } from '@mui/material/styles'
 
 import { useTranslate } from 'src/locales'
+import { POLYMARKET_REFRESH } from 'src/config-global'
 import {
   polymarketCancelOrder,
   polymarketPurchase,
-  polymarketPurchaseStatus,
   useGetPolymarketTradesSWR,
   useGetPolymarketClosedPositionsSWR
 } from 'src/app/api/hooks'
@@ -37,21 +37,13 @@ import { useSWRConfig } from 'swr'
 
 import Iconify from 'src/components/iconify'
 import { fNumber } from 'src/utils/format-number'
+import { toEpochMs } from 'src/utils/format-time'
 
 import type { IPolymarketOrder, IPolymarketPosition } from 'src/types/polymarket'
 
-// ----------------------------------------------------------------------
+import { usePolymarketActivity } from './polymarket-activity-context'
 
-type ActivePurchase = {
-  purchase_id: string
-  side: 'BUY' | 'SELL'
-  outcome: string
-  size: number
-  price: number
-  market_title: string
-  current_step: string
-  status: string
-}
+// ----------------------------------------------------------------------
 
 const STEP_LABELS: Record<string, string> = {
   submitting: 'Submitting',
@@ -75,27 +67,25 @@ export default function DashboardPositionsTable({ positions, orders, isLoading }
 
   const [activeTab, setActiveTab] = useState<'active' | 'closed'>('active')
   const [cancellingId, setCancellingId] = useState<string | null>(null)
-  const [sellingPos, setSellingPos] = useState<string | null>(null)
-  const [activePurchases, setActivePurchases] = useState<ActivePurchase[]>([])
-  const [soldPositionKeys, setSoldPositionKeys] = useState<Set<string>>(new Set())
   const [partialSellAnchor, setPartialSellAnchor] = useState<HTMLElement | null>(null)
   const [partialSellPos, setPartialSellPos] = useState<IPolymarketPosition | null>(null)
   const [partialSellAmount, setPartialSellAmount] = useState('')
 
-  // Fetch trade history and closed positions
-  const { data: trades = [] } = useGetPolymarketTradesSWR(30000)
-  const { data: closedPositions = [], isLoading: isClosedLoading } =
-    useGetPolymarketClosedPositionsSWR(30000)
+  // Optimistic order tracking lives in a dashboard-level context, so progress
+  // (and polling) survives closing this drawer and page reloads.
+  const { pendingOps, sellingPosKeys, startSell, attachPurchaseId, completeOp, failOp } =
+    usePolymarketActivity()
 
-  // Track polling intervals for cleanup on unmount
-  const pollIntervalsRef = useRef<Map<string, NodeJS.Timeout>>(new Map())
-
-  useEffect(
-    () => () => {
-      pollIntervalsRef.current.forEach((interval) => clearInterval(interval))
-    },
-    []
+  // In-flight buy/sell orders to show in the Open Orders section.
+  const activePurchases = useMemo(
+    () => pendingOps.filter((op) => op.status === 'processing' && op.kind !== 'claim'),
+    [pendingOps]
   )
+
+  // Fetch trade history and closed positions
+  const { data: trades = [] } = useGetPolymarketTradesSWR(POLYMARKET_REFRESH.HISTORY_MS)
+  const { data: closedPositions = [], isLoading: isClosedLoading } =
+    useGetPolymarketClosedPositionsSWR(POLYMARKET_REFRESH.HISTORY_MS)
 
   const handleCancelOrder = async (orderId: string) => {
     setCancellingId(orderId)
@@ -116,35 +106,30 @@ export default function DashboardPositionsTable({ positions, orders, isLoading }
 
   const handleSellPosition = async (pos: IPolymarketPosition, overrideSize?: number) => {
     const posKey = (pos.market?.condition_id || pos.conditionId) + pos.outcome
-    setSellingPos(posKey)
 
     const token = pos.market?.tokens?.find((tk: any) => tk.outcome === pos.outcome)
     const tokenId = pos.asset || pos.token_id || token?.token_id
 
     if (!tokenId) {
       enqueueSnackbar('Token ID not found', { variant: 'error' })
-      setSellingPos(null)
       return
     }
 
     const sellSize = overrideSize ?? Math.floor(pos.size * 1e6) / 1e6
     const sellPrice = pos.current_price ?? pos.curPrice ?? 0
-    const tempId = `temp-${Date.now()}`
     const marketTitle = pos.title || pos.market_title || pos.market?.question || '—'
+    const marketSlug = pos.slug || pos.market_slug || pos.market?.slug
 
-    setActivePurchases((prev) => [
-      ...prev,
-      {
-        purchase_id: tempId,
-        side: 'SELL',
-        outcome: pos.outcome,
-        size: sellSize,
-        price: sellPrice,
-        market_title: marketTitle,
-        current_step: 'submitting',
-        status: 'processing'
-      }
-    ])
+    // Optimistically register the order — the position row moves to Open Orders
+    // immediately and is tracked by the context (survives drawer close / reload).
+    const opId = startSell({
+      posKey,
+      marketTitle,
+      marketSlug,
+      outcome: pos.outcome,
+      size: sellSize,
+      price: sellPrice
+    })
 
     try {
       const res = await polymarketPurchase({
@@ -155,95 +140,20 @@ export default function DashboardPositionsTable({ positions, orders, isLoading }
         bridge_amount: '0'
       })
       if (res.ok) {
-        const purchaseId = res.data?.purchase_id || tempId
-        setSoldPositionKeys((prev) => new Set(prev).add(posKey))
-        setActivePurchases((prev) =>
-          prev.map((p) =>
-            p.purchase_id === tempId
-              ? { ...p, purchase_id: purchaseId, current_step: 'order_placement' }
-              : p
-          )
-        )
-
-        const poll = async () => {
-          try {
-            const statusRes = await polymarketPurchaseStatus(purchaseId)
-            if (statusRes.ok && statusRes.data) {
-              const st = statusRes.data.status
-              const step = statusRes.data.current_step || ''
-              setActivePurchases((prev) =>
-                prev.map((p) =>
-                  p.purchase_id === purchaseId ? { ...p, current_step: step, status: st } : p
-                )
-              )
-              if (st === 'completed') {
-                const interval = pollIntervalsRef.current.get(purchaseId)
-                if (interval) {
-                  clearInterval(interval)
-                  pollIntervalsRef.current.delete(purchaseId)
-                }
-                setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
-                enqueueSnackbar('Sell order completed', { variant: 'success' })
-                mutate(
-                  (key: any) =>
-                    Array.isArray(key) &&
-                    typeof key[0] === 'string' &&
-                    key[0].includes('/positions')
-                )
-                mutate(
-                  (key: any) =>
-                    Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders')
-                )
-                mutate(
-                  (key: any) =>
-                    Array.isArray(key) &&
-                    typeof key[0] === 'string' &&
-                    key[0].includes('/portfolio')
-                )
-                mutate(
-                  (key: any) =>
-                    Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance')
-                )
-                mutate(
-                  (key: any) =>
-                    Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/trades')
-                )
-                setSoldPositionKeys((prev) => {
-                  const n = new Set(prev)
-                  n.delete(posKey)
-                  return n
-                })
-              } else if (st === 'failed') {
-                const interval = pollIntervalsRef.current.get(purchaseId)
-                if (interval) {
-                  clearInterval(interval)
-                  pollIntervalsRef.current.delete(purchaseId)
-                }
-                setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
-                enqueueSnackbar(statusRes.data.error || 'Sell failed', { variant: 'error' })
-                setSoldPositionKeys((prev) => {
-                  const n = new Set(prev)
-                  n.delete(posKey)
-                  return n
-                })
-              }
-            }
-          } catch (e) {
-            console.error(e)
-          }
+        const purchaseId = res.data?.purchase_id
+        if (purchaseId) {
+          attachPurchaseId(opId, purchaseId)
+        } else {
+          // No id to poll — resolve optimistically and revalidate.
+          completeOp(opId)
         }
-        poll()
-        const pollInterval = setInterval(poll, 4000)
-        pollIntervalsRef.current.set(purchaseId, pollInterval)
       } else {
-        setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== tempId))
+        failOp(opId, res.message || 'Error executing sell')
         enqueueSnackbar(res.message || 'Error executing sell', { variant: 'error' })
       }
     } catch {
-      setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== tempId))
+      failOp(opId, 'Error executing sell')
       enqueueSnackbar('Error executing sell', { variant: 'error' })
-    } finally {
-      setSellingPos(null)
     }
   }
 
@@ -258,7 +168,7 @@ export default function DashboardPositionsTable({ positions, orders, isLoading }
   }
 
   const filteredPositions = positions.filter(
-    (p) => !soldPositionKeys.has((p.market?.condition_id || p.conditionId) + p.outcome)
+    (p) => !sellingPosKeys.has((p.market?.condition_id || p.conditionId) + p.outcome)
   )
 
   // Build a lookup map from condition_id to position data for enriching trades
@@ -384,6 +294,8 @@ export default function DashboardPositionsTable({ positions, orders, isLoading }
                                 component='img'
                                 src={pos.icon || pos.market?.image}
                                 alt=''
+                                loading='lazy'
+                                decoding='async'
                                 sx={{
                                   width: 40,
                                   height: 40,
@@ -469,12 +381,11 @@ export default function DashboardPositionsTable({ positions, orders, isLoading }
                               ${fNumber(valueUsd)} USD
                             </Typography>
                             {(() => {
-                              const pctRaw = pos.pnl_percent ?? pos.percentPnl ?? 0
-                              const pctDisplay =
-                                Math.abs(pctRaw) > 1
-                                  ? pctRaw // Already a percentage (e.g. -96.71)
-                                  : pctRaw * 100 // Decimal, convert (e.g. -0.9671 → -96.71)
-                              const pctRounded = Math.round(pctDisplay * 100) / 100
+                              // Compute the % from the cost basis instead of trusting the API's
+                              // percent field, whose units are ambiguous (percent vs. fraction).
+                              const costBasis = pos.initialValue ?? avgPrice * pos.size
+                              const pctRounded =
+                                costBasis > 0 ? Math.round((pnlVal / costBasis) * 10000) / 100 : 0
                               return (
                                 <Typography
                                   variant='caption'
@@ -491,30 +402,50 @@ export default function DashboardPositionsTable({ positions, orders, isLoading }
                         </TableCell>
 
                         <TableCell align='right'>
-                          <ButtonGroup
-                            size='small'
-                            color='error'
-                            variant='contained'
-                            disabled={sellingPos === posKey}
-                          >
-                            <Button onClick={() => handleSellPosition(pos)}>
-                              {sellingPos === posKey ? (
+                          {currentPrice >= 1 ? (
+                            <Button
+                              size='small'
+                              color='success'
+                              variant='contained'
+                              disabled={sellingPosKeys.has(posKey)}
+                              onClick={() => handleSellPosition(pos)}
+                              sx={{ whiteSpace: 'nowrap' }}
+                            >
+                              {sellingPosKeys.has(posKey) ? (
                                 <CircularProgress size={14} color='inherit' />
                               ) : (
-                                t('polymarket.sell-all')
+                                t('polymarket.claim-amount', { amount: fNumber(valueUsd) })
                               )}
                             </Button>
-                            <Button
-                              sx={{ px: 0.5, minWidth: 28 }}
-                              onClick={(e) => {
-                                setPartialSellPos(pos)
-                                setPartialSellAmount(String(Math.floor(pos.size * 1e6) / 1e6))
-                                setPartialSellAnchor(e.currentTarget)
-                              }}
+                          ) : (
+                            <ButtonGroup
+                              size='small'
+                              color='error'
+                              variant='contained'
+                              disabled={sellingPosKeys.has(posKey)}
                             >
-                              <Iconify icon='eva:chevron-down-fill' width={16} />
-                            </Button>
-                          </ButtonGroup>
+                              <Button
+                                onClick={() => handleSellPosition(pos)}
+                                sx={{ whiteSpace: 'nowrap', minWidth: 76 }}
+                              >
+                                {sellingPosKeys.has(posKey) ? (
+                                  <CircularProgress size={14} color='inherit' />
+                                ) : (
+                                  t('polymarket.sell-all')
+                                )}
+                              </Button>
+                              <Button
+                                sx={{ px: 0.5, minWidth: 28 }}
+                                onClick={(e) => {
+                                  setPartialSellPos(pos)
+                                  setPartialSellAmount(String(Math.floor(pos.size * 1e6) / 1e6))
+                                  setPartialSellAnchor(e.currentTarget)
+                                }}
+                              >
+                                <Iconify icon='eva:chevron-down-fill' width={16} />
+                              </Button>
+                            </ButtonGroup>
+                          )}
                         </TableCell>
                       </TableRow>
                     )
@@ -559,7 +490,7 @@ export default function DashboardPositionsTable({ positions, orders, isLoading }
                   <TableBody>
                     {activePurchases.map((ap) => (
                       <TableRow
-                        key={ap.purchase_id}
+                        key={ap.id}
                         sx={{
                           '@keyframes softPulse': {
                             '0%, 100%': { opacity: 1 },
@@ -570,7 +501,7 @@ export default function DashboardPositionsTable({ positions, orders, isLoading }
                       >
                         <TableCell>
                           <Typography variant='subtitle2' noWrap sx={{ maxWidth: 200 }}>
-                            {ap.market_title}
+                            {ap.marketTitle}
                           </Typography>
                         </TableCell>
                         <TableCell>
@@ -597,18 +528,20 @@ export default function DashboardPositionsTable({ positions, orders, isLoading }
                         </TableCell>
                         <TableCell align='right'>
                           <Typography variant='body2' fontWeight={600}>
-                            {fNumber(ap.size)}
+                            {fNumber(ap.size ?? 0)}
                           </Typography>
                         </TableCell>
                         <TableCell align='right'>
-                          <Typography variant='body2'>{Math.round(ap.price * 100)}¢</Typography>
+                          <Typography variant='body2'>
+                            {Math.round((ap.price ?? 0) * 100)}¢
+                          </Typography>
                         </TableCell>
                         <TableCell align='right'>
                           <Chip
                             icon={
                               <CircularProgress size={12} sx={{ color: 'inherit !important' }} />
                             }
-                            label={STEP_LABELS[ap.current_step] || ap.current_step}
+                            label={STEP_LABELS[ap.step] || ap.step}
                             size='small'
                             sx={{
                               fontWeight: 600,
@@ -732,6 +665,8 @@ export default function DashboardPositionsTable({ positions, orders, isLoading }
                                 component='img'
                                 src={pos.icon || pos.market?.image}
                                 alt=''
+                                loading='lazy'
+                                decoding='async'
                                 sx={{
                                   width: 36,
                                   height: 36,
@@ -836,14 +771,7 @@ export default function DashboardPositionsTable({ positions, orders, isLoading }
               </TableHead>
               <TableBody>
                 {trades.map((trade, idx) => {
-                  // Handle both Unix epoch seconds (number) and ISO string timestamps
-                  const ts =
-                    typeof trade.timestamp === 'number'
-                      ? trade.timestamp > 1e12
-                        ? trade.timestamp
-                        : trade.timestamp * 1000
-                      : new Date(trade.timestamp).getTime()
-                  const date = new Date(ts)
+                  const date = new Date(toEpochMs(trade.timestamp))
                   const dateStr = date.toLocaleDateString(undefined, {
                     month: 'short',
                     day: 'numeric'

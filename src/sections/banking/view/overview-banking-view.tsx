@@ -1,11 +1,14 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { useState, useEffect, useMemo } from 'react'
 
 import Box from '@mui/material/Box'
-import Stack from '@mui/material/Stack'
 import Container from '@mui/material/Container'
 import { useTheme } from '@mui/material/styles'
+
+import { useRouter } from 'src/routes/hooks'
+import { paths } from 'src/routes/paths'
 
 import { useTranslate } from 'src/locales'
 import type { AuthUserType } from 'src/auth/types'
@@ -13,15 +16,11 @@ import { useAuthContext } from 'src/auth/hooks'
 import {
   useGetTokens,
   useGetWalletBalance,
-  useGetWalletTransactions,
-  useGetPolymarketPositionsSWR,
-  useGetPolymarketOrdersSWR,
-  useGetPolymarketPortfolioSWR,
-  useGetPolymarketTradesSWR,
-  polymarketBridgeWithdraw
+  useGetWalletTransactionsCached,
+  polymarketBridgeWithdraw,
+  polymarketAccountStatus
 } from 'src/app/api/hooks'
 import { getTokenPricesWithChange } from 'src/app/api/services/coingecko/coingecko-service'
-import { useSWRConfig } from 'swr'
 
 import { useBoolean } from 'src/hooks/use-boolean'
 
@@ -31,26 +30,31 @@ import { useSnackbar } from 'src/components/snackbar'
 import type { IToken, IBalances, ITransaction } from 'src/types/wallet'
 import type { TokenPriceData } from 'src/app/api/services/coingecko/coingecko-service'
 
-import PolymarketPNLWidget from 'src/sections/polymarket/polymarket-pnl-widget'
-
 import BankingRecentTransitions from '../banking-recent-transitions'
-import DashboardDepositModal from '../dashboard-deposit-modal'
-import DashboardWithdrawModal from '../dashboard-withdraw-modal'
-import DashboardSwapModal from '../dashboard-swap-modal'
+import BankingPolymarketDrawer from '../banking-polymarket-drawer'
 import DashboardPortfolioBalance from '../dashboard-portfolio-balance'
-import DashboardPositionsTable from '../dashboard-positions-table'
-import DashboardDrawer from '../dashboard-drawer'
+import { mergePendingOps } from '../pending-op-transaction'
+import { usePolymarketActivity, PolymarketActivityProvider } from '../polymarket-activity-context'
 
 // ----------------------------------------------------------------------
 
-export default function OverviewBankingView() {
+// Code-split on-demand / heavy components so they stay out of the initial dashboard bundle.
+const DashboardDepositModal = dynamic(() => import('../dashboard-deposit-modal'), { ssr: false })
+const DashboardWithdrawModal = dynamic(() => import('../dashboard-withdraw-modal'), { ssr: false })
+const DashboardSwapModal = dynamic(() => import('../dashboard-swap-modal'), { ssr: false })
+
+// ----------------------------------------------------------------------
+
+function BankingDashboardContent() {
   const { t } = useTranslate()
   const theme = useTheme()
   const isDark = theme.palette.mode === 'dark'
   const settings = useSettingsContext()
   const { user }: { user: AuthUserType } = useAuthContext()
   const { enqueueSnackbar } = useSnackbar()
-  const { mutate } = useSWRConfig()
+  const router = useRouter()
+
+  const [polymarketReady, setPolymarketReady] = useState<boolean | null>(null)
 
   const [walletAddress, setWalletAddress] = useState<string>('')
   const [hideValues, setHideValues] = useState(false)
@@ -84,13 +88,23 @@ export default function OverviewBankingView() {
 
   // Fetch tokens from database
   const { data: tokensData } = useGetTokens()
-  const tokens: IToken[] = tokensData?.data || []
+  // Stable reference: the `[]` fallback would otherwise be a new array every
+  // render and invalidate the tokenLogos memo below on each update.
+  const tokens = useMemo<IToken[]>(() => tokensData?.data || [], [tokensData])
 
   useEffect(() => {
     if (user?.wallet) {
       setWalletAddress(user.wallet)
     }
   }, [user])
+
+  useEffect(() => {
+    if (!user?.id) return
+    polymarketAccountStatus().then((res) => {
+      const ready = !!res.data?.account?.has_account && !!res.data.account.terms_accepted
+      setPolymarketReady(ready)
+    })
+  }, [user?.id])
 
   // Wallet data
   const { data: balances, isLoading: isLoadingBalances }: { data: IBalances; isLoading: boolean } =
@@ -99,14 +113,9 @@ export default function OverviewBankingView() {
   const {
     data: transactions,
     isLoading: isLoadingTrxs
-  }: { data: ITransaction[]; isLoading: boolean } = useGetWalletTransactions(walletAddress)
+  }: { data: ITransaction[]; isLoading: boolean } = useGetWalletTransactionsCached(walletAddress)
 
-  // Polymarket data (pre-loaded for drawer)
-  const { data: positions = [], isLoading: isLoadingPositions } =
-    useGetPolymarketPositionsSWR(10000)
-  const { data: orders = [], isLoading: isLoadingOrders } = useGetPolymarketOrdersSWR(10000)
-  const { data: portfolioData, isLoading: isLoadingPortfolio } = useGetPolymarketPortfolioSWR(10000)
-  const { data: trades = [], isLoading: isLoadingTrades } = useGetPolymarketTradesSWR(30000)
+  const { pendingOps, addClaim, failOp, completeOp } = usePolymarketActivity()
 
   // Fetch CoinGecko price data for crypto dropdown
   useEffect(() => {
@@ -138,41 +147,59 @@ export default function OverviewBankingView() {
       ? { wallet: '', balances: [], totals: { usd: 0, ars: 0, brl: 0, uyu: 0 } }
       : balances || { wallet: '', balances: [], totals: { usd: 0, ars: 0, brl: 0, uyu: 0 } }
 
-  const safeTransactions: ITransaction[] = !walletAddress || isLoadingTrxs ? [] : transactions
+  // Stable reference: the `[]` fallback would otherwise be a new array every
+  // render and invalidate the merge memo below on each update.
+  const safeTransactions = useMemo<ITransaction[]>(
+    () => (!walletAddress || isLoadingTrxs ? [] : transactions),
+    [walletAddress, isLoadingTrxs, transactions]
+  )
+
+  const mergedTransactions = useMemo<ITransaction[]>(
+    () => mergePendingOps(pendingOps, safeTransactions, walletAddress),
+    [pendingOps, safeTransactions, walletAddress]
+  )
 
   const idleUsdc = safeBalances.polymarket?.idle_usdc ?? 0
   const polymarketTotalUsd = safeBalances.polymarket?.total_usd ?? 0
 
-  // Claim handler
+  // A claim keeps processing in the background (~45 s) after the API responds, while
+  // the on-chain balance hasn't refreshed yet. Keep the button disabled for the whole
+  // in-flight window — driven by the persisted op, so it survives reloads too.
+  const claimInProgress = useMemo(
+    () => pendingOps.some((op) => op.kind === 'claim' && op.status === 'processing'),
+    [pendingOps]
+  )
+
+  // Claim handler — drops an optimistic record immediately; the activity context
+  // owns its lifecycle (status tracking + balance/portfolio revalidation), so it
+  // stays visible in the history even after this view's button resets.
   const handleClaimSubmit = async () => {
     if (idleUsdc <= 0) {
       enqueueSnackbar('No idle funds to claim', { variant: 'warning' })
       return
     }
 
+    const opId = addClaim(idleUsdc)
     setIsClaiming(true)
     try {
       const result = await polymarketBridgeWithdraw(idleUsdc.toString())
       if (result.ok) {
-        enqueueSnackbar('Funds Claiming... This may take a minute.', { variant: 'info' })
-        setTimeout(() => {
-          mutate(
-            (key: any) =>
-              Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance')
-          )
-          mutate(
-            (key: any) =>
-              Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/portfolio')
-          )
-          enqueueSnackbar('Scroll Wallet Balance Updated', { variant: 'success' })
-          setIsClaiming(false)
-        }, 40000)
+        if (result.data?.hash) {
+          // Bridge completed synchronously — close the op now, don't wait 45 s.
+          completeOp(opId)
+          enqueueSnackbar('Funds transferred to Scroll!', { variant: 'success' })
+        } else {
+          // Background claim triggered — auto-resolves after CLAIM_RESOLVE_MS.
+          enqueueSnackbar('Funds Claiming... This may take a minute.', { variant: 'info' })
+        }
       } else {
+        failOp(opId, result.message)
         enqueueSnackbar(result.message || 'Error claiming funds', { variant: 'error' })
-        setIsClaiming(false)
       }
     } catch {
+      failOp(opId)
       enqueueSnackbar('Error claiming funds', { variant: 'error' })
+    } finally {
       setIsClaiming(false)
     }
   }
@@ -210,7 +237,8 @@ export default function OverviewBankingView() {
           onClaimClick={handleClaimSubmit}
           onCryptoClick={() => setCryptoExpanded((prev) => !prev)}
           onPolymarketClick={polymarketDrawer.onTrue}
-          isClaiming={isClaiming}
+          onPredictClick={() => router.push(paths.dashboard.polymarket.root)}
+          isClaiming={isClaiming || claimInProgress}
           selectedCurrency={selectedCurrency}
           onCurrencyChange={handleCurrencyChange}
           totals={safeBalances.totals}
@@ -219,6 +247,7 @@ export default function OverviewBankingView() {
           cryptoExpanded={cryptoExpanded}
           onCryptoToggle={() => setCryptoExpanded((prev) => !prev)}
           priceData={priceData}
+          polymarketReady={polymarketReady}
         />
 
         {/* Full-width History */}
@@ -226,7 +255,7 @@ export default function OverviewBankingView() {
           <BankingRecentTransitions
             title={t('transactions.title')}
             isLoading={isLoadingTrxs || !walletAddress}
-            tableData={safeTransactions}
+            tableData={mergedTransactions}
             tableLabels={[
               { id: 'description', label: t('transactions.table-transaction') },
               { id: 'amount', label: t('transactions.table-amount') },
@@ -241,27 +270,7 @@ export default function OverviewBankingView() {
       </Container>
 
       {/* Polymarket Drawer — PNL + Positions (50% screen width) */}
-      <DashboardDrawer
-        open={polymarketDrawer.value}
-        onClose={polymarketDrawer.onFalse}
-        title='Polymarket'
-        width='50vw'
-      >
-        <Stack spacing={3}>
-          <PolymarketPNLWidget
-            variant='expanded'
-            portfolioData={portfolioData ?? null}
-            positions={positions}
-            trades={trades}
-            isLoadingExternal={isLoadingPortfolio || isLoadingTrades}
-          />
-          <DashboardPositionsTable
-            positions={positions}
-            orders={orders}
-            isLoading={isLoadingPositions || isLoadingOrders}
-          />
-        </Stack>
-      </DashboardDrawer>
+      <BankingPolymarketDrawer open={polymarketDrawer.value} onClose={polymarketDrawer.onFalse} />
 
       {/* Deposit Modal */}
       <DashboardDepositModal
@@ -293,5 +302,22 @@ export default function OverviewBankingView() {
         selectedCurrency={selectedCurrency}
       />
     </>
+  )
+}
+
+// ----------------------------------------------------------------------
+
+export default function OverviewBankingView() {
+  const { user }: { user: AuthUserType } = useAuthContext()
+  const [wallet, setWallet] = useState<string>('')
+
+  useEffect(() => {
+    if (user?.wallet) setWallet(user.wallet)
+  }, [user])
+
+  return (
+    <PolymarketActivityProvider wallet={wallet}>
+      <BankingDashboardContent />
+    </PolymarketActivityProvider>
   )
 }

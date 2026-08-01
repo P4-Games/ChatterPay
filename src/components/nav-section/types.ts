@@ -10,6 +10,7 @@ export type SlotProps = {
   subItem?: SxProps<Theme>
   subheader?: SxProps<Theme>
   currentRole?: string
+  collapsed?: boolean
 }
 
 export type NavItemStateProps = {
@@ -19,6 +20,7 @@ export type NavItemStateProps = {
   hasChild?: boolean
   currentRole?: string
   externalLink?: boolean
+  collapsed?: boolean
 }
 
 export type NavItemBaseProps = {

@@ -4,6 +4,11 @@ import Container from '@mui/material/Container'
 
 // ----------------------------------------------------------------------
 
+const SKELETON_ROWS = [100, 95, 88, 100, 72, 90, 85, 100, 60, 92, 78, 95].map((width, i) => ({
+  id: `row-${i}`,
+  width
+}))
+
 export default function Loading() {
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
@@ -26,8 +31,8 @@ export default function Loading() {
         <Skeleton width={120} height={20} sx={{ mb: 0.5 }} />
         <Skeleton width={180} height={20} sx={{ mb: 3 }} />
         <Skeleton width='100%' height={1} sx={{ mb: 3 }} />
-        {[100, 95, 88, 100, 72, 90, 85, 100, 60, 92, 78, 95].map((w, i) => (
-          <Skeleton key={i} width={`${w}%`} height={20} sx={{ mb: 1 }} />
+        {SKELETON_ROWS.map((row) => (
+          <Skeleton key={row.id} width={`${row.width}%`} height={20} sx={{ mb: 1 }} />
         ))}
       </Container>
     </Box>

@@ -1,23 +1,7 @@
-import { useState } from 'react'
-import { enqueueSnackbar } from 'notistack'
-import QRCode from 'react-qr-code'
-
 import MenuItem from '@mui/material/MenuItem'
 import IconButton from '@mui/material/IconButton'
 import Card, { type CardProps } from '@mui/material/Card'
-import {
-  Box,
-  Stack,
-  Button,
-  Select,
-  Tooltip,
-  Dialog,
-  Alert,
-  Typography,
-  DialogTitle,
-  DialogContent,
-  type SelectChangeEvent
-} from '@mui/material'
+import { Stack, Button, Select, Tooltip, Typography, type SelectChangeEvent } from '@mui/material'
 
 import { useBoolean } from 'src/hooks/use-boolean'
 import { useResponsive } from 'src/hooks/use-responsive'
@@ -29,9 +13,9 @@ import { BOT_WAPP_URL, EXPLORER_L2_URL } from 'src/config-global'
 
 import Iconify from 'src/components/iconify'
 
-import LayerswapWidget from 'src/sections/deposit/view/layerswap-widget'
+import DashboardDepositModal from './dashboard-deposit-modal'
 
-import type { IBalances, CurrencyKey } from 'src/types/wallet'
+import type { IBalances } from 'src/types/wallet'
 
 // ----------------------------------------------------------------------
 
@@ -61,12 +45,6 @@ export default function BankingBalances({
 
   const mdUp = useResponsive('up', 'md')
   const depositModal = useBoolean()
-  const [showAddress, setShowAddress] = useState(false)
-
-  const handleCloseDeposit = () => {
-    depositModal.onFalse()
-    setShowAddress(false)
-  }
 
   const sendReciveUrl = BOT_WAPP_URL.replaceAll('MESSAGE', t('balances.wapp-msg'))
 
@@ -74,11 +52,6 @@ export default function BankingBalances({
     if (onCurrencyChange) {
       onCurrencyChange(event.target.value as 'usd' | 'ars' | 'brl' | 'uyu')
     }
-  }
-
-  const handleCopyAddress = () => {
-    navigator.clipboard.writeText(tableData?.wallet || '')
-    enqueueSnackbar(t('balances.address-copied'), { variant: 'success' })
   }
 
   const renderTitle = (
@@ -184,128 +157,14 @@ export default function BankingBalances({
     </Card>
   )
 
-  // Deposit modal — uses theme palette so it respects dark/light mode
-
-  const renderDepositModal = (
-    <Dialog open={depositModal.value} onClose={handleCloseDeposit} maxWidth='xs' fullWidth>
-      <DialogTitle sx={{ pb: 1 }}>
-        <Stack direction='row' alignItems='center' justifyContent='space-between'>
-          <Typography variant='h6'>{t('deposit.title')}</Typography>
-          <IconButton onClick={handleCloseDeposit} size='small'>
-            <Iconify icon='mingcute:close-line' />
-          </IconButton>
-        </Stack>
-      </DialogTitle>
-
-      <DialogContent sx={{ px: 0, pb: 0 }}>
-        {!showAddress ? (
-          <Stack spacing={0} alignItems='center'>
-            <LayerswapWidget destAddress={tableData?.wallet || ''} />
-
-            <Button
-              variant='text'
-              size='small'
-              onClick={() => setShowAddress(true)}
-              sx={{
-                mt: 1.5,
-                mb: 2,
-                color: 'text.secondary',
-                '&:hover': {
-                  color: 'text.primary'
-                }
-              }}
-            >
-              {t('deposit.show-address', 'See my address on Scroll')}
-            </Button>
-          </Stack>
-        ) : (
-          <Stack spacing={3} alignItems='center' sx={{ py: 2, px: 3 }}>
-            {/* QR Code */}
-            <Box
-              sx={{
-                p: 2,
-                bgcolor: '#fff',
-                borderRadius: 2
-              }}
-            >
-              <QRCode value={tableData?.wallet || ''} size={200} />
-            </Box>
-
-            <Stack spacing={1} sx={{ width: 1 }}>
-              <Typography variant='caption' sx={{ color: 'text.secondary' }}>
-                {t('deposit.wallet-address')}
-              </Typography>
-              <Typography variant='body2' sx={{ wordBreak: 'break-all', fontFamily: 'monospace' }}>
-                {tableData?.wallet}
-              </Typography>
-            </Stack>
-
-            {/* Network Info */}
-            <Stack
-              direction='row'
-              spacing={1.5}
-              alignItems='center'
-              sx={{
-                width: '100%',
-                p: 2,
-                bgcolor: 'action.selected',
-                borderRadius: 1.5
-              }}
-            >
-              <Box
-                component='img'
-                src='https://storage.googleapis.com/chatbot-multimedia/chatterpay/images/tokens/scr.svg'
-                alt='Scroll Network'
-                sx={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: '50%'
-                }}
-              />
-              <Stack spacing={0.25}>
-                <Typography variant='subtitle2'>{t('deposit.network')}: Scroll</Typography>
-              </Stack>
-            </Stack>
-
-            {/* Warning Alert */}
-            <Alert severity='warning' sx={{ width: '100%' }}>
-              {t('deposit.network-warning')}
-            </Alert>
-
-            <Button
-              fullWidth
-              variant='contained'
-              color='primary'
-              startIcon={<Iconify icon='eva:copy-fill' />}
-              onClick={handleCopyAddress}
-            >
-              {t('deposit.copy-address')}
-            </Button>
-
-            <Button
-              variant='text'
-              size='small'
-              startIcon={<Iconify icon='eva:arrow-back-fill' width={16} />}
-              onClick={() => setShowAddress(false)}
-              sx={{
-                color: 'text.secondary',
-                '&:hover': {
-                  color: 'text.primary'
-                }
-              }}
-            >
-              {t('deposit.back-to-deposit', 'Back to deposit')}
-            </Button>
-          </Stack>
-        )}
-      </DialogContent>
-    </Dialog>
-  )
-
   return (
     <>
       {mdUp ? renderSummaryDesktop : renderSummaryMobile}
-      {renderDepositModal}
+      <DashboardDepositModal
+        open={depositModal.value}
+        onClose={depositModal.onFalse}
+        walletAddress={tableData?.wallet || ''}
+      />
     </>
   )
 }

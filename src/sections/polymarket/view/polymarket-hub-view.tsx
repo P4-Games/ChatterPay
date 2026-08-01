@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useMemo } from 'react'
 
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
@@ -8,28 +8,36 @@ import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
 import { useTheme } from '@mui/material/styles'
 import { useTranslate } from 'src/locales'
+import { POLYMARKET_REFRESH } from 'src/config-global'
 import { useAuthContext } from 'src/auth/hooks'
 import {
   useGetPolymarketEvents,
   useGetPolymarketEventsInfinite,
-  polymarketAccountStatus
+  useSearchPolymarkets,
+  useGetPolymarketPositionsSWR,
+  useGetPolymarketOrdersSWR,
+  useGetPolymarketPortfolioSWR
 } from 'src/app/api/hooks'
 
+import { useBoolean } from 'src/hooks/use-boolean'
+import { useDebounce } from 'src/hooks/use-debounce'
 import { useSettingsContext } from 'src/components/settings'
 
-import type { IPolymarketEvent, IPolymarketAccountStatus } from 'src/types/polymarket'
+import type { IPolymarketEvent } from 'src/types/polymarket'
 
 import PolymarketMarketList from '../polymarket-market-list'
-import PolymarketMarketCard from '../polymarket-market-card'
-import PolymarketEventCard from '../polymarket-event-card'
+import PolymarketHubHero from '../polymarket-hub-hero'
+import PolymarketTrendingMarquee from '../polymarket-trending-marquee'
 import PolymarketPNLWidget from '../polymarket-pnl-widget'
 import PolymarketTermsOverlay from '../polymarket-terms-overlay'
-import Marquee from 'src/components/marquee'
-import Iconify from 'src/components/iconify'
+import { usePolymarketAccountStatus } from '../use-polymarket-account-status'
+import DashboardDrawer from 'src/sections/banking/dashboard-drawer'
+import DashboardPositionsTable from 'src/sections/banking/dashboard-positions-table'
+import { PolymarketActivityProvider } from 'src/sections/banking/polymarket-activity-context'
 
 // ----------------------------------------------------------------------
 
-export default function PolymarketHubView() {
+function PolymarketHubContent() {
   const { t } = useTranslate()
   const theme = useTheme()
   const isDark = theme.palette.mode === 'dark'
@@ -38,31 +46,31 @@ export default function PolymarketHubView() {
 
   const [category, setCategory] = useState('All')
   const [sortBy, setSortBy] = useState('recommended')
+  const [searchQuery, setSearchQuery] = useState('')
+  const debouncedSearchQuery = useDebounce(searchQuery, 300)
+  const trimmedSearchQuery = debouncedSearchQuery.trim()
+  const isSearching = trimmedSearchQuery.length > 0
 
-  // Account status for terms check
-  const [accountStatus, setAccountStatus] = useState<IPolymarketAccountStatus | null>(null)
-  const [statusLoading, setStatusLoading] = useState(true)
+  const portfolioDrawer = useBoolean()
+  const isDrawerOpen = portfolioDrawer.value
 
-  const checkAccountStatus = useCallback(async () => {
-    try {
-      const result = await polymarketAccountStatus()
-      if (result.ok && result.data) {
-        setAccountStatus(result.data)
-      }
-    } catch {
-      // Silently fail — don't block the hub
-    } finally {
-      setStatusLoading(false)
-    }
-  }, [])
+  const { accountStatus, showTermsOverlay, checkAccountStatus } = usePolymarketAccountStatus()
 
-  useEffect(() => {
-    if (user?.id) {
-      checkAccountStatus()
-    } else {
-      setStatusLoading(false)
-    }
-  }, [user?.id, checkAccountStatus])
+  // Portfolio + positions — always fetched when logged in so the button value matches the drawer
+  const { data: portfolio, isLoading: isPortfolioLoading } = useGetPolymarketPortfolioSWR(
+    POLYMARKET_REFRESH.LIVE_MS,
+    !!user?.id
+  )
+  const { data: positions = [], isLoading: isPositionsLoading } = useGetPolymarketPositionsSWR(
+    POLYMARKET_REFRESH.LIVE_MS,
+    !!user?.id
+  )
+
+  // Orders — lazy, only fetched while drawer is open
+  const { data: orders = [], isLoading: isOrdersLoading } = useGetPolymarketOrdersSWR(
+    POLYMARKET_REFRESH.LIVE_MS,
+    isDrawerOpen
+  )
 
   // Events with infinite scroll
   const { events, isLoading, isLoadingMore, hasMore, loadMore } = useGetPolymarketEventsInfinite(
@@ -70,15 +78,20 @@ export default function PolymarketHubView() {
     user?.id
   )
 
+  // Search — separate fetch, no pagination support server-side, so it fully
+  // replaces the infinite-scroll list while active instead of augmenting it.
+  const { data: searchResult, isLoading: isSearchLoading } =
+    useSearchPolymarkets(trimmedSearchQuery)
+  const searchEvents: IPolymarketEvent[] = useMemo(
+    () => (searchResult?.ok && Array.isArray(searchResult.data) ? searchResult.data : []),
+    [searchResult]
+  )
+
   // Trending: separate fetch without category filter (first 4)
   const { data: trendingData } = useGetPolymarketEvents()
   const trendingEvents: IPolymarketEvent[] = Array.isArray(trendingData?.data)
     ? trendingData.data.slice(0, 4)
     : []
-
-  // Show terms overlay if logged in + terms not accepted
-  const showTermsOverlay =
-    !statusLoading && !!user?.id && accountStatus && !accountStatus.account?.terms_accepted
 
   return (
     <>
@@ -104,83 +117,15 @@ export default function PolymarketHubView() {
             sx={{ pt: { xs: 15, md: 20 } }}
           >
             <Stack spacing={3}>
-              <Stack
-                direction={{ xs: 'column', md: 'row' }}
-                alignItems={{ xs: 'flex-start', md: 'center' }}
-                justifyContent='space-between'
-                spacing={4}
-              >
-                <Box sx={{ maxWidth: 480 }}>
-                  <Typography
-                    variant='h1'
-                    sx={{
-                      fontWeight: 700,
-                      color: 'text.primary',
-                      mb: 2,
-                      fontSize: { xs: 32, md: 36 },
-                      letterSpacing: '-0.36px'
-                    }}
-                  >
-                    {t('polymarket.making-predictions')}
-                  </Typography>
-                  <Typography
-                    variant='body1'
-                    sx={{
-                      color: 'text.primary',
-                      fontSize: 16,
-                      letterSpacing: '-0.16px',
-                      lineHeight: 1.5,
-                      mb: 3
-                    }}
-                  >
-                    {t('polymarket.just-with-whatsapp')}
-                  </Typography>
-                </Box>
+              <PolymarketHubHero
+                portfolio={portfolio ?? null}
+                positions={positions}
+                isPortfolioLoading={isPortfolioLoading}
+                isPositionsLoading={isPositionsLoading}
+                onOpenPortfolio={portfolioDrawer.onTrue}
+              />
 
-                <PolymarketPNLWidget />
-              </Stack>
-
-              {/* Trending */}
-              {trendingEvents.length > 0 && (
-                <Box sx={{ pt: 4 }}>
-                  <Typography
-                    variant='body1'
-                    sx={{
-                      mb: 2,
-                      color: 'text.primary',
-                      fontSize: 16,
-                      fontWeight: 600,
-                      letterSpacing: '-0.16px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 1
-                    }}
-                  >
-                    <Iconify icon='solar:fire-bold' width={22} sx={{ color: 'error.main' }} />
-                    {t('polymarket.trending-today')}
-                  </Typography>
-
-                  <Box sx={{ py: 1.5 }}>
-                    <Marquee speed={30} pauseOnHover>
-                      {trendingEvents.map((event) => {
-                        const isSingleMarket = !event.markets || event.markets.length <= 1
-                        const topMarket = event.markets?.[0]
-                        if (!topMarket) return null
-
-                        return (
-                          <Box key={event.id || event.slug} sx={{ width: 361, flexShrink: 0 }}>
-                            {isSingleMarket ? (
-                              <PolymarketMarketCard market={topMarket} compact />
-                            ) : (
-                              <PolymarketEventCard event={event} compact />
-                            )}
-                          </Box>
-                        )
-                      })}
-                    </Marquee>
-                  </Box>
-                </Box>
-              )}
+              <PolymarketTrendingMarquee events={trendingEvents} />
             </Stack>
           </Container>
         </Box>
@@ -192,19 +137,57 @@ export default function PolymarketHubView() {
           </Typography>
 
           <PolymarketMarketList
-            events={events}
-            trendingEvents={trendingEvents}
-            isLoading={isLoading}
+            events={isSearching ? searchEvents : events}
+            isLoading={isSearching ? isSearchLoading : isLoading}
             category={category}
             onChangeCategory={setCategory}
             sortBy={sortBy}
             onChangeSortBy={setSortBy}
-            hasMore={hasMore}
-            isLoadingMore={!!isLoadingMore}
-            onLoadMore={loadMore}
+            searchQuery={searchQuery}
+            onChangeSearchQuery={setSearchQuery}
+            isSearching={isSearching}
+            pagination={
+              isSearching ? null : { hasMore, isLoadingMore: !!isLoadingMore, onLoadMore: loadMore }
+            }
           />
         </Container>
       </Box>
+
+      {/* Portfolio Drawer — same pattern as dashboard, opens on compact widget click */}
+      <DashboardDrawer
+        open={isDrawerOpen}
+        onClose={portfolioDrawer.onFalse}
+        title={t('polymarket.portfolio-title')}
+        width='50vw'
+      >
+        <Stack spacing={3}>
+          <PolymarketPNLWidget
+            variant='expanded'
+            portfolioData={portfolio ?? null}
+            positions={positions}
+            isLoadingExternal={isPortfolioLoading}
+          />
+          <DashboardPositionsTable
+            positions={positions}
+            orders={orders}
+            isLoading={isPositionsLoading || isOrdersLoading}
+          />
+        </Stack>
+      </DashboardDrawer>
     </>
+  )
+}
+
+// ----------------------------------------------------------------------
+
+export default function PolymarketHubView() {
+  const { user } = useAuthContext()
+
+  // Provide the optimistic-activity context the positions table relies on, so
+  // selling/claiming from the portfolio drawer works here just like on /dashboard.
+  return (
+    <PolymarketActivityProvider wallet={user?.wallet ?? ''}>
+      <PolymarketHubContent />
+    </PolymarketActivityProvider>
   )
 }

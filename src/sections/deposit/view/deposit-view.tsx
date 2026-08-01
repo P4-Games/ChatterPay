@@ -1,7 +1,7 @@
 'use client'
 
-import { useMemo } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useMemo, useCallback } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 import Box from '@mui/material/Box'
 import Alert from '@mui/material/Alert'
@@ -11,6 +11,7 @@ import AlertTitle from '@mui/material/AlertTitle'
 import Typography from '@mui/material/Typography'
 import { alpha, useTheme } from '@mui/material/styles'
 
+import { paths } from 'src/routes/paths'
 import { useTranslate } from 'src/locales'
 import { CHATIZALO_PHONE_NUMBER } from 'src/config-global'
 
@@ -24,16 +25,30 @@ const WHATSAPP_BASE_URL = 'https://api.whatsapp.com/send/'
 
 const isValidEthAddress = (address: string): boolean => /^0x[a-fA-F0-9]{40}$/.test(address)
 
+// Prevents "Return to ChatterPay" from navigating back to an external site
+const isSameOriginReferrer = (): boolean => {
+  if (!document.referrer) return false
+  try {
+    return new URL(document.referrer).origin === window.location.origin
+  } catch {
+    return false
+  }
+}
+
 // ----------------------------------------------------------------------
 
 export default function DepositView() {
   const { t } = useTranslate()
   const theme = useTheme()
+  const router = useRouter()
   const searchParams = useSearchParams()
 
   const address = searchParams.get('address') || ''
   const hasAddress = address.length > 0
   const isValid = hasAddress && isValidEthAddress(address)
+
+  // Boolean flag instead of a return URL to avoid open redirects
+  const fromApp = searchParams.get('from') === 'app'
 
   const primaryMain = theme.palette.primary.main
 
@@ -46,6 +61,18 @@ export default function DepositView() {
     })
     return `${WHATSAPP_BASE_URL}?${params.toString()}`
   }, [t])
+
+  const handleReturnToApp = useCallback(() => {
+    if (isSameOriginReferrer() && window.history.length > 1) {
+      router.back()
+    } else {
+      router.push(paths.dashboard.root)
+    }
+  }, [router])
+
+  const returnButtonProps = fromApp
+    ? { onClick: handleReturnToApp }
+    : { href: whatsappReturnUrl, target: '_blank', rel: 'noopener noreferrer' }
 
   // ----------------------------------------------------------------------
 
@@ -97,9 +124,7 @@ export default function DepositView() {
         <Button
           variant='text'
           size='medium'
-          href={whatsappReturnUrl}
-          target='_blank'
-          rel='noopener noreferrer'
+          {...returnButtonProps}
           startIcon={<Iconify icon='eva:arrow-back-fill' />}
           sx={{
             color: 'text.secondary',

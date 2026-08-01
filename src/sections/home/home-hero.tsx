@@ -7,12 +7,20 @@ import Button from '@mui/material/Button'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Unstable_Grid2'
 import Typography from '@mui/material/Typography'
-import { styled, useTheme } from '@mui/material/styles'
+import { styled, lighten, useTheme } from '@mui/material/styles'
+
+import {
+  buttonSheen,
+  buttonEdgeShadow,
+  buttonPressedShadow
+} from 'src/theme/overrides/components/button'
+
+import { paths } from 'src/routes/paths'
+import { RouterLink } from 'src/routes/components'
 
 import { useResponsive } from 'src/hooks/use-responsive'
 
 import { useLocales, useTranslate } from 'src/locales'
-import { CHATIZALO_PHONE_NUMBER } from 'src/config-global'
 
 import { SingleWordHighlight } from 'src/components/highlight'
 import { varFade, MotionContainer } from 'src/components/animate'
@@ -76,13 +84,24 @@ const StyledMobileIcon = styled('img')(({ theme }) => ({
 }))
 
 const StyledCreateButton = styled(Button)(({ theme }) => ({
-  backgroundColor: GREEN_COLOR,
+  background: `${buttonSheen(theme)}, ${GREEN_COLOR}`,
   color: theme.palette.common.white,
   fontWeight: 600,
   fontSize: '1rem',
-  borderRadius: theme.shape.borderRadius * 1.5,
-  '&:hover': {
-    backgroundColor: 'hsla(147, 41%, 16%, 1)'
+  borderRadius: theme.shape.borderRadius,
+  boxShadow: buttonEdgeShadow(theme),
+  transition: theme.transitions.create(['box-shadow', 'transform', 'background-color'], {
+    duration: 200
+  }),
+  '@media (hover: hover)': {
+    '&:hover': {
+      background: `${buttonSheen(theme)}, ${lighten(GREEN_COLOR, 0.08)}`,
+      boxShadow: buttonEdgeShadow(theme)
+    }
+  },
+  '&:active': {
+    boxShadow: buttonPressedShadow(theme),
+    transform: 'scale(0.98)'
   },
   padding: theme.spacing(1.5, 5),
   marginTop: theme.spacing(4),
@@ -245,18 +264,11 @@ export default function HomeHero() {
 
   const mdUp = useResponsive('up', 'md')
   const lgUp = useResponsive('up', 'lg')
+  const xlUp = useResponsive('up', 'xl')
   const heroRef = useRef<HTMLDivElement | null>(null)
 
   // Get localized mockup image path
   const mockupImagePath = getLanguageMockupPath(currentLang.value)
-
-  // Handle WhatsApp chat start
-  const handleChatStart = () => {
-    const message = encodeURIComponent(
-      t('home.cta.whatsapp_message') || 'Hi! I want to create an account'
-    )
-    window.open(`https://wa.me/${CHATIZALO_PHONE_NUMBER}?text=${message}`, '_blank')
-  }
 
   // Find the word "WhatsApp" in the title
   const titleWords = t('home.hero.new.title').split(' ')
@@ -268,11 +280,13 @@ export default function HomeHero() {
       return t('home.hero.new.title')
     }
 
-    const charWidth = { xs: 20, md: 25, lg: 29 }
+    const charWidth = { xs: 20, md: 25, lg: 25, xl: 27 }
 
     // Calculate width based on screen size
     let highlightWidth = titleWords[whatsAppIndex].length * charWidth.xs
-    if (lgUp) {
+    if (xlUp) {
+      highlightWidth = titleWords[whatsAppIndex].length * charWidth.xl
+    } else if (lgUp) {
       highlightWidth = titleWords[whatsAppIndex].length * charWidth.lg
     } else if (mdUp) {
       highlightWidth = titleWords[whatsAppIndex].length * charWidth.md
@@ -321,8 +335,6 @@ export default function HomeHero() {
         sx={{
           height: mdUp ? '100%' : 'auto',
           py: mdUp ? { md: 2, lg: 0 } : 6,
-          pl: { md: 0 },
-          pr: { md: 0 },
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
@@ -335,6 +347,7 @@ export default function HomeHero() {
           alignItems='center'
           sx={{
             height: 'auto',
+            width: '100%',
             maxWidth: '100%',
             mx: 'auto',
             mt: { xs: 6, md: 0 }
@@ -349,14 +362,30 @@ export default function HomeHero() {
             <m.div variants={varFade().in}>
               <Typography
                 variant='h1'
-                sx={{ mb: 3, fontSize: { xs: 32, md: 40, lg: 46 }, fontWeight: 'bold' }}
+                sx={{ mb: 3, fontSize: { xs: 32, md: 40, lg: 40, xl: 42 }, fontWeight: 800 }}
               >
                 {renderTitle()}
               </Typography>
             </m.div>
 
             <m.div variants={varFade().in}>
+              <Typography
+                sx={{
+                  mb: 4,
+                  color: 'text.secondary',
+                  fontSize: { xs: 16, xl: 18 },
+                  maxWidth: 480,
+                  mx: { xs: 'auto', md: 0 }
+                }}
+              >
+                {t('home.hero.new.subtitle')}
+              </Typography>
+            </m.div>
+
+            <m.div variants={varFade().in}>
               <StyledCreateButton
+                component={RouterLink}
+                href={paths.auth.jwt.login}
                 variant='contained'
                 endIcon={
                   <Box
@@ -367,7 +396,6 @@ export default function HomeHero() {
                     sx={{ width: 24, height: 24 }}
                   />
                 }
-                onClick={handleChatStart}
               >
                 {t('home.hero.new.button')}
               </StyledCreateButton>
@@ -420,12 +448,19 @@ export default function HomeHero() {
               >
                 <DesktopIcons />
 
-                <Box sx={{ position: 'relative', zIndex: 2, maxWidth: '90%' }}>
+                <Box
+                  sx={{
+                    position: 'relative',
+                    zIndex: 2,
+                    maxWidth: '80%',
+                    ml: { md: '30px', lg: '40px' }
+                  }}
+                >
                   <m.div variants={varFade().in}>
                     <StyledImagePlaceholder
                       sx={{
-                        maxWidth: { md: '90%', lg: '100%' },
-                        maxHeight: '80vh'
+                        maxWidth: { md: '75%', lg: '85%' },
+                        maxHeight: '65vh'
                       }}
                     >
                       <MockupImage imagePath={mockupImagePath} />

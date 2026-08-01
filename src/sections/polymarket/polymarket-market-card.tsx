@@ -5,20 +5,21 @@ import Card from '@mui/material/Card'
 import Stack from '@mui/material/Stack'
 import Chip from '@mui/material/Chip'
 import Typography from '@mui/material/Typography'
-import LinearProgress from '@mui/material/LinearProgress'
 import { alpha, useTheme } from '@mui/material/styles'
 
 import { m } from 'framer-motion'
 import { useRouter } from 'src/routes/hooks'
 import { paths } from 'src/routes/paths'
 
-import { fNumber, fPercent } from 'src/utils/format-number'
+import { fNumber } from 'src/utils/format-number'
 
 import { HugeiconsIcon } from '@hugeicons/react'
 import { ArrowRight01Icon } from '@hugeicons/core-free-icons'
 
 import Iconify from 'src/components/iconify'
 import { useTranslate } from 'src/locales'
+
+import { isMarketResolvedYes } from './polymarket-market-sort'
 
 import type { IPolymarketMarket } from 'src/types/polymarket'
 
@@ -28,22 +29,31 @@ type Props = {
   market: IPolymarketMarket
   compact?: boolean
   inlineImage?: boolean
+  /**
+   * Replaces the market's own image (e.g. a team flag on sports events, where
+   * market images are generic placeholders).
+   */
+  imageOverride?: string
 }
 
 export default function PolymarketMarketCard({
   market,
   compact = false,
-  inlineImage = false
+  inlineImage = false,
+  imageOverride
 }: Props) {
   const { t } = useTranslate()
   const theme = useTheme()
   const router = useRouter()
 
   const displayTitle = market.group_item_title || market.question
+  const displayImage = imageOverride || market.image
   const yesPrice = Number(market.outcome_prices?.[0] || 0)
   const noPrice = Number(market.outcome_prices?.[1] || 0)
   const yesPercent = Math.round(yesPrice * 100)
   const noPercent = Math.round(noPrice * 100)
+  const spreadPercent = 100 - yesPercent - noPercent
+  const resolvedYes = isMarketResolvedYes(market)
 
   const handleClick = () => {
     router.push(paths.dashboard.polymarket.detail(market.slug))
@@ -66,10 +76,10 @@ export default function PolymarketMarketCard({
         }}
       >
         <Stack direction='row' alignItems='center' spacing={2}>
-          {market.image && (
+          {displayImage && (
             <Box
               component='img'
-              src={market.image}
+              src={displayImage}
               alt={displayTitle}
               sx={{
                 width: 63,
@@ -129,10 +139,10 @@ export default function PolymarketMarketCard({
       }}
     >
       {/* Image — hero banner (default) or hidden (inlineImage mode) */}
-      {!inlineImage && market.image && (
+      {!inlineImage && displayImage && (
         <Box
           component='img'
-          src={market.image}
+          src={displayImage}
           alt={displayTitle}
           sx={{
             width: '100%',
@@ -167,10 +177,10 @@ export default function PolymarketMarketCard({
           justifyContent='space-between'
           spacing={inlineImage ? 1.5 : 2}
         >
-          {inlineImage && market.image && (
+          {inlineImage && displayImage && (
             <Box
               component='img'
-              src={market.image}
+              src={displayImage}
               alt={displayTitle}
               sx={{
                 width: 44,
@@ -207,77 +217,90 @@ export default function PolymarketMarketCard({
           />
         </Stack>
 
-        {/* Yes / No bars */}
-        <Stack spacing={1}>
-          <Stack direction='row' alignItems='center' justifyContent='space-between'>
-            <Stack direction='row' alignItems='center' spacing={0.5}>
-              <Box
-                sx={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: '50%',
-                  bgcolor: theme.palette.success.main
-                }}
-              />
-              <Typography variant='caption' fontWeight={600}>
-                {t('common.yes')}
-              </Typography>
-            </Stack>
-            <Typography variant='caption' fontWeight={700} color='success.main'>
-              {yesPercent}¢
-            </Typography>
-          </Stack>
-          <LinearProgress
-            variant='determinate'
-            value={yesPercent}
-            sx={{
-              height: 6,
-              borderRadius: 3,
-              bgcolor: alpha(theme.palette.success.main, 0.12),
-              '& .MuiLinearProgress-bar': {
-                borderRadius: 3,
-                bgcolor: theme.palette.success.main
-              }
-            }}
-          />
-
+        {/* Resolved badge (closed market) or Yes / No bars (live market) */}
+        {market.closed ? (
           <Stack
             direction='row'
             alignItems='center'
-            justifyContent='space-between'
-            sx={{ mt: 0.5 }}
+            spacing={1}
+            sx={{
+              px: 1.5,
+              py: 1,
+              borderRadius: 1,
+              bgcolor: alpha(
+                resolvedYes ? theme.palette.success.main : theme.palette.error.main,
+                0.08
+              )
+            }}
           >
-            <Stack direction='row' alignItems='center' spacing={0.5}>
-              <Box
-                sx={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: '50%',
-                  bgcolor: theme.palette.error.main
-                }}
-              />
-              <Typography variant='caption' fontWeight={600}>
-                {t('common.no')}
-              </Typography>
-            </Stack>
-            <Typography variant='caption' fontWeight={700} color='error.main'>
-              {noPercent}¢
+            <Iconify
+              icon={resolvedYes ? 'solar:check-circle-bold' : 'solar:close-circle-bold'}
+              width={18}
+              sx={{ color: resolvedYes ? 'success.main' : 'error.main' }}
+            />
+            <Typography
+              variant='subtitle2'
+              fontWeight={700}
+              sx={{ color: resolvedYes ? 'success.main' : 'error.main' }}
+            >
+              {resolvedYes ? t('common.yes') : t('common.no')}
             </Typography>
           </Stack>
-          <LinearProgress
-            variant='determinate'
-            value={noPercent}
-            sx={{
-              height: 6,
-              borderRadius: 3,
-              bgcolor: alpha(theme.palette.error.main, 0.12),
-              '& .MuiLinearProgress-bar': {
-                borderRadius: 3,
-                bgcolor: theme.palette.error.main
-              }
-            }}
-          />
-        </Stack>
+        ) : (
+          <Stack spacing={0.75}>
+            <Stack direction='row' alignItems='center' justifyContent='space-between'>
+              <Typography variant='caption' fontWeight={700} color='success.main'>
+                {t('common.yes')} {yesPercent}%
+              </Typography>
+              <Typography variant='caption' fontWeight={700} color='error.main'>
+                {noPercent}% {t('common.no')}
+              </Typography>
+            </Stack>
+            {/* Unified Yes / spread / No bar with slash-angled dividers */}
+            <Box
+              sx={{
+                display: 'flex',
+                height: 18,
+                borderRadius: '5px',
+                overflow: 'hidden',
+                gap: '3px'
+              }}
+            >
+              <Box
+                sx={{
+                  width: `${yesPercent}%`,
+                  flexShrink: 0,
+                  ml: '-8px',
+                  bgcolor: alpha(theme.palette.success.main, 0.85),
+                  transform: 'skewX(-16deg)',
+                  boxShadow: `inset 0 2px 3px ${alpha(theme.palette.common.white, 0.25)}, inset 0 -2px 3px ${alpha(theme.palette.common.black, 0.15)}`
+                }}
+              />
+              {spreadPercent > 0 && (
+                <Box
+                  sx={{
+                    flex: 1,
+                    minWidth: 0,
+                    bgcolor: alpha(theme.palette.grey[500], 0.24),
+                    transform: 'skewX(-16deg)',
+                    boxShadow: `inset 0 2px 3px ${alpha(theme.palette.common.black, 0.08)}`
+                  }}
+                />
+              )}
+              <Box
+                sx={{
+                  width: `${noPercent}%`,
+                  flexShrink: 0,
+                  mr: '-8px',
+                  bgcolor: alpha(theme.palette.error.main, 0.85),
+                  transform: 'skewX(-16deg)',
+                  boxShadow: `inset 0 2px 3px ${alpha(theme.palette.common.white, 0.25)}, inset 0 -2px 3px ${alpha(theme.palette.common.black, 0.15)}`,
+                  ...(spreadPercent <= 0 && { ml: 'auto' })
+                }}
+              />
+            </Box>
+          </Stack>
+        )}
 
         {/* Volume & End Date */}
         <Stack

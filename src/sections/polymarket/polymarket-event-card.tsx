@@ -18,6 +18,9 @@ import { ArrowRight01Icon } from '@hugeicons/core-free-icons'
 import Iconify from 'src/components/iconify'
 import { useTranslate } from 'src/locales'
 
+import { sortMarketOptions, isMarketResolvedYes } from './polymarket-market-sort'
+import PolymarketTeamLogos from './polymarket-team-logos'
+
 import type { IPolymarketEvent } from 'src/types/polymarket'
 
 // ----------------------------------------------------------------------
@@ -36,7 +39,8 @@ export default function PolymarketEventCard({ event, compact = false }: Props) {
 
   const firstMarket = event.markets[0]
   const optionCount = event.markets.length
-  const visibleOptions = event.markets.slice(0, MAX_VISIBLE_OPTIONS)
+  const sortedMarkets = sortMarketOptions(event.markets)
+  const visibleOptions = sortedMarkets.slice(0, MAX_VISIBLE_OPTIONS)
   const hiddenCount = optionCount - MAX_VISIBLE_OPTIONS
 
   const totalVolume = event.markets.reduce((sum, m) => sum + (m.volume || 0), 0)
@@ -47,7 +51,9 @@ export default function PolymarketEventCard({ event, compact = false }: Props) {
       (a, b) => new Date(a.end_date_iso).getTime() - new Date(b.end_date_iso).getTime()
     )[0]?.end_date_iso
 
-  // Event-level image with fallback to first market image
+  // Sports events: compose the team flags — the event image is a generic sport
+  // placeholder (e.g. a soccer ball). Otherwise fall back to the event image.
+  const hasTeamLogos = (event.teams?.length ?? 0) >= 2
   const eventImage = event.image || event.icon || firstMarket?.image || ''
 
   const handleClick = () => {
@@ -74,20 +80,24 @@ export default function PolymarketEventCard({ event, compact = false }: Props) {
         }}
       >
         <Stack direction='row' alignItems='center' spacing={2}>
-          {eventImage && (
-            <Box
-              component='img'
-              src={eventImage}
-              alt={event.title}
-              sx={{
-                width: 40,
-                height: 40,
-                borderRadius: 1,
-                objectFit: 'cover',
-                flexShrink: 0,
-                bgcolor: 'grey.200'
-              }}
-            />
+          {hasTeamLogos ? (
+            <PolymarketTeamLogos teams={event.teams!} size={40} borderRadius={1} />
+          ) : (
+            eventImage && (
+              <Box
+                component='img'
+                src={eventImage}
+                alt={event.title}
+                sx={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 1,
+                  objectFit: 'cover',
+                  flexShrink: 0,
+                  bgcolor: 'grey.200'
+                }}
+              />
+            )
           )}
           <Typography
             variant='subtitle2'
@@ -139,20 +149,24 @@ export default function PolymarketEventCard({ event, compact = false }: Props) {
       <Stack spacing={1.5} sx={{ p: 2.5, flex: 1, justifyContent: 'space-between' }}>
         {/* Header: inline image + title + arrow */}
         <Stack direction='row' alignItems='center' spacing={1.5}>
-          {eventImage && (
-            <Box
-              component='img'
-              src={eventImage}
-              alt={event.title}
-              sx={{
-                width: 44,
-                height: 44,
-                borderRadius: 1.5,
-                objectFit: 'cover',
-                flexShrink: 0,
-                bgcolor: 'grey.200'
-              }}
-            />
+          {hasTeamLogos ? (
+            <PolymarketTeamLogos teams={event.teams!} size={44} />
+          ) : (
+            eventImage && (
+              <Box
+                component='img'
+                src={eventImage}
+                alt={event.title}
+                sx={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 1.5,
+                  objectFit: 'cover',
+                  flexShrink: 0,
+                  bgcolor: 'grey.200'
+                }}
+              />
+            )
           )}
           <Typography
             variant='subtitle1'
@@ -184,6 +198,7 @@ export default function PolymarketEventCard({ event, compact = false }: Props) {
           {visibleOptions.map((market) => {
             const yesPrice = Number(market.outcome_prices?.[0] || 0)
             const yesPercent = Math.round(yesPrice * 100)
+            const resolvedYes = isMarketResolvedYes(market)
 
             return (
               <Stack
@@ -212,16 +227,35 @@ export default function PolymarketEventCard({ event, compact = false }: Props) {
                 >
                   {getOptionLabel(market)}
                 </Typography>
-                <Typography
-                  variant='caption'
-                  sx={{
-                    fontWeight: 700,
-                    color: theme.palette.success.main,
-                    flexShrink: 0
-                  }}
-                >
-                  {yesPercent}%
-                </Typography>
+                {market.closed ? (
+                  <Stack direction='row' alignItems='center' spacing={0.5} sx={{ flexShrink: 0 }}>
+                    <Iconify
+                      icon={resolvedYes ? 'solar:check-circle-bold' : 'solar:close-circle-bold'}
+                      width={14}
+                      sx={{ color: resolvedYes ? 'success.main' : 'error.main' }}
+                    />
+                    <Typography
+                      variant='caption'
+                      sx={{
+                        fontWeight: 700,
+                        color: resolvedYes ? 'success.main' : 'error.main'
+                      }}
+                    >
+                      {resolvedYes ? t('common.yes') : t('common.no')}
+                    </Typography>
+                  </Stack>
+                ) : (
+                  <Typography
+                    variant='caption'
+                    sx={{
+                      fontWeight: 700,
+                      color: theme.palette.success.main,
+                      flexShrink: 0
+                    }}
+                  >
+                    {yesPercent}%
+                  </Typography>
+                )}
               </Stack>
             )
           })}

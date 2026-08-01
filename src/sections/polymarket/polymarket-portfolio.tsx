@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import Link from 'next/link'
 
 import Box from '@mui/material/Box'
@@ -23,6 +23,7 @@ import InputAdornment from '@mui/material/InputAdornment'
 import { alpha, useTheme } from '@mui/material/styles'
 
 import { useTranslate } from 'src/locales'
+import { POLYMARKET_REFRESH } from 'src/config-global'
 import {
   useGetPolymarketPositionsSWR,
   useGetPolymarketOrdersSWR,
@@ -41,6 +42,7 @@ import { useSWRConfig } from 'swr'
 import Iconify from 'src/components/iconify'
 
 import { fNumber } from 'src/utils/format-number'
+import { toEpochMs } from 'src/utils/format-time'
 
 import type { IPolymarketPosition } from 'src/types/polymarket'
 
@@ -72,10 +74,24 @@ export default function PolymarketPortfolio() {
   const theme = useTheme()
 
   const { user } = useAuthContext()
-  const { data: portfolio } = useGetPolymarketPortfolioSWR(10000)
-  const { data: positions = [] } = useGetPolymarketPositionsSWR(10000)
-  const { data: orders = [], isLoading: isOrdersLoading } = useGetPolymarketOrdersSWR(10000)
-  const { data: trades = [] } = useGetPolymarketTradesSWR(30000)
+
+  // Purchase/sell status-poll intervals — cleared on unmount so they don't
+  // keep calling setState after the view is gone.
+  const pollIntervalsRef = useRef<Set<ReturnType<typeof setInterval>>>(new Set())
+  useEffect(
+    () => () => {
+      pollIntervalsRef.current.forEach((id) => clearInterval(id))
+      pollIntervalsRef.current.clear()
+    },
+    []
+  )
+
+  const { data: portfolio } = useGetPolymarketPortfolioSWR(POLYMARKET_REFRESH.LIVE_MS)
+  const { data: positions = [] } = useGetPolymarketPositionsSWR(POLYMARKET_REFRESH.LIVE_MS)
+  const { data: orders = [], isLoading: isOrdersLoading } = useGetPolymarketOrdersSWR(
+    POLYMARKET_REFRESH.LIVE_MS
+  )
+  const { data: trades = [] } = useGetPolymarketTradesSWR(POLYMARKET_REFRESH.HISTORY_MS)
   const { data: balanceData, isLoading: isBalanceLoading } = useGetWalletBalance(user?.wallet || '')
 
   const polyBalance = balanceData?.polymarket
@@ -149,28 +165,44 @@ export default function PolymarketPortfolio() {
         bridge_amount: '0'
       })
       if (res.ok) {
-        const purchaseId = res.data?.purchase_id || tempId
+        const purchaseId = res.data?.purchase_id
         setSoldPositionKeys((prev) => new Set(prev).add(posKey))
-        setActivePurchases((prev) =>
-          prev.map((p) =>
-            p.purchase_id === tempId
-              ? { ...p, purchase_id: purchaseId, current_step: 'order_placement' }
-              : p
-          )
-        )
 
-        const poll = async () => {
-          try {
-            const statusRes = await polymarketPurchaseStatus(purchaseId)
-            if (statusRes.ok && statusRes.data) {
-              const st = statusRes.data.status
-              const step = statusRes.data.current_step || ''
-              setActivePurchases((prev) =>
-                prev.map((p) =>
-                  p.purchase_id === purchaseId ? { ...p, current_step: step, status: st } : p
-                )
-              )
-              if (st === 'completed') {
+        // No purchase_id → backend completed the operation synchronously (e.g. claim).
+        if (!purchaseId) {
+          setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== tempId))
+          enqueueSnackbar(t('polymarket.sell-completed'), { variant: 'success' })
+          mutate(
+            (key: any) =>
+              Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/positions')
+          )
+          mutate(
+            (key: any) =>
+              Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/portfolio')
+          )
+          mutate(
+            (key: any) =>
+              Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/balance')
+          )
+          setSoldPositionKeys((prev) => {
+            const n = new Set(prev)
+            n.delete(posKey)
+            return n
+          })
+        } else {
+          setActivePurchases((prev) =>
+            prev.map((p) =>
+              p.purchase_id === tempId
+                ? { ...p, purchase_id: purchaseId, current_step: 'order_placement' }
+                : p
+            )
+          )
+
+          const poll = async () => {
+            try {
+              const statusRes = await polymarketPurchaseStatus(purchaseId)
+              if (!statusRes.ok) {
+                // Purchase not found or backend error — stop polling to avoid infinite loop.
                 clearInterval(pollInterval)
                 setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
                 enqueueSnackbar(t('polymarket.sell-completed'), { variant: 'success' })
@@ -179,10 +211,6 @@ export default function PolymarketPortfolio() {
                     Array.isArray(key) &&
                     typeof key[0] === 'string' &&
                     key[0].includes('/positions')
-                )
-                mutate(
-                  (key: any) =>
-                    Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders')
                 )
                 mutate(
                   (key: any) =>
@@ -199,25 +227,68 @@ export default function PolymarketPortfolio() {
                   n.delete(posKey)
                   return n
                 })
-              } else if (st === 'failed') {
-                clearInterval(pollInterval)
-                setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
-                enqueueSnackbar(statusRes.data.error || t('polymarket.sell-failed'), {
-                  variant: 'error'
-                })
-                setSoldPositionKeys((prev) => {
-                  const n = new Set(prev)
-                  n.delete(posKey)
-                  return n
-                })
+                return
               }
+              if (statusRes.data) {
+                const st = statusRes.data.status
+                const step = statusRes.data.current_step || ''
+                setActivePurchases((prev) =>
+                  prev.map((p) =>
+                    p.purchase_id === purchaseId ? { ...p, current_step: step, status: st } : p
+                  )
+                )
+                if (st === 'completed') {
+                  clearInterval(pollInterval)
+                  setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
+                  enqueueSnackbar(t('polymarket.sell-completed'), { variant: 'success' })
+                  mutate(
+                    (key: any) =>
+                      Array.isArray(key) &&
+                      typeof key[0] === 'string' &&
+                      key[0].includes('/positions')
+                  )
+                  mutate(
+                    (key: any) =>
+                      Array.isArray(key) && typeof key[0] === 'string' && key[0].includes('/orders')
+                  )
+                  mutate(
+                    (key: any) =>
+                      Array.isArray(key) &&
+                      typeof key[0] === 'string' &&
+                      key[0].includes('/portfolio')
+                  )
+                  mutate(
+                    (key: any) =>
+                      Array.isArray(key) &&
+                      typeof key[0] === 'string' &&
+                      key[0].includes('/balance')
+                  )
+                  setSoldPositionKeys((prev) => {
+                    const n = new Set(prev)
+                    n.delete(posKey)
+                    return n
+                  })
+                } else if (st === 'failed') {
+                  clearInterval(pollInterval)
+                  setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== purchaseId))
+                  enqueueSnackbar(statusRes.data.error || t('polymarket.sell-failed'), {
+                    variant: 'error'
+                  })
+                  setSoldPositionKeys((prev) => {
+                    const n = new Set(prev)
+                    n.delete(posKey)
+                    return n
+                  })
+                }
+              }
+            } catch (e) {
+              console.error(e)
             }
-          } catch (e) {
-            console.error(e)
           }
+          poll()
+          const pollInterval = setInterval(poll, 4000)
+          pollIntervalsRef.current.add(pollInterval)
         }
-        poll()
-        const pollInterval = setInterval(poll, 4000)
       } else {
         setActivePurchases((prev) => prev.filter((p) => p.purchase_id !== tempId))
         enqueueSnackbar(res.message || t('polymarket.error-executing-sell'), { variant: 'error' })
@@ -544,7 +615,10 @@ export default function PolymarketPortfolio() {
                               variant='contained'
                               disabled={sellingPos === posKey}
                             >
-                              <Button onClick={() => handleSellPosition(pos)}>
+                              <Button
+                                onClick={() => handleSellPosition(pos)}
+                                sx={{ whiteSpace: 'nowrap', minWidth: 76 }}
+                              >
                                 {sellingPos === posKey ? (
                                   <CircularProgress size={14} color='inherit' />
                                 ) : (
@@ -802,13 +876,7 @@ export default function PolymarketPortfolio() {
               </TableHead>
               <TableBody>
                 {trades.map((trade, idx) => {
-                  const ts =
-                    typeof trade.timestamp === 'number'
-                      ? trade.timestamp > 1e12
-                        ? trade.timestamp
-                        : trade.timestamp * 1000
-                      : new Date(trade.timestamp).getTime()
-                  const date = new Date(ts)
+                  const date = new Date(toEpochMs(trade.timestamp))
                   const dateStr = date.toLocaleDateString(undefined, {
                     month: 'short',
                     day: 'numeric'

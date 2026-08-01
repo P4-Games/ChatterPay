@@ -74,7 +74,7 @@ export default function Header({ onOpenNav }: Props) {
         bgcolor: 'transparent',
         backdropFilter: 'none',
         boxShadow: 'none',
-        transition: theme.transitions.create(['height'], {
+        transition: theme.transitions.create(['height', 'width'], {
           duration: theme.transitions.duration.shorter
         }),
         ...(lgUp && {
