@@ -41,8 +41,10 @@ steps:
       - NEXT_PUBLIC_SECURITY_RECOVERY_QUESTIONS_COUNT=${_NEXT_PUBLIC_SECURITY_RECOVERY_QUESTIONS_COUNT}
       - NEXT_PUBLIC_SECURITY_PIN_LENGTH=${_NEXT_PUBLIC_SECURITY_PIN_LENGTH}
       - POLYMARKET_CLOB_API_URL=${_POLYMARKET_CLOB_API_URL}
-      - POLYMARKET_ADAPTER_TOKEN=${_POLYMARKET_ADAPTER_TOKEN}
       - NEXT_PUBLIC_POLYMARKET_WS_URL=${_NEXT_PUBLIC_POLYMARKET_WS_URL}
+    secretEnv: [
+      POLYMARKET_ADAPTER_AUTH_TOKEN
+    ]
   #
   # Build docker imagen.
   # Variables with a prefix '_' are from Cloud Build 'substitution' (declared in the job).
@@ -88,11 +90,12 @@ steps:
       '--build-arg', 'NEXT_PUBLIC_SECURITY_RECOVERY_QUESTIONS_COUNT=${_NEXT_PUBLIC_SECURITY_RECOVERY_QUESTIONS_COUNT}',
       '--build-arg', 'NEXT_PUBLIC_SECURITY_PIN_LENGTH=${_NEXT_PUBLIC_SECURITY_PIN_LENGTH}',
       '--build-arg', 'POLYMARKET_CLOB_API_URL=${_POLYMARKET_CLOB_API_URL}',
-      '--build-arg', 'POLYMARKET_ADAPTER_TOKEN=${_POLYMARKET_ADAPTER_TOKEN}',
       '--build-arg', 'NEXT_PUBLIC_POLYMARKET_WS_URL=${_NEXT_PUBLIC_POLYMARKET_WS_URL}',
       '.'
     ]
-
+    secretEnv: [
+      POLYMARKET_ADAPTER_AUTH_TOKEN
+    ]
   #
   # push the container images to Container Registry
   #
@@ -121,10 +124,13 @@ steps:
       '--labels',
       'managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID,gcb-trigger-id=$_TRIGGER_ID',
       '--quiet',
-      '--allow-unauthenticated',
-      '--set-secrets',
-      'BACKEND_API_TOKEN=${_BACKEND_API_TOKEN_SECRET_NAME}:latest,POLYMARKET_ADAPTER_TOKEN=${_POLYMARKET_ADAPTER_AUTH_TOKEN_NAME}:latest',
+      '--allow-unauthenticated'
     ]
+
+availableSecrets:
+  secretManager:
+    - versionName: projects/$PROJECT_ID/secrets/${_POLYMARKET_ADAPTER_AUTH_TOKEN_NAME}/versions/latest
+      env: 'POLYMARKET_ADAPTER_AUTH_TOKEN'
 
 images:
   - $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA

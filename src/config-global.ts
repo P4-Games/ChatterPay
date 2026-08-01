@@ -117,7 +117,7 @@ export const POLYMARKET_MIN_ORDER_USD = 1.5
 
 export const POLYMARKET_CLOB_API_URL =
   process.env.POLYMARKET_CLOB_API_URL || 'https://clob.polymarket.com'
-export const POLYMARKET_ADAPTER_TOKEN = process.env.POLYMARKET_ADAPTER_TOKEN || ''
+export const POLYMARKET_ADAPTER_AUTH_TOKEN = process.env.POLYMARKET_ADAPTER_AUTH_TOKEN || ''
 export const POLYMARKET_WS_URL =
   process.env.NEXT_PUBLIC_POLYMARKET_WS_URL ||
   'wss://ws-subscriptions-clob.polymarket.com/ws/market'
