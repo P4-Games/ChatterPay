@@ -16,7 +16,7 @@ type Props = {
 
 export default function MainLayout({ children }: Props) {
   const pathname = usePathname()
-  const homePage = pathname === '/'
+  const fullBleedHero = pathname === '/' || pathname.startsWith('/products/b2b')
 
   return (
     <BaseLayout>
@@ -27,7 +27,7 @@ export default function MainLayout({ children }: Props) {
           component='main'
           sx={{
             flexGrow: 1,
-            ...(!homePage && {
+            ...(!fullBleedHero && {
               pt: { xs: 8, md: 10 }
             })
           }}

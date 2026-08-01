@@ -1,0 +1,41 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/web/ChatterPay-Backend/src/**)",
+      "Read(//c/web/ChatterPay-Backend/src/services/polymarket/**)",
+      "Read(//c/web/ChatterPay-Backend/src/controllers/**)",
+      "Read(//c/web/ChatterPay-Backend/src/api/**)",
+      "Read(//c/web/ChatterPay-Backend/src/types/**)",
+      "Bash(cd /c/web/ChatterPay-Backend && rtk tsc --noEmit 2>&1 | tail -20)",
+      "Read(//c/web/ChatterPay-Backend/**)",
+      "Read(//c/web/ChatterPay-Backend/test/services/polymarket/**)",
+      "Read(//c/web/ChatterPay-Backend/test/controllers/**)",
+      "Bash(rtk vitest *)",
+      "Bash(rtk proxy *)",
+      "PowerShell($pkg = Get-Content package.json -Raw | ConvertFrom-Json; $pkg.scripts | Format-List; $pkg.devDependencies.eslint)",
+      "PowerShell(npx biome lint src/sections/chatterpoints src/locales/langs/en.json src/locales/langs/es.json src/locales/langs/br.json)",
+      "PowerShell(npx biome format src/sections/chatterpoints src/locales/langs/en.json src/locales/langs/es.json src/locales/langs/br.json)",
+      "PowerShell(npx biome format --write src/sections/chatterpoints src/locales/langs/en.json src/locales/langs/es.json src/locales/langs/br.json)",
+      "PowerShell(npx biome lint src/sections/chatterpoints)",
+      "PowerShell(npx biome format --write src/sections/nfts src/locales/langs/en.json src/locales/langs/es.json src/locales/langs/br.json)",
+      "PowerShell(npx biome lint src/sections/nfts)",
+      "PowerShell(npx tsc --noEmit)",
+      "PowerShell(npx biome format --write src/sections/nfts/nfts-hero.tsx)",
+      "PowerShell(npx biome format --write src/sections/account)",
+      "PowerShell(npx biome lint src/sections/account)",
+      "Bash(rtk npm *)",
+      "Bash(netstat -ano)",
+      "PowerShell(Get-CimInstance Win32_Process -Filter \"name='node.exe'\")",
+      "Bash(taskkill //F //T //PID 15380)",
+      "Read(//c/web/T9J-Capacitaciones-Frontend/**)",
+      "Bash(rtk find *)"
+    ],
+    "additionalDirectories": [
+      "c:\\web\\ChatterPay-Backend\\src\\config",
+      "c:\\web\\ChatterPay-Backend\\src\\services\\polymarket",
+      "c:\\web\\ChatterPay-Backend\\src\\types",
+      "c:\\web\\ChatterPay-Backend\\src\\controllers",
+      "c:\\web\\ChatterPay-Backend\\test\\services\\polymarket"
+    ]
+  }
+}

@@ -11,5 +11,32 @@ export {
   useGetWalletNfts,
   useGetWalletBalance,
   useGetWalletTransactions,
+  useGetWalletTransactionsCached,
   useGetWalletNotifications
 } from './use-wallet'
+
+export {
+  useGetPolymarketEvents,
+  useGetPolymarketEventsInfinite,
+  useGetPolymarketMarkets,
+  useGetPolymarketMarket,
+  useSearchPolymarkets,
+  polymarketAccountStatus,
+  polymarketCreateAccount,
+  polymarketAcceptTerms,
+  polymarketPlaceOrder,
+  polymarketCancelOrder,
+  polymarketGetPositions,
+  polymarketGetOrders,
+  polymarketGetPortfolio,
+  polymarketPurchase,
+  polymarketPurchaseStatus,
+  polymarketBridgeWithdraw,
+  polymarketGetTrades,
+  polymarketGetPnlHistory,
+  useGetPolymarketPositionsSWR,
+  useGetPolymarketOrdersSWR,
+  useGetPolymarketPortfolioSWR,
+  useGetPolymarketTradesSWR,
+  useGetPolymarketClosedPositionsSWR
+} from './use-polymarket'

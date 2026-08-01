@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(awk 'NR>=10 && NR<=46 {printf \"%d:%s$\\\\n\", NR, $0}' cloudbuild.yaml)",
+      "Bash(node *)",
+      "Bash(npx tsc *)"
+    ]
+  }
+}

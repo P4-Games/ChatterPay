@@ -4,9 +4,9 @@ import Stack from '@mui/material/Stack'
 import IconButton from '@mui/material/IconButton'
 import ListItem from '@mui/material/ListItem'
 import ListItemText from '@mui/material/ListItemText'
-import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemButton from '@mui/material/ListItemButton'
 import CardContent from '@mui/material/CardContent'
+import { alpha, useTheme } from '@mui/material/styles'
 
 import { useTranslate } from 'src/locales'
 import { useAuthContext } from 'src/auth/hooks'
@@ -18,11 +18,43 @@ import { RouterLink } from 'src/routes/components'
 
 // ----------------------------------------------------------------------
 
+const rowSx = { px: 2, py: 1.5, borderRadius: 1 }
+
+/**
+ * Icon chip shown at the start of each referral row.
+ * @param {{ icon: string }} props - Iconify icon name.
+ * @returns {JSX.Element} Rounded icon chip.
+ */
+function RowIcon({ icon }: { icon: string }) {
+  const theme = useTheme()
+
+  return (
+    <Stack
+      alignItems='center'
+      justifyContent='center'
+      sx={{
+        width: 40,
+        height: 40,
+        borderRadius: 1.5,
+        bgcolor: alpha(theme.palette.primary.main, 0.08),
+        flexShrink: 0,
+        mr: 2
+      }}
+    >
+      <Iconify icon={icon} width={22} sx={{ color: 'primary.main' }} />
+    </Stack>
+  )
+}
+
+/**
+ * Referral details list: own code (copyable), usage count and referred-by code.
+ * @returns {JSX.Element} Referrals detail card.
+ */
 export default function ReferralsDetail() {
   const { t } = useTranslate()
+  const theme = useTheme()
   const { user } = useAuthContext()
   const { enqueueSnackbar } = useSnackbar()
-  const rowSx = { px: 2, py: 1.5 }
 
   const { data: referralStats, isLoading: referralStatsLoading } = useReferralCodeWithUsageCount(
     user?.id
@@ -40,7 +72,12 @@ export default function ReferralsDetail() {
   }
 
   return (
-    <Card>
+    <Card
+      sx={{
+        border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}`,
+        boxShadow: theme.customShadows.card
+      }}
+    >
       <CardContent>
         <List disablePadding>
           <ListItem
@@ -57,9 +94,7 @@ export default function ReferralsDetail() {
               )
             }
           >
-            <ListItemIcon sx={{ minWidth: 36 }}>
-              <Iconify icon='eva:pricetags-fill' width={20} />
-            </ListItemIcon>
+            <RowIcon icon='solar:ticket-bold-duotone' />
             <ListItemText
               primary={t('referrals.my-code')}
               secondary={
@@ -69,9 +104,7 @@ export default function ReferralsDetail() {
           </ListItem>
 
           <ListItem sx={rowSx}>
-            <ListItemIcon sx={{ minWidth: 36 }}>
-              <Iconify icon='eva:bar-chart-fill' width={20} />
-            </ListItemIcon>
+            <RowIcon icon='solar:chart-2-bold-duotone' />
             <ListItemText
               primary={t('referrals.usage-count').replace(
                 '{COUNT}',
@@ -93,9 +126,7 @@ export default function ReferralsDetail() {
                 </IconButton>
               }
             >
-              <ListItemIcon sx={{ minWidth: 36 }}>
-                <Iconify icon='eva:link-2-fill' width={20} />
-              </ListItemIcon>
+              <RowIcon icon='solar:link-round-bold' />
               <ListItemText
                 primary={t('referrals.referred-by')}
                 secondary={referralByCodeData?.referralByCode}
@@ -107,16 +138,16 @@ export default function ReferralsDetail() {
               component={RouterLink}
               href={paths.dashboard.user.referralsReferredCode}
             >
-              <ListItemIcon sx={{ minWidth: 36 }}>
-                <Iconify icon='eva:link-2-fill' width={20} />
-              </ListItemIcon>
+              <RowIcon icon='solar:link-round-bold' />
               <ListItemText
                 primary={t('referrals.referred-by')}
                 secondary={referralByCodeLoading ? '...' : t('referrals.not-set')}
               />
-              <Stack direction='row' alignItems='center' spacing={1}>
-                <Iconify icon='eva:arrow-ios-forward-fill' width={18} />
-              </Stack>
+              <Iconify
+                icon='eva:arrow-ios-forward-fill'
+                width={18}
+                sx={{ color: 'text.secondary' }}
+              />
             </ListItemButton>
           )}
         </List>

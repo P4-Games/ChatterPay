@@ -1,26 +1,7 @@
-import { useState, useEffect } from 'react'
-import { enqueueSnackbar } from 'notistack'
-import QRCode from 'react-qr-code'
-
 import MenuItem from '@mui/material/MenuItem'
 import IconButton from '@mui/material/IconButton'
 import Card, { type CardProps } from '@mui/material/Card'
-import {
-  Box,
-  Stack,
-  Button,
-  Select,
-  Tooltip,
-  Dialog,
-  Alert,
-  Typography,
-  DialogTitle,
-  DialogContent,
-  type SelectChangeEvent
-} from '@mui/material'
-import { alpha, useTheme } from '@mui/material/styles'
-
-import { useRouter } from 'src/routes/hooks'
+import { Stack, Button, Select, Tooltip, Typography, type SelectChangeEvent } from '@mui/material'
 
 import { useBoolean } from 'src/hooks/use-boolean'
 import { useResponsive } from 'src/hooks/use-responsive'
@@ -32,7 +13,9 @@ import { BOT_WAPP_URL, EXPLORER_L2_URL } from 'src/config-global'
 
 import Iconify from 'src/components/iconify'
 
-import type { IBalances, CurrencyKey } from 'src/types/wallet'
+import DashboardDepositModal from './dashboard-deposit-modal'
+
+import type { IBalances } from 'src/types/wallet'
 
 // ----------------------------------------------------------------------
 
@@ -59,11 +42,9 @@ export default function BankingBalances({
   const walletLinkL2 = `${EXPLORER_L2_URL}/address/${tableData?.wallet || ''}`
 
   const { t } = useTranslate()
-  const theme = useTheme()
 
   const mdUp = useResponsive('up', 'md')
   const depositModal = useBoolean()
-  const router = useRouter()
 
   const sendReciveUrl = BOT_WAPP_URL.replaceAll('MESSAGE', t('balances.wapp-msg'))
 
@@ -71,11 +52,6 @@ export default function BankingBalances({
     if (onCurrencyChange) {
       onCurrencyChange(event.target.value as 'usd' | 'ars' | 'brl' | 'uyu')
     }
-  }
-
-  const handleCopyAddress = () => {
-    navigator.clipboard.writeText(tableData?.wallet || '')
-    enqueueSnackbar(t('balances.address-copied'), { variant: 'success' })
   }
 
   const renderTitle = (
@@ -181,90 +157,14 @@ export default function BankingBalances({
     </Card>
   )
 
-  const renderDepositModal = (
-    <Dialog open={depositModal.value} onClose={depositModal.onFalse} maxWidth='xs' fullWidth>
-      <DialogTitle sx={{ pb: 2 }}>
-        <Stack direction='row' alignItems='center' justifyContent='space-between'>
-          <Typography variant='h6'>{t('deposit.title')}</Typography>
-          <IconButton onClick={depositModal.onFalse} size='small'>
-            <Iconify icon='mingcute:close-line' />
-          </IconButton>
-        </Stack>
-      </DialogTitle>
-
-      <DialogContent>
-        <Stack spacing={3} alignItems='center' sx={{ py: 2 }}>
-          {/* QR Code */}
-          <Box
-            sx={{
-              p: 2,
-              bgcolor: 'background.paper',
-              borderRadius: 2,
-              border: `2px solid ${alpha(theme.palette.primary.main, 0.2)}`
-            }}
-          >
-            <QRCode value={tableData?.wallet || ''} size={200} />
-          </Box>
-
-          <Stack spacing={1} sx={{ width: 1 }}>
-            <Typography variant='caption' color='text.secondary'>
-              {t('deposit.wallet-address')}
-            </Typography>
-            <Typography variant='body2' sx={{ wordBreak: 'break-all', fontFamily: 'monospace' }}>
-              {tableData?.wallet}
-            </Typography>
-          </Stack>
-
-          {/* Network Info */}
-          <Stack
-            direction='row'
-            spacing={1.5}
-            alignItems='center'
-            sx={{
-              width: '100%',
-              p: 2,
-              bgcolor: alpha(theme.palette.primary.main, 0.08),
-              borderRadius: 1.5
-            }}
-          >
-            <Box
-              component='img'
-              src='https://storage.googleapis.com/chatbot-multimedia/chatterpay/images/tokens/scr.svg'
-              alt='Scroll Network'
-              sx={{
-                width: 32,
-                height: 32,
-                borderRadius: '50%'
-              }}
-            />
-            <Stack spacing={0.25}>
-              <Typography variant='subtitle2'>{t('deposit.network')}: Scroll</Typography>
-            </Stack>
-          </Stack>
-
-          {/* Warning Alert */}
-          <Alert severity='warning' sx={{ width: '100%' }}>
-            {t('deposit.network-warning')}
-          </Alert>
-
-          <Button
-            fullWidth
-            variant='contained'
-            color='primary'
-            startIcon={<Iconify icon='eva:copy-fill' />}
-            onClick={handleCopyAddress}
-          >
-            {t('deposit.copy-address')}
-          </Button>
-        </Stack>
-      </DialogContent>
-    </Dialog>
-  )
-
   return (
     <>
       {mdUp ? renderSummaryDesktop : renderSummaryMobile}
-      {renderDepositModal}
+      <DashboardDepositModal
+        open={depositModal.value}
+        onClose={depositModal.onFalse}
+        walletAddress={tableData?.wallet || ''}
+      />
     </>
   )
 }

@@ -9,7 +9,7 @@ import type { JwtPayload } from 'src/types/jwt'
 
 // ----------------------------------------------------------------------
 
-type AuthContext = {
+export type AuthContext = {
   userId: string
   ip: string
   jwtToken: JwtPayload
@@ -45,4 +45,10 @@ export async function validateRequestSecurity(
   }
 
   return { userId, ip, jwtToken: jwtTokenDecoded }
+}
+
+export function getUserIdFromRequest(req: NextRequest): string | null {
+  const cookie = req.cookies.get(CHP_DSH_NAME)?.value
+  const jwtTokenDecoded: JwtPayload | null = cookie ? extractJwtTokenFromCookie(cookie) : null
+  return jwtTokenDecoded?.user?.id || null
 }

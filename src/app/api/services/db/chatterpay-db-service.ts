@@ -227,15 +227,83 @@ export async function checkUserHaveActiveSession(
       (session: any) =>
         getFormattedId(session.id) === jwtToken.sessionId &&
         session.token === jwtToken.accessToken &&
-        session.ip === ip &&
         session.status === 'active'
     )
 
-    return !!matchingSession
+    if (!matchingSession) {
+      return false
+    }
+
+    // IP changes mid-session are expected (carrier NAT, dual-stack, WiFi/mobile switch).
+    // Per OWASP, treat as security signal: log and track, don't terminate the session.
+    const lastKnownIp = matchingSession.lastIp ?? matchingSession.ip
+    if (ip && ip !== lastKnownIp) {
+      console.warn(
+        `session IP changed for user ${userId}, session ${jwtToken.sessionId}: ${lastKnownIp} -> ${ip}`
+      )
+      await updateUserSessionIp(userId, jwtToken.sessionId, ip)
+    }
+
+    return true
   } catch (error) {
     console.error('checkUserHaveActiveSession', userId, error.message)
   }
   return false
+}
+
+/**
+ * Tracks a mid-session client IP change: updates the session's lastIp and
+ * appends the new IP to its ipHistory (capped to the last 20 entries).
+ */
+export async function updateUserSessionIp(
+  userId: string,
+  sessionId: string,
+  newIp: string
+): Promise<boolean> {
+  const result = await updateOneCommon(
+    DB_CHATTERPAY_NAME,
+    SCHEMA_USERS,
+    {
+      _id: getObjectId(userId),
+      'front.sessions.id': getObjectId(sessionId)
+    },
+    {
+      $set: { 'front.sessions.$.lastIp': newIp },
+      $push: {
+        'front.sessions.$.ipHistory': { $each: [{ ip: newIp, at: new Date() }], $slice: -20 }
+      }
+    }
+  )
+
+  return result
+}
+
+/**
+ * Returns the user's session matching the given sessionId, or null if not found.
+ */
+export async function getUserSession(
+  userId: string,
+  sessionId: string
+): Promise<UserSession | null> {
+  try {
+    const user = await findOneCommon(
+      DB_CHATTERPAY_NAME,
+      SCHEMA_USERS,
+      { _id: getObjectId(userId) },
+      { 'front.sessions': 1 }
+    )
+
+    if (!user || !user.front?.sessions) {
+      return null
+    }
+
+    const session = user.front.sessions.find((item: any) => getFormattedId(item.id) === sessionId)
+
+    return session ?? null
+  } catch (error) {
+    console.error('getUserSession', userId, error.message)
+    return null
+  }
 }
 
 export async function updateUser(contact: IAccount): Promise<boolean> {
@@ -467,17 +535,44 @@ export async function getWalletNft(wallet: string, nftId: string): Promise<INFT 
   return result
 }
 
-export async function getUserTransactions(wallet: string): Promise<ITransaction[] | undefined> {
+export async function getUserTransactions(
+  wallet: string,
+  opts?: { limit?: number; since?: string | number | Date }
+): Promise<ITransaction[] | undefined> {
   const client = await getClientPromise()
   const db = client.db(DB_CHATTERPAY_NAME)
+
+  // Base ownership filter
+  const match: Record<string, any> = {
+    $or: [{ wallet_from: wallet }, { wallet_to: wallet }]
+  }
+
+  // Incremental fetch: only return records newer than `since`. The bot writes `date`
+  // as a BSON Date, but tolerate epoch-ms / ISO inputs by coercing to a Date.
+  if (opts?.since != null) {
+    const sinceDate =
+      opts.since instanceof Date
+        ? opts.since
+        : typeof opts.since === 'number'
+          ? new Date(opts.since)
+          : new Date(String(opts.since))
+    if (!Number.isNaN(sinceDate.getTime())) {
+      match.date = { $gt: sinceDate }
+    }
+  }
+
+  // Bound the result set. Callers fetch a small "head" (newest N) instead of the
+  // entire history; old records don't change so the client merges them from cache.
+  const limit =
+    opts?.limit != null && Number.isFinite(opts.limit) && opts.limit > 0
+      ? Math.min(Math.floor(opts.limit), 500)
+      : undefined
 
   const cursor: ITransactionDB[] | null = await db
     .collection(SCHEMA_TRANSACTIONS)
     .aggregate([
       {
-        $match: {
-          $or: [{ wallet_from: wallet }, { wallet_to: wallet }]
-        }
+        $match: match
       },
       {
         $lookup: {
@@ -534,12 +629,22 @@ export async function getUserTransactions(wallet: string): Promise<ITransaction[
           fee: 1,
           type: 1,
           status: 1,
-          trx_hash: 1
+          trx_hash: 1,
+          user_notes: 1,
+          chain_id: 1,
+          polymarket_market_slug: 1,
+          polymarket_purchase_id: 1,
+          polymarket_order_id: 1,
+          polymarket_size: 1,
+          polymarket_bridge_tx_hash: 1,
+          polymarket_bridge_amount: 1,
+          polymarket_bridge_token: 1
         }
       },
       {
         $sort: { date: -1 }
-      }
+      },
+      ...(limit != null ? [{ $limit: limit }] : [])
     ])
     .toArray()
 

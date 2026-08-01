@@ -5,6 +5,8 @@ export type UserSession = {
   token: string
   status: 'created' | 'active' | 'terminated' | 'expired'
   ip: string
+  lastIp?: string
+  ipHistory?: { ip: string; at: Date | string }[]
 }
 
 export type IAccount = {

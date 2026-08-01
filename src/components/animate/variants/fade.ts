@@ -11,6 +11,7 @@ export const varFade = (props?: VariantsType) => {
   const easeOut = props?.easeOut
 
   return {
+    /* eslint-disable-next-line */ ...({} as any),
     // IN
     in: {
       initial: { opacity: 0 },

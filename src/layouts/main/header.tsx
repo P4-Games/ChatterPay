@@ -7,6 +7,7 @@ import Toolbar from '@mui/material/Toolbar'
 import { useTheme } from '@mui/material/styles'
 
 import { paths } from 'src/routes/paths'
+import { usePathname } from 'src/routes/hooks'
 import { RouterLink } from 'src/routes/components'
 
 import { useOffSetTop } from 'src/hooks/use-off-set-top'
@@ -25,13 +26,23 @@ import HeaderShadow from '../common/header-shadow'
 import LanguagePopover from '../common/language-popover'
 import SettingsModeButton from '../common/settings-mode-button'
 
+// Pages whose hero has a dark background (header text should be white when not scrolled)
+const DARK_HERO_PATHS = [paths.products.b2b]
+
 // ----------------------------------------------------------------------
 
 export default function Header() {
   const theme = useTheme()
   const { t } = useTranslate()
   const mdUp = useResponsive('up', 'md')
+  const pathname = usePathname()
   const offsetTop = useOffSetTop(HEADER.H_DESKTOP)
+
+  const hasDarkHero = DARK_HERO_PATHS.some((p) => pathname.startsWith(p))
+  const useLight = hasDarkHero && !offsetTop
+
+  // Resolve nav-link color based on hero context
+  const navColor = useLight ? 'common.white' : 'text.primary'
 
   const navConfigMobile = [
     {
@@ -55,9 +66,14 @@ export default function Header() {
       path: paths.development
     },
     {
+      title: t('home.header.b2b'),
+      icon: <Iconify icon='solar:case-round-bold-duotone' />,
+      path: paths.products.b2b
+    },
+    {
       title: t('home.header.sign-in'),
       icon: <Iconify icon='solar:wallet-bold-duotone' />,
-      path: paths.dashboard.root
+      path: paths.auth.jwt.login
     }
   ]
 
@@ -67,9 +83,14 @@ export default function Header() {
         disableGutters
         sx={{
           height: { xs: HEADER.H_MOBILE, md: HEADER.H_DESKTOP },
-          transition: theme.transitions.create(['height'], {
+          transition: theme.transitions.create(['height', 'background-color', 'backdrop-filter'], {
             easing: theme.transitions.easing.easeInOut,
             duration: theme.transitions.duration.shorter
+          }),
+          // Dark-hero pages: subtle frosted dark backdrop so white text pops
+          ...(useLight && {
+            backgroundColor: 'rgba(11, 43, 27, 0.55)',
+            backdropFilter: 'blur(12px)'
           }),
           ...(offsetTop && {
             ...bgBlur({ color: theme.palette.background.default }),
@@ -88,7 +109,7 @@ export default function Header() {
           }}
         >
           {mdUp ? (
-            <LogoWithName sx={{ height: { xs: 28, md: 40 } }} />
+            <LogoWithName light={useLight} sx={{ height: { xs: 28, md: 40 } }} />
           ) : (
             <NavMobile data={navConfigMobile} />
           )}
@@ -99,7 +120,7 @@ export default function Header() {
                 <Button
                   component={RouterLink}
                   href={paths.aboutUs}
-                  sx={{ fontWeight: 600, color: 'text.primary' }}
+                  sx={{ fontWeight: 600, color: navColor, transition: 'color 0.3s' }}
                 >
                   {t('home.header.about-us')}
                 </Button>
@@ -107,7 +128,7 @@ export default function Header() {
                 <Button
                   component={RouterLink}
                   href={paths.products.root}
-                  sx={{ fontWeight: 600, color: 'text.primary' }}
+                  sx={{ fontWeight: 600, color: navColor, transition: 'color 0.3s' }}
                 >
                   {t('home.header.products')}
                 </Button>
@@ -115,7 +136,7 @@ export default function Header() {
                 <Button
                   component={RouterLink}
                   href={paths.roadmap}
-                  sx={{ fontWeight: 600, color: 'text.primary' }}
+                  sx={{ fontWeight: 600, color: navColor, transition: 'color 0.3s' }}
                 >
                   {t('home.header.roadmap')}
                 </Button>
@@ -123,12 +144,29 @@ export default function Header() {
                 <Button
                   component={RouterLink}
                   href={paths.development}
-                  sx={{ fontWeight: 600, color: 'text.primary' }}
+                  sx={{ fontWeight: 600, color: navColor, transition: 'color 0.3s' }}
                 >
                   {t('home.header.development')}
                 </Button>
 
-                <LoginButton />
+                <Button
+                  component={RouterLink}
+                  href={paths.products.b2b}
+                  sx={{ fontWeight: 600, color: navColor, transition: 'color 0.3s' }}
+                >
+                  {t('home.header.b2b')}
+                </Button>
+
+                <LoginButton
+                  sx={{
+                    ...(useLight && {
+                      color: 'common.white',
+                      bgcolor: 'rgba(255,255,255,0.12)',
+                      '&:hover': { bgcolor: 'rgba(255,255,255,0.2)' }
+                    }),
+                    transition: 'all 0.3s'
+                  }}
+                />
               </Stack>
             )}
 

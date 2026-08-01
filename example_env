@@ -33,6 +33,7 @@ NEXT_PUBLIC_NFT_MARKETPLACE_URL='https://testnets.opensea.io/assets/arbitrum_sep
 NEXT_PUBLIC_EXPLORER_L1_URL='https://sepolia.etherscan.io'
 NEXT_PUBLIC_EXPLORER_L2_URL='https://sepolia.arbiscan.io/' 
 NEXT_PUBLIC_EXPLORER_NFT_URL='https://sepolia.arbiscan.io'
+NEXT_PUBLIC_LAYERSWAP_BASE_URL='https://testnet.layerswap.io/app'
 NEXT_PUBLIC_CHATIZALO_PHONE_NUMBER={chatizalo phone number}
 NEXT_PUBLIC_NETWORK='scroll sepolia'
 NEXT_PUBLIC_SECURITY_RECOVERY_QUESTIONS_COUNT=3
@@ -41,3 +42,8 @@ NEXT_PUBLIC_SECURITY_PIN_LENGTH=6
 # analytics
 NEXT_PUBLIC_GA_MEASUREMENT_ID={google analytics measurement id}
 NEXT_PUBLIC_MS_CLARITY_ID={microsoft clarity id}
+
+# polymarket
+POLYMARKET_CLOB_API_URL='https://clob.polymarket.com'
+POLYMARKET_ADAPTER_AUTH_TOKEN={adapter token}
+NEXT_PUBLIC_POLYMARKET_WS_URL='wss://ws-subscriptions-clob.polymarket.com/ws/market'

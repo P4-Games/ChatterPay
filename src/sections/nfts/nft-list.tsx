@@ -9,20 +9,26 @@ import NftItem from './nft-item'
 
 // ----------------------------------------------------------------------
 
+const ITEMS_PER_PAGE = 8
+
 type Props = {
   nfts: INFT[]
 }
 
+/**
+ * Paginated gallery grid of the wallet's NFTs.
+ * @param {Props} props - NFTs to render.
+ * @returns {JSX.Element} NFT grid with pagination.
+ */
 export default function NftList({ nfts }: Props) {
   const [page, setPage] = useState(1)
-  const itemsPerPage = 6
 
   const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value)
   }
 
   const paginatedNfts = Array.isArray(nfts)
-    ? nfts.slice((page - 1) * itemsPerPage, page * itemsPerPage)
+    ? nfts.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE)
     : []
 
   return (
@@ -33,7 +39,8 @@ export default function NftList({ nfts }: Props) {
         gridTemplateColumns={{
           xs: 'repeat(1, 1fr)',
           sm: 'repeat(2, 1fr)',
-          md: 'repeat(4, 1fr)'
+          md: 'repeat(3, 1fr)',
+          lg: 'repeat(4, 1fr)'
         }}
       >
         {paginatedNfts.map((nft) => (
@@ -41,13 +48,13 @@ export default function NftList({ nfts }: Props) {
         ))}
       </Box>
 
-      {nfts.length > itemsPerPage && (
+      {nfts.length > ITEMS_PER_PAGE && (
         <Pagination
-          count={Math.ceil(nfts.length / itemsPerPage)}
+          count={Math.ceil(nfts.length / ITEMS_PER_PAGE)}
           page={page}
           onChange={handleChangePage}
           sx={{
-            mt: 8,
+            mt: 5,
             [`& .${paginationClasses.ul}`]: {
               justifyContent: 'center'
             }

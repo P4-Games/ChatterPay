@@ -16,7 +16,7 @@ export default function LoginButton({ sx }: Props) {
   const { t } = useTranslate()
 
   return (
-    <Button component={RouterLink} href={paths.dashboard.root} variant='soft' sx={{ mr: 1, ...sx }}>
+    <Button component={RouterLink} href={paths.auth.jwt.login} variant='soft' sx={{ mr: 1, ...sx }}>
       {t('home.header.sign-in')}
     </Button>
   )

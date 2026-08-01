@@ -12,16 +12,19 @@ export interface LogoWithNameProps extends BoxProps {
   disabledLink?: boolean
   /** preferred height in px; width scales automatically */
   heightPx?: number
+  /** force the light (white) variant regardless of theme, e.g. over dark heroes */
+  light?: boolean
 }
 
 const LogoWithName = forwardRef<HTMLImageElement, LogoWithNameProps>(
-  ({ disabledLink = false, sx, heightPx = 36, ...other }, ref) => {
+  ({ disabledLink = false, sx, heightPx = 36, light = false, ...other }, ref) => {
     const theme = useTheme()
     const isDark = theme.palette.mode === 'dark'
 
-    const src = isDark
-      ? '/assets/images/home/logo-w-name.svg'
-      : '/assets/images/home/logo-w-name-black.svg'
+    const src =
+      light || isDark
+        ? '/assets/images/home/logo-w-name.svg'
+        : '/assets/images/home/logo-w-name-black.svg'
 
     const img = (
       <Box

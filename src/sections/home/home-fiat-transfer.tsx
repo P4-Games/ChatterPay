@@ -1,19 +1,29 @@
-import { useState, useEffect } from 'react'
-import { m, AnimatePresence } from 'framer-motion'
+import type { ElementType } from 'react'
+
+import { m } from 'framer-motion'
 
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import { styled } from '@mui/material/styles'
+import type { ButtonProps } from '@mui/material/Button'
+import { alpha, styled } from '@mui/material/styles'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Unstable_Grid2'
 import Typography from '@mui/material/Typography'
 
+import { paths } from 'src/routes/paths'
+import { RouterLink } from 'src/routes/components'
+
 import { useTranslate } from 'src/locales'
-import { CHATIZALO_PHONE_NUMBER } from 'src/config-global'
+import {
+  buttonSheen,
+  buttonEdgeShadow,
+  buttonPressedShadow
+} from 'src/theme/overrides/components/button'
 
 // ----------------------------------------------------------------------
 
 const GREEN_COLOR = 'hsla(147, 41%, 21%, 1)'
+const CHAT_GREEN = '#25D366'
 
 const StyledRoot = styled('div')(({ theme }) => ({
   backgroundColor: GREEN_COLOR,
@@ -23,73 +33,57 @@ const StyledRoot = styled('div')(({ theme }) => ({
   borderRadius: '0 0 32px 32px'
 }))
 
-const StyledButton = styled(Button)(({ theme }) => ({
-  backgroundColor: theme.palette.common.white,
+const StyledButton = styled(Button)<ButtonProps & { component?: ElementType }>(({ theme }) => ({
+  background: `${buttonSheen(theme)}, ${theme.palette.common.white}`,
   color: GREEN_COLOR,
   fontWeight: 600,
   fontSize: '1rem',
-  borderRadius: theme.shape.borderRadius * 1.5,
-  '&:hover': {
-    backgroundColor: theme.palette.grey[100],
-    '& .arrow-icon': {
-      transform: 'translateX(3px)'
+  borderRadius: theme.shape.borderRadius,
+  boxShadow: buttonEdgeShadow(theme),
+  transition: theme.transitions.create(['box-shadow', 'transform', 'background-color'], {
+    duration: 200
+  }),
+  '@media (hover: hover)': {
+    '&:hover': {
+      background: `${buttonSheen(theme)}, ${theme.palette.grey[100]}`,
+      boxShadow: buttonEdgeShadow(theme)
     }
+  },
+  '&:active': {
+    boxShadow: buttonPressedShadow(theme),
+    transform: 'scale(0.98)'
   },
   padding: theme.spacing(1.2, 4),
   [theme.breakpoints.down('md')]: {
     fontSize: '0.9rem'
-  },
-  '& .MuiButton-endIcon': {
-    marginLeft: theme.spacing(1)
-  },
-  '& .arrow-icon': {
-    transition: 'transform 0.2s ease-in-out'
   }
 }))
 
 export default function HomeFiatTransfer() {
   const { t } = useTranslate()
-  const [currentCurrencyIndex, setCurrentCurrencyIndex] = useState(0)
-  const currencies = t('home.fiat-transfer.currencies', { returnObjects: true }) as string[]
-
-  const whatsappMessage = encodeURIComponent(t('home.fiat-transfer.whatsapp_msg'))
-  const whatsappLink = `https://wa.me/${CHATIZALO_PHONE_NUMBER}?text=${whatsappMessage}`
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentCurrencyIndex((prevIndex) => (prevIndex + 1) % currencies.length)
-    }, 2000)
-
-    return () => clearInterval(interval)
-  }, [currencies.length])
-
-  // Get the title with the currency marker
-  const titleWithMarker = t('home.fiat-transfer.title')
 
   return (
     <StyledRoot>
       <Container
         sx={{
-          position: 'relative',
-          px: { xs: 2, md: 0 },
-          width: '100%',
-          maxWidth: { lg: '100%' }
+          position: 'relative'
         }}
       >
         <Grid
           container
           spacing={{ xs: 5, md: 3 }}
           alignItems='center'
-          justifyContent='space-between'
+          justifyContent='center'
           sx={{ position: 'relative' }}
         >
           <Grid
             xs={12}
-            md={6}
+            md={8}
             sx={{
-              textAlign: { xs: 'center', md: 'left' },
-              py: 15,
-              px: 10
+              textAlign: 'center',
+              pt: { xs: 10, md: 18 },
+              pb: { xs: 10, md: 18 },
+              px: { xs: 2, md: 4 }
             }}
           >
             <m.div
@@ -99,71 +93,21 @@ export default function HomeFiatTransfer() {
               viewport={{ once: false, margin: '-100px' }}
             >
               <Typography
+                variant='overline'
+                sx={{ color: CHAT_GREEN, letterSpacing: 2, display: 'block', mb: 2 }}
+              >
+                {t('home.b2b-banner.eyebrow')}
+              </Typography>
+              <Typography
                 variant='h3'
                 sx={{
                   mb: 3,
                   color: 'common.white',
                   fontWeight: 700,
-                  position: 'relative',
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  alignItems: 'center',
-                  justifyContent: { xs: 'center', md: 'flex-start' },
-                  textAlign: { xs: 'center', md: 'left' },
-                  gap: 0.5
+                  fontFamily: (theme) => theme.typography.fontSecondaryFamily
                 }}
               >
-                <Box component='span'>{titleWithMarker.split('#currency#')[0]}</Box>
-                <Box
-                  component='span'
-                  sx={{
-                    display: 'inline-flex',
-                    position: 'relative',
-                    height: '1.5em',
-                    padding: 0,
-                    margin: 0,
-                    justifyContent: 'center'
-                  }}
-                >
-                  <AnimatePresence mode='wait' initial={false}>
-                    <m.span
-                      key={currentCurrencyIndex}
-                      initial={{
-                        opacity: 0,
-                        y: 10,
-                        filter: 'blur(3px)'
-                      }}
-                      animate={{
-                        opacity: 1,
-                        y: 0,
-                        filter: 'blur(0px)',
-                        transition: {
-                          type: 'spring',
-                          stiffness: 300,
-                          damping: 20
-                        }
-                      }}
-                      exit={{
-                        opacity: 0,
-                        y: -10,
-                        filter: 'blur(3px)',
-                        transition: {
-                          duration: 0.2
-                        }
-                      }}
-                      style={{
-                        display: 'inline',
-                        fontWeight: 700,
-                        whiteSpace: 'nowrap',
-                        color: '#ffffff',
-                        textShadow: '0 0 8px rgba(0,0,0,0.15)'
-                      }}
-                    >
-                      {currencies[currentCurrencyIndex]}
-                    </m.span>
-                  </AnimatePresence>
-                </Box>
-                <Box component='span'>{titleWithMarker.split('#currency#')[1]}</Box>
+                {t('home.b2b-banner.title')}
               </Typography>
             </m.div>
 
@@ -180,14 +124,15 @@ export default function HomeFiatTransfer() {
                   opacity: 0.8
                 }}
               >
-                {t('home.fiat-transfer.description')}
+                {t('home.b2b-banner.description')}
               </Typography>
             </m.div>
 
             <Box
               sx={{
                 display: 'flex',
-                justifyContent: { xs: 'center', md: 'flex-start' }
+                justifyContent: 'center',
+                mt: 2
               }}
             >
               <m.div
@@ -196,61 +141,25 @@ export default function HomeFiatTransfer() {
                 transition={{ duration: 0.7, ease: 'easeOut', delay: 0.4 }}
                 viewport={{ once: false, margin: '-100px' }}
               >
-                <a
-                  href={whatsappLink}
-                  target='_blank'
-                  rel='noopener noreferrer'
-                  style={{ textDecoration: 'none' }}
+                <StyledButton
+                  component={RouterLink}
+                  href={paths.products.b2b}
+                  variant='contained'
+                  endIcon={
+                    <Box
+                      component='img'
+                      src='/assets/icons/home/landing_resources/button_arrow.svg'
+                      alt='Arrow'
+                      className='arrow-icon'
+                      sx={{ width: 18, height: 18 }}
+                    />
+                  }
                 >
-                  <StyledButton
-                    variant='contained'
-                    endIcon={
-                      <Box
-                        component='img'
-                        src='/assets/icons/home/landing_resources/button_arrow.svg'
-                        alt='Arrow'
-                        className='arrow-icon'
-                        sx={{ width: 18, height: 18 }}
-                      />
-                    }
-                  >
-                    {t('home.fiat-transfer.button')}
-                  </StyledButton>
-                </a>
+                  {t('home.b2b-banner.button')}
+                </StyledButton>
               </m.div>
             </Box>
           </Grid>
-
-          <Box
-            sx={{
-              position: 'relative',
-              left: 'auto',
-              height: '100%',
-              width: '50%',
-              display: { xs: 'none', md: 'block' },
-              overflow: 'hidden'
-            }}
-          >
-            <m.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.7, ease: 'easeOut' }}
-              viewport={{ once: false, margin: '-100px' }}
-              style={{ height: '100%' }}
-            >
-              <Box
-                component='img'
-                src='/assets/images/home/fiat_like_pro.png'
-                alt='Fiat transfer'
-                sx={{
-                  height: '100%',
-                  maxWidth: 'none',
-                  objectFit: 'cover',
-                  objectPosition: 'center right'
-                }}
-              />
-            </m.div>
-          </Box>
         </Grid>
       </Container>
     </StyledRoot>

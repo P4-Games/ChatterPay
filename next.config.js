@@ -14,6 +14,7 @@ module.exports = {
     }
   },
   output: 'standalone',
+
   images: {
     domains: [
       'storage.googleapis.com',
@@ -88,10 +89,27 @@ module.exports = {
         use: ['@svgr/webpack']
       }
     )
+    config.resolve.fallback = { ...config.resolve.fallback, fs: false, net: false, tls: false }
+    config.externals.push('pino-pretty', 'lokijs', 'encoding')
     return config
   },
   // https://nextjs.org/docs/api-reference/next.config.js/headers
   async headers() {
+    // CSP must allow the same origin the client uses to open the WS.
+    const polymarketWsOrigin = (() => {
+      const url =
+        process.env.NEXT_PUBLIC_POLYMARKET_WS_URL || 'wss://ws-subscriptions-clob.polymarket.com'
+      // The env value may use either scheme (the WebSocket constructor
+      // auto-upgrades https:// to wss://), but a CSP `https://host` source
+      // does NOT match wss: connections — so allow both schemes explicitly.
+      try {
+        const { host } = new URL(url)
+        return `wss://${host} https://${host}`
+      } catch {
+        return 'wss://ws-subscriptions-clob.polymarket.com https://ws-subscriptions-clob.polymarket.com'
+      }
+    })()
+
     return [
       {
         source: '/:all*(svg|jpg|png|mp3|gif|mp4)',
@@ -126,11 +144,12 @@ module.exports = {
                 https://www.gstatic.com
                 https://api.iconify.design
                 https://api.simplesvg.com
-                https://api.unisvg.com;
+                https://api.unisvg.com
+                ${polymarketWsOrigin};
               
               img-src 'self' data: https:;
               style-src 'self' 'unsafe-inline';
-              frame-src 'self' https://www.google.com https://www.youtube.com;
+              frame-src 'self' https://www.google.com https://www.youtube.com https://layerswap.io https://*.layerswap.io;
               frame-ancestors 'self';
             `
               .replace(/\s+/g, ' ')

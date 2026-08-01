@@ -143,6 +143,8 @@ export default function BankingAssetBreakdown({
               component='img'
               src={logoUrl}
               alt={balance.token}
+              loading='lazy'
+              decoding='async'
               sx={{
                 width: 40,
                 height: 40,
