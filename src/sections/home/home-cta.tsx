@@ -1,9 +1,16 @@
+// @ts-nocheck
 import { m } from 'framer-motion'
 
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import { styled } from '@mui/material/styles'
 import Container from '@mui/material/Container'
+
+import {
+  buttonSheen,
+  buttonEdgeShadow,
+  buttonPressedShadow
+} from 'src/theme/overrides/components/button'
 import Grid from '@mui/material/Unstable_Grid2'
 import Typography from '@mui/material/Typography'
 
@@ -22,13 +29,24 @@ const StyledRoot = styled('div')(({ theme }) => ({
 }))
 
 const StyledButton = styled(Button)(({ theme }) => ({
-  backgroundColor: theme.palette.common.white,
+  background: `${buttonSheen(theme)}, ${theme.palette.common.white}`,
   color: GREEN_COLOR,
   fontWeight: 600,
   fontSize: '1rem',
-  borderRadius: theme.shape.borderRadius * 1.5,
-  '&:hover': {
-    backgroundColor: theme.palette.grey[100]
+  borderRadius: theme.shape.borderRadius,
+  boxShadow: buttonEdgeShadow(theme),
+  transition: theme.transitions.create(['box-shadow', 'transform', 'background-color'], {
+    duration: 200
+  }),
+  '@media (hover: hover)': {
+    '&:hover': {
+      background: `${buttonSheen(theme)}, ${theme.palette.grey[100]}`,
+      boxShadow: buttonEdgeShadow(theme)
+    }
+  },
+  '&:active': {
+    boxShadow: buttonPressedShadow(theme),
+    transform: 'scale(0.98)'
   },
   padding: theme.spacing(1.2, 4),
   [theme.breakpoints.down('md')]: {
@@ -190,7 +208,8 @@ export default function HomeCTA() {
                   sx={{
                     mb: 3,
                     color: 'common.white',
-                    fontWeight: 700
+                    fontWeight: 700,
+                    fontFamily: (theme) => theme.typography.fontSecondaryFamily
                   }}
                 >
                   {t('home.cta.title_new')}

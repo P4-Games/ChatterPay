@@ -7,7 +7,6 @@ import { useSettingsContext } from 'src/components/settings'
 
 import Main from './main'
 import Header from './header'
-import NavMini from './nav-mini'
 import BaseLayout from '../baseLayout'
 import NavVertical from './nav-vertical'
 import NavHorizontal from './nav-horizontal'
@@ -27,10 +26,6 @@ export default function DashboardLayout({ children }: Props) {
 
   const isHorizontal = settings.themeLayout === 'horizontal'
 
-  const isMini = settings.themeLayout === 'mini'
-
-  const renderNavMini = <NavMini />
-
   const renderHorizontal = <NavHorizontal />
 
   const renderNavVertical = <NavVertical openNav={nav.value} onCloseNav={nav.onFalse} />
@@ -43,26 +38,6 @@ export default function DashboardLayout({ children }: Props) {
         {lgUp ? renderHorizontal : renderNavVertical}
 
         <Main>{children}</Main>
-      </BaseLayout>
-    )
-  }
-
-  if (isMini) {
-    return (
-      <BaseLayout>
-        <Header onOpenNav={nav.onTrue} />
-
-        <Box
-          sx={{
-            minHeight: 1,
-            display: 'flex',
-            flexDirection: { xs: 'column', lg: 'row' }
-          }}
-        >
-          {lgUp ? renderNavMini : renderNavVertical}
-
-          <Main>{children}</Main>
-        </Box>
       </BaseLayout>
     )
   }

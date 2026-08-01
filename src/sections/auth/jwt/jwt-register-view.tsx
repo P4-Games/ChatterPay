@@ -76,16 +76,25 @@ export default function JwtRegisterView() {
   })
 
   const renderHead = (
-    <Stack spacing={2} sx={{ mb: 5, position: 'relative' }}>
+    <Stack spacing={1.5} sx={{ mb: 5, position: 'relative' }}>
       <Typography variant='h4'>{t('register.get-started')}</Typography>
 
       <Stack direction='row' spacing={0.5}>
         <Typography variant='body2'> {t('register.already-account')}</Typography>
 
-        <Link href={paths.dashboard.root} component={RouterLink} variant='subtitle2'>
+        <Link
+          href={paths.auth.jwt.login}
+          component={RouterLink}
+          variant='subtitle2'
+          color='primary'
+        >
           {t('register.sign-in')}
         </Link>
       </Stack>
+
+      <Typography variant='caption' sx={{ color: 'text.secondary' }}>
+        {t('register.whatsapp-note')}
+      </Typography>
     </Stack>
   )
 
@@ -93,8 +102,6 @@ export default function JwtRegisterView() {
     <Typography
       component='div'
       sx={{
-        mt: 2.5,
-        textAlign: 'center',
         typography: 'caption',
         color: 'text.secondary'
       }}
@@ -142,9 +149,11 @@ export default function JwtRegisterView() {
           />
         </>
       )}
+      {renderTerms}
+
       <LoadingButton
         fullWidth
-        color='inherit'
+        color='primary'
         size='large'
         type='submit'
         variant='contained'
@@ -168,8 +177,6 @@ export default function JwtRegisterView() {
       <FormProvider methods={methods} onSubmit={onSubmit}>
         {renderForm}
       </FormProvider>
-
-      {renderTerms}
     </>
   )
 }

@@ -1,6 +1,11 @@
 import jwt from 'jsonwebtoken'
 
-import { JWT_SECRET, USER_SESSION_EXPIRATION_MINUTES } from 'src/config-global'
+import {
+  JWT_SECRET,
+  CHP_DSH_NAME,
+  IS_DEVELOPMENT,
+  USER_SESSION_EXPIRATION_MINUTES
+} from 'src/config-global'
 
 import type { UserSession } from 'src/types/account'
 import type { JwtPayload, jwtPayloadUser } from 'src/types/jwt'
@@ -39,6 +44,22 @@ export function extractJwtTokenFromCookie(cookieValue?: string): JwtPayload | nu
   } catch (err: any) {
     console.error('Invalid JWT in cookie', err.message)
     return null
+  }
+}
+
+/**
+ * Builds the HttpOnly session cookie settings for the given JWT,
+ * shared by the login and refresh endpoints.
+ */
+export function buildSessionCookie(jwtToken: string) {
+  return {
+    name: CHP_DSH_NAME,
+    value: jwtToken,
+    httpOnly: true,
+    secure: !IS_DEVELOPMENT,
+    sameSite: 'lax' as const,
+    path: '/',
+    maxAge: Number(USER_SESSION_EXPIRATION_MINUTES) * 60
   }
 }
 

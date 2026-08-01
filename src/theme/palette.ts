@@ -43,13 +43,13 @@ export const primaryLight = {
   contrastText: '#FFFFFF'
 }
 
-// Dark mode primary (vibrant green)
+// Dark mode primary (brand teal)
 export const primaryDark = {
-  lighter: '#B8F6C9',
-  light: '#5FED9A',
-  main: '#00D856',
-  dark: '#00A043',
-  darker: '#007030',
+  lighter: '#A8E6D5',
+  light: '#4CC3A8',
+  main: '#1B9C85',
+  dark: '#147A68',
+  darker: '#0E5A4C',
   contrastText: '#FFFFFF'
 }
 

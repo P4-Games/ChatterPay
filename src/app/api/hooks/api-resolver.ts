@@ -90,7 +90,8 @@ export const endpoints = {
   auth: {
     code: () => getFullUIEndpoint(`auth/code`),
     login: () => getFullUIEndpoint(`auth/login`),
-    me: () => getFullUIEndpoint('auth/me')
+    me: () => getFullUIEndpoint('auth/me'),
+    refresh: () => getFullUIEndpoint('auth/refresh')
   },
   nft: {
     id: (id: string) => getFullUIEndpoint(`nft/${id}`)
@@ -136,7 +137,13 @@ export const endpoints = {
     },
     wallet: {
       balance: (id: string) => getFullUIEndpoint(`wallet/${id}/balance`),
-      transactions: (id: string) => getFullUIEndpoint(`wallet/${id}/transactions`),
+      transactions: (id: string, params?: { limit?: number; since?: string | number }) => {
+        const search = new URLSearchParams()
+        if (params?.limit != null) search.append('limit', String(params.limit))
+        if (params?.since != null) search.append('since', String(params.since))
+        const qs = search.toString()
+        return getFullUIEndpoint(`wallet/${id}/transactions${qs ? `?${qs}` : ''}`)
+      },
       notifications: (id: string, pageIndex: number, pageSize: number) =>
         getFullUIEndpoint(
           `wallet/${id}/notifications?lazy=true&pageIndex=${pageIndex}&pageSize=${pageSize}`
@@ -150,6 +157,38 @@ export const endpoints = {
         history: (id: string) => getFullUIEndpoint(`wallet/${id}/chatterpoints/history`)
       }
     }
+  },
+  polymarket: {
+    categories: () => getFullUIEndpoint('polymarket/categories'),
+    events: (params?: string) =>
+      getFullUIEndpoint(`polymarket/events${params ? `?${params}` : ''}`),
+    markets: (params?: string) =>
+      getFullUIEndpoint(`polymarket/markets${params ? `?${params}` : ''}`),
+    marketBySlug: (slug: string) => getFullUIEndpoint(`polymarket/markets/${slug}`),
+    search: (query: string) =>
+      getFullUIEndpoint(`polymarket/search?query=${encodeURIComponent(query)}`),
+    account: {
+      status: () => getFullUIEndpoint('polymarket/account/status'),
+      create: () => getFullUIEndpoint('polymarket/account/create'),
+      acceptTerms: () => getFullUIEndpoint('polymarket/account/accept-terms')
+    },
+    order: {
+      place: () => getFullUIEndpoint('polymarket/order/place'),
+      cancel: () => getFullUIEndpoint('polymarket/order/cancel')
+    },
+    purchase: {
+      root: () => getFullUIEndpoint('polymarket/purchase'),
+      status: () => getFullUIEndpoint('polymarket/purchase/status')
+    },
+    bridge: {
+      withdraw: () => getFullUIEndpoint('polymarket/bridge/withdraw')
+    },
+    positions: () => getFullUIEndpoint('polymarket/positions'),
+    closedPositions: () => getFullUIEndpoint('polymarket/positions/closed'),
+    orders: () => getFullUIEndpoint('polymarket/orders'),
+    portfolio: () => getFullUIEndpoint('polymarket/portfolio'),
+    trades: () => getFullUIEndpoint('polymarket/trades'),
+    pnlHistory: () => getFullUIEndpoint('polymarket/pnl/history')
   },
   backend_bot: {
     sendMessage: () => getFullBotEndpoint('chatbot/conversations/send-message')

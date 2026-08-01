@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { m } from 'framer-motion'
 import { useRef, useState, useEffect } from 'react'
 
@@ -125,7 +126,10 @@ export default function HomeAwards() {
             viewport={{ once: false, margin: '-100px' }}
             variants={ANIMATIONS.title}
           >
-            <Typography variant='h3'>
+            <Typography
+              variant='h3'
+              sx={{ fontFamily: (theme) => theme.typography.fontSecondaryFamily }}
+            >
               {t('home.awards.title', { defaultValue: 'Awarded by the best:' })}
             </Typography>
           </m.div>

@@ -8,7 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import React, { useRef, useState, useEffect, useCallback } from 'react'
 
 import Link from '@mui/material/Link'
-import { Alert, useTheme } from '@mui/material'
+import { Alert } from '@mui/material'
 import Stack from '@mui/material/Stack'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
@@ -68,6 +68,7 @@ export default function JwtLoginView() {
   const router = useRouter()
 
   const [errorKey, setErrorKey] = useState<string | null>(null)
+  const [invalidUserPhone, setInvalidUserPhone] = useState<string | null>(null)
 
   const [codeSent, setCodeSent] = useState(false)
   const { counting, countdown, startCountdown } = useCountdownSeconds(120)
@@ -79,7 +80,6 @@ export default function JwtLoginView() {
   const { currentLang } = useLocales()
   const [language, setLanguage] = useState(getRecaptchaLng(currentLang.value))
   const [recaptchaKey, setRecaptchaKey] = useState(0)
-  const theme = useTheme()
 
   const LoginSchema = Yup.object().shape({
     phone: Yup.string()
@@ -141,6 +141,7 @@ export default function JwtLoginView() {
 
         if (apiError.code === 'USER_NOT_FOUND') {
           setErrorKey('login.msg.invalid-user')
+          setInvalidUserPhone(data.phone)
           setCodeSent(false)
           return
         }
@@ -204,6 +205,33 @@ export default function JwtLoginView() {
     setSelectedCountry(event.target.value)
   }
 
+  const renderErrorAlert = errorKey ? (
+    errorKey === 'login.msg.invalid-user' ? (
+      <Alert severity='warning' variant='outlined' icon={false}>
+        <Stack spacing={0.5} alignItems='flex-start'>
+          <Typography variant='body2' sx={{ color: 'inherit' }}>
+            {t(errorKey)}
+          </Typography>
+          <Link
+            component={RouterLink}
+            href={paths.auth.jwt.register}
+            variant='subtitle2'
+            underline='always'
+            sx={{ color: 'inherit' }}
+          >
+            {t('login.create-account')}
+          </Link>
+        </Stack>
+      </Alert>
+    ) : (
+      <Alert severity='error' variant='outlined' icon={false}>
+        {t(errorKey)}
+      </Alert>
+    )
+  ) : null
+
+  const isKnownInvalidUser = errorKey === 'login.msg.invalid-user' && phone === invalidUserPhone
+
   // ----------------------------------------------------------------------
 
   useEffect(() => {
@@ -224,7 +252,7 @@ export default function JwtLoginView() {
   // ----------------------------------------------------------------------
 
   const renderHead = (
-    <Stack spacing={1.5} sx={{ mb: 5, px: 4 }}>
+    <Stack spacing={1.5} sx={{ mb: 5 }}>
       <Typography variant='h4'>{t('login.title')}</Typography>
       <Stack direction='row' spacing={0.5}>
         <Typography variant='body2'>{t('login.new-user')}</Typography>
@@ -237,11 +265,15 @@ export default function JwtLoginView() {
           {t('login.create-account')}
         </Link>
       </Stack>
+
+      <Typography variant='caption' sx={{ color: 'text.secondary' }}>
+        {t('register.whatsapp-note')}
+      </Typography>
     </Stack>
   )
 
   const renderForm = (
-    <Stack spacing={2} sx={{ px: 4 }}>
+    <Stack spacing={2}>
       {!codeSent ? (
         <>
           <FormControl fullWidth>
@@ -262,6 +294,7 @@ export default function JwtLoginView() {
             name='phone'
             label={t('common.phone-number')}
             placeholder='1155557777'
+            helperText={t('login.msg.enter-phone')}
             type='number'
             inputProps={{
               inputMode: 'numeric',
@@ -289,8 +322,7 @@ export default function JwtLoginView() {
               }
             }}
           />
-          <Alert severity='info'>{t('login.msg.enter-phone')}</Alert>
-          {errorKey && <Alert severity='error'>{t(errorKey)}</Alert>}
+          {renderErrorAlert}
           <LoadingButton
             fullWidth
             color='primary'
@@ -298,7 +330,7 @@ export default function JwtLoginView() {
             type='button'
             variant='contained'
             loading={isSubmitting}
-            disabled={!selectedCountry || !phone || isSubmitting}
+            disabled={!selectedCountry || !phone || isSubmitting || isKnownInvalidUser}
             onClick={handleSubmit(handleSendCode)}
           >
             {t('login.send-code')}
@@ -322,7 +354,9 @@ export default function JwtLoginView() {
             </Select>
           </FormControl>
           <RHFTextField disabled name='phone' label='Phone Number' type='number' value={phone} />
-          <Alert severity='info'>{t('login.msg.code-info')}</Alert>
+          <Typography variant='body2' sx={{ color: 'text.secondary' }}>
+            {t('login.msg.code-info')}
+          </Typography>
           <RHFCode
             name='code'
             TextFieldsProps={{ type: 'password' }}
@@ -334,7 +368,7 @@ export default function JwtLoginView() {
             }}
           />
 
-          {errorKey && <Alert severity='error'>{t(errorKey)}</Alert>}
+          {renderErrorAlert}
           <LoadingButton
             fullWidth
             color='primary'

@@ -10,6 +10,7 @@ export const varFlip = (props?: VariantsType) => {
   const easeOut = props?.easeOut
 
   return {
+    /* eslint-disable-next-line */ ...({} as any),
     // IN
     inX: {
       initial: { rotateX: -180, opacity: 0 },

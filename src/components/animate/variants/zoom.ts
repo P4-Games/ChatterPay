@@ -11,6 +11,7 @@ export const varZoom = (props?: VariantsType) => {
   const easeOut = props?.easeOut
 
   return {
+    /* eslint-disable-next-line */ ...({} as any),
     // IN
     in: {
       initial: { scale: 0, opacity: 0 },

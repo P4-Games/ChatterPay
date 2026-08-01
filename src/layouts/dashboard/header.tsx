@@ -7,8 +7,6 @@ import IconButton from '@mui/material/IconButton'
 import { useOffSetTop } from 'src/hooks/use-off-set-top'
 import { useResponsive } from 'src/hooks/use-responsive'
 
-import { bgBlur } from 'src/theme/css'
-
 import Logo from 'src/components/logo'
 import SvgColor from 'src/components/svg-color'
 import { useSettingsContext } from 'src/components/settings'
@@ -73,10 +71,10 @@ export default function Header({ onOpenNav }: Props) {
       sx={{
         height: HEADER.H_MOBILE,
         zIndex: theme.zIndex.appBar + 1,
-        ...bgBlur({
-          color: theme.palette.background.default
-        }),
-        transition: theme.transitions.create(['height'], {
+        bgcolor: 'transparent',
+        backdropFilter: 'none',
+        boxShadow: 'none',
+        transition: theme.transitions.create(['height', 'width'], {
           duration: theme.transitions.duration.shorter
         }),
         ...(lgUp && {

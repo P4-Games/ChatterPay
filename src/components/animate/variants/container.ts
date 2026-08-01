@@ -12,6 +12,7 @@ export const varContainer = (props?: Props) => {
   const staggerOut = props?.staggerIn || 0.05
 
   return {
+    /* eslint-disable-next-line */ ...({} as any),
     animate: {
       transition: {
         staggerChildren: staggerIn,

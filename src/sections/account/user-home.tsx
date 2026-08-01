@@ -1,17 +1,38 @@
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
-import CardActionArea from '@mui/material/CardActionArea'
-import CardHeader from '@mui/material/CardHeader'
-import { useTheme } from '@mui/material/styles'
+import Stack from '@mui/material/Stack'
 import Grid from '@mui/material/Unstable_Grid2'
-import { useSecurityStatus } from 'src/app/api/hooks/use-security'
-import { useAuthContext } from 'src/auth/hooks'
-import Iconify from 'src/components/iconify'
-import { useTranslate } from 'src/locales'
+import Typography from '@mui/material/Typography'
+import CardActionArea from '@mui/material/CardActionArea'
+import { alpha, useTheme } from '@mui/material/styles'
+
 import { paths } from 'src/routes/paths'
+import { useTranslate } from 'src/locales'
+import { useAuthContext } from 'src/auth/hooks'
+import { useSecurityStatus } from 'src/app/api/hooks/use-security'
+import Iconify from 'src/components/iconify'
+
+import type { ColorSchema } from 'src/theme/palette'
 
 // ----------------------------------------------------------------------
 
+type HubCard = {
+  href: string
+  icon: string
+  color: ColorSchema
+  title: string
+  description: string
+  status?: {
+    label: string
+    color: 'success' | 'warning' | 'error'
+  }
+}
+
+/**
+ * User hub: entry cards for profile, security and referrals with
+ * configuration status chips. Styled after the system card grammar.
+ * @returns {JSX.Element} Hub card grid.
+ */
 export default function UserHome() {
   const { t } = useTranslate()
   const theme = useTheme()
@@ -27,117 +48,131 @@ export default function UserHome() {
     !hasSecurityError &&
     (pinStatus === 'not_set' || pinStatus === 'reset_required' || !recoveryConfigured)
 
-  const securityStatusColor = hasSecurityError
-    ? theme.palette.error.main
-    : hasSecurityWarning
-      ? theme.palette.warning.main
-      : theme.palette.success.main
-  const securityStatusIcon =
-    hasSecurityError || hasSecurityWarning ? 'eva:alert-circle-fill' : 'eva:checkmark-fill'
+  const cards: HubCard[] = [
+    {
+      href: paths.dashboard.user.profile,
+      icon: 'solar:user-id-bold-duotone',
+      color: 'primary',
+      title: t('user.cards.profile.title'),
+      description: t('user.cards.profile.description'),
+      status: {
+        label: emailConfigured
+          ? t('user.cards.security.badge.configured')
+          : t('user.cards.security.badge.actionRequired'),
+        color: emailConfigured ? 'success' : 'warning'
+      }
+    },
+    {
+      href: paths.dashboard.user.security,
+      icon: 'solar:shield-keyhole-bold-duotone',
+      color: 'info',
+      title: t('user.cards.security.title'),
+      description: t('user.cards.security.description'),
+      status: pinStatus
+        ? {
+            label:
+              hasSecurityError || hasSecurityWarning
+                ? t('user.cards.security.badge.actionRequired')
+                : t('user.cards.security.badge.configured'),
+            color: hasSecurityError ? 'error' : hasSecurityWarning ? 'warning' : 'success'
+          }
+        : undefined
+    },
+    {
+      href: paths.dashboard.user.referrals,
+      icon: 'solar:users-group-rounded-bold-duotone',
+      color: 'warning',
+      title: t('user.cards.referrals.title'),
+      description: t('user.cards.referrals.description')
+    }
+  ]
 
-  const showSecurityStatus = !!pinStatus
-  const profileStatusColor = emailConfigured
-    ? theme.palette.success.main
-    : theme.palette.warning.main
-  const profileStatusIcon = emailConfigured ? 'eva:checkmark-fill' : 'eva:alert-circle-fill'
-
-  const renderStatusBadge = (color: string, icon: string) => (
-    <Box
-      sx={{
-        mt: 0.5,
-        mr: 0.5,
-        width: 24,
-        height: 24,
-        borderRadius: '50%',
-        bgcolor: color,
-        color: 'common.white',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}
-    >
-      <Iconify icon={icon} width={16} />
-    </Box>
-  )
   return (
     <Grid container spacing={3} alignItems='stretch'>
-      <Grid xs={12} md={4}>
-        <Card sx={{ height: '100%', minHeight: 180 }}>
-          <CardActionArea
-            href={paths.dashboard.user.profile}
-            sx={{ height: '100%', display: 'flex', alignItems: 'stretch' }}
-          >
-            <CardHeader
-              avatar={<Iconify icon='eva:person-fill' width={24} />}
-              title={t('user.cards.profile.title')}
-              subheader={t('user.cards.profile.description')}
-              action={renderStatusBadge(profileStatusColor, profileStatusIcon)}
-              sx={{ flex: 1 }}
-              subheaderTypographyProps={{
-                sx: {
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden'
-                }
-              }}
-            />
-          </CardActionArea>
-        </Card>
-      </Grid>
+      {cards.map((card) => {
+        const paletteColor = theme.palette[card.color]
 
-      <Grid xs={12} md={4}>
-        <Card sx={{ height: '100%', minHeight: 180 }}>
-          <CardActionArea
-            href={paths.dashboard.user.security}
-            sx={{ height: '100%', display: 'flex', alignItems: 'stretch' }}
-          >
-            <CardHeader
-              avatar={<Iconify icon='eva:lock-fill' width={24} />}
-              title={t('user.cards.security.title')}
-              subheader={t('user.cards.security.description')}
-              action={
-                showSecurityStatus
-                  ? renderStatusBadge(securityStatusColor, securityStatusIcon)
-                  : null
-              }
-              sx={{ flex: 1 }}
-              subheaderTypographyProps={{
-                sx: {
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden'
+        return (
+          <Grid key={card.href} xs={12} md={4}>
+            <Card
+              sx={{
+                height: '100%',
+                border: `1px solid ${alpha(theme.palette.grey[500], 0.12)}`,
+                boxShadow: theme.customShadows.card,
+                transition: 'all 0.18s ease',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: theme.customShadows.z20
                 }
               }}
-            />
-          </CardActionArea>
-        </Card>
-      </Grid>
+            >
+              <CardActionArea href={card.href} sx={{ height: '100%', p: 3 }}>
+                <Stack spacing={2} sx={{ height: '100%' }}>
+                  <Stack direction='row' alignItems='flex-start' justifyContent='space-between'>
+                    <Stack
+                      alignItems='center'
+                      justifyContent='center'
+                      sx={{
+                        width: 44,
+                        height: 44,
+                        borderRadius: 1.5,
+                        bgcolor: alpha(paletteColor.main, 0.08)
+                      }}
+                    >
+                      <Iconify icon={card.icon} width={26} sx={{ color: paletteColor.main }} />
+                    </Stack>
 
-      <Grid xs={12} md={4}>
-        <Card sx={{ height: '100%', minHeight: 180 }}>
-          <CardActionArea
-            href={paths.dashboard.user.referrals}
-            sx={{ height: '100%', display: 'flex', alignItems: 'stretch' }}
-          >
-            <CardHeader
-              avatar={<Iconify icon='eva:people-fill' width={24} />}
-              title={t('user.cards.referrals.title')}
-              subheader={t('user.cards.referrals.description')}
-              sx={{ flex: 1 }}
-              subheaderTypographyProps={{
-                sx: {
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden'
-                }
-              }}
-            />
-          </CardActionArea>
-        </Card>
-      </Grid>
+                    {card.status && (
+                      <Box
+                        sx={{
+                          px: 1,
+                          py: 0.25,
+                          borderRadius: 0.75,
+                          bgcolor: alpha(theme.palette[card.status.color].main, 0.12),
+                          color: `${card.status.color}.main`,
+                          typography: 'caption',
+                          fontWeight: 700
+                        }}
+                      >
+                        {card.status.label}
+                      </Box>
+                    )}
+                  </Stack>
+
+                  <Box sx={{ flexGrow: 1 }}>
+                    <Typography variant='subtitle1' fontWeight={700} sx={{ mb: 0.5 }}>
+                      {card.title}
+                    </Typography>
+                    <Typography
+                      variant='body2'
+                      sx={{
+                        color: 'text.secondary',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden'
+                      }}
+                    >
+                      {card.description}
+                    </Typography>
+                  </Box>
+
+                  <Stack direction='row' alignItems='center' spacing={0.5}>
+                    <Typography variant='caption' sx={{ color: 'primary.main', fontWeight: 600 }}>
+                      {t('common.view')}
+                    </Typography>
+                    <Iconify
+                      icon='eva:arrow-ios-forward-fill'
+                      width={16}
+                      sx={{ color: 'primary.main' }}
+                    />
+                  </Stack>
+                </Stack>
+              </CardActionArea>
+            </Card>
+          </Grid>
+        )
+      })}
     </Grid>
   )
 }

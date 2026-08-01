@@ -26,6 +26,15 @@ export function fTimestamp(date: InputValue) {
   return date ? getTime(new Date(date)) : ''
 }
 
+/**
+ * Normalize a timestamp that may be epoch seconds (e.g. Polymarket APIs),
+ * epoch milliseconds, or a date string, to epoch milliseconds.
+ */
+export function toEpochMs(date: InputValue): number {
+  if (typeof date === 'number') return date > 1e12 ? date : date * 1000
+  return date ? new Date(date).getTime() : 0
+}
+
 export function fToNow(date: InputValue) {
   return date
     ? formatDistanceToNow(new Date(date), {

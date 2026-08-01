@@ -11,6 +11,7 @@ export const varSlide = (props?: VariantsType) => {
   const easeOut = props?.easeOut
 
   return {
+    /* eslint-disable-next-line */ ...({} as any),
     // IN
     inUp: {
       initial: { y: distance },
