@@ -7,6 +7,7 @@ import { useResponsive } from 'src/hooks/use-responsive'
 
 import { bgGradient } from 'src/theme/css'
 import { useTranslate } from 'src/locales'
+import { GCP_BUCKET_BASE_URL } from 'src/config-global'
 
 import { LogoWithName } from 'src/components/logo'
 
@@ -66,10 +67,7 @@ export default function AuthClassicLayout({ children, image, title }: Props) {
       <Box
         component='img'
         alt='auth'
-        src={
-          image ||
-          'https://storage.googleapis.com/chatbot-multimedia/chatterpay/images/login_graphic.webp'
-        }
+        src={image || `${GCP_BUCKET_BASE_URL}/images/login_graphic.webp`}
         sx={{
           width: '100%',
           height: '100vh',

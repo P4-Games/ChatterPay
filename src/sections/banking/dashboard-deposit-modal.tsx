@@ -22,6 +22,7 @@ import { Copy01Icon, QrCode01Icon } from '@hugeicons/core-free-icons'
 
 import { useTranslate } from 'src/locales'
 import Iconify from 'src/components/iconify'
+import { GCP_BUCKET_BASE_URL } from 'src/config-global'
 
 import LayerswapWidget from 'src/sections/deposit/view/layerswap-widget'
 
@@ -131,7 +132,7 @@ export default function DashboardDepositModal({ open, onClose, walletAddress }: 
                 >
                   <Box
                     component='img'
-                    src='https://storage.googleapis.com/chatbot-multimedia/chatterpay/images/tokens/scr.svg'
+                    src={`${GCP_BUCKET_BASE_URL}/images/tokens/scr.svg`}
                     alt='Scroll Network'
                     loading='lazy'
                     decoding='async'
