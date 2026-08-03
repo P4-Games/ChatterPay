@@ -44,6 +44,9 @@ export const EXPLORER_NFT_URL: string =
 export const NFT_IMAGE_REPOSITORY = (
   process.env.NEXT_PUBLIC_NFT_IMAGE_REPOSITORY || 'gcp'
 ).toLowerCase()
+export const GCP_BUCKET_BASE_URL =
+  process.env.NEXT_PUBLIC_GCP_BUCKET_BASE_URL ||
+  'https://storage.googleapis.com/chatterpay_frontend_storage/chatterpay-develop'
 export const CHATIZALO_PHONE_NUMBER = process.env.NEXT_PUBLIC_CHATIZALO_PHONE_NUMBER || 0
 
 export const NETWORK_NAME = process.env.NEXT_PUBLIC_NETWORK || 'Scroll'

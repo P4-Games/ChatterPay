@@ -27,6 +27,7 @@ __env*
 .DS_Store
 .vercel
 .netlify
+.claude/settings.local.json
 .unimportedrc.json
 tsconfig.tsbuildinfo
 .todo*

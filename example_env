@@ -29,6 +29,7 @@ NEXT_PUBLIC_UI_URL=http://localhost:3000
 NEXT_PUBLIC_ALLOWED_ORIGINS=http://localhost:3000
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY={recaptcha side key}
 NEXT_PUBLIC_NFT_IMAGE_REPOSITORY={gcp|ipfs}
+NEXT_PUBLIC_GCP_BUCKET_BASE_URL='https://storage.googleapis.com/<bucket>/<env>'
 NEXT_PUBLIC_NFT_MARKETPLACE_URL='https://testnets.opensea.io/assets/arbitrum_sepolia/'
 NEXT_PUBLIC_EXPLORER_L1_URL='https://sepolia.etherscan.io'
 NEXT_PUBLIC_EXPLORER_L2_URL='https://sepolia.arbiscan.io/' 
