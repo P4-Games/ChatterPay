@@ -33,6 +33,9 @@ const TONE_COLORS: Record<string, LabelColor> = {
   info: 'info'
 }
 
+// Brand marks fill their own tile, so they drop the tinted background.
+const BRAND_ICON_SX = { width: 40, height: 40, flexShrink: 0, borderRadius: 1.5, display: 'block' }
+
 type CellProps = {
   cell: FeeCell
   label: string
@@ -142,11 +145,8 @@ function FeesSection({ section, footer }: Props) {
     bgcolor: alpha(theme.palette.primary.main, isDark ? 0.16 : 0.12)
   }
 
-  // Brand marks fill their own tile, so they drop the tinted background.
-  const brandIconSx = { width: 40, height: 40, flexShrink: 0, borderRadius: 1.5, display: 'block' }
-
   const sectionIcon = section.iconImage ? (
-    <Box component='img' src={section.iconImage} alt='' sx={brandIconSx} />
+    <Box component='img' src={section.iconImage} alt='' sx={BRAND_ICON_SX} />
   ) : (
     <Box sx={iconBoxSx}>
       <Iconify icon={section.icon || ''} width={22} />

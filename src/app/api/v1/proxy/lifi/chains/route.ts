@@ -30,13 +30,15 @@ export async function GET(request: NextRequest) {
     }
 
     // The full payload is ~80 KB; public pages only need mainnet name + logo.
-    const chains: LifiChain[] = (data.chains || [])
-      .filter((chain: LifiChain) => chain.mainnet)
-      .map((chain: LifiChain) => ({
-        key: chain.key,
-        name: chain.name,
-        logoURI: chain.logoURI || ''
-      }))
+    const chains: LifiChain[] = (data.chains || []).reduce(
+      (acc: LifiChain[], chain: LifiChain) => {
+        if (chain.mainnet) {
+          acc.push({ key: chain.key, name: chain.name, logoURI: chain.logoURI || '' })
+        }
+        return acc
+      },
+      []
+    )
 
     return NextResponse.json({ chains })
   } catch {
