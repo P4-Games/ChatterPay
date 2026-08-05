@@ -3,7 +3,7 @@ import Stack from '@mui/material/Stack'
 import { alpha } from '@mui/material/styles'
 import ButtonBase from '@mui/material/ButtonBase'
 
-import Iconify from '../../iconify'
+import Iconify from '../../iconify/iconify'
 
 // ----------------------------------------------------------------------
 
