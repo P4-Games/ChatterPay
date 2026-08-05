@@ -97,6 +97,9 @@ export const endpoints = {
     id: (id: string) => getFullUIEndpoint(`nft/${id}`)
   },
   tokens: getFullUIEndpoint('tokens'),
+  proxy: {
+    lifiChainsSummary: getFullUIEndpoint('proxy/lifi/chains?fields=summary')
+  },
   dashboard: {
     root: getFullUIEndpoint('app'),
     user: {
