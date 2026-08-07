@@ -147,7 +147,7 @@
       "sign-in": "Web App",
       "about-us": "Sobre Nós",
       "products": "Produtos",
-      "roadmap": "Roteiro",
+      "fees": "Taxas",
       "development": "Demo",
       "b2b": "Para empresas"
     },
@@ -167,6 +167,7 @@
         "about-us": "Sobre nós",
         "contact-us": "Contate-nos",
         "products": "Produtos",
+        "fees": "Taxas",
         "roadmap": "Roteiro",
         "development": "Demo",
         "faqs": "FAQs",
@@ -344,6 +345,82 @@
     },
     "last_updated": "Última atualização:",
     "date": "Setembro 2024"
+  },
+  "fees": {
+    "hero": {
+      "eyebrow": "Preços",
+      "title": "Taxas",
+      "description": "Todas as taxas do ChatterPay são descontadas no token que você está enviando. Cobrimos o gas em todas as redes suportadas, então você nunca precisa ter o token nativo.",
+      "last_updated": "Última atualização:"
+    },
+    "columns": {
+      "action": "Ação",
+      "chatterpay_fee": "Taxa do ChatterPay",
+      "provider_fees": "Taxas de terceiros",
+      "network": "Rede",
+      "send": "Enviar (mesma rede)",
+      "swap": "Swap"
+    },
+    "values": {
+      "zero": "$0",
+      "none": "Nenhuma",
+      "varies": "Sim, variam",
+      "available": "Disponível",
+      "coming_soon": "Em breve",
+      "flat_by_network": "Taxa fixa, varia por rede. Veja abaixo"
+    },
+    "sections": {
+      "free": {
+        "title": "Grátis",
+        "rows": {
+          "create_wallet": "Criar uma carteira",
+          "wallet_maintenance": "Manutenção da carteira",
+          "receive_funds": "Receber fundos",
+          "deposits": "Depósitos",
+          "create_nft": "Criar NFTs",
+          "copy_nft": "Copiar um NFT",
+          "same_chain_contract": "Interação com contratos na mesma rede"
+        }
+      },
+      "charges": {
+        "title": "O que cobramos",
+        "rows": {
+          "send": "Enviar",
+          "swap": "Swap",
+          "cross_network": "Transferência entre redes"
+        }
+      },
+      "networks": {
+        "title": "Redes suportadas",
+        "rows": {
+          "scroll": "Scroll",
+          "cardano": "Cardano"
+        },
+        "other_networks": "Envie para +{{total}} redes:",
+        "other_networks_hint": "Disponíveis para transferências entre redes, a partir do seu saldo na Scroll, qualquer token para qualquer token. Aplica-se a taxa de transferência entre redes."
+      },
+      "polymarket": {
+        "title": "Polymarket",
+        "rows": {
+          "move_in": "Mover fundos para a Polymarket",
+          "move_out": "Mover fundos de volta para sua carteira",
+          "place_order": "Fazer uma ordem"
+        },
+        "notes": {
+          "network": "A Polymarket funciona na Polygon. Mover fundos para dentro ou para fora significa movê-los entre redes, por isso os 0,25% se aplicam nas duas direções.",
+          "protocol_fee": "O ChatterPay não cobra nada para fazer uma ordem. A Polymarket aplica sua própria taxa de protocolo no momento do match. Essa taxa é definida pela Polymarket, varia por mercado e não vai para o ChatterPay."
+        }
+      }
+    },
+    "disclaimer": {
+      "title": "Aviso legal",
+      "items": {
+        "custody": "O ChatterPay não custodia seus fundos. Você controla sua carteira o tempo todo.",
+        "provider_fees": "As taxas do ChatterPay são fixas. As de terceiros não. Swaps e transferências entre redes passam por provedores externos de liquidez e pontes que definem suas próprias taxas, e essas taxas mudam conforme as condições de mercado e de rede. Não as controlamos e elas podem mudar sem aviso prévio.",
+        "gas": "Gas é a moeda nativa necessária para executar uma transação em cada rede. O ChatterPay paga por você. O custo do gas varia com o congestionamento da rede.",
+        "subject_to_change": "As taxas estão sujeitas a alterações."
+      }
+    }
   },
   "login": {
     "title": "Entrar no ChatterPay",
