@@ -36,6 +36,9 @@ const TONE_COLORS: Record<string, LabelColor> = {
 // Brand marks fill their own tile, so they drop the tinted background.
 const BRAND_ICON_SX = { width: 40, height: 40, flexShrink: 0, borderRadius: 1.5, display: 'block' }
 
+// Below `sm` there's rarely room for every column on one line: wrap instead of forcing a scrollbar.
+const CELL_WHITE_SPACE_SX = { whiteSpace: { xs: 'normal', sm: 'nowrap' } }
+
 type CellProps = {
   cell: FeeCell
   label: string
@@ -110,7 +113,7 @@ function FeeTableRow({ row, sectionId }: RowProps) {
         <TableCell
           key={`${row.id}-${index}`}
           align={index === 0 ? 'left' : 'right'}
-          sx={{ whiteSpace: 'nowrap' }}
+          sx={CELL_WHITE_SPACE_SX}
         >
           <FeeCellContent cell={cell} label={label} logo={row.logo} />
         </TableCell>
@@ -177,8 +180,8 @@ function FeesSection({ section, footer }: Props) {
             bgcolor: isDark ? alpha(theme.palette.grey[900], 0.4) : 'common.white'
           }}
         >
-          <TableContainer sx={{ overflowX: 'auto' }}>
-            <Table size='medium' sx={{ minWidth: 440 }}>
+          <TableContainer sx={{ overflowX: { xs: 'visible', sm: 'auto' } }}>
+            <Table size='medium' sx={{ minWidth: { xs: 0, sm: 440 } }}>
               <TableHead>
                 <TableRow sx={{ bgcolor: alpha(theme.palette.grey[500], 0.08) }}>
                   {section.columns.map((column, index) => (
@@ -186,8 +189,8 @@ function FeesSection({ section, footer }: Props) {
                       key={column}
                       align={index === 0 ? 'left' : 'right'}
                       sx={{
+                        ...CELL_WHITE_SPACE_SX,
                         bgcolor: 'transparent',
-                        whiteSpace: 'nowrap',
                         color: 'text.secondary',
                         fontWeight: 600
                       }}
