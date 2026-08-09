@@ -1069,7 +1069,9 @@
     "errors": {
       "title": "Invalid Request",
       "missingAddress": "A wallet address is required. Please provide your address in the URL (?address=0x...).",
-      "invalidAddress": "The wallet address provided is not a valid Ethereum address."
+      "invalidAddress": "The wallet address provided is not a valid Ethereum address.",
+      "unsupportedNetworkTitle": "Deposits not available on this network",
+      "unsupportedNetwork": "External deposits are not available on {network} yet. You can still deposit by sending funds directly to your wallet address."
     }
   },
   "b2b": {
