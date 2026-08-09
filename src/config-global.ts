@@ -60,6 +60,7 @@ export const GCP_BUCKET_BASE_URL =
 export const CHATIZALO_PHONE_NUMBER = process.env.NEXT_PUBLIC_CHATIZALO_PHONE_NUMBER || 0
 
 export const NETWORK_NAME = process.env.NEXT_PUBLIC_NETWORK || 'Scroll'
+export const DEFAULT_CHAIN_ID = Number(process.env.NEXT_PUBLIC_DEFAULT_CHAIN_ID) || 421614
 const parsedSecurityRecoveryQuestionsCount = parseInt(
   process.env.NEXT_PUBLIC_SECURITY_RECOVERY_QUESTIONS_COUNT ?? '',
   10
