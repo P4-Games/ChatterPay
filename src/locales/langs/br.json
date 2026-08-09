@@ -889,8 +889,14 @@
       }
     },
     "polymarket-view": {
-      "status": "🔮 Beta — já disponível na sua carteira ChatterPay.",
-      "cta": "Experimentar Polymarket"
+      "status": "🔮 Já disponível na sua carteira ChatterPay.",
+      "cta": "Experimentar Polymarket",
+      "example-markets": {
+        "1": "A NASA confirma sinais de vida em Marte até 2030?",
+        "2": "O BTC fecha acima de $100k este mês?",
+        "3": "Quem vence a próxima eleição?",
+        "4": "Este filme vence o Oscar?"
+      }
     }
   },
   "polymarket": {

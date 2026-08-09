@@ -889,8 +889,14 @@
       }
     },
     "polymarket-view": {
-      "status": "🔮 Beta — available now from your ChatterPay wallet.",
-      "cta": "Try Polymarket"
+      "status": "🔮 Available now from your ChatterPay wallet.",
+      "cta": "Try Polymarket",
+      "example-markets": {
+        "1": "Will NASA confirm signs of life on Mars by 2030?",
+        "2": "Will BTC close above $100k this month?",
+        "3": "Who wins the next election?",
+        "4": "Will this movie win Best Picture?"
+      }
     }
   },
   "polymarket": {

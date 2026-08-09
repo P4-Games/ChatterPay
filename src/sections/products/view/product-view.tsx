@@ -155,7 +155,7 @@ export default function ProductView(): JSX.Element {
                     'products.hero.polymarket.description',
                     'Trade prediction markets on real-world events, right from your ChatterPay wallet.'
                   )}
-                  badge={t('products.hero.states.beta', 'Beta')}
+                  badge={t('products.hero.states.live', 'Live')}
                   cta={`${t('products.hero.cta', 'Learn more')} →`}
                 />
               </Grid>
