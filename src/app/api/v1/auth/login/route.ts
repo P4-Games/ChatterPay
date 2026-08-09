@@ -91,7 +91,9 @@ export async function POST(req: NextRequest) {
       phoneNumber: user.phone_number || ''
     }
     const data: Record<string, any> = {
-      user: dataUser,
+      // The wallet list is display-only and would bloat every request if signed
+      // into the token, so it travels in the response body only.
+      user: { ...dataUser, wallets: user.wallets || [] },
       sessionId: userSession.id,
       jwtToken: generateJwtToken(dataUser, userSession)
     }

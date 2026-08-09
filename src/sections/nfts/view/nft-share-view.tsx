@@ -17,8 +17,9 @@ import NftItemShare from '../nft-item-share'
 
 type NftItemProps = {
   nftId: string
+  chainId?: number
 }
-export default function NftShareView({ nftId }: NftItemProps) {
+export default function NftShareView({ nftId, chainId }: NftItemProps) {
   const { t } = useTranslate()
   const settings = useSettingsContext()
 
@@ -28,7 +29,7 @@ export default function NftShareView({ nftId }: NftItemProps) {
   }: {
     data: INFT
     isLoading: boolean
-  } = useGetNftById(nftId)
+  } = useGetNftById(nftId, chainId)
 
   const notFound = !nftData
 

@@ -1,6 +1,9 @@
 import { type NextRequest, NextResponse } from 'next/server'
 
-import { getUserTransactions } from 'src/app/api/services/db/chatterpay-db-service'
+import {
+  getUserTransactions,
+  getUserWalletAddresses
+} from 'src/app/api/services/db/chatterpay-db-service'
 import { validateRequestSecurity } from 'src/app/api/middleware/validators/base-security-validator'
 import { validateWalletCommonsInputs as validateWalletCommonInputs } from 'src/app/api/middleware/validators/wallet-common-inputs-validator'
 
@@ -31,8 +34,17 @@ export async function GET(req: NextRequest, { params }: { params: IParams }) {
     const limitParam = searchParams.get('limit')
     const sinceParam = searchParams.get('since')
     const limit = limitParam ? Number(limitParam) : undefined
+
+    // `scope=user` widens the query to every wallet of the owner, so the history
+    // aggregates the networks the user operated on instead of just the active one.
+    let wallets: string | string[] = walletId
+    if (searchParams.get('scope') === 'user') {
+      const userWallets = await getUserWalletAddresses(userId)
+      if (userWallets.length > 0) wallets = userWallets
+    }
+
     const data: ITransaction[] =
-      (await getUserTransactions(walletId, {
+      (await getUserTransactions(wallets, {
         limit: limit != null && Number.isFinite(limit) ? limit : undefined,
         since: sinceParam ?? undefined
       })) ?? []

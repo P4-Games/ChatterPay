@@ -40,7 +40,8 @@ interface Props extends CardProps {
   isLoading: boolean
   tableData: ITransaction[]
   tableLabels: any
-  userWallet: string
+  /** Every wallet of the user — the history spans all the networks they used. */
+  userWallets: string[]
   tokenLogos?: Record<string, string>
   hideValues?: boolean
 }
@@ -51,7 +52,7 @@ export default function BankingRecentTransitions({
   tableLabels,
   isLoading,
   tableData,
-  userWallet,
+  userWallets,
   tokenLogos = EMPTY_TOKEN_LOGOS,
   hideValues = false,
   ...other
@@ -87,7 +88,7 @@ export default function BankingRecentTransitions({
               visibleData.map((row) => (
                 <BankingRecentTransitionsRow
                   key={row.id}
-                  userWallet={userWallet}
+                  userWallets={userWallets}
                   row={row}
                   mdUp={mdUp}
                   hideValues={hideValues}

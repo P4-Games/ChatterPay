@@ -9,6 +9,7 @@ import {
   Box,
   Stack,
   Alert,
+  Avatar,
   Button,
   Dialog,
   Typography,
@@ -22,7 +23,7 @@ import { Copy01Icon, QrCode01Icon } from '@hugeicons/core-free-icons'
 
 import { useTranslate } from 'src/locales'
 import Iconify from 'src/components/iconify'
-import { GCP_BUCKET_BASE_URL } from 'src/config-global'
+import { getChainName, getChainLogoUrl, getLayerswapNetwork } from 'src/config-chains'
 
 import LayerswapWidget from 'src/sections/deposit/view/layerswap-widget'
 
@@ -39,15 +40,24 @@ const transition = { duration: 0.1, ease: 'easeOut' as const }
 /**
  * Deposit modal with two views:
  * - Main: multichain deposit via Layerswap (primary CTA)
- * - Address: wallet address + QR on Scroll network (secondary)
+ * - Address: wallet address + QR on the active network (secondary)
  */
 export default function DashboardDepositModal({ open, onClose, walletAddress }: Props) {
   const { t } = useTranslate()
-  const [showAddress, setShowAddress] = useState(false)
+
+  // Layerswap cannot deposit into every network. Where it can't, the widget
+  // renders nothing, so the address view is the only way to deposit and the
+  // modal opens straight into it instead of on an empty first step.
+  const hasLayerswap = Boolean(getLayerswapNetwork())
+  const [showAddress, setShowAddress] = useState(!hasLayerswap)
+
+  // Deposits by address land on the network the app operates on, whichever it is.
+  const networkName = getChainName()
+  const networkLogo = getChainLogoUrl()
 
   const handleClose = () => {
     onClose()
-    setShowAddress(false)
+    setShowAddress(!hasLayerswap)
   }
 
   const handleCopyAddress = () => {
@@ -89,7 +99,10 @@ export default function DashboardDepositModal({ open, onClose, walletAddress }: 
                     startIcon={<HugeiconsIcon icon={QrCode01Icon} size={18} />}
                     sx={{ mt: 0.5, mb: 3 }}
                   >
-                    {t('deposit.show-address', 'See my address on Scroll')}
+                    {t('deposit.show-address', 'See my address on {network}').replace(
+                      '{network}',
+                      networkName
+                    )}
                   </Button>
                 </Box>
               </Stack>
@@ -130,16 +143,19 @@ export default function DashboardDepositModal({ open, onClose, walletAddress }: 
                     borderRadius: 1.5
                   }}
                 >
-                  <Box
-                    component='img'
-                    src={`${GCP_BUCKET_BASE_URL}/images/tokens/scr.svg`}
-                    alt='Scroll Network'
-                    loading='lazy'
-                    decoding='async'
-                    sx={{ width: 32, height: 32, borderRadius: '50%' }}
-                  />
+                  {/* Not every network has artwork uploaded, so fall back to the
+                      network initial instead of rendering a broken image. */}
+                  <Avatar
+                    src={networkLogo || undefined}
+                    alt={networkName}
+                    sx={{ width: 32, height: 32, bgcolor: 'primary.main', fontSize: 14 }}
+                  >
+                    {networkName.charAt(0).toUpperCase()}
+                  </Avatar>
                   <Stack spacing={0.25}>
-                    <Typography variant='subtitle2'>{t('deposit.network')}: Scroll</Typography>
+                    <Typography variant='subtitle2'>
+                      {t('deposit.network')}: {networkName}
+                    </Typography>
                   </Stack>
                 </Stack>
 
@@ -158,18 +174,20 @@ export default function DashboardDepositModal({ open, onClose, walletAddress }: 
                   {t('deposit.copy-address')}
                 </Button>
 
-                <Button
-                  variant='text'
-                  size='small'
-                  startIcon={<Iconify icon='eva:arrow-back-fill' width={16} />}
-                  onClick={() => setShowAddress(false)}
-                  sx={{
-                    color: 'text.secondary',
-                    '&:hover': { color: 'text.primary' }
-                  }}
-                >
-                  {t('deposit.back-to-deposit', 'Back to deposit')}
-                </Button>
+                {hasLayerswap && (
+                  <Button
+                    variant='text'
+                    size='small'
+                    startIcon={<Iconify icon='eva:arrow-back-fill' width={16} />}
+                    onClick={() => setShowAddress(false)}
+                    sx={{
+                      color: 'text.secondary',
+                      '&:hover': { color: 'text.primary' }
+                    }}
+                  >
+                    {t('deposit.back-to-deposit', 'Back to deposit')}
+                  </Button>
+                )}
               </Stack>
             </m.div>
           )}

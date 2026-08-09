@@ -94,7 +94,9 @@ export const endpoints = {
     refresh: () => getFullUIEndpoint('auth/refresh')
   },
   nft: {
-    id: (id: string) => getFullUIEndpoint(`nft/${id}`)
+    // chainId disambiguates token ids, which repeat across networks.
+    id: (id: string, chainId?: number) =>
+      getFullUIEndpoint(`nft/${id}${chainId ? `?chainId=${chainId}` : ''}`)
   },
   tokens: getFullUIEndpoint('tokens'),
   proxy: {
@@ -140,10 +142,16 @@ export const endpoints = {
     },
     wallet: {
       balance: (id: string) => getFullUIEndpoint(`wallet/${id}/balance`),
-      transactions: (id: string, params?: { limit?: number; since?: string | number }) => {
+      transactions: (
+        id: string,
+        // `allChains` aggregates the history of every wallet of the owner, so the
+        // user still sees what they did on networks the app no longer operates on.
+        params?: { limit?: number; since?: string | number; allChains?: boolean }
+      ) => {
         const search = new URLSearchParams()
         if (params?.limit != null) search.append('limit', String(params.limit))
         if (params?.since != null) search.append('since', String(params.since))
+        if (params?.allChains) search.append('scope', 'user')
         const qs = search.toString()
         return getFullUIEndpoint(`wallet/${id}/transactions${qs ? `?${qs}` : ''}`)
       },
@@ -152,7 +160,8 @@ export const endpoints = {
           `wallet/${id}/notifications?lazy=true&pageIndex=${pageIndex}&pageSize=${pageSize}`
         ),
       nfts: {
-        root: (id: string) => getFullUIEndpoint(`wallet/${id}/nfts`),
+        root: (id: string, params?: { allChains?: boolean }) =>
+          getFullUIEndpoint(`wallet/${id}/nfts${params?.allChains ? '?scope=user' : ''}`),
         id: (walletId: string, nftId: string) =>
           getFullUIEndpoint(`wallet/${walletId}/nfts/${nftId}`)
       },

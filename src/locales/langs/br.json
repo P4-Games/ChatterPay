@@ -464,7 +464,7 @@
     "network-warning": "Qualquer ativo enviado em outra rede será perdido",
     "wallet-address": "Endereço da carteira",
     "copy-address": "Copiar endereço",
-    "show-address": "Ver meu endereço na Scroll",
+    "show-address": "Ver meu endereço na {network}",
     "back-to-deposit": "Voltar ao depósito"
   },
   "withdraw": {
@@ -1069,7 +1069,9 @@
     "errors": {
       "title": "Solicitação inválida",
       "missingAddress": "Um endereço de carteira é necessário. Forneça seu endereço na URL (?address=0x...).",
-      "invalidAddress": "O endereço de carteira fornecido não é um endereço Ethereum válido."
+      "invalidAddress": "O endereço de carteira fornecido não é um endereço Ethereum válido.",
+      "unsupportedNetworkTitle": "Depósitos indisponíveis nesta rede",
+      "unsupportedNetwork": "Os depósitos externos ainda não estão disponíveis na rede {network}. Você ainda pode depositar enviando fundos diretamente para o endereço da sua carteira."
     }
   },
   "b2b": {

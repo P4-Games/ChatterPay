@@ -48,6 +48,7 @@ export async function GET(req: NextRequest, { params }: { params: IParams }) {
       displayName: user.name,
       wallet: user.wallet,
       walletEOA: user.walletEOA || '',
+      wallets: user.wallets || [],
       email: user.email || '',
       photoURL: user.photo,
       phoneNumber: user.phone_number

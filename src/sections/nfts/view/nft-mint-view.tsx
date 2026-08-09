@@ -17,8 +17,9 @@ import NftItemClaim from '../nft-item-claim'
 
 type NftItemProps = {
   nftId: string
+  chainId?: number
 }
-export default function NftMintView({ nftId }: NftItemProps) {
+export default function NftMintView({ nftId, chainId }: NftItemProps) {
   const { t } = useTranslate()
   const settings = useSettingsContext()
 
@@ -28,7 +29,7 @@ export default function NftMintView({ nftId }: NftItemProps) {
   }: {
     data: INFT
     isLoading: boolean
-  } = useGetNftById(nftId)
+  } = useGetNftById(nftId, chainId)
 
   const notFound = !nftData
 

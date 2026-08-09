@@ -464,7 +464,7 @@
     "network-warning": "Cualquier activo enviado en otra red se perderá",
     "wallet-address": "Dirección de billetera",
     "copy-address": "Copiar dirección",
-    "show-address": "Ver mi dirección en Scroll",
+    "show-address": "Ver mi dirección en {network}",
     "back-to-deposit": "Volver a depositar"
   },
   "withdraw": {
@@ -1069,7 +1069,9 @@
     "errors": {
       "title": "Solicitud inválida",
       "missingAddress": "Se requiere una dirección de billetera. Proporciónala en la URL (?address=0x...).",
-      "invalidAddress": "La dirección de billetera proporcionada no es una dirección Ethereum válida."
+      "invalidAddress": "La dirección de billetera proporcionada no es una dirección Ethereum válida.",
+      "unsupportedNetworkTitle": "Depósitos no disponibles en esta red",
+      "unsupportedNetwork": "Los depósitos externos todavía no están disponibles en {network}. Igual podés depositar enviando fondos directamente a la dirección de tu billetera."
     }
   },
   "b2b": {
