@@ -30,7 +30,13 @@ import { alpha, useTheme } from '@mui/material/styles'
 import { useTranslate } from 'src/locales'
 import Iconify from 'src/components/iconify'
 import { fNumber } from 'src/utils/format-number'
-import { BOT_WAPP_URL, TRANSACTION_FEE_USD, LIFI_CHAINS_URL, ENS_LOGO } from 'src/config-global'
+import {
+  BOT_WAPP_URL,
+  TRANSACTION_FEE_USD,
+  LIFI_CHAINS_URL,
+  ENS_LOGO,
+  DEFAULT_CHAIN_ID
+} from 'src/config-global'
 
 import type { IBalance, ITransaction, IToken } from 'src/types/wallet'
 
@@ -240,7 +246,7 @@ export default function DashboardWithdrawModal({
   // Step 2
   const [destType, setDestType] = useState<DestType>('phone')
   const [destination, setDestination] = useState('')
-  const [selectedChainId, setSelectedChainId] = useState(534352)
+  const [selectedChainId, setSelectedChainId] = useState(DEFAULT_CHAIN_ID)
   const [destTokenSymbol, setDestTokenSymbol] = useState('USDT')
   const [tokenSearch, setTokenSearch] = useState('')
 
@@ -318,7 +324,7 @@ export default function DashboardWithdrawModal({
       setIsFeeAdded(false)
       setDestType('phone')
       setDestination('')
-      setSelectedChainId(534352)
+      setSelectedChainId(DEFAULT_CHAIN_ID)
       setDestTokenSymbol('USDT')
       setTokenSearch('')
       setLifiTokens([])
@@ -549,10 +555,10 @@ export default function DashboardWithdrawModal({
       if (detected) {
         setSelectedChainId(detected)
       } else if (trimmed.endsWith('.eth') || isValidEvmAddress(trimmed)) {
-        // ENS / EVM addresses — ensure an EVM chain is selected (default Scroll)
+        // ENS / EVM addresses — ensure an EVM chain is selected (default to the app's home chain)
         setSelectedChainId((prev) => {
           const currentChain = chains.find((c) => c.id === prev)
-          if (currentChain?.addressType !== 'evm') return 534352
+          if (currentChain?.addressType !== 'evm') return DEFAULT_CHAIN_ID
           return prev
         })
       }
@@ -640,7 +646,7 @@ export default function DashboardWithdrawModal({
     if (destType === 'phone') {
       message = `Send ${amountFloat} ${selectedToken} to ${destination.trim()}`
     } else {
-      const isCrossChain = destTokenSymbol !== selectedToken || selectedChainId !== 534352
+      const isCrossChain = destTokenSymbol !== selectedToken || selectedChainId !== DEFAULT_CHAIN_ID
       if (isCrossChain) {
         message = `Send ${amountFloat} ${selectedToken} to ${destTokenSymbol} on ${selectedChain?.name}, ${effectiveAddress}`
       } else {

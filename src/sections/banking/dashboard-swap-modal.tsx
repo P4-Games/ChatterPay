@@ -72,7 +72,6 @@ type Props = {
   selectedCurrency?: CurrencyKey
 }
 
-const SCROLL_CHAIN_ID = 534352
 const SWAP_FEE_PERCENT = 0.0025 // 0.25%
 
 // ----------------------------------------------------------------------
@@ -196,8 +195,8 @@ export default function DashboardSwapModal({
       const fromAmount = BigInt(Math.floor(amountFloat * 10 ** sourceDbToken.decimals)).toString()
 
       const params = new URLSearchParams({
-        fromChain: String(SCROLL_CHAIN_ID),
-        toChain: String(SCROLL_CHAIN_ID),
+        fromChain: String(sourceDbToken.chain_id),
+        toChain: String(destDbToken.chain_id),
         fromToken: sourceDbToken.address,
         toToken: destDbToken.address,
         fromAmount,

@@ -142,7 +142,20 @@ export default function ProductView(): JSX.Element {
                     'products.hero.b2b.description',
                     'Integrate crypto flows into your product.'
                   )}
-                  badge={t('products.hero.states.planned', 'Planned')}
+                  badge={t('products.hero.states.dev', 'In development')}
+                  cta={`${t('products.hero.cta', 'Learn more')} →`}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6} md={6}>
+                <Tile
+                  href='/products/polymarket'
+                  title={`🔮 ${t('products.hero.polymarket.title', 'Polymarket')}`}
+                  description={t(
+                    'products.hero.polymarket.description',
+                    'Trade prediction markets on real-world events, right from your ChatterPay wallet.'
+                  )}
+                  badge={t('products.hero.states.live', 'Live')}
                   cta={`${t('products.hero.cta', 'Learn more')} →`}
                 />
               </Grid>
