@@ -1,6 +1,7 @@
 // @ts-nocheck
 import Image from 'next/image'
 import { m } from 'framer-motion'
+import { Icon } from '@iconify/react'
 
 import { Box, Stack } from '@mui/system'
 import { Card, Button, Typography } from '@mui/material'
@@ -119,12 +120,10 @@ export default function NftItemClaim({ nftId, nftData }: NftItemClaimProps) {
               }}
               aria-label={t('nfts.claim.opensea-alt')}
             >
-              <Image
-                width={40}
-                height={40}
-                src='https://storage.googleapis.com/opensea-static/Logomark/Logomark-Blue.svg'
-                alt={t('nfts.claim.opensea-alt')}
-              />
+              {/* Was a logo loaded from a third-party bucket that now returns 403, so it
+                  rendered broken. A local icon also fits better now that the button may
+                  lead to the network's explorer instead of a marketplace. */}
+              <Icon icon='mdi:image-frame' width={40} height={40} />
             </button>
           </m.div>
         </Card>
