@@ -1,5 +1,6 @@
 // src/layouts/main/header.tsx
 import Box from '@mui/material/Box'
+import Chip from '@mui/material/Chip'
 import { Stack } from '@mui/system'
 import AppBar from '@mui/material/AppBar'
 import Button from '@mui/material/Button'
@@ -15,6 +16,7 @@ import { useResponsive } from 'src/hooks/use-responsive'
 
 import { bgBlur } from 'src/theme/css'
 import { useTranslate } from 'src/locales'
+import { IS_TESTNET_HOST } from 'src/config-global'
 
 import Iconify from 'src/components/iconify'
 import { LogoWithName } from 'src/components/logo'
@@ -109,9 +111,47 @@ export default function Header() {
           }}
         >
           {mdUp ? (
-            <LogoWithName light={useLight} sx={{ height: { xs: 28, md: 40 } }} />
+            <Stack direction='row' alignItems='center' spacing={1.5}>
+              <LogoWithName light={useLight} sx={{ height: { xs: 28, md: 40 } }} />
+              {IS_TESTNET_HOST && (
+                <Chip
+                  label={t('home.header.testnet-badge')}
+                  size='small'
+                  sx={{
+                    height: 22,
+                    fontWeight: 700,
+                    fontSize: 11,
+                    letterSpacing: 0.5,
+                    textTransform: 'uppercase',
+                    color: 'warning.darker',
+                    bgcolor: 'warning.lighter',
+                    border: '1px solid',
+                    borderColor: 'warning.main'
+                  }}
+                />
+              )}
+            </Stack>
           ) : (
-            <NavMobile data={navConfigMobile} />
+            <Stack direction='row' alignItems='center' spacing={1}>
+              <NavMobile data={navConfigMobile} />
+              {IS_TESTNET_HOST && (
+                <Chip
+                  label={t('home.header.testnet-badge')}
+                  size='small'
+                  sx={{
+                    height: 20,
+                    fontWeight: 700,
+                    fontSize: 10,
+                    letterSpacing: 0.5,
+                    textTransform: 'uppercase',
+                    color: 'warning.darker',
+                    bgcolor: 'warning.lighter',
+                    border: '1px solid',
+                    borderColor: 'warning.main'
+                  }}
+                />
+              )}
+            </Stack>
           )}
 
           <Stack direction='row' alignItems='center' spacing={2}>

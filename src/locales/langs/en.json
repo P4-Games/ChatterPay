@@ -149,7 +149,8 @@
       "products": "Products",
       "fees": "Fees",
       "development": "Demo",
-      "b2b": "For business"
+      "b2b": "For business",
+      "testnet-badge": "Testnet"
     },
     "help": {
       "need-help": "Need help?"
@@ -169,6 +170,7 @@
         "products": "Products",
         "fees": "Fees",
         "roadmap": "Roadmap",
+        "b2b": "For business",
         "development": "Demo",
         "faqs": "FAQs",
         "legal": "Legal",
@@ -244,7 +246,7 @@
         },
         "faq3": {
           "question": "What are the fees?",
-          "answer": "Opening your account is 100% free, with no maintenance costs. We only charge a fixed transaction fee (swap, transfer) based on network congestion from $0.2 USD to $0.5 USD per transaction."
+          "answer": "Opening your account is 100% free, with no maintenance costs. Transaction fees (swap, transfer) vary depending on the operation and network. You can see the full, up-to-date breakdown on our Fees page: chatterpay.net/fees."
         },
         "faq4": {
           "question": "Can I exchange between different tokens?",
@@ -311,7 +313,7 @@
       "description": "If you have any questions about these Terms and Conditions, please contact us at"
     },
     "last_updated": "Last updated:",
-    "date": "September 2024"
+    "date": "August 2026"
   },
   "policy": {
     "title": "Privacy Policy",
@@ -344,7 +346,7 @@
       "description": "If you have any questions about this Privacy Policy, feel free to contact us at"
     },
     "last_updated": "Last updated:",
-    "date": "September 2024"
+    "date": "August 2026"
   },
   "fees": {
     "hero": {
@@ -880,7 +882,15 @@
       "telegram": {
         "title": "Telegram",
         "description": "Access ChatterPay directly from Telegram. Check your wallet and balance without leaving the chat - fast, secure, and private."
+      },
+      "polymarket": {
+        "title": "Polymarket",
+        "description": "Trade prediction markets on real-world events, right from your ChatterPay wallet."
       }
+    },
+    "polymarket-view": {
+      "status": "🔮 Beta — available now from your ChatterPay wallet.",
+      "cta": "Try Polymarket"
     }
   },
   "polymarket": {

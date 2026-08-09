@@ -31,6 +31,16 @@ export const handleVercelFreePlanTimeOut =
 
 // environment: client-side
 export const UI_BASE_URL = process.env.NEXT_PUBLIC_UI_URL || 'https://chatterpay.net'
+// Detects the dev/testnet deployment (dev.<domain>) purely from the public site URL,
+// so it works in client components without needing a server-only env var like APP_ENV.
+const uiHostname = (() => {
+  try {
+    return new URL(UI_BASE_URL).hostname.toLowerCase()
+  } catch {
+    return ''
+  }
+})()
+export const IS_TESTNET_HOST = uiHostname === 'localhost' || uiHostname.startsWith('dev.')
 export const USE_MOCK =
   (process.env.NEXT_PUBLIC_USE_MOCK?.toString().toLowerCase() || 'true') === 'true'
 export const ALLOWED_ORIGINS = process.env.NEXT_PUBLIC_ALLOWED_ORIGINS || '*'
