@@ -23,7 +23,7 @@ import { Copy01Icon, QrCode01Icon } from '@hugeicons/core-free-icons'
 
 import { useTranslate } from 'src/locales'
 import Iconify from 'src/components/iconify'
-import { getChainName, getChainLogoUrl } from 'src/config-chains'
+import { getChainName, getChainLogoUrl, getLayerswapNetwork } from 'src/config-chains'
 
 import LayerswapWidget from 'src/sections/deposit/view/layerswap-widget'
 
@@ -44,7 +44,12 @@ const transition = { duration: 0.1, ease: 'easeOut' as const }
  */
 export default function DashboardDepositModal({ open, onClose, walletAddress }: Props) {
   const { t } = useTranslate()
-  const [showAddress, setShowAddress] = useState(false)
+
+  // Layerswap cannot deposit into every network. Where it can't, the widget
+  // renders nothing, so the address view is the only way to deposit and the
+  // modal opens straight into it instead of on an empty first step.
+  const hasLayerswap = Boolean(getLayerswapNetwork())
+  const [showAddress, setShowAddress] = useState(!hasLayerswap)
 
   // Deposits by address land on the network the app operates on, whichever it is.
   const networkName = getChainName()
@@ -52,7 +57,7 @@ export default function DashboardDepositModal({ open, onClose, walletAddress }: 
 
   const handleClose = () => {
     onClose()
-    setShowAddress(false)
+    setShowAddress(!hasLayerswap)
   }
 
   const handleCopyAddress = () => {
@@ -169,18 +174,20 @@ export default function DashboardDepositModal({ open, onClose, walletAddress }: 
                   {t('deposit.copy-address')}
                 </Button>
 
-                <Button
-                  variant='text'
-                  size='small'
-                  startIcon={<Iconify icon='eva:arrow-back-fill' width={16} />}
-                  onClick={() => setShowAddress(false)}
-                  sx={{
-                    color: 'text.secondary',
-                    '&:hover': { color: 'text.primary' }
-                  }}
-                >
-                  {t('deposit.back-to-deposit', 'Back to deposit')}
-                </Button>
+                {hasLayerswap && (
+                  <Button
+                    variant='text'
+                    size='small'
+                    startIcon={<Iconify icon='eva:arrow-back-fill' width={16} />}
+                    onClick={() => setShowAddress(false)}
+                    sx={{
+                      color: 'text.secondary',
+                      '&:hover': { color: 'text.primary' }
+                    }}
+                  >
+                    {t('deposit.back-to-deposit', 'Back to deposit')}
+                  </Button>
+                )}
               </Stack>
             </m.div>
           )}
