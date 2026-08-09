@@ -518,11 +518,23 @@ export async function getWalletNfts(wallet: string | string[]): Promise<INFT[] |
       },
       {
         // Realizar un lookup para obtener el total_of_this
-        // del registro original relacionado
+        // del registro original relacionado. El id de un token solo es único
+        // dentro de una red, así que el original tiene que buscarse en la misma
+        // chain: si no, una copia puede tomar el total de un NFT ajeno que
+        // comparte su id en otra red.
         $lookup: {
           from: SCHEMA_NFTS,
-          localField: 'copy_of_original',
-          foreignField: 'id',
+          let: { originalId: '$copy_of_original', chainId: '$chain_id' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [{ $eq: ['$id', '$$originalId'] }, { $eq: ['$chain_id', '$$chainId'] }]
+                }
+              }
+            },
+            { $project: { total_of_this: 1 } }
+          ],
           as: 'original_nft'
         }
       },
