@@ -43,7 +43,7 @@ export default function Footer({ simple }: FooterProps) {
       children: [
         { name: t('home.footer.links.products'), href: paths.products.root },
         { name: t('home.footer.links.fees'), href: paths.fees },
-        { name: t('home.footer.links.roadmap'), href: paths.roadmap },
+        { name: t('home.footer.links.b2b'), href: paths.products.b2b },
         { name: t('home.footer.links.development'), href: paths.development }
       ]
     },
@@ -182,7 +182,7 @@ export default function Footer({ simple }: FooterProps) {
         </Grid>
 
         <Typography variant='body2' sx={{ mt: 10 }}>
-          © 2024. {t('home.footer.all-rights')}
+          © {new Date().getFullYear()}. {t('home.footer.all-rights')}
         </Typography>
       </Container>
     </Box>
