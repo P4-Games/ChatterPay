@@ -94,7 +94,9 @@ export const endpoints = {
     refresh: () => getFullUIEndpoint('auth/refresh')
   },
   nft: {
-    id: (id: string) => getFullUIEndpoint(`nft/${id}`)
+    // chainId disambiguates token ids, which repeat across networks.
+    id: (id: string, chainId?: number) =>
+      getFullUIEndpoint(`nft/${id}${chainId ? `?chainId=${chainId}` : ''}`)
   },
   tokens: getFullUIEndpoint('tokens'),
   proxy: {
