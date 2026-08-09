@@ -72,7 +72,9 @@ export const CHAINS: Record<number, ChainConfig> = {
     name: 'Scroll Sepolia',
     explorerUrl: 'https://sepolia.scrollscan.com',
     nftExplorerUrl: 'https://sepolia.scrollscan.com',
-    nftMarketplaceUrl: 'https://testnets.opensea.io/assets/scroll-sepolia',
+    // OpenSea dropped testnet support, so testnets point at the block explorer,
+    // which has its own NFT page and renders the artwork from the tokenURI.
+    nftMarketplaceUrl: 'https://sepolia.scrollscan.com/nft',
     logo: '',
     // Layerswap lists no testnets in its public networks API.
     layerswapNetwork: '',
@@ -93,7 +95,8 @@ export const CHAINS: Record<number, ChainConfig> = {
     name: 'Arbitrum Sepolia',
     explorerUrl: 'https://sepolia.arbiscan.io',
     nftExplorerUrl: 'https://sepolia.arbiscan.io',
-    nftMarketplaceUrl: 'https://testnets.opensea.io/assets/arbitrum_sepolia',
+    // OpenSea dropped testnet support — see the Scroll Sepolia entry above.
+    nftMarketplaceUrl: 'https://sepolia.arbiscan.io/nft',
     logo: '',
     // Pending: confirm the sandbox identifier with Layerswap to re-enable deposits in dev.
     layerswapNetwork: '',
