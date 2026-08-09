@@ -47,7 +47,11 @@ export type ChainConfig = {
   testnet: boolean
 }
 
-const stripTrailingSlash = (url: string): string => url.replace(/\/+$/, '')
+// Values arriving from environment variables are trimmed as well as stripped: a stray
+// space in a Cloud Build trigger would otherwise survive into the href and produce a
+// malformed link. Seen in the develop trigger, where the marketplace URL was configured
+// with a leading space.
+const stripTrailingSlash = (url: string): string => url.trim().replace(/\/+$/, '')
 
 export const SCROLL_CHAIN_ID = 534352
 export const SCROLL_SEPOLIA_CHAIN_ID = 534351
