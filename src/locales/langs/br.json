@@ -246,7 +246,8 @@
         },
         "faq3": {
           "question": "Quais são as taxas?",
-          "answer": "Abrir sua conta é 100% gratuito, sem custos de manutenção. As taxas de transação (swap, transferência) variam de acordo com a operação e a rede. Você pode ver o detalhamento completo e atualizado na nossa página de Taxas: chatterpay.net/fees."
+          "answer": "Abrir sua conta é 100% gratuito, sem custos de manutenção. As taxas de transação (swap, transferência) variam de acordo com a operação e a rede. Você pode ver o detalhamento completo e atualizado na nossa {FEES_LINK}.",
+          "answerLink": "página de Taxas"
         },
         "faq4": {
           "question": "Posso trocar entre diferentes tokens?",
@@ -262,7 +263,7 @@
         },
         "faq7": {
           "question": "Como posso entrar em contato com a equipe ChatterPay?",
-          "answer": "Pelo mesmo chat do WhatsApp ({PHONE}), você pode solicitar suporte a qualquer momento e responderemos o mais rápido possível."
+          "answer": "Você pode solicitar suporte a qualquer momento pelo seu próprio chat do ChatterPay: escreva para o bot e responderemos o mais rápido possível."
         }
       }
     },
