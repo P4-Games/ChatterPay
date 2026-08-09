@@ -62,11 +62,16 @@ export default function Header() {
       icon: <Iconify icon='solar:tag-price-bold-duotone' />,
       path: paths.fees
     },
-    {
-      title: t('home.header.development'),
-      icon: <Iconify icon='solar:magic-stick-bold-duotone' />,
-      path: paths.development
-    },
+    // "Demo" links out to the dev/testnet site — pointless when already browsing it.
+    ...(IS_TESTNET_HOST
+      ? []
+      : [
+          {
+            title: t('home.header.development'),
+            icon: <Iconify icon='solar:magic-stick-bold-duotone' />,
+            path: paths.development
+          }
+        ]),
     {
       title: t('home.header.b2b'),
       icon: <Iconify icon='solar:case-round-bold-duotone' />,
@@ -181,13 +186,15 @@ export default function Header() {
                   {t('home.header.fees')}
                 </Button>
 
-                <Button
-                  component={RouterLink}
-                  href={paths.development}
-                  sx={{ fontWeight: 600, color: navColor, transition: 'color 0.3s' }}
-                >
-                  {t('home.header.development')}
-                </Button>
+                {!IS_TESTNET_HOST && (
+                  <Button
+                    component={RouterLink}
+                    href={paths.development}
+                    sx={{ fontWeight: 600, color: navColor, transition: 'color 0.3s' }}
+                  >
+                    {t('home.header.development')}
+                  </Button>
+                )}
 
                 <Button
                   component={RouterLink}

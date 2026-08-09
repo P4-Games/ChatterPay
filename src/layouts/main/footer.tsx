@@ -12,7 +12,7 @@ import { paths } from 'src/routes/paths'
 import { RouterLink } from 'src/routes/components'
 
 import { useTranslate } from 'src/locales'
-import { _socials, BOT_WAPP_URL, CONTACT_EMAIL } from 'src/config-global'
+import { _socials, BOT_WAPP_URL, CONTACT_EMAIL, IS_TESTNET_HOST } from 'src/config-global'
 
 import Iconify from 'src/components/iconify'
 import Logo, { LogoWithName } from 'src/components/logo'
@@ -44,7 +44,10 @@ export default function Footer({ simple }: FooterProps) {
         { name: t('home.footer.links.products'), href: paths.products.root },
         { name: t('home.footer.links.fees'), href: paths.fees },
         { name: t('home.footer.links.b2b'), href: paths.products.b2b },
-        { name: t('home.footer.links.development'), href: paths.development }
+        // "Demo" links out to the dev/testnet site — pointless when already browsing it.
+        ...(IS_TESTNET_HOST
+          ? []
+          : [{ name: t('home.footer.links.development'), href: paths.development }])
       ]
     },
     {
