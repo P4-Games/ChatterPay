@@ -44,6 +44,7 @@ import type { ITransaction } from 'src/types/wallet'
 // ----------------------------------------------------------------------
 
 const POLYGON_EXPLORER_URL = 'https://polygonscan.com'
+const POLYGON_CHAIN_ID = 137
 
 function getRowBadge(
   polymarketSide: PolymarketSide | null,
@@ -169,7 +170,7 @@ export default function BankingRecentTransitionsRow({
   const isRealHash =
     (bridgeTxHash && bridgeTxHash.startsWith('0x')) ||
     (row.trx_hash && row.trx_hash.startsWith('0x'))
-  const explorerBase = row.chain_id === 534352 ? EXPLORER_L2_URL : POLYGON_EXPLORER_URL
+  const explorerBase = row.chain_id === POLYGON_CHAIN_ID ? POLYGON_EXPLORER_URL : EXPLORER_L2_URL
   const trxLink =
     bridgeTxHash && bridgeTxHash.startsWith('0x')
       ? `${EXPLORER_L2_URL}/tx/${bridgeTxHash}`
