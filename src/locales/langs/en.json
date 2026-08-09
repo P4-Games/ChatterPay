@@ -246,7 +246,8 @@
         },
         "faq3": {
           "question": "What are the fees?",
-          "answer": "Opening your account is 100% free, with no maintenance costs. Transaction fees (swap, transfer) vary depending on the operation and network. You can see the full, up-to-date breakdown on our Fees page: chatterpay.net/fees."
+          "answer": "Opening your account is 100% free, with no maintenance costs. Transaction fees (swap, transfer) vary depending on the operation and network. You can see the full, up-to-date breakdown on our {FEES_LINK}.",
+          "answerLink": "Fees page"
         },
         "faq4": {
           "question": "Can I exchange between different tokens?",
@@ -262,7 +263,7 @@
         },
         "faq7": {
           "question": "How can I contact the ChatterPay team?",
-          "answer": "Through the same WhatsApp chat ({PHONE}), you can request support at any time and we will respond as soon as possible."
+          "answer": "You can request support at any time from your ChatterPay chat itself: just write to the bot and we will respond as soon as possible."
         }
       }
     },
