@@ -170,12 +170,10 @@ export default function NftItemShare({ nftId, nftData }: NftItemClaimProps) {
                 }}
                 aria-label={t('nfts.claim.opensea-alt')}
               >
-                <Image
-                  width={24}
-                  height={24}
-                  src='https://storage.googleapis.com/opensea-static/Logomark/Logomark-Blue.svg'
-                  alt={t('nfts.claim.opensea-alt')}
-                />
+                {/* Was a logo loaded from a third-party bucket that now returns 403, so it
+                    rendered broken. A local icon also fits better now that the button may
+                    lead to the network's explorer instead of a marketplace. */}
+                <Icon icon='mdi:image-frame' width={24} height={24} />
               </button>
             </m.div>
           </Box>
