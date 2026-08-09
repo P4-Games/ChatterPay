@@ -147,7 +147,7 @@
       "sign-in": "Web App",
       "about-us": "About Us",
       "products": "Products",
-      "roadmap": "Roadmap",
+      "fees": "Fees",
       "development": "Demo",
       "b2b": "For business"
     },
@@ -167,6 +167,7 @@
         "about-us": "About us",
         "contact-us": "Contact us",
         "products": "Products",
+        "fees": "Fees",
         "roadmap": "Roadmap",
         "development": "Demo",
         "faqs": "FAQs",
@@ -344,6 +345,82 @@
     },
     "last_updated": "Last updated:",
     "date": "September 2024"
+  },
+  "fees": {
+    "hero": {
+      "eyebrow": "Pricing",
+      "title": "Fees",
+      "description": "All ChatterPay fees are deducted in the token you're sending. We cover gas on every supported network, so you never need to hold a native token.",
+      "last_updated": "Last updated:"
+    },
+    "columns": {
+      "action": "Action",
+      "chatterpay_fee": "ChatterPay Fee",
+      "provider_fees": "Provider Fees",
+      "network": "Network",
+      "send": "Send (same network)",
+      "swap": "Swap"
+    },
+    "values": {
+      "zero": "$0",
+      "none": "None",
+      "varies": "Yes, varies",
+      "available": "Available",
+      "coming_soon": "Coming soon",
+      "flat_by_network": "Flat fee, varies by network. See below"
+    },
+    "sections": {
+      "free": {
+        "title": "Free",
+        "rows": {
+          "create_wallet": "Creating a wallet",
+          "wallet_maintenance": "Wallet maintenance",
+          "receive_funds": "Receiving funds",
+          "deposits": "Deposits",
+          "create_nft": "Creating NFTs",
+          "copy_nft": "Copying an NFT",
+          "same_chain_contract": "Same-chain contract interactions"
+        }
+      },
+      "charges": {
+        "title": "What we charge",
+        "rows": {
+          "send": "Send",
+          "swap": "Swap",
+          "cross_network": "Cross-network transfer"
+        }
+      },
+      "networks": {
+        "title": "Supported networks",
+        "rows": {
+          "scroll": "Scroll",
+          "cardano": "Cardano"
+        },
+        "other_networks": "Send to +{{total}} networks:",
+        "other_networks_hint": "Available for cross-network transfers, from your Scroll balance, any token to any token. The cross-network transfer fee applies."
+      },
+      "polymarket": {
+        "title": "Polymarket",
+        "rows": {
+          "move_in": "Move funds to Polymarket",
+          "move_out": "Move funds back to your wallet",
+          "place_order": "Place an order"
+        },
+        "notes": {
+          "network": "Polymarket runs on Polygon. Moving funds in or out means moving them between networks, which is why the 0.25% applies in both directions.",
+          "protocol_fee": "ChatterPay charges nothing to place an order. Polymarket applies its own protocol fee at match time. That fee is set by Polymarket, varies by market, and does not go to ChatterPay."
+        }
+      }
+    },
+    "disclaimer": {
+      "title": "Disclaimer",
+      "items": {
+        "custody": "ChatterPay does not custody your funds. You control your wallet at all times.",
+        "provider_fees": "ChatterPay fees are fixed. Provider fees are not. Swaps and cross-network transfers route through external liquidity and bridge providers who set their own fees, and those fees change with market and network conditions. We do not control them and they can change without notice.",
+        "gas": "Gas is the native currency required to execute a transaction on each network. ChatterPay pays it on your behalf. Gas costs vary with network congestion.",
+        "subject_to_change": "Fees are subject to change."
+      }
+    }
   },
   "login": {
     "title": "Sign in to ChatterPay",

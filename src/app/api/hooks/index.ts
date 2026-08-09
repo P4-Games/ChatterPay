@@ -6,6 +6,8 @@ export { useGetChatterpointsSummary } from './use-chatterpoints'
 
 export { useGetTokens } from './use-tokens'
 
+export { useGetLifiChainsSummary, type LifiChainSummary } from './use-lifi'
+
 export {
   useGetWalletNft,
   useGetWalletNfts,

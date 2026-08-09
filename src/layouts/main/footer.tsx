@@ -42,6 +42,7 @@ export default function Footer({ simple }: FooterProps) {
       headline: t('home.footer.links.explore'),
       children: [
         { name: t('home.footer.links.products'), href: paths.products.root },
+        { name: t('home.footer.links.fees'), href: paths.fees },
         { name: t('home.footer.links.roadmap'), href: paths.roadmap },
         { name: t('home.footer.links.development'), href: paths.development }
       ]

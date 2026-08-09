@@ -56,9 +56,9 @@ export default function Header() {
       path: paths.products.root
     },
     {
-      title: t('home.header.roadmap'),
-      icon: <Iconify icon='solar:map-bold-duotone' />,
-      path: paths.roadmap
+      title: t('home.header.fees'),
+      icon: <Iconify icon='solar:tag-price-bold-duotone' />,
+      path: paths.fees
     },
     {
       title: t('home.header.development'),
@@ -135,10 +135,10 @@ export default function Header() {
 
                 <Button
                   component={RouterLink}
-                  href={paths.roadmap}
+                  href={paths.fees}
                   sx={{ fontWeight: 600, color: navColor, transition: 'color 0.3s' }}
                 >
-                  {t('home.header.roadmap')}
+                  {t('home.header.fees')}
                 </Button>
 
                 <Button

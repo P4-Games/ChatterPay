@@ -147,7 +147,7 @@
       "sign-in": "Web App",
       "about-us": "Sobre Nosotros",
       "products": "Productos",
-      "roadmap": "Roadmap",
+      "fees": "Comisiones",
       "development": "Demo",
       "b2b": "Para empresas"
     },
@@ -167,6 +167,7 @@
         "about-us": "Acerca de nosotros",
         "contact-us": "Contáctanos",
         "products": "Productos",
+        "fees": "Comisiones",
         "roadmap": "Roadmap",
         "development": "Demo",
         "faqs": "Preguntas frecuentes",
@@ -344,6 +345,82 @@
     },
     "last_updated": "Última actualización:",
     "date": "Septiembre 2024"
+  },
+  "fees": {
+    "hero": {
+      "eyebrow": "Precios",
+      "title": "Comisiones",
+      "description": "Todas las comisiones de ChatterPay se descuentan del token que estás enviando. Cubrimos el gas en todas las redes soportadas, así que nunca necesitas tener el token nativo.",
+      "last_updated": "Última actualización:"
+    },
+    "columns": {
+      "action": "Acción",
+      "chatterpay_fee": "Comisión de ChatterPay",
+      "provider_fees": "Comisiones de terceros",
+      "network": "Red",
+      "send": "Enviar (misma red)",
+      "swap": "Swap"
+    },
+    "values": {
+      "zero": "$0",
+      "none": "Ninguna",
+      "varies": "Sí, varían",
+      "available": "Disponible",
+      "coming_soon": "Próximamente",
+      "flat_by_network": "Comisión fija, varía según la red. Ver abajo"
+    },
+    "sections": {
+      "free": {
+        "title": "Gratis",
+        "rows": {
+          "create_wallet": "Crear una billetera",
+          "wallet_maintenance": "Mantenimiento de la billetera",
+          "receive_funds": "Recibir fondos",
+          "deposits": "Depósitos",
+          "create_nft": "Crear NFTs",
+          "copy_nft": "Copiar un NFT",
+          "same_chain_contract": "Interacción con contratos en la misma red"
+        }
+      },
+      "charges": {
+        "title": "Lo que cobramos",
+        "rows": {
+          "send": "Enviar",
+          "swap": "Swap",
+          "cross_network": "Transferencia entre redes"
+        }
+      },
+      "networks": {
+        "title": "Redes soportadas",
+        "rows": {
+          "scroll": "Scroll",
+          "cardano": "Cardano"
+        },
+        "other_networks": "Enviá hacia +{{total}} redes:",
+        "other_networks_hint": "Disponibles para transferencias entre redes, desde tu balance en Scroll, cualquier token a cualquier token. Aplica fee de transferencia entre redes."
+      },
+      "polymarket": {
+        "title": "Polymarket",
+        "rows": {
+          "move_in": "Mover fondos a Polymarket",
+          "move_out": "Mover fondos de vuelta a tu billetera",
+          "place_order": "Poner una orden"
+        },
+        "notes": {
+          "network": "Polymarket funciona sobre Polygon. Mover fondos hacia adentro o hacia afuera implica moverlos entre redes, por eso se aplica el 0,25% en ambas direcciones.",
+          "protocol_fee": "ChatterPay no cobra nada por poner una orden. Polymarket aplica su propia comisión de protocolo al momento del match. Esa comisión la define Polymarket, varía según el mercado y no va a ChatterPay."
+        }
+      }
+    },
+    "disclaimer": {
+      "title": "Disclaimer",
+      "items": {
+        "custody": "ChatterPay no custodia tus fondos. Vos controlás tu billetera en todo momento.",
+        "provider_fees": "Las comisiones de ChatterPay son fijas. Las de terceros no. Los swaps y las transferencias entre redes pasan por proveedores externos de liquidez y puentes que definen sus propias comisiones, y esas comisiones cambian según las condiciones del mercado y de la red. No las controlamos y pueden cambiar sin previo aviso.",
+        "gas": "El gas es la moneda nativa que se necesita para ejecutar una transacción en cada red. ChatterPay lo paga por vos. El costo del gas varía según la congestión de la red.",
+        "subject_to_change": "Las comisiones están sujetas a cambios."
+      }
+    }
   },
   "login": {
     "title": "Iniciar sesión en ChatterPay",
