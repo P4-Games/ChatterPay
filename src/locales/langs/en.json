@@ -464,7 +464,7 @@
     "network-warning": "Any asset sent in other network will be lost",
     "wallet-address": "Wallet Address",
     "copy-address": "Copy Address",
-    "show-address": "See my address on Scroll",
+    "show-address": "See my address on {network}",
     "back-to-deposit": "Back to deposit"
   },
   "withdraw": {

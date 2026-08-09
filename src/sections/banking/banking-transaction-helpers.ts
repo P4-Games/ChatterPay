@@ -41,14 +41,26 @@ export function getPolymarketSide(data: ITransaction): PolymarketSide {
 }
 
 /**
+ * Whether a transaction is incoming for the user.
+ * The history aggregates every network the user operated on, and each network
+ * has its own wallet address, so the check is against the whole set.
+ * @param {string[]} userWallets - Every wallet address of the user.
+ * @param {ITransaction} data - Transaction record.
+ * @returns {boolean} True when the user is the receiving side.
+ */
+export function isIncomingTrx(userWallets: string[], data: ITransaction): boolean {
+  return !!data.wallet_to && userWallets.includes(data.wallet_to)
+}
+
+/**
  * Derive the counterparty display data and formatted amount for a row.
- * @param {string} userWallet - Current user's wallet address.
+ * @param {string[]} userWallets - Every wallet address of the user (one per network).
  * @param {ITransaction} data - Transaction record.
  * @param {boolean} mdUp - Desktop breakpoint flag (contact name hidden on mobile).
  * @returns {object} `contactName`, `contactIdentifier` and `calculatedAmount`.
  */
 export function getContactData(
-  userWallet: string,
+  userWallets: string[],
   data: ITransaction,
   mdUp: boolean
 ): { contactName: string; contactIdentifier: string; calculatedAmount: string } {
@@ -56,7 +68,7 @@ export function getContactData(
   let contactIdentifier: string = ''
   let calculatedAmount: string = ''
 
-  const trxReceive: boolean = userWallet === data.wallet_to
+  const trxReceive: boolean = isIncomingTrx(userWallets, data)
 
   if (isPolymarketTrx(data.type)) {
     contactIdentifier = ''

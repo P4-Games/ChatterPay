@@ -464,7 +464,7 @@
     "network-warning": "Cualquier activo enviado en otra red se perderá",
     "wallet-address": "Dirección de billetera",
     "copy-address": "Copiar dirección",
-    "show-address": "Ver mi dirección en Scroll",
+    "show-address": "Ver mi dirección en {network}",
     "back-to-deposit": "Volver a depositar"
   },
   "withdraw": {

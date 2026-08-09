@@ -1,11 +1,11 @@
 import type { ObjectId, Collection } from 'mongodb'
 
-import { DB_BOT_NAME, DB_CHATTERPAY_NAME } from 'src/config-global'
+import { DB_BOT_NAME, DEFAULT_CHAIN_ID, DB_CHATTERPAY_NAME } from 'src/config-global'
 
 import type { JwtPayload } from 'src/types/jwt'
 import type { LastUserConversation } from 'src/types/chat'
 import type { INFT, IToken, ITransaction } from 'src/types/wallet'
-import type { IAccount, UserSession } from 'src/types/account'
+import type { IAccount, UserSession, IAccountWallet } from 'src/types/account'
 
 import { getClientPromise } from './_connections/mongo-connection'
 import { getClientPromiseBot } from './_connections/mongo-bot-onnection'
@@ -72,6 +72,56 @@ interface UserConversation {
 
 // ----------------------------------------------------------------------
 
+/**
+ * Wallets a user owns, normalized and ordered with the active chain first.
+ * A user accumulates one wallet per network they have operated on; the app
+ * operates on the active chain but still shows the others as history.
+ * @param {IAccountDB['wallets']} wallets - Raw wallets array from Mongo.
+ * @returns {IAccountWallet[]} Normalized wallets, active chain first.
+ */
+function normalizeWallets(wallets: IAccountDB['wallets']): IAccountWallet[] {
+  if (!Array.isArray(wallets)) return []
+
+  return wallets
+    .filter((w) => !!w?.wallet_proxy)
+    .map((w) => ({
+      wallet_proxy: w.wallet_proxy,
+      wallet_eoa: w.wallet_eoa,
+      chain_id: w.chain_id,
+      status: w.status
+    }))
+    .sort((a, b) => {
+      if (a.chain_id === b.chain_id) return 0
+      if (a.chain_id === DEFAULT_CHAIN_ID) return -1
+      if (b.chain_id === DEFAULT_CHAIN_ID) return 1
+      return 0
+    })
+}
+
+/**
+ * Splits a user document into the active-chain wallet plus the full wallet list.
+ * Picking by chain matters once a user has wallets on more than one network:
+ * `wallets[0]` is whichever chain they used first, not the one the app operates on.
+ * @param {IAccountDB['wallets']} wallets - Raw wallets array from Mongo.
+ * @returns {{ wallet: string; walletEOA: string; wallets: IAccountWallet[] }} Active wallet and list.
+ */
+function resolveUserWallets(wallets: IAccountDB['wallets']): {
+  wallet: string
+  walletEOA: string
+  wallets: IAccountWallet[]
+} {
+  const all = normalizeWallets(wallets)
+  // `all` is sorted active-chain-first, so the head is the active wallet when it
+  // exists; otherwise fall back to the first one so legacy users keep working.
+  const active = all.find((w) => w.chain_id === DEFAULT_CHAIN_ID) ?? all[0]
+
+  return {
+    wallet: active?.wallet_proxy || '',
+    walletEOA: active?.wallet_eoa || '',
+    wallets: all
+  }
+}
+
 export async function getUserByPhone(phone: string): Promise<IAccount | undefined> {
   const client = await getClientPromise()
   const db = client.db(DB_CHATTERPAY_NAME)
@@ -94,15 +144,14 @@ export async function getUserByPhone(phone: string): Promise<IAccount | undefine
 
   const { _id, wallets, ...rest } = data
 
-  // Assuming that wallets is an array and we're only taking the first wallet
-  const wallet = wallets && wallets.length > 0 ? wallets[0].wallet_proxy : ''
-  const walletEOA = wallets && wallets.length > 0 ? wallets[0].wallet_eoa : ''
+  const { wallet, walletEOA, wallets: userWallets } = resolveUserWallets(wallets)
 
   // Transform the user object to match the old model
   const user: IAccount = {
     id: getFormattedId(_id),
     wallet,
     walletEOA,
+    wallets: userWallets,
     ...rest
   }
   return user
@@ -123,15 +172,14 @@ export async function getUserById(id: string): Promise<IAccount | undefined> {
   // Destructure _id and other properties from the user data
   const { _id, wallets, ...rest } = data
 
-  // If wallets exist, extract the first wallet's wallet_proxy and wallet_eoa
-  const wallet = wallets && wallets.length > 0 ? wallets[0].wallet_proxy : ''
-  const walletEOA = wallets && wallets.length > 0 ? wallets[0].wallet_eoa : ''
+  const { wallet, walletEOA, wallets: userWallets } = resolveUserWallets(wallets)
 
   // Transform the user data to match the IAccount model
   const user: IAccount = {
     id: getFormattedId(_id), // Add the formatted user ID
-    wallet, // Add wallet
-    walletEOA, // Add walletEOA
+    wallet, // Active-chain proxy wallet
+    walletEOA, // Active-chain EOA
+    wallets: userWallets, // Every wallet, one per chain
     ...rest
   }
 
@@ -155,6 +203,25 @@ export async function getUserIdByWallet(userWallet: string): Promise<string | un
   }
 
   return getFormattedId(data._id)
+}
+
+/**
+ * Every proxy wallet a user owns, one per chain. Used by the read-only views
+ * that aggregate history across networks (NFTs, transactions).
+ * @param {string} userId - ChatterPay user id.
+ * @returns {Promise<string[]>} Proxy wallet addresses, active chain first.
+ */
+export async function getUserWalletAddresses(userId: string): Promise<string[]> {
+  const client = await getClientPromise()
+  const db = client.db(DB_CHATTERPAY_NAME)
+
+  const data: IAccountDB | null = await db
+    .collection(SCHEMA_USERS)
+    .findOne({ _id: getObjectId(userId) })
+
+  if (!data) return []
+
+  return normalizeWallets(data.wallets).map((w) => w.wallet_proxy)
 }
 
 export async function updateUserCode(userId: string, code: number | undefined): Promise<boolean> {
@@ -401,16 +468,21 @@ export async function updateUserSessionStatus(
   return result
 }
 
-export async function getWalletNfts(wallet: string): Promise<INFT[] | undefined> {
+export async function getWalletNfts(wallet: string | string[]): Promise<INFT[] | undefined> {
   const client = await getClientPromise()
   const db = client.db(DB_CHATTERPAY_NAME)
+
+  // A single wallet belongs to a single chain, so passing every wallet of the
+  // user is what returns their NFTs across all the networks they operated on.
+  const wallets = Array.isArray(wallet) ? wallet : [wallet]
+  if (wallets.length === 0) return undefined
 
   const cursor: INFTDB[] | null = await db
     .collection(SCHEMA_NFTS)
     .aggregate([
       {
         $match: {
-          wallet
+          wallet: { $in: wallets }
         }
       },
       {
@@ -428,7 +500,8 @@ export async function getWalletNfts(wallet: string): Promise<INFT[] | undefined>
           copy_order: 1,
           copy_of_original: 1,
           copy_order_original: 1,
-          minted_contract_address: 1
+          minted_contract_address: 1,
+          chain_id: 1
         }
       },
       {
@@ -487,13 +560,27 @@ export async function getWalletNfts(wallet: string): Promise<INFT[] | undefined>
   return nfts
 }
 
-export async function getNftById(nftId: string): Promise<INFT | undefined> {
+/**
+ * Finds an NFT by its on-chain token id.
+ *
+ * Token ids restart from zero on every network, so the id on its own does not
+ * identify an NFT: the same id exists on more than one chain. The active
+ * network wins, and only if the id is unknown there do we fall back to the most
+ * recent match on any other network, so links shared before a network switch
+ * keep resolving to the NFT they were created for.
+ */
+export async function getNftById(nftId: string, chainId?: number): Promise<INFT | undefined> {
   const client = await getClientPromise()
   const db = client.db(DB_CHATTERPAY_NAME)
+  const collection = db.collection(SCHEMA_NFTS)
 
-  const nft: INFT | null = await db.collection(SCHEMA_NFTS).findOne({
-    id: nftId
+  const nftOnChain: INFT | null = await collection.findOne({
+    id: nftId,
+    chain_id: chainId ?? DEFAULT_CHAIN_ID
   })
+
+  const nft: INFT | null =
+    nftOnChain ?? (await collection.findOne({ id: nftId }, { sort: { timestamp: -1 } }))
 
   if (!nft) {
     return undefined
@@ -506,9 +593,11 @@ export async function getWalletNft(wallet: string, nftId: string): Promise<INFT 
   const client = await getClientPromise()
   const db = client.db(DB_CHATTERPAY_NAME)
 
+  // Token ids are stored as strings; a wallet belongs to a single chain, so the
+  // wallet is what scopes the lookup to one network.
   const nft: INFTDB | null = await db.collection(SCHEMA_NFTS).findOne({
     wallet,
-    id: Number(nftId)
+    id: String(nftId)
   })
 
   if (!nft) {
@@ -536,15 +625,19 @@ export async function getWalletNft(wallet: string, nftId: string): Promise<INFT 
 }
 
 export async function getUserTransactions(
-  wallet: string,
+  wallet: string | string[],
   opts?: { limit?: number; since?: string | number | Date }
 ): Promise<ITransaction[] | undefined> {
   const client = await getClientPromise()
   const db = client.db(DB_CHATTERPAY_NAME)
 
-  // Base ownership filter
+  // Base ownership filter. Passing every wallet of the user aggregates the
+  // history of all the networks they operated on into a single timeline.
+  const wallets = Array.isArray(wallet) ? wallet : [wallet]
+  if (wallets.length === 0) return undefined
+
   const match: Record<string, any> = {
-    $or: [{ wallet_from: wallet }, { wallet_to: wallet }]
+    $or: [{ wallet_from: { $in: wallets } }, { wallet_to: { $in: wallets } }]
   }
 
   // Incremental fetch: only return records newer than `since`. The bot writes `date`

@@ -464,7 +464,7 @@
     "network-warning": "Qualquer ativo enviado em outra rede será perdido",
     "wallet-address": "Endereço da carteira",
     "copy-address": "Copiar endereço",
-    "show-address": "Ver meu endereço na Scroll",
+    "show-address": "Ver meu endereço na {network}",
     "back-to-deposit": "Voltar ao depósito"
   },
   "withdraw": {

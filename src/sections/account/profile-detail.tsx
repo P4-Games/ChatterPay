@@ -14,6 +14,10 @@ import { useTranslate } from 'src/locales'
 import { useAuthContext } from 'src/auth/hooks'
 import { useSnackbar } from 'src/components/snackbar'
 import Iconify from 'src/components/iconify'
+import { DEFAULT_CHAIN_ID } from 'src/config-global'
+import { getChainName } from 'src/config-chains'
+
+import type { IAccountWallet } from 'src/types/account'
 
 // ----------------------------------------------------------------------
 
@@ -46,7 +50,7 @@ function RowIcon({ icon }: { icon: string }) {
 }
 
 /**
- * Profile details list: name, phone, wallet (copyable) and email.
+ * Profile details list: name, phone, wallets (one per network, copyable) and email.
  * @returns {JSX.Element} Profile detail card.
  */
 export default function ProfileDetail() {
@@ -54,6 +58,31 @@ export default function ProfileDetail() {
   const theme = useTheme()
   const { user } = useAuthContext()
   const { enqueueSnackbar } = useSnackbar()
+
+  const handleCopy = async (address: string) => {
+    try {
+      await navigator.clipboard.writeText(address)
+      enqueueSnackbar(t('common.copied'))
+    } catch {
+      enqueueSnackbar(t('common.msg.update-error'), { variant: 'error' })
+    }
+  }
+
+  // A user owns one wallet per network they have operated on. The list comes
+  // from the API already ordered with the active network first; fall back to the
+  // single active wallet for sessions created before wallets travelled in the payload.
+  const wallets: IAccountWallet[] =
+    Array.isArray(user?.wallets) && user.wallets.length
+      ? user.wallets
+      : user?.wallet
+        ? [
+            {
+              wallet_proxy: user.wallet,
+              wallet_eoa: user.walletEOA || '',
+              chain_id: DEFAULT_CHAIN_ID
+            }
+          ]
+        : []
 
   return (
     <Card
@@ -85,31 +114,34 @@ export default function ProfileDetail() {
             />
           </ListItem>
 
-          <ListItem sx={rowSx}>
-            <RowIcon icon='solar:wallet-bold-duotone' />
-            <ListItemText
-              primary={t('user.profile.rows.wallet')}
-              secondary={user?.wallet || t('common.nodata')}
-              secondaryTypographyProps={{ sx: { wordBreak: 'break-all' } }}
-            />
-            {!!(user?.wallet || '').trim() && (
-              <IconButton
-                size='small'
-                onClick={async () => {
-                  try {
-                    await navigator.clipboard.writeText(user!.wallet)
-                    enqueueSnackbar(t('common.copied'))
-                  } catch {
-                    enqueueSnackbar(t('common.msg.update-error'), { variant: 'error' })
-                  }
-                }}
-                aria-label={t('common.accessibility.copy-wallet')}
-                sx={{ ml: 1 }}
-              >
-                <Iconify icon='eva:copy-fill' width={18} />
-              </IconButton>
-            )}
-          </ListItem>
+          {wallets.length === 0 ? (
+            <ListItem sx={rowSx}>
+              <RowIcon icon='solar:wallet-bold-duotone' />
+              <ListItemText
+                primary={t('user.profile.rows.wallet')}
+                secondary={t('common.nodata')}
+              />
+            </ListItem>
+          ) : (
+            wallets.map((w) => (
+              <ListItem key={`${w.chain_id}-${w.wallet_proxy}`} sx={rowSx}>
+                <RowIcon icon='solar:wallet-bold-duotone' />
+                <ListItemText
+                  primary={`${t('user.profile.rows.wallet')} · ${getChainName(w.chain_id)}`}
+                  secondary={w.wallet_proxy}
+                  secondaryTypographyProps={{ sx: { wordBreak: 'break-all' } }}
+                />
+                <IconButton
+                  size='small'
+                  onClick={() => handleCopy(w.wallet_proxy)}
+                  aria-label={t('common.accessibility.copy-wallet')}
+                  sx={{ ml: 1 }}
+                >
+                  <Iconify icon='eva:copy-fill' width={18} />
+                </IconButton>
+              </ListItem>
+            ))
+          )}
 
           <ListItemButton sx={rowSx} component={RouterLink} href={paths.dashboard.user.email}>
             <RowIcon icon='solar:letter-bold-duotone' />

@@ -20,7 +20,8 @@ import {
 import { useResponsive } from 'src/hooks/use-responsive'
 
 import { useTranslate } from 'src/locales'
-import { NFT_MARKETPLACE_URL, NFT_IMAGE_REPOSITORY } from 'src/config-global'
+import { NFT_IMAGE_REPOSITORY } from 'src/config-global'
+import { getNftMarketplaceUrl } from 'src/config-chains'
 
 import { varFade } from 'src/components/animate'
 
@@ -39,7 +40,8 @@ export default function NftItemShare({ nftId, nftData }: NftItemClaimProps) {
   const [openShare, setOpenShare] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
 
-  const nftUrl = `${NFT_MARKETPLACE_URL}/${nftData.minted_contract_address}/${nftId}`
+  // A shared NFT may have been minted on a network the app no longer operates on.
+  const nftUrl = `${getNftMarketplaceUrl(nftData.chain_id)}/${nftData.minted_contract_address}/${nftId}`
 
   const handleOpenOpenSea = () => {
     window.open(nftUrl, '_blank')

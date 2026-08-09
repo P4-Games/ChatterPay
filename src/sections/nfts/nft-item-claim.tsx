@@ -8,7 +8,8 @@ import { Card, Button, Typography } from '@mui/material'
 import { useResponsive } from 'src/hooks/use-responsive'
 
 import { useTranslate } from 'src/locales'
-import { BOT_WAPP_URL, NFT_MARKETPLACE_URL, NFT_IMAGE_REPOSITORY } from 'src/config-global'
+import { BOT_WAPP_URL, NFT_IMAGE_REPOSITORY } from 'src/config-global'
+import { getNftMarketplaceUrl } from 'src/config-chains'
 
 import { varFade } from 'src/components/animate'
 
@@ -26,7 +27,8 @@ export default function NftItemClaim({ nftId, nftData }: NftItemClaimProps) {
   const { t } = useTranslate()
 
   const handleOpenOpenSea = () => {
-    const url = `${NFT_MARKETPLACE_URL}/${nftData.minted_contract_address}/${nftId}`
+    // The NFT may have been minted on a network the app no longer operates on.
+    const url = `${getNftMarketplaceUrl(nftData.chain_id)}/${nftData.minted_contract_address}/${nftId}`
     window.open(url, '_blank')
   }
 
