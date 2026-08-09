@@ -73,7 +73,9 @@ export default function NftItem({ nft }: Props) {
   const linkTrx = `${getNftExplorerUrl(chainId)}/tx/${trxId}`
   const linkMarketplace = `${getNftMarketplaceUrl(chainId)}/${nft.minted_contract_address}/${nftId}`
 
-  const mintUrl = `${UI_BASE_URL}/nfts/mint/${nftId.toString()}`
+  // Token ids repeat across networks, so a shared link has to name the network
+  // its NFT belongs to; without it the link resolves against the active one.
+  const mintUrl = `${UI_BASE_URL}/nfts/mint/${nftId.toString()}${isForeignChain ? `?chainId=${chainId}` : ''}`
   const linkShare = `${NFT_SHARE.replace('MESSAGE', `${t('nfts.mint')}: ${mintUrl}`)}`
 
   const [openMetadata, setOpenMetadata] = useState(false)
