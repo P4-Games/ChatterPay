@@ -62,7 +62,10 @@
         "title": "Profile information",
         "description": "Your personal details, email, and wallet.",
         "cta": "View details",
-        "badge": "View"
+        "badge": {
+          "complete": "Complete",
+          "incomplete": "Incomplete"
+        }
       },
       "security": {
         "title": "Security",
