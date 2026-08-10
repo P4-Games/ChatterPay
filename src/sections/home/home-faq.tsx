@@ -61,6 +61,26 @@ const formatPhoneNumber = (phoneNumber: string) => {
   return `+${countryPhoneCode} ${formattedRest.trim()}`
 }
 
+// An answer may point at another page. The copy carries a {FEES_LINK} placeholder
+// rather than a spelled-out address, so the reader gets something clickable instead
+// of a URL to retype, and the label stays translatable.
+const renderAnswer = (answer: string, answerLink: string) => {
+  const text = answer.replace('{PHONE}', formatPhoneNumber(String(CHATIZALO_PHONE_NUMBER)))
+  const [before, after] = text.split('{FEES_LINK}')
+
+  if (after === undefined) return text
+
+  return (
+    <>
+      {before}
+      <Link component={RouterLink} href={paths.fees} underline='always' color='inherit'>
+        {answerLink || paths.fees}
+      </Link>
+      {after}
+    </>
+  )
+}
+
 export default function HomeFaQ() {
   const { t } = useTranslate()
 
@@ -73,26 +93,6 @@ export default function HomeFaQ() {
       answerLink: t(`home.faq.faqs.faq${index + 1}.answerLink`) || ''
     }
   })
-
-  // An answer may point at another page. The copy carries a {FEES_LINK} placeholder
-  // rather than a spelled-out address, so the reader gets something clickable instead
-  // of a URL to retype, and the label stays translatable.
-  const renderAnswer = (answer: string, answerLink: string) => {
-    const text = answer.replace('{PHONE}', formatPhoneNumber(String(CHATIZALO_PHONE_NUMBER)))
-    const [before, after] = text.split('{FEES_LINK}')
-
-    if (after === undefined) return text
-
-    return (
-      <>
-        {before}
-        <Link component={RouterLink} href={paths.fees} underline='always' color='inherit'>
-          {answerLink || paths.fees}
-        </Link>
-        {after}
-      </>
-    )
-  }
 
   const renderDescription = (
     <Stack spacing={3} sx={{ mb: 10, textAlign: 'center' }}>
