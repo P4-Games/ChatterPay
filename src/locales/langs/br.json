@@ -62,7 +62,10 @@
         "title": "Informações do perfil",
         "description": "Seus dados pessoais, email e carteira.",
         "cta": "Ver detalhes",
-        "badge": "Ver"
+        "badge": {
+          "complete": "Completo",
+          "incomplete": "Incompleto"
+        }
       },
       "security": {
         "title": "Segurança",
