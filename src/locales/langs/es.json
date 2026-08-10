@@ -522,7 +522,7 @@
     "invalid-amount": "Monto inválido",
     "exceeds-balance": "El monto excede el saldo disponible",
     "fetching-quote": "Obteniendo cotización...",
-    "no-quote": "Cotización no disponible para este par"
+    "no-quote": "Estimación no disponible — podés continuar por WhatsApp"
   },
   "balances": {
     "title": "Tu dinero",
