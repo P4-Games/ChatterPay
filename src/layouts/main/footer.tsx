@@ -76,7 +76,7 @@ export default function Footer({ simple }: FooterProps) {
       <Container>
         <Logo sx={{ mb: 1, mx: 'auto' }} />
         <Typography variant='caption' component='div'>
-          © {t('home.footer.all-rights')}
+          © {new Date().getFullYear()} ChatterPay Ltd. {t('home.footer.all-rights')}
           <br />
           {t('home.footer.made-by')}{' '}
           <Link href='https://p4techsolutions.com/'>P4 Tech Solutions</Link>
@@ -185,7 +185,7 @@ export default function Footer({ simple }: FooterProps) {
         </Grid>
 
         <Typography variant='body2' sx={{ mt: 10 }}>
-          © {new Date().getFullYear()}. {t('home.footer.all-rights')}
+          © {new Date().getFullYear()} ChatterPay Ltd. {t('home.footer.all-rights')}
         </Typography>
       </Container>
     </Box>
