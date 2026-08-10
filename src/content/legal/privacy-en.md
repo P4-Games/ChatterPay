@@ -2,7 +2,7 @@
 
 **Version 2.0 | Effective: 10th August 2026**
 
-ChatterPay Ltd., a Cayman Islands exempted company (Registration No. CR-426282), registered office at 68 Fort Street, George Town, PO Box 31726, Grand Cayman KY1-1207, Cayman Islands, is the data controller for the processing described here.
+ChatterPay, a Cayman Islands exempted company (Registration No. CR-426282), registered office at 68 Fort Street, George Town, PO Box 31726, Grand Cayman KY1-1207, Cayman Islands, is the data controller for the processing described here.
 
 This Policy forms part of the ChatterPay Terms of Service. Capitalised terms not defined here have the meaning given in the Terms.
 
@@ -162,7 +162,7 @@ We may update this Policy. We will publish the new version with a version number
 
 ## 14. CONTACT
 
-**ChatterPay Ltd.**
+**ChatterPay**
 68 Fort Street, George Town, PO Box 31726
 Grand Cayman KY1-1207, Cayman Islands
 Registration No. CR-426282

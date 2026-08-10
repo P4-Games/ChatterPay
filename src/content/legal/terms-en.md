@@ -2,7 +2,7 @@
 
 **Version 2.0 | Effective: 10th August 2026**
 
-ChatterPay Ltd., a Cayman Islands exempted company (Registration No. CR-426282), registered office at 68 Fort Street, George Town, PO Box 31726, Grand Cayman KY1-1207, Cayman Islands ("**ChatterPay**", "**we**", "**us**").
+ChatterPay, a Cayman Islands exempted company (Registration No. CR-426282), registered office at 68 Fort Street, George Town, PO Box 31726, Grand Cayman KY1-1207, Cayman Islands ("**ChatterPay**", "**we**", "**us**").
 
 ---
 
@@ -318,7 +318,7 @@ You will indemnify and hold harmless ChatterPay and the persons listed in Sectio
 
 ## 25. CONTACT
 
-**ChatterPay Ltd.**
+**ChatterPay**
 68 Fort Street, George Town, PO Box 31726
 Grand Cayman KY1-1207, Cayman Islands
 Registration No. CR-426282

@@ -2,7 +2,7 @@
 
 **Versão 2.0 | Vigência: 10 de agosto de 2026 | Substitui os Termos e Condições de setembro de 2024**
 
-ChatterPay Ltd., uma exempted company das Ilhas Cayman (Registro n.º CR-426282), com sede em 68 Fort Street, George Town, PO Box 31726, Grand Cayman KY1-1207, Ilhas Cayman ("**ChatterPay**", "**nós**").
+ChatterPay, uma exempted company das Ilhas Cayman (Registro n.º CR-426282), com sede em 68 Fort Street, George Town, PO Box 31726, Grand Cayman KY1-1207, Ilhas Cayman ("**ChatterPay**", "**nós**").
 
 ---
 
@@ -318,7 +318,7 @@ Você indenizará e manterá indene a ChatterPay e as pessoas listadas na Seçã
 
 ## 25. CONTATO
 
-**ChatterPay Ltd.**
+**ChatterPay**
 68 Fort Street, George Town, PO Box 31726
 Grand Cayman KY1-1207, Ilhas Cayman
 Registro n.º CR-426282

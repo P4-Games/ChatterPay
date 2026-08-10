@@ -2,7 +2,7 @@
 
 **Versão 2.0 | Vigência: 10 de agosto de 2026**
 
-A ChatterPay Ltd., exempted company das Ilhas Cayman (Registro n.º CR-426282), com sede em 68 Fort Street, George Town, PO Box 31726, Grand Cayman KY1-1207, Ilhas Cayman, é a controladora do tratamento aqui descrito.
+A ChatterPay, exempted company das Ilhas Cayman (Registro n.º CR-426282), com sede em 68 Fort Street, George Town, PO Box 31726, Grand Cayman KY1-1207, Ilhas Cayman, é a controladora do tratamento aqui descrito.
 
 Esta Política integra os Termos de Serviço da ChatterPay. Os termos iniciados em maiúscula não definidos aqui têm o significado atribuído nos Termos.
 
@@ -162,7 +162,7 @@ Podemos atualizar esta Política. Publicaremos a nova versão com número de ver
 
 ## 14. CONTATO
 
-**ChatterPay Ltd.**
+**ChatterPay**
 68 Fort Street, George Town, PO Box 31726
 Grand Cayman KY1-1207, Ilhas Cayman
 Registro n.º CR-426282

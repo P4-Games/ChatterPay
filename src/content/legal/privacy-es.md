@@ -2,7 +2,7 @@
 
 **Versión 2.0 | Vigencia: 10 de agosto de 2026**
 
-ChatterPay Ltd., una exempted company de las Islas Caimán (Registro N.º CR-426282), con domicilio social en 68 Fort Street, George Town, PO Box 31726, Grand Cayman KY1-1207, Islas Caimán, es el responsable del tratamiento descrito en este documento.
+ChatterPay, una exempted company de las Islas Caimán (Registro N.º CR-426282), con domicilio social en 68 Fort Street, George Town, PO Box 31726, Grand Cayman KY1-1207, Islas Caimán, es el responsable del tratamiento descrito en este documento.
 
 Esta Política forma parte de los Términos del Servicio de ChatterPay. Los términos en mayúscula no definidos aquí tienen el significado dado en los Términos.
 
@@ -162,7 +162,7 @@ Podemos actualizar esta Política. Publicaremos la nueva versión con número de
 
 ## 14. CONTACTO
 
-**ChatterPay Ltd.**
+**ChatterPay**
 68 Fort Street, George Town, PO Box 31726
 Grand Cayman KY1-1207, Islas Caimán
 Registro N.º CR-426282
