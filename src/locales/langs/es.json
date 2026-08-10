@@ -163,7 +163,7 @@
       "contact-us-wapp-msg": "¡Hola! Quiero conocer más sobre Chatterpay!"
     },
     "footer": {
-      "description": "Transfiere criptomonedas fácilmente a través de WhatsApp utilizando nuestra plataforma Web3.",
+      "description": "Envia y recibe crypto a través de WhatsApp",
       "all-rights": "Todos los derechos reservados",
       "made-by": "realizado por",
       "links": {
@@ -185,7 +185,7 @@
     "hero": {
       "title1": "Envía dinero",
       "title2": "con un mensaje",
-      "legend": "Transfiere criptomonedas fácilmente a través de WhatsApp utilizando nuestra plataforma Web3.",
+      "legend": "Envia y recibe crypto a través de WhatsApp",
       "new": {
         "title": "Envía y recibe cripto con WhatsApp",
         "button": "Ir a la app",
