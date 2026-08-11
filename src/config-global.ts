@@ -94,9 +94,11 @@ export const IS_DEVELOPMENT =
   APP_ENV.toLowerCase() === 'development' || APP_ENV.toLowerCase() === 'testing'
 export const BOT_WAPP_URL = `https://api.whatsapp.com/send/?phone=${CHATIZALO_PHONE_NUMBER}&text=MESSAGE&type=phone_number&app_absent=0`
 
+// Where an NFT of the active network is opened. OpenSea dropped testnet support, so the
+// default points at the block explorer, which has its own NFT page. A deployment on a
+// network OpenSea does serve overrides this through the environment variable.
 export const NFT_MARKETPLACE_URL =
-  process.env.NEXT_PUBLIC_NFT_MARKETPLACE_URL ||
-  'https://testnets.opensea.io/assets/arbitrum_sepolia'
+  process.env.NEXT_PUBLIC_NFT_MARKETPLACE_URL || 'https://sepolia.arbiscan.io/nft'
 
 export const NFT_SHARE = 'https://api.whatsapp.com/send/?text=MESSAGE'
 export const STORAGE_KEY_TOKEN = `chatterpay_${APP_ENV}_jwtToken`

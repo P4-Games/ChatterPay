@@ -62,7 +62,10 @@
         "title": "Profile information",
         "description": "Your personal details, email, and wallet.",
         "cta": "View details",
-        "badge": "View"
+        "badge": {
+          "complete": "Complete",
+          "incomplete": "Incomplete"
+        }
       },
       "security": {
         "title": "Security",
@@ -246,7 +249,8 @@
         },
         "faq3": {
           "question": "What are the fees?",
-          "answer": "Opening your account is 100% free, with no maintenance costs. Transaction fees (swap, transfer) vary depending on the operation and network. You can see the full, up-to-date breakdown on our Fees page: chatterpay.net/fees."
+          "answer": "Opening your account is 100% free, with no maintenance costs. Transaction fees (swap, transfer) vary depending on the operation and network. You can see the full, up-to-date breakdown on our {FEES_LINK}.",
+          "answerLink": "Fees page"
         },
         "faq4": {
           "question": "Can I exchange between different tokens?",
@@ -262,7 +266,7 @@
         },
         "faq7": {
           "question": "How can I contact the ChatterPay team?",
-          "answer": "Through the same WhatsApp chat ({PHONE}), you can request support at any time and we will respond as soon as possible."
+          "answer": "You can request support at any time from your ChatterPay chat itself: just write to the bot and we will respond as soon as possible."
         }
       }
     },
@@ -284,69 +288,6 @@
       "cac_old": "app-store CAC",
       "cac_new": "CAC on WhatsApp rails"
     }
-  },
-  "terms": {
-    "title": "Terms and Conditions",
-    "introduction": {
-      "title": "1. Introduction",
-      "description": "Welcome to ChatterPay, a Web3 wallet for WhatsApp. By using our application, you agree to comply with the following Terms and Conditions."
-    },
-    "usage": {
-      "title": "2. Use of ChatterPay",
-      "description": "ChatterPay allows you to send, receive, and manage digital assets within WhatsApp using blockchain technology. You agree that you are responsible for transactions made."
-    },
-    "security": {
-      "title": "3. Security",
-      "description": "You agree to keep your account and private key confidential. ChatterPay is not liable for losses due to unauthorized access."
-    },
-    "privacy_policy": {
-      "title": "4. Privacy Policy",
-      "description": "We respect your privacy. For more information on how we handle your personal data, please refer to our",
-      "link": "Privacy Policy"
-    },
-    "modifications": {
-      "title": "5. Modifications",
-      "description": "ChatterPay reserves the right to modify these Terms and Conditions at any time. Updates will be posted on this page."
-    },
-    "contact": {
-      "title": "6. Contact",
-      "description": "If you have any questions about these Terms and Conditions, please contact us at"
-    },
-    "last_updated": "Last updated:",
-    "date": "August 2026"
-  },
-  "policy": {
-    "title": "Privacy Policy",
-    "introduction": {
-      "title": "1. Introduction",
-      "description": "At ChatterPay, we respect your privacy and are committed to protecting your personal data. This policy outlines how we collect, use, and safeguard your information."
-    },
-    "data_collection": {
-      "title": "2. Data Collection",
-      "description": "We collect personal information such as your name, email address, and transaction details on our platform."
-    },
-    "data_usage": {
-      "title": "3. Data Usage",
-      "description": "We use your information to enhance our services, ensure transaction security, and provide a personalized experience."
-    },
-    "third_party": {
-      "title": "4. Sharing with Third Parties",
-      "description": "We do not share your data with third parties without your consent, except where required by law."
-    },
-    "security": {
-      "title": "5. Security",
-      "description": "We implement advanced security measures to protect your personal data from unauthorized access and attacks."
-    },
-    "modifications": {
-      "title": "6. Modifications",
-      "description": "We reserve the right to modify this Privacy Policy at any time. Changes will be posted on this page."
-    },
-    "contact": {
-      "title": "7. Contact",
-      "description": "If you have any questions about this Privacy Policy, feel free to contact us at"
-    },
-    "last_updated": "Last updated:",
-    "date": "August 2026"
   },
   "fees": {
     "hero": {
@@ -521,7 +462,7 @@
     "invalid-amount": "Invalid amount",
     "exceeds-balance": "Amount exceeds available balance",
     "fetching-quote": "Fetching quote...",
-    "no-quote": "No quote available for this pair"
+    "no-quote": "Estimate unavailable — you can still continue on WhatsApp"
   },
   "balances": {
     "title": "Your money",

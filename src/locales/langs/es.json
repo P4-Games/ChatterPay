@@ -62,7 +62,10 @@
         "title": "Información de perfil",
         "description": "Tus datos personales, correo, wallet.",
         "cta": "Ver detalles",
-        "badge": "Ver"
+        "badge": {
+          "complete": "Completo",
+          "incomplete": "Incompleto"
+        }
       },
       "security": {
         "title": "Seguridad",
@@ -160,7 +163,7 @@
       "contact-us-wapp-msg": "¡Hola! Quiero conocer más sobre Chatterpay!"
     },
     "footer": {
-      "description": "Transfiere criptomonedas fácilmente a través de WhatsApp utilizando nuestra plataforma Web3.",
+      "description": "Envia y recibe crypto a través de WhatsApp",
       "all-rights": "Todos los derechos reservados",
       "made-by": "realizado por",
       "links": {
@@ -182,7 +185,7 @@
     "hero": {
       "title1": "Envía dinero",
       "title2": "con un mensaje",
-      "legend": "Transfiere criptomonedas fácilmente a través de WhatsApp utilizando nuestra plataforma Web3.",
+      "legend": "Envia y recibe crypto a través de WhatsApp. ChatterPay es software de una wallet non-custodial, no un banco, exchange, bróker ni entidad de pago.",
       "new": {
         "title": "Envía y recibe cripto con WhatsApp",
         "button": "Ir a la app",
@@ -246,7 +249,8 @@
         },
         "faq3": {
           "question": "¿Cuáles son las comisiones?",
-          "answer": "Abrir tu cuenta es 100% gratis, sin ningún costo de mantenimiento. Las comisiones por transacción (swap, transferencia) varían según la operación y la red. Podés ver el detalle completo y actualizado en nuestra página de Comisiones: chatterpay.net/fees."
+          "answer": "Abrir tu cuenta es 100% gratis, sin ningún costo de mantenimiento. Las comisiones por transacción (swap, transferencia) varían según la operación y la red. Podés ver el detalle completo y actualizado en nuestra {FEES_LINK}.",
+          "answerLink": "página de Comisiones"
         },
         "faq4": {
           "question": "¿Puedo intercambiar entre diferentes tokens?",
@@ -262,7 +266,7 @@
         },
         "faq7": {
           "question": "¿Cómo puedo contactar al equipo de ChatterPay?",
-          "answer": "A través del mismo chat de WhatsApp ({PHONE}), podes solicitar soporte en cualquier momento y te responderemos lo antes posible."
+          "answer": "Podés pedir soporte en cualquier momento desde tu propio chat de ChatterPay: escribile al bot y te responderemos lo antes posible."
         }
       }
     },
@@ -284,69 +288,6 @@
       "cac_old": "CAC en app stores",
       "cac_new": "CAC en rieles de WhatsApp"
     }
-  },
-  "terms": {
-    "title": "Términos y Condiciones",
-    "introduction": {
-      "title": "1. Introducción",
-      "description": "Bienvenido a ChatterPay, una wallet de Web3 para WhatsApp. Al utilizar nuestra aplicación, aceptas cumplir con los siguientes Términos y Condiciones."
-    },
-    "usage": {
-      "title": "2. Uso de ChatterPay",
-      "description": "ChatterPay te permite enviar, recibir y gestionar activos digitales dentro de WhatsApp utilizando tecnología blockchain. Aceptas que eres responsable de las transacciones realizadas."
-    },
-    "security": {
-      "title": "3. Seguridad",
-      "description": "Te comprometes a mantener la confidencialidad de tu cuenta y clave privada. ChatterPay no se responsabiliza por pérdidas debidas a accesos no autorizados."
-    },
-    "privacy_policy": {
-      "title": "4. Política de Privacidad",
-      "description": "Respetamos tu privacidad. Para más información sobre cómo manejamos tus datos personales, consulta nuestra",
-      "link": "Política de Privacidad"
-    },
-    "modifications": {
-      "title": "5. Modificaciones",
-      "description": "ChatterPay se reserva el derecho de modificar estos Términos y Condiciones en cualquier momento. Las actualizaciones serán publicadas en esta página."
-    },
-    "contact": {
-      "title": "6. Contacto",
-      "description": "Si tienes preguntas sobre estos Términos y Condiciones, contáctanos en"
-    },
-    "last_updated": "Última actualización:",
-    "date": "Agosto 2026"
-  },
-  "policy": {
-    "title": "Política de Privacidad",
-    "introduction": {
-      "title": "1. Introducción",
-      "description": "En ChatterPay, respetamos tu privacidad y estamos comprometidos a proteger tus datos personales. Esta política describe cómo recopilamos, usamos y protegemos tu información."
-    },
-    "data_collection": {
-      "title": "2. Recopilación de Datos",
-      "description": "Recopilamos información personal como tu nombre, dirección de correo electrónico y detalles de las transacciones realizadas en nuestra plataforma."
-    },
-    "data_usage": {
-      "title": "3. Uso de los Datos",
-      "description": "Utilizamos tu información para mejorar nuestros servicios, asegurar la seguridad de las transacciones y ofrecerte una experiencia personalizada."
-    },
-    "third_party": {
-      "title": "4. Compartir con Terceros",
-      "description": "No compartimos tus datos con terceros sin tu consentimiento, excepto cuando sea necesario para cumplir con obligaciones legales."
-    },
-    "security": {
-      "title": "5. Seguridad",
-      "description": "Implementamos medidas de seguridad avanzadas para proteger tus datos personales contra accesos no autorizados y ataques."
-    },
-    "modifications": {
-      "title": "6. Modificaciones",
-      "description": "Nos reservamos el derecho de modificar esta Política de Privacidad en cualquier momento. Las modificaciones serán publicadas en esta página."
-    },
-    "contact": {
-      "title": "7. Contacto",
-      "description": "Si tienes preguntas sobre esta Política de Privacidad, no dudes en contactarnos en"
-    },
-    "last_updated": "Última actualización:",
-    "date": "Agosto 2026"
   },
   "fees": {
     "hero": {
@@ -521,7 +462,7 @@
     "invalid-amount": "Monto inválido",
     "exceeds-balance": "El monto excede el saldo disponible",
     "fetching-quote": "Obteniendo cotización...",
-    "no-quote": "Cotización no disponible para este par"
+    "no-quote": "Estimación no disponible — podés continuar por WhatsApp"
   },
   "balances": {
     "title": "Tu dinero",

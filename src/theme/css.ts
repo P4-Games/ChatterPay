@@ -173,3 +173,29 @@ export const hideScroll = {
     }
   }
 } as const
+
+// ----------------------------------------------------------------------
+
+/**
+ * Slim, unobtrusive scrollbar for panels that only overflow on short screens.
+ * The platform scrollbar (wide, with stepper arrows on Windows/Linux) reads as
+ * chrome inside a dialog; this keeps the area scrollable without that weight.
+ */
+export const thinScroll = {
+  scrollbarWidth: 'thin',
+  scrollbarColor: 'rgba(145, 158, 171, 0.32) transparent',
+  '&::-webkit-scrollbar': {
+    width: 6,
+    height: 6
+  },
+  '&::-webkit-scrollbar-track': {
+    background: 'transparent'
+  },
+  '&::-webkit-scrollbar-thumb': {
+    borderRadius: 8,
+    backgroundColor: 'rgba(145, 158, 171, 0.32)'
+  },
+  '&::-webkit-scrollbar-thumb:hover': {
+    backgroundColor: 'rgba(145, 158, 171, 0.48)'
+  }
+} as const

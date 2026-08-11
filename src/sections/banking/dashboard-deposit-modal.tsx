@@ -23,6 +23,7 @@ import { Copy01Icon, QrCode01Icon } from '@hugeicons/core-free-icons'
 
 import { useTranslate } from 'src/locales'
 import Iconify from 'src/components/iconify'
+import { thinScroll } from 'src/theme/css'
 import { getChainName, getChainLogoUrl, getLayerswapNetwork } from 'src/config-chains'
 
 import LayerswapWidget from 'src/sections/deposit/view/layerswap-widget'
@@ -66,7 +67,15 @@ export default function DashboardDepositModal({ open, onClose, walletAddress }: 
   }
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth='xs' fullWidth>
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      maxWidth='xs'
+      fullWidth
+      // The paper already keeps a 16px margin; the default 64px cap wastes half
+      // a screen of height on short windows and forces the content to scroll.
+      PaperProps={{ sx: { maxHeight: 'calc(100% - 32px)' } }}
+    >
       <DialogTitle sx={{ pb: 1 }}>
         <Stack direction='row' alignItems='center' justifyContent='space-between'>
           <Typography variant='h6'>{t('deposit.title')}</Typography>
@@ -76,7 +85,7 @@ export default function DashboardDepositModal({ open, onClose, walletAddress }: 
         </Stack>
       </DialogTitle>
 
-      <DialogContent sx={{ px: 0, pb: 0, overflowX: 'hidden' }}>
+      <DialogContent sx={{ px: 0, pb: 0, overflowX: 'hidden', ...thinScroll }}>
         <AnimatePresence initial={false} mode='wait'>
           {!showAddress ? (
             <m.div
@@ -115,9 +124,9 @@ export default function DashboardDepositModal({ open, onClose, walletAddress }: 
               exit={{ opacity: 0, x: 16 }}
               transition={transition}
             >
-              <Stack spacing={3} alignItems='center' sx={{ py: 2, px: 4 }}>
-                <Box sx={{ p: 2, bgcolor: '#fff', borderRadius: 2 }}>
-                  <QRCode value={walletAddress} size={200} />
+              <Stack spacing={2} alignItems='center' sx={{ py: 2, px: 4 }}>
+                <Box sx={{ p: 1.5, bgcolor: '#fff', borderRadius: 2 }}>
+                  <QRCode value={walletAddress} size={160} />
                 </Box>
 
                 <Stack spacing={1} sx={{ width: 1 }}>
@@ -138,7 +147,7 @@ export default function DashboardDepositModal({ open, onClose, walletAddress }: 
                   alignItems='center'
                   sx={{
                     width: '100%',
-                    p: 2,
+                    p: 1.5,
                     bgcolor: 'action.selected',
                     borderRadius: 1.5
                   }}
@@ -159,7 +168,7 @@ export default function DashboardDepositModal({ open, onClose, walletAddress }: 
                   </Stack>
                 </Stack>
 
-                <Alert severity='warning' sx={{ width: '100%' }}>
+                <Alert severity='warning' sx={{ width: '100%', py: 0.5 }}>
                   {t('deposit.network-warning')}
                 </Alert>
 

@@ -50,6 +50,34 @@ function RowIcon({ icon }: { icon: string }) {
 }
 
 /**
+ * Round status badge shown at the end of a profile row, same grammar as the
+ * security list, so the hub card and the row agree on what is still missing.
+ * @param {{ color: 'success' | 'warning'; icon: string }} props - Badge colour and icon.
+ * @returns {JSX.Element} Status badge.
+ */
+function RowBadge({ color, icon }: { color: 'success' | 'warning'; icon: string }) {
+  const theme = useTheme()
+
+  return (
+    <Stack
+      alignItems='center'
+      justifyContent='center'
+      sx={{
+        width: 22,
+        height: 22,
+        borderRadius: '50%',
+        bgcolor: alpha(theme.palette[color].main, 0.16),
+        color: `${color}.main`,
+        flexShrink: 0,
+        ml: 1
+      }}
+    >
+      <Iconify icon={icon} width={14} />
+    </Stack>
+  )
+}
+
+/**
  * Profile details list: name, phone, wallets (one per network, copyable) and email.
  * @returns {JSX.Element} Profile detail card.
  */
@@ -58,6 +86,8 @@ export default function ProfileDetail() {
   const theme = useTheme()
   const { user } = useAuthContext()
   const { enqueueSnackbar } = useSnackbar()
+
+  const emailConfigured = !!(user?.email || '').trim()
 
   const handleCopy = async (address: string) => {
     try {
@@ -149,10 +179,15 @@ export default function ProfileDetail() {
               primary={t('user.profile.rows.email')}
               secondary={user?.email || t('common.nodata')}
             />
+            {emailConfigured ? (
+              <RowBadge color='success' icon='eva:checkmark-fill' />
+            ) : (
+              <RowBadge color='warning' icon='eva:alert-circle-fill' />
+            )}
             <Iconify
               icon='eva:arrow-ios-forward-fill'
               width={18}
-              sx={{ color: 'text.secondary' }}
+              sx={{ color: 'text.secondary', ml: 1 }}
             />
           </ListItemButton>
         </List>
