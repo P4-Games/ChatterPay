@@ -20,7 +20,8 @@ import {
 import { useResponsive } from 'src/hooks/use-responsive'
 
 import { useTranslate } from 'src/locales'
-import { NFT_MARKETPLACE_URL, NFT_IMAGE_REPOSITORY } from 'src/config-global'
+import { NFT_IMAGE_REPOSITORY } from 'src/config-global'
+import { getNftMarketplaceUrl } from 'src/config-chains'
 
 import { varFade } from 'src/components/animate'
 
@@ -39,7 +40,8 @@ export default function NftItemShare({ nftId, nftData }: NftItemClaimProps) {
   const [openShare, setOpenShare] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
 
-  const nftUrl = `${NFT_MARKETPLACE_URL}/${nftData.minted_contract_address}/${nftId}`
+  // A shared NFT may have been minted on a network the app no longer operates on.
+  const nftUrl = `${getNftMarketplaceUrl(nftData.chain_id)}/${nftData.minted_contract_address}/${nftId}`
 
   const handleOpenOpenSea = () => {
     window.open(nftUrl, '_blank')
@@ -168,12 +170,10 @@ export default function NftItemShare({ nftId, nftData }: NftItemClaimProps) {
                 }}
                 aria-label={t('nfts.claim.opensea-alt')}
               >
-                <Image
-                  width={24}
-                  height={24}
-                  src='https://storage.googleapis.com/opensea-static/Logomark/Logomark-Blue.svg'
-                  alt={t('nfts.claim.opensea-alt')}
-                />
+                {/* Was a logo loaded from a third-party bucket that now returns 403, so it
+                    rendered broken. A local icon also fits better now that the button may
+                    lead to the network's explorer instead of a marketplace. */}
+                <Icon icon='mdi:image-frame' width={24} height={24} />
               </button>
             </m.div>
           </Box>

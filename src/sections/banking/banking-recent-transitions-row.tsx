@@ -13,7 +13,8 @@ import { useSnackbar } from 'src/components/snackbar'
 import { fDate, fTime } from 'src/utils/format-time'
 
 import { useTranslate } from 'src/locales'
-import { EXPLORER_L2_URL } from 'src/config-global'
+import { EXPLORER_L2_URL, DEFAULT_CHAIN_ID } from 'src/config-global'
+import { getChainName, getExplorerUrl } from 'src/config-chains'
 
 import { HugeiconsIcon } from '@hugeicons/react'
 import {
@@ -32,6 +33,7 @@ import {
   isPolymarketTrx,
   getPolymarketSide,
   getContactData,
+  isIncomingTrx,
   formatMarketSlug,
   formatStepName
 } from './banking-transaction-helpers'
@@ -42,8 +44,6 @@ import type { RowBadge } from './banking-transaction-row-parts'
 import type { ITransaction } from 'src/types/wallet'
 
 // ----------------------------------------------------------------------
-
-const POLYGON_EXPLORER_URL = 'https://polygonscan.com'
 
 function getRowBadge(
   polymarketSide: PolymarketSide | null,
@@ -91,7 +91,8 @@ function getRowBadge(
 }
 
 type Props = {
-  userWallet: string
+  /** Every wallet of the user — the history spans all the networks they used. */
+  userWallets: string[]
   row: ITransaction
   mdUp: boolean
   hideValues: boolean
@@ -105,17 +106,21 @@ type Props = {
  * @returns {JSX.Element} The table row.
  */
 export default function BankingRecentTransitionsRow({
-  userWallet,
+  userWallets,
   row,
   mdUp,
   hideValues,
   tokenLogos
 }: Props) {
   const { t } = useTranslate()
-  const trxReceive: boolean = userWallet === row.wallet_to
+  const trxReceive: boolean = isIncomingTrx(userWallets, row)
   const isPolymarket = isPolymarketTrx(row.type)
   const polymarketSide = isPolymarket ? getPolymarketSide(row) : null
-  const { contactName, contactIdentifier, calculatedAmount } = getContactData(userWallet, row, mdUp)
+  const { contactName, contactIdentifier, calculatedAmount } = getContactData(
+    userWallets,
+    row,
+    mdUp
+  )
 
   const { enqueueSnackbar } = useSnackbar()
   const { copy } = useCopyToClipboard()
@@ -169,11 +174,23 @@ export default function BankingRecentTransitionsRow({
   const isRealHash =
     (bridgeTxHash && bridgeTxHash.startsWith('0x')) ||
     (row.trx_hash && row.trx_hash.startsWith('0x'))
-  const explorerBase = row.chain_id === 534352 ? EXPLORER_L2_URL : POLYGON_EXPLORER_URL
+  // The history spans every network the user operated on, so the explorer comes
+  // from the row's own chain — Polygon for Polymarket rows, the home chain of
+  // that record otherwise. The bridge hash is always on the active home chain.
+  const explorerBase = getExplorerUrl(row.chain_id)
   const trxLink =
     bridgeTxHash && bridgeTxHash.startsWith('0x')
       ? `${EXPLORER_L2_URL}/tx/${bridgeTxHash}`
       : `${explorerBase}/tx/${row.trx_hash}`
+
+  // Only labelled when the row doesn't belong to the active network, so the
+  // common case stays uncluttered.
+  // Polymarket rows are already labelled as such and always live on Polygon, so
+  // tagging them with the network again would be noise.
+  const foreignChainLabel =
+    !isPolymarket && row.chain_id != null && row.chain_id !== DEFAULT_CHAIN_ID
+      ? getChainName(row.chain_id)
+      : null
 
   // Live step label for optimistic (in-flight) records.
   const pendingStepLabel = row.polymarket_pending_step
@@ -306,6 +323,11 @@ export default function BankingRecentTransitionsRow({
         <Typography variant='caption' sx={{ color: 'text.secondary', display: 'block', mt: 0.5 }}>
           {fTime(new Date(row.date))}
         </Typography>
+        {foreignChainLabel && (
+          <Typography variant='caption' sx={{ color: 'text.disabled', display: 'block' }}>
+            {foreignChainLabel}
+          </Typography>
+        )}
       </TableCell>
 
       <TableCell align='right' sx={{ py: 2, pr: 3 }}>
@@ -338,6 +360,7 @@ export default function BankingRecentTransitionsRow({
               )}
               <Box component='span' sx={{ display: 'block', mt: 0.5 }}>
                 {`${fDate(new Date(row.date))} ${fTime(new Date(row.date))}`}
+                {foreignChainLabel ? ` · ${foreignChainLabel}` : ''}
               </Box>
             </>
           }

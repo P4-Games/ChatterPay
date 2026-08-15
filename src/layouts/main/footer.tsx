@@ -12,7 +12,7 @@ import { paths } from 'src/routes/paths'
 import { RouterLink } from 'src/routes/components'
 
 import { useTranslate } from 'src/locales'
-import { _socials, BOT_WAPP_URL, CONTACT_EMAIL } from 'src/config-global'
+import { _socials, BOT_WAPP_URL, CONTACT_EMAIL, IS_TESTNET_HOST } from 'src/config-global'
 
 import Iconify from 'src/components/iconify'
 import Logo, { LogoWithName } from 'src/components/logo'
@@ -42,8 +42,12 @@ export default function Footer({ simple }: FooterProps) {
       headline: t('home.footer.links.explore'),
       children: [
         { name: t('home.footer.links.products'), href: paths.products.root },
-        { name: t('home.footer.links.roadmap'), href: paths.roadmap },
-        { name: t('home.footer.links.development'), href: paths.development }
+        { name: t('home.footer.links.fees'), href: paths.fees },
+        { name: t('home.footer.links.b2b'), href: paths.products.b2b },
+        // "Demo" links out to the dev/testnet site — pointless when already browsing it.
+        ...(IS_TESTNET_HOST
+          ? []
+          : [{ name: t('home.footer.links.development'), href: paths.development }])
       ]
     },
     {
@@ -72,7 +76,7 @@ export default function Footer({ simple }: FooterProps) {
       <Container>
         <Logo sx={{ mb: 1, mx: 'auto' }} />
         <Typography variant='caption' component='div'>
-          © {t('home.footer.all-rights')}
+          © {new Date().getFullYear()} ChatterPay {t('home.footer.all-rights')}
           <br />
           {t('home.footer.made-by')}{' '}
           <Link href='https://p4techsolutions.com/'>P4 Tech Solutions</Link>
@@ -181,7 +185,7 @@ export default function Footer({ simple }: FooterProps) {
         </Grid>
 
         <Typography variant='body2' sx={{ mt: 10 }}>
-          © 2024. {t('home.footer.all-rights')}
+          © {new Date().getFullYear()} ChatterPay {t('home.footer.all-rights')}
         </Typography>
       </Container>
     </Box>

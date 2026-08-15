@@ -6,8 +6,8 @@ import { closeSnackbar, SnackbarProvider as NotistackProvider } from 'notistack'
 import Collapse from '@mui/material/Collapse'
 import IconButton from '@mui/material/IconButton'
 
-import Iconify from '../iconify'
-import { useSettingsContext } from '../settings'
+import Iconify from '../iconify/iconify'
+import { useSettingsContext } from '../settings/context/settings-context'
 import { StyledIcon, StyledNotistack } from './styles'
 
 // ----------------------------------------------------------------------

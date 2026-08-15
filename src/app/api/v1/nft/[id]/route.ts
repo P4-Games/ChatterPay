@@ -32,7 +32,13 @@ export async function GET(request: Request, { params }: { params: IParams }) {
   }
 
   try {
-    const nft: INFT | undefined = await getNftById(params.id)
+    // Token ids repeat across networks, so a shared link may carry the network
+    // it was minted on. Without it, the active network is assumed.
+    const chainIdParam = new URL(request.url).searchParams.get('chainId')
+    const chainId =
+      chainIdParam && !Number.isNaN(Number(chainIdParam)) ? Number(chainIdParam) : undefined
+
+    const nft: INFT | undefined = await getNftById(params.id, chainId)
 
     if (nft) {
       return NextResponse.json(nft)

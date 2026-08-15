@@ -62,7 +62,10 @@
         "title": "Profile information",
         "description": "Your personal details, email, and wallet.",
         "cta": "View details",
-        "badge": "View"
+        "badge": {
+          "complete": "Complete",
+          "incomplete": "Incomplete"
+        }
       },
       "security": {
         "title": "Security",
@@ -147,9 +150,10 @@
       "sign-in": "Web App",
       "about-us": "About Us",
       "products": "Products",
-      "roadmap": "Roadmap",
+      "fees": "Fees",
       "development": "Demo",
-      "b2b": "For business"
+      "b2b": "For business",
+      "testnet-badge": "Testnet"
     },
     "help": {
       "need-help": "Need help?"
@@ -167,7 +171,9 @@
         "about-us": "About us",
         "contact-us": "Contact us",
         "products": "Products",
+        "fees": "Fees",
         "roadmap": "Roadmap",
+        "b2b": "For business",
         "development": "Demo",
         "faqs": "FAQs",
         "legal": "Legal",
@@ -243,7 +249,8 @@
         },
         "faq3": {
           "question": "What are the fees?",
-          "answer": "Opening your account is 100% free, with no maintenance costs. We only charge a fixed transaction fee (swap, transfer) based on network congestion from $0.2 USD to $0.5 USD per transaction."
+          "answer": "Opening your account is 100% free, with no maintenance costs. Transaction fees (swap, transfer) vary depending on the operation and network. You can see the full, up-to-date breakdown on our {FEES_LINK}.",
+          "answerLink": "Fees page"
         },
         "faq4": {
           "question": "Can I exchange between different tokens?",
@@ -259,7 +266,7 @@
         },
         "faq7": {
           "question": "How can I contact the ChatterPay team?",
-          "answer": "Through the same WhatsApp chat ({PHONE}), you can request support at any time and we will respond as soon as possible."
+          "answer": "You can request support at any time from your ChatterPay chat itself: just write to the bot and we will respond as soon as possible."
         }
       }
     },
@@ -282,68 +289,81 @@
       "cac_new": "CAC on WhatsApp rails"
     }
   },
-  "terms": {
-    "title": "Terms and Conditions",
-    "introduction": {
-      "title": "1. Introduction",
-      "description": "Welcome to ChatterPay, a Web3 wallet for WhatsApp. By using our application, you agree to comply with the following Terms and Conditions."
+  "fees": {
+    "hero": {
+      "eyebrow": "Pricing",
+      "title": "Fees",
+      "description": "All ChatterPay fees are deducted in the token you're sending. We cover gas on every supported network, so you never need to hold a native token.",
+      "last_updated": "Last updated:"
     },
-    "usage": {
-      "title": "2. Use of ChatterPay",
-      "description": "ChatterPay allows you to send, receive, and manage digital assets within WhatsApp using blockchain technology. You agree that you are responsible for transactions made."
+    "columns": {
+      "action": "Action",
+      "chatterpay_fee": "ChatterPay Fee",
+      "provider_fees": "Provider Fees",
+      "network": "Network",
+      "send": "Send (same network)",
+      "swap": "Swap"
     },
-    "security": {
-      "title": "3. Security",
-      "description": "You agree to keep your account and private key confidential. ChatterPay is not liable for losses due to unauthorized access."
+    "values": {
+      "zero": "$0",
+      "none": "None",
+      "varies": "Yes, varies",
+      "available": "Available",
+      "coming_soon": "Coming soon",
+      "flat_by_network": "Flat fee, varies by network. See below"
     },
-    "privacy_policy": {
-      "title": "4. Privacy Policy",
-      "description": "We respect your privacy. For more information on how we handle your personal data, please refer to our",
-      "link": "Privacy Policy"
+    "sections": {
+      "free": {
+        "title": "Free",
+        "rows": {
+          "create_wallet": "Creating a wallet",
+          "wallet_maintenance": "Wallet maintenance",
+          "receive_funds": "Receiving funds",
+          "deposits": "Deposits",
+          "create_nft": "Creating NFTs",
+          "copy_nft": "Copying an NFT",
+          "same_chain_contract": "Same-chain contract interactions"
+        }
+      },
+      "charges": {
+        "title": "What we charge",
+        "rows": {
+          "send": "Send",
+          "swap": "Swap",
+          "cross_network": "Cross-network transfer"
+        }
+      },
+      "networks": {
+        "title": "Supported networks",
+        "rows": {
+          "scroll": "Scroll",
+          "cardano": "Cardano"
+        },
+        "other_networks": "Send to +{{total}} networks:",
+        "other_networks_hint": "Available for cross-network transfers, from your Scroll balance, any token to any token. The cross-network transfer fee applies."
+      },
+      "polymarket": {
+        "title": "Polymarket",
+        "rows": {
+          "move_in": "Move funds to Polymarket",
+          "move_out": "Move funds back to your wallet",
+          "place_order": "Place an order"
+        },
+        "notes": {
+          "network": "Polymarket runs on Polygon. Moving funds in or out means moving them between networks, which is why the 0.25% applies in both directions.",
+          "protocol_fee": "ChatterPay charges nothing to place an order. Polymarket applies its own protocol fee at match time. That fee is set by Polymarket, varies by market, and does not go to ChatterPay."
+        }
+      }
     },
-    "modifications": {
-      "title": "5. Modifications",
-      "description": "ChatterPay reserves the right to modify these Terms and Conditions at any time. Updates will be posted on this page."
-    },
-    "contact": {
-      "title": "6. Contact",
-      "description": "If you have any questions about these Terms and Conditions, please contact us at"
-    },
-    "last_updated": "Last updated:",
-    "date": "September 2024"
-  },
-  "policy": {
-    "title": "Privacy Policy",
-    "introduction": {
-      "title": "1. Introduction",
-      "description": "At ChatterPay, we respect your privacy and are committed to protecting your personal data. This policy outlines how we collect, use, and safeguard your information."
-    },
-    "data_collection": {
-      "title": "2. Data Collection",
-      "description": "We collect personal information such as your name, email address, and transaction details on our platform."
-    },
-    "data_usage": {
-      "title": "3. Data Usage",
-      "description": "We use your information to enhance our services, ensure transaction security, and provide a personalized experience."
-    },
-    "third_party": {
-      "title": "4. Sharing with Third Parties",
-      "description": "We do not share your data with third parties without your consent, except where required by law."
-    },
-    "security": {
-      "title": "5. Security",
-      "description": "We implement advanced security measures to protect your personal data from unauthorized access and attacks."
-    },
-    "modifications": {
-      "title": "6. Modifications",
-      "description": "We reserve the right to modify this Privacy Policy at any time. Changes will be posted on this page."
-    },
-    "contact": {
-      "title": "7. Contact",
-      "description": "If you have any questions about this Privacy Policy, feel free to contact us at"
-    },
-    "last_updated": "Last updated:",
-    "date": "September 2024"
+    "disclaimer": {
+      "title": "Disclaimer",
+      "items": {
+        "custody": "ChatterPay does not custody your funds. You control your wallet at all times.",
+        "provider_fees": "ChatterPay fees are fixed. Provider fees are not. Swaps and cross-network transfers route through external liquidity and bridge providers who set their own fees, and those fees change with market and network conditions. We do not control them and they can change without notice.",
+        "gas": "Gas is the native currency required to execute a transaction on each network. ChatterPay pays it on your behalf. Gas costs vary with network congestion.",
+        "subject_to_change": "Fees are subject to change."
+      }
+    }
   },
   "login": {
     "title": "Sign in to ChatterPay",
@@ -385,7 +405,7 @@
     "network-warning": "Any asset sent in other network will be lost",
     "wallet-address": "Wallet Address",
     "copy-address": "Copy Address",
-    "show-address": "See my address on Scroll",
+    "show-address": "See my address on {network}",
     "back-to-deposit": "Back to deposit"
   },
   "withdraw": {
@@ -442,7 +462,7 @@
     "invalid-amount": "Invalid amount",
     "exceeds-balance": "Amount exceeds available balance",
     "fetching-quote": "Fetching quote...",
-    "no-quote": "No quote available for this pair"
+    "no-quote": "Estimate unavailable — you can still continue on WhatsApp"
   },
   "balances": {
     "title": "Your money",
@@ -803,6 +823,20 @@
       "telegram": {
         "title": "Telegram",
         "description": "Access ChatterPay directly from Telegram. Check your wallet and balance without leaving the chat - fast, secure, and private."
+      },
+      "polymarket": {
+        "title": "Polymarket",
+        "description": "Trade prediction markets on real-world events, right from your ChatterPay wallet."
+      }
+    },
+    "polymarket-view": {
+      "status": "🔮 Available now from your ChatterPay wallet.",
+      "cta": "Try Polymarket",
+      "example-markets": {
+        "1": "Will NASA confirm signs of life on Mars by 2030?",
+        "2": "Will BTC close above $100k this month?",
+        "3": "Who wins the next election?",
+        "4": "Will this movie win Best Picture?"
       }
     }
   },
@@ -976,7 +1010,9 @@
     "errors": {
       "title": "Invalid Request",
       "missingAddress": "A wallet address is required. Please provide your address in the URL (?address=0x...).",
-      "invalidAddress": "The wallet address provided is not a valid Ethereum address."
+      "invalidAddress": "The wallet address provided is not a valid Ethereum address.",
+      "unsupportedNetworkTitle": "Deposits not available on this network",
+      "unsupportedNetwork": "External deposits are not available on {network} yet. You can still deposit by sending funds directly to your wallet address."
     }
   },
   "b2b": {

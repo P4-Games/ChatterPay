@@ -29,8 +29,15 @@ import { alpha, useTheme } from '@mui/material/styles'
 
 import { useTranslate } from 'src/locales'
 import Iconify from 'src/components/iconify'
+import { thinScroll } from 'src/theme/css'
 import { fNumber } from 'src/utils/format-number'
-import { BOT_WAPP_URL, TRANSACTION_FEE_USD, LIFI_CHAINS_URL, ENS_LOGO } from 'src/config-global'
+import {
+  BOT_WAPP_URL,
+  TRANSACTION_FEE_USD,
+  LIFI_CHAINS_URL,
+  ENS_LOGO,
+  DEFAULT_CHAIN_ID
+} from 'src/config-global'
 
 import type { IBalance, ITransaction, IToken } from 'src/types/wallet'
 
@@ -240,7 +247,7 @@ export default function DashboardWithdrawModal({
   // Step 2
   const [destType, setDestType] = useState<DestType>('phone')
   const [destination, setDestination] = useState('')
-  const [selectedChainId, setSelectedChainId] = useState(534352)
+  const [selectedChainId, setSelectedChainId] = useState(DEFAULT_CHAIN_ID)
   const [destTokenSymbol, setDestTokenSymbol] = useState('USDT')
   const [tokenSearch, setTokenSearch] = useState('')
 
@@ -318,7 +325,7 @@ export default function DashboardWithdrawModal({
       setIsFeeAdded(false)
       setDestType('phone')
       setDestination('')
-      setSelectedChainId(534352)
+      setSelectedChainId(DEFAULT_CHAIN_ID)
       setDestTokenSymbol('USDT')
       setTokenSearch('')
       setLifiTokens([])
@@ -549,10 +556,10 @@ export default function DashboardWithdrawModal({
       if (detected) {
         setSelectedChainId(detected)
       } else if (trimmed.endsWith('.eth') || isValidEvmAddress(trimmed)) {
-        // ENS / EVM addresses — ensure an EVM chain is selected (default Scroll)
+        // ENS / EVM addresses — ensure an EVM chain is selected (default to the app's home chain)
         setSelectedChainId((prev) => {
           const currentChain = chains.find((c) => c.id === prev)
-          if (currentChain?.addressType !== 'evm') return 534352
+          if (currentChain?.addressType !== 'evm') return DEFAULT_CHAIN_ID
           return prev
         })
       }
@@ -640,7 +647,7 @@ export default function DashboardWithdrawModal({
     if (destType === 'phone') {
       message = `Send ${amountFloat} ${selectedToken} to ${destination.trim()}`
     } else {
-      const isCrossChain = destTokenSymbol !== selectedToken || selectedChainId !== 534352
+      const isCrossChain = destTokenSymbol !== selectedToken || selectedChainId !== DEFAULT_CHAIN_ID
       if (isCrossChain) {
         message = `Send ${amountFloat} ${selectedToken} to ${destTokenSymbol} on ${selectedChain?.name}, ${effectiveAddress}`
       } else {
@@ -679,7 +686,11 @@ export default function DashboardWithdrawModal({
       onClose={onClose}
       maxWidth='sm'
       fullWidth
-      PaperProps={{ sx: { borderRadius: 3, overflow: 'hidden' } }}
+      // The paper already keeps a 16px margin; the default 64px cap wastes half
+      // a screen of height on short windows and forces the content to scroll.
+      PaperProps={{
+        sx: { borderRadius: 3, overflow: 'hidden', maxHeight: 'calc(100% - 32px)' }
+      }}
     >
       {/* Header */}
       <DialogTitle sx={{ pb: 1, pt: 2.5, px: 3 }}>
@@ -701,7 +712,7 @@ export default function DashboardWithdrawModal({
       </DialogTitle>
 
       {/* Step Indicator */}
-      <Box sx={{ px: 3, pb: 2 }}>
+      <Box sx={{ px: 3, pb: 2, flexShrink: 0 }}>
         <Stack direction='row' spacing={1} alignItems='center'>
           {steps.map((s, i) => {
             const isActive = i === step
@@ -768,8 +779,18 @@ export default function DashboardWithdrawModal({
       <Divider />
 
       {/* Content */}
+      {/* The minimum height keeps the dialog from resizing between steps, but it
+          has to stay small enough that the footer button is never pushed out of
+          the paper on short screens. */}
       <DialogContent
-        sx={{ px: 3, py: 0, minHeight: 320, position: 'relative', overflowX: 'hidden' }}
+        sx={{
+          px: 3,
+          py: 0,
+          minHeight: 240,
+          position: 'relative',
+          overflowX: 'hidden',
+          ...thinScroll
+        }}
       >
         <AnimatePresence initial={false} custom={direction} mode='wait'>
           {/* ============ STEP 0: Token & Amount ============ */}
@@ -783,7 +804,7 @@ export default function DashboardWithdrawModal({
               exit='exit'
               transition={{ duration: 0.2, ease: 'easeInOut' }}
             >
-              <Stack spacing={3} sx={{ py: 3 }}>
+              <Stack spacing={2} sx={{ py: 1.5 }}>
                 {/* Token Select */}
                 <Stack spacing={1}>
                   <Typography variant='caption' color='text.secondary' fontWeight={600}>
@@ -959,7 +980,7 @@ export default function DashboardWithdrawModal({
               exit='exit'
               transition={{ duration: 0.2, ease: 'easeInOut' }}
             >
-              <Stack spacing={2.5} sx={{ py: 3 }}>
+              <Stack spacing={2} sx={{ py: 1.5 }}>
                 {/* Recent Sends — hide once a destination is filled */}
                 {recentSends.length > 0 && !destination && (
                   <Stack spacing={1}>
@@ -1420,7 +1441,7 @@ export default function DashboardWithdrawModal({
               exit='exit'
               transition={{ duration: 0.2, ease: 'easeInOut' }}
             >
-              <Stack spacing={2.5} sx={{ py: 3 }}>
+              <Stack spacing={2} sx={{ py: 1.5 }}>
                 <Box
                   sx={{
                     p: 2.5,
@@ -1569,7 +1590,7 @@ export default function DashboardWithdrawModal({
       </DialogContent>
 
       {/* Footer */}
-      <Box sx={{ px: 3, pb: 3, pt: 1 }}>
+      <Box sx={{ px: 3, pb: 3, pt: 1, flexShrink: 0 }}>
         {step < 2 ? (
           <Button
             fullWidth

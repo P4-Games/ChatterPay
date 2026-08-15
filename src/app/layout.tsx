@@ -35,6 +35,11 @@ export const metadata = {
   description: 'Transfer crypto easily through WhatsApp using our Web3 platform.',
   keywords: 'whatsapp,transaction,pago,web3,transferencia,wallet,billetera',
   manifest: '/manifest.json',
+  verification: {
+    other: {
+      'facebook-domain-verification': 'ywdgz18p4lptfbmfpc5ydten1o4s1z'
+    }
+  },
   openGraph: {
     title: 'ChatterPay',
     description: 'Transfer crypto easily through WhatsApp using our Web3 platform.',

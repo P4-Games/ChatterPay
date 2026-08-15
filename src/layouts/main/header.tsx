@@ -1,5 +1,6 @@
 // src/layouts/main/header.tsx
 import Box from '@mui/material/Box'
+import Chip from '@mui/material/Chip'
 import { Stack } from '@mui/system'
 import AppBar from '@mui/material/AppBar'
 import Button from '@mui/material/Button'
@@ -15,6 +16,7 @@ import { useResponsive } from 'src/hooks/use-responsive'
 
 import { bgBlur } from 'src/theme/css'
 import { useTranslate } from 'src/locales'
+import { IS_TESTNET_HOST } from 'src/config-global'
 
 import Iconify from 'src/components/iconify'
 import { LogoWithName } from 'src/components/logo'
@@ -56,15 +58,20 @@ export default function Header() {
       path: paths.products.root
     },
     {
-      title: t('home.header.roadmap'),
-      icon: <Iconify icon='solar:map-bold-duotone' />,
-      path: paths.roadmap
+      title: t('home.header.fees'),
+      icon: <Iconify icon='solar:tag-price-bold-duotone' />,
+      path: paths.fees
     },
-    {
-      title: t('home.header.development'),
-      icon: <Iconify icon='solar:magic-stick-bold-duotone' />,
-      path: paths.development
-    },
+    // "Demo" links out to the dev/testnet site — pointless when already browsing it.
+    ...(IS_TESTNET_HOST
+      ? []
+      : [
+          {
+            title: t('home.header.development'),
+            icon: <Iconify icon='solar:magic-stick-bold-duotone' />,
+            path: paths.development
+          }
+        ]),
     {
       title: t('home.header.b2b'),
       icon: <Iconify icon='solar:case-round-bold-duotone' />,
@@ -109,9 +116,47 @@ export default function Header() {
           }}
         >
           {mdUp ? (
-            <LogoWithName light={useLight} sx={{ height: { xs: 28, md: 40 } }} />
+            <Stack direction='row' alignItems='center' spacing={1.5}>
+              <LogoWithName light={useLight} sx={{ height: { xs: 28, md: 40 } }} />
+              {IS_TESTNET_HOST && (
+                <Chip
+                  label={t('home.header.testnet-badge')}
+                  size='small'
+                  sx={{
+                    height: 22,
+                    fontWeight: 700,
+                    fontSize: 11,
+                    letterSpacing: 0.5,
+                    textTransform: 'uppercase',
+                    color: 'warning.darker',
+                    bgcolor: 'warning.lighter',
+                    border: '1px solid',
+                    borderColor: 'warning.main'
+                  }}
+                />
+              )}
+            </Stack>
           ) : (
-            <NavMobile data={navConfigMobile} />
+            <Stack direction='row' alignItems='center' spacing={1}>
+              <NavMobile data={navConfigMobile} />
+              {IS_TESTNET_HOST && (
+                <Chip
+                  label={t('home.header.testnet-badge')}
+                  size='small'
+                  sx={{
+                    height: 20,
+                    fontWeight: 700,
+                    fontSize: 10,
+                    letterSpacing: 0.5,
+                    textTransform: 'uppercase',
+                    color: 'warning.darker',
+                    bgcolor: 'warning.lighter',
+                    border: '1px solid',
+                    borderColor: 'warning.main'
+                  }}
+                />
+              )}
+            </Stack>
           )}
 
           <Stack direction='row' alignItems='center' spacing={2}>
@@ -135,19 +180,21 @@ export default function Header() {
 
                 <Button
                   component={RouterLink}
-                  href={paths.roadmap}
+                  href={paths.fees}
                   sx={{ fontWeight: 600, color: navColor, transition: 'color 0.3s' }}
                 >
-                  {t('home.header.roadmap')}
+                  {t('home.header.fees')}
                 </Button>
 
-                <Button
-                  component={RouterLink}
-                  href={paths.development}
-                  sx={{ fontWeight: 600, color: navColor, transition: 'color 0.3s' }}
-                >
-                  {t('home.header.development')}
-                </Button>
+                {!IS_TESTNET_HOST && (
+                  <Button
+                    component={RouterLink}
+                    href={paths.development}
+                    sx={{ fontWeight: 600, color: navColor, transition: 'color 0.3s' }}
+                  >
+                    {t('home.header.development')}
+                  </Button>
+                )}
 
                 <Button
                   component={RouterLink}

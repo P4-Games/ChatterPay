@@ -14,6 +14,7 @@ import { alpha, useTheme } from '@mui/material/styles'
 import { paths } from 'src/routes/paths'
 import { useTranslate } from 'src/locales'
 import { CHATIZALO_PHONE_NUMBER } from 'src/config-global'
+import { getChainName, getLayerswapNetwork } from 'src/config-chains'
 
 import Iconify from 'src/components/iconify'
 
@@ -101,6 +102,17 @@ export default function DepositView() {
     )
   }
 
+  // Layerswap does not reach every network. Say so, instead of leaving the page
+  // blank where the widget would have been.
+  const renderUnsupportedNetwork = () => (
+    <Container maxWidth='sm' sx={{ py: { xs: 4, md: 6 } }}>
+      <Alert severity='info' sx={{ borderRadius: 2, boxShadow: theme.customShadows.z8 }}>
+        <AlertTitle>{t('layerswapDeposit.errors.unsupportedNetworkTitle')}</AlertTitle>
+        {t('layerswapDeposit.errors.unsupportedNetwork').replace('{network}', getChainName())}
+      </Alert>
+    </Container>
+  )
+
   // ----------------------------------------------------------------------
 
   return (
@@ -118,6 +130,7 @@ export default function DepositView() {
         {t('layerswapDeposit.title', 'Deposit to ChatterPay')}
       </Typography>
 
+      {!getLayerswapNetwork() && renderUnsupportedNetwork()}
       {isValid ? <LayerswapWidget destAddress={address} /> : renderError()}
 
       <Box sx={{ mt: 2, textAlign: 'center' }}>

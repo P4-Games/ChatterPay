@@ -1,6 +1,9 @@
 import { type NextRequest, NextResponse } from 'next/server'
 
-import { getWalletNfts } from 'src/app/api/services/db/chatterpay-db-service'
+import {
+  getWalletNfts,
+  getUserWalletAddresses
+} from 'src/app/api/services/db/chatterpay-db-service'
 import { validateRequestSecurity } from 'src/app/api/middleware/validators/base-security-validator'
 import { validateWalletCommonsInputs as validateWalletCommonInputs } from 'src/app/api/middleware/validators/wallet-common-inputs-validator'
 
@@ -22,7 +25,16 @@ export async function GET(req: NextRequest, { params }: { params: IParams }) {
   if (securityCheckResult instanceof NextResponse) return securityCheckResult
 
   try {
-    const nfts = (await getWalletNfts(walletId)) || {}
+    // `scope=user` widens the query to every wallet of the owner, so the gallery
+    // can also show NFTs minted on networks the app no longer operates on.
+    const scope = new URL(req.url).searchParams.get('scope')
+    let wallets: string | string[] = walletId
+    if (scope === 'user') {
+      const userWallets = await getUserWalletAddresses(userId)
+      if (userWallets.length > 0) wallets = userWallets
+    }
+
+    const nfts = (await getWalletNfts(wallets)) || {}
     return NextResponse.json(nfts)
   } catch (ex) {
     console.error(ex)

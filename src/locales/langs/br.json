@@ -62,7 +62,10 @@
         "title": "Informações do perfil",
         "description": "Seus dados pessoais, email e carteira.",
         "cta": "Ver detalhes",
-        "badge": "Ver"
+        "badge": {
+          "complete": "Completo",
+          "incomplete": "Incompleto"
+        }
       },
       "security": {
         "title": "Segurança",
@@ -147,9 +150,10 @@
       "sign-in": "Web App",
       "about-us": "Sobre Nós",
       "products": "Produtos",
-      "roadmap": "Roteiro",
+      "fees": "Taxas",
       "development": "Demo",
-      "b2b": "Para empresas"
+      "b2b": "Para empresas",
+      "testnet-badge": "Testnet"
     },
     "help": {
       "need-help": "Precisa de ajuda?"
@@ -167,7 +171,9 @@
         "about-us": "Sobre nós",
         "contact-us": "Contate-nos",
         "products": "Produtos",
+        "fees": "Taxas",
         "roadmap": "Roteiro",
+        "b2b": "Para empresas",
         "development": "Demo",
         "faqs": "FAQs",
         "legal": "Legal",
@@ -243,7 +249,8 @@
         },
         "faq3": {
           "question": "Quais são as taxas?",
-          "answer": "Abrir sua conta é 100% gratuito, sem custos de manutenção. Cobramos apenas uma taxa de transação fixa (swap, transferência) baseada na congestão da rede, de $0,2 USD a $0,5 USD por transação."
+          "answer": "Abrir sua conta é 100% gratuito, sem custos de manutenção. As taxas de transação (swap, transferência) variam de acordo com a operação e a rede. Você pode ver o detalhamento completo e atualizado na nossa {FEES_LINK}.",
+          "answerLink": "página de Taxas"
         },
         "faq4": {
           "question": "Posso trocar entre diferentes tokens?",
@@ -259,7 +266,7 @@
         },
         "faq7": {
           "question": "Como posso entrar em contato com a equipe ChatterPay?",
-          "answer": "Pelo mesmo chat do WhatsApp ({PHONE}), você pode solicitar suporte a qualquer momento e responderemos o mais rápido possível."
+          "answer": "Você pode solicitar suporte a qualquer momento pelo seu próprio chat do ChatterPay: escreva para o bot e responderemos o mais rápido possível."
         }
       }
     },
@@ -282,68 +289,81 @@
       "cac_new": "CAC em trilhas de WhatsApp"
     }
   },
-  "terms": {
-    "title": "Termos e Condições",
-    "introduction": {
-      "title": "1. Introdução",
-      "description": "Bem-vindo ao ChatterPay, uma carteira Web3 para WhatsApp. Ao usar nosso aplicativo, você concorda em cumprir os seguintes Termos e Condições."
+  "fees": {
+    "hero": {
+      "eyebrow": "Preços",
+      "title": "Taxas",
+      "description": "Todas as taxas do ChatterPay são descontadas no token que você está enviando. Cobrimos o gas em todas as redes suportadas, então você nunca precisa ter o token nativo.",
+      "last_updated": "Última atualização:"
     },
-    "usage": {
-      "title": "2. Uso do ChatterPay",
-      "description": "O ChatterPay permite enviar, receber e gerenciar ativos digitais no WhatsApp usando tecnologia blockchain. Você concorda que é responsável pelas transações realizadas."
+    "columns": {
+      "action": "Ação",
+      "chatterpay_fee": "Taxa do ChatterPay",
+      "provider_fees": "Taxas de terceiros",
+      "network": "Rede",
+      "send": "Enviar (mesma rede)",
+      "swap": "Swap"
     },
-    "security": {
-      "title": "3. Segurança",
-      "description": "Você concorda em manter sua conta e chave privada confidenciais. O ChatterPay não se responsabiliza por perdas devido a acesso não autorizado."
+    "values": {
+      "zero": "$0",
+      "none": "Nenhuma",
+      "varies": "Sim, variam",
+      "available": "Disponível",
+      "coming_soon": "Em breve",
+      "flat_by_network": "Taxa fixa, varia por rede. Veja abaixo"
     },
-    "privacy_policy": {
-      "title": "4. Política de Privacidade",
-      "description": "Respeitamos sua privacidade. Para mais informações sobre como lidamos com seus dados pessoais, consulte nossa",
-      "link": "Política de Privacidade"
+    "sections": {
+      "free": {
+        "title": "Grátis",
+        "rows": {
+          "create_wallet": "Criar uma carteira",
+          "wallet_maintenance": "Manutenção da carteira",
+          "receive_funds": "Receber fundos",
+          "deposits": "Depósitos",
+          "create_nft": "Criar NFTs",
+          "copy_nft": "Copiar um NFT",
+          "same_chain_contract": "Interação com contratos na mesma rede"
+        }
+      },
+      "charges": {
+        "title": "O que cobramos",
+        "rows": {
+          "send": "Enviar",
+          "swap": "Swap",
+          "cross_network": "Transferência entre redes"
+        }
+      },
+      "networks": {
+        "title": "Redes suportadas",
+        "rows": {
+          "scroll": "Scroll",
+          "cardano": "Cardano"
+        },
+        "other_networks": "Envie para +{{total}} redes:",
+        "other_networks_hint": "Disponíveis para transferências entre redes, a partir do seu saldo na Scroll, qualquer token para qualquer token. Aplica-se a taxa de transferência entre redes."
+      },
+      "polymarket": {
+        "title": "Polymarket",
+        "rows": {
+          "move_in": "Mover fundos para a Polymarket",
+          "move_out": "Mover fundos de volta para sua carteira",
+          "place_order": "Fazer uma ordem"
+        },
+        "notes": {
+          "network": "A Polymarket funciona na Polygon. Mover fundos para dentro ou para fora significa movê-los entre redes, por isso os 0,25% se aplicam nas duas direções.",
+          "protocol_fee": "O ChatterPay não cobra nada para fazer uma ordem. A Polymarket aplica sua própria taxa de protocolo no momento do match. Essa taxa é definida pela Polymarket, varia por mercado e não vai para o ChatterPay."
+        }
+      }
     },
-    "modifications": {
-      "title": "5. Modificações",
-      "description": "O ChatterPay reserva-se o direito de modificar estes Termos e Condições a qualquer momento. As atualizações serão publicadas nesta página."
-    },
-    "contact": {
-      "title": "6. Contato",
-      "description": "Se você tiver alguma dúvida sobre estes Termos e Condições, entre em contato conosco em"
-    },
-    "last_updated": "Última atualização:",
-    "date": "Setembro 2024"
-  },
-  "policy": {
-    "title": "Política de Privacidade",
-    "introduction": {
-      "title": "1. Introdução",
-      "description": "No ChatterPay, respeitamos sua privacidade e estamos comprometidos em proteger seus dados pessoais. Esta política descreve como coletamos, usamos e protegemos suas informações."
-    },
-    "data_collection": {
-      "title": "2. Coleta de Dados",
-      "description": "Coletamos informações pessoais como seu nome, endereço de email e detalhes de transações em nossa plataforma."
-    },
-    "data_usage": {
-      "title": "3. Uso de Dados",
-      "description": "Usamos suas informações para aprimorar nossos serviços, garantir a segurança das transações e proporcionar uma experiência personalizada."
-    },
-    "third_party": {
-      "title": "4. Compartilhamento com Terceiros",
-      "description": "Não compartilhamos seus dados com terceiros sem seu consentimento, exceto quando exigido por lei."
-    },
-    "security": {
-      "title": "5. Segurança",
-      "description": "Implementamos medidas de segurança avançadas para proteger seus dados pessoais contra acesso não autorizado e ataques."
-    },
-    "modifications": {
-      "title": "6. Modificações",
-      "description": "Reservamo-nos o direito de modificar esta Política de Privacidade a qualquer momento. As alterações serão publicadas nesta página."
-    },
-    "contact": {
-      "title": "7. Contato",
-      "description": "Se você tiver dúvidas sobre esta Política de Privacidade, sinta-se à vontade para nos contatar em"
-    },
-    "last_updated": "Última atualização:",
-    "date": "Setembro 2024"
+    "disclaimer": {
+      "title": "Aviso legal",
+      "items": {
+        "custody": "O ChatterPay não custodia seus fundos. Você controla sua carteira o tempo todo.",
+        "provider_fees": "As taxas do ChatterPay são fixas. As de terceiros não. Swaps e transferências entre redes passam por provedores externos de liquidez e pontes que definem suas próprias taxas, e essas taxas mudam conforme as condições de mercado e de rede. Não as controlamos e elas podem mudar sem aviso prévio.",
+        "gas": "Gas é a moeda nativa necessária para executar uma transação em cada rede. O ChatterPay paga por você. O custo do gas varia com o congestionamento da rede.",
+        "subject_to_change": "As taxas estão sujeitas a alterações."
+      }
+    }
   },
   "login": {
     "title": "Entrar no ChatterPay",
@@ -385,7 +405,7 @@
     "network-warning": "Qualquer ativo enviado em outra rede será perdido",
     "wallet-address": "Endereço da carteira",
     "copy-address": "Copiar endereço",
-    "show-address": "Ver meu endereço na Scroll",
+    "show-address": "Ver meu endereço na {network}",
     "back-to-deposit": "Voltar ao depósito"
   },
   "withdraw": {
@@ -442,7 +462,7 @@
     "invalid-amount": "Valor inválido",
     "exceeds-balance": "O valor excede o saldo disponível",
     "fetching-quote": "Buscando cotação...",
-    "no-quote": "Cotação não disponível para este par"
+    "no-quote": "Estimativa indisponível — você pode continuar pelo WhatsApp"
   },
   "balances": {
     "title": "Seu dinheiro",
@@ -803,6 +823,20 @@
       "telegram": {
         "title": "Telegram",
         "description": "Acesse o ChatterPay diretamente pelo Telegram. Verifique sua carteira e saldo sem sair do chat - rápido, seguro e privado."
+      },
+      "polymarket": {
+        "title": "Polymarket",
+        "description": "Opere mercados de previsão sobre eventos reais, direto da sua carteira ChatterPay."
+      }
+    },
+    "polymarket-view": {
+      "status": "🔮 Já disponível na sua carteira ChatterPay.",
+      "cta": "Experimentar Polymarket",
+      "example-markets": {
+        "1": "A NASA confirma sinais de vida em Marte até 2030?",
+        "2": "O BTC fecha acima de $100k este mês?",
+        "3": "Quem vence a próxima eleição?",
+        "4": "Este filme vence o Oscar?"
       }
     }
   },
@@ -976,7 +1010,9 @@
     "errors": {
       "title": "Solicitação inválida",
       "missingAddress": "Um endereço de carteira é necessário. Forneça seu endereço na URL (?address=0x...).",
-      "invalidAddress": "O endereço de carteira fornecido não é um endereço Ethereum válido."
+      "invalidAddress": "O endereço de carteira fornecido não é um endereço Ethereum válido.",
+      "unsupportedNetworkTitle": "Depósitos indisponíveis nesta rede",
+      "unsupportedNetwork": "Os depósitos externos ainda não estão disponíveis na rede {network}. Você ainda pode depositar enviando fundos diretamente para o endereço da sua carteira."
     }
   },
   "b2b": {

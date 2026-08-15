@@ -4,6 +4,6 @@ import { useGetCommon } from './common'
 
 // ----------------------------------------------------------------------
 
-export function useGetNftById(nftId: string) {
-  return useGetCommon(endpoints.nft.id(nftId))
+export function useGetNftById(nftId: string, chainId?: number) {
+  return useGetCommon(endpoints.nft.id(nftId, chainId))
 }

@@ -98,6 +98,17 @@ function BankingDashboardContent() {
     }
   }, [user])
 
+  // Balances and every operation (deposit / withdraw / swap) stay on the active
+  // network's wallet. The history is the exception: it aggregates all of them, so
+  // the user doesn't lose sight of what they did on networks now retired.
+  const userWallets = useMemo<string[]>(() => {
+    const fromUser: string[] = Array.isArray(user?.wallets)
+      ? user.wallets.map((w: { wallet_proxy: string }) => w.wallet_proxy).filter(Boolean)
+      : []
+    if (fromUser.length) return fromUser
+    return walletAddress ? [walletAddress] : []
+  }, [user, walletAddress])
+
   useEffect(() => {
     if (!user?.id) return
     polymarketAccountStatus().then((res) => {
@@ -113,7 +124,9 @@ function BankingDashboardContent() {
   const {
     data: transactions,
     isLoading: isLoadingTrxs
-  }: { data: ITransaction[]; isLoading: boolean } = useGetWalletTransactionsCached(walletAddress)
+  }: { data: ITransaction[]; isLoading: boolean } = useGetWalletTransactionsCached(walletAddress, {
+    allChains: true
+  })
 
   const { pendingOps, addClaim, failOp, completeOp } = usePolymarketActivity()
 
@@ -262,7 +275,7 @@ function BankingDashboardContent() {
               { id: 'date', label: t('transactions.table-date') },
               { id: '' }
             ]}
-            userWallet={walletAddress || ''}
+            userWallets={userWallets}
             tokenLogos={tokenLogos}
             hideValues={hideValues}
           />

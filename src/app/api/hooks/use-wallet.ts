@@ -41,12 +41,15 @@ export function useGetWalletTransactions(walletId: string) {
 const HEAD_LIMIT = 50
 const TX_CACHE_MAX = 200
 
-const txCacheKey = (walletId: string) => `cp:txs:${walletId}`
+// The cache key carries the scope: the all-chains timeline is a superset of the
+// single-wallet one, so mixing both under the same key would leak rows between them.
+const txCacheKey = (walletId: string, allChains?: boolean) =>
+  `cp:txs:${walletId}${allChains ? ':all' : ''}`
 
-function readTxCache(walletId: string): ITransaction[] {
+function readTxCache(walletId: string, allChains?: boolean): ITransaction[] {
   if (typeof window === 'undefined' || !walletId) return []
   try {
-    const raw = window.localStorage.getItem(txCacheKey(walletId))
+    const raw = window.localStorage.getItem(txCacheKey(walletId, allChains))
     if (!raw) return []
     const parsed = JSON.parse(raw)
     return Array.isArray(parsed) ? parsed : []
@@ -55,10 +58,13 @@ function readTxCache(walletId: string): ITransaction[] {
   }
 }
 
-function writeTxCache(walletId: string, txs: ITransaction[]) {
+function writeTxCache(walletId: string, txs: ITransaction[], allChains?: boolean) {
   if (typeof window === 'undefined' || !walletId) return
   try {
-    window.localStorage.setItem(txCacheKey(walletId), JSON.stringify(txs.slice(0, TX_CACHE_MAX)))
+    window.localStorage.setItem(
+      txCacheKey(walletId, allChains),
+      JSON.stringify(txs.slice(0, TX_CACHE_MAX))
+    )
   } catch {
     // ignore quota / serialization errors — cache is best-effort
   }
@@ -80,14 +86,16 @@ function mergeTransactions(cached: ITransaction[], fresh: ITransaction[]): ITran
   return Array.from(map.values()).sort((a, b) => txTime(b) - txTime(a))
 }
 
-export function useGetWalletTransactionsCached(walletId: string) {
+export function useGetWalletTransactionsCached(walletId: string, opts?: { allChains?: boolean }) {
+  const allChains = !!opts?.allChains
+
   // Synchronous read so the very first render already shows cached history.
-  const initialCache = useMemo(() => readTxCache(walletId), [walletId])
+  const initialCache = useMemo(() => readTxCache(walletId, allChains), [walletId, allChains])
 
   const { data, error, isLoading, isValidating, mutate } = useSWR(
     walletId
       ? [
-          endpoints.dashboard.wallet.transactions(walletId, { limit: HEAD_LIMIT }),
+          endpoints.dashboard.wallet.transactions(walletId, { limit: HEAD_LIMIT, allChains }),
           { headers: getAuthorizationHeader() }
         ]
       : null,
@@ -108,8 +116,8 @@ export function useGetWalletTransactionsCached(walletId: string) {
   const merged = useMemo(() => mergeTransactions(initialCache, fresh), [initialCache, fresh])
 
   useEffect(() => {
-    if (walletId && fresh.length) writeTxCache(walletId, merged)
-  }, [walletId, merged, fresh.length])
+    if (walletId && fresh.length) writeTxCache(walletId, merged, allChains)
+  }, [walletId, merged, fresh.length, allChains])
 
   return useMemo(
     () => ({
@@ -124,9 +132,16 @@ export function useGetWalletTransactionsCached(walletId: string) {
   )
 }
 
-export function useGetWalletNfts(walletId?: string) {
+/**
+ * NFTs of a wallet, or of every wallet of its owner when `allChains` is set —
+ * the latter is what lets the gallery show mints from networks the app no
+ * longer operates on.
+ */
+export function useGetWalletNfts(walletId?: string, opts?: { allChains?: boolean }) {
   return useGetCommon(
-    walletId ? endpoints.dashboard.wallet.nfts.root(walletId) : null,
+    walletId
+      ? endpoints.dashboard.wallet.nfts.root(walletId, { allChains: opts?.allChains })
+      : null,
     walletId ? { headers: getAuthorizationHeader() } : {}
   )
 }

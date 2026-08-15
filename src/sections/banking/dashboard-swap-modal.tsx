@@ -72,7 +72,6 @@ type Props = {
   selectedCurrency?: CurrencyKey
 }
 
-const SCROLL_CHAIN_ID = 534352
 const SWAP_FEE_PERCENT = 0.0025 // 0.25%
 
 // ----------------------------------------------------------------------
@@ -196,8 +195,8 @@ export default function DashboardSwapModal({
       const fromAmount = BigInt(Math.floor(amountFloat * 10 ** sourceDbToken.decimals)).toString()
 
       const params = new URLSearchParams({
-        fromChain: String(SCROLL_CHAIN_ID),
-        toChain: String(SCROLL_CHAIN_ID),
+        fromChain: String(sourceDbToken.chain_id),
+        toChain: String(destDbToken.chain_id),
         fromToken: sourceDbToken.address,
         toToken: destDbToken.address,
         fromAmount,
@@ -637,13 +636,18 @@ export default function DashboardSwapModal({
             </Stack>
           )}
 
-          {/* No quote warning */}
+          {/*
+            No quote notice. The quote is only an estimate: the swap itself is carried out by the
+            bot over WhatsApp, so a missing quote never blocks the operation. It is rendered as a
+            neutral caption (not a warning) to stay in sync with the always-enabled action button.
+            On testnets the quote provider has no coverage, so this is the normal case there.
+          */}
           {!isLoadingQuote &&
             !quote &&
             amountFloat > 0 &&
             destDbToken &&
             sourceDbToken?.address.toLowerCase() !== destDbToken.address.toLowerCase() && (
-              <Typography variant='caption' color='warning.main' textAlign='center'>
+              <Typography variant='caption' color='text.secondary' textAlign='center'>
                 {t('swap.no-quote')}
               </Typography>
             )}
