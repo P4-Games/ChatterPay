@@ -31,6 +31,16 @@ export const handleVercelFreePlanTimeOut =
 
 // environment: client-side
 export const UI_BASE_URL = process.env.NEXT_PUBLIC_UI_URL || 'https://chatterpay.net'
+// Detects the dev/testnet deployment (dev.<domain>) purely from the public site URL,
+// so it works in client components without needing a server-only env var like APP_ENV.
+const uiHostname = (() => {
+  try {
+    return new URL(UI_BASE_URL).hostname.toLowerCase()
+  } catch {
+    return ''
+  }
+})()
+export const IS_TESTNET_HOST = uiHostname === 'localhost' || uiHostname.startsWith('dev.')
 export const USE_MOCK =
   (process.env.NEXT_PUBLIC_USE_MOCK?.toString().toLowerCase() || 'true') === 'true'
 export const ALLOWED_ORIGINS = process.env.NEXT_PUBLIC_ALLOWED_ORIGINS || '*'
@@ -44,9 +54,13 @@ export const EXPLORER_NFT_URL: string =
 export const NFT_IMAGE_REPOSITORY = (
   process.env.NEXT_PUBLIC_NFT_IMAGE_REPOSITORY || 'gcp'
 ).toLowerCase()
+export const GCP_BUCKET_BASE_URL =
+  process.env.NEXT_PUBLIC_GCP_BUCKET_BASE_URL ||
+  'https://storage.googleapis.com/chatterpay_frontend_storage/chatterpay-develop'
 export const CHATIZALO_PHONE_NUMBER = process.env.NEXT_PUBLIC_CHATIZALO_PHONE_NUMBER || 0
 
 export const NETWORK_NAME = process.env.NEXT_PUBLIC_NETWORK || 'Scroll'
+export const DEFAULT_CHAIN_ID = Number(process.env.NEXT_PUBLIC_DEFAULT_CHAIN_ID) || 421614
 const parsedSecurityRecoveryQuestionsCount = parseInt(
   process.env.NEXT_PUBLIC_SECURITY_RECOVERY_QUESTIONS_COUNT ?? '',
   10
@@ -80,9 +94,11 @@ export const IS_DEVELOPMENT =
   APP_ENV.toLowerCase() === 'development' || APP_ENV.toLowerCase() === 'testing'
 export const BOT_WAPP_URL = `https://api.whatsapp.com/send/?phone=${CHATIZALO_PHONE_NUMBER}&text=MESSAGE&type=phone_number&app_absent=0`
 
+// Where an NFT of the active network is opened. OpenSea dropped testnet support, so the
+// default points at the block explorer, which has its own NFT page. A deployment on a
+// network OpenSea does serve overrides this through the environment variable.
 export const NFT_MARKETPLACE_URL =
-  process.env.NEXT_PUBLIC_NFT_MARKETPLACE_URL ||
-  'https://testnets.opensea.io/assets/arbitrum_sepolia'
+  process.env.NEXT_PUBLIC_NFT_MARKETPLACE_URL || 'https://sepolia.arbiscan.io/nft'
 
 export const NFT_SHARE = 'https://api.whatsapp.com/send/?text=MESSAGE'
 export const STORAGE_KEY_TOKEN = `chatterpay_${APP_ENV}_jwtToken`

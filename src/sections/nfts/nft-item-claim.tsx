@@ -1,6 +1,7 @@
 // @ts-nocheck
 import Image from 'next/image'
 import { m } from 'framer-motion'
+import { Icon } from '@iconify/react'
 
 import { Box, Stack } from '@mui/system'
 import { Card, Button, Typography } from '@mui/material'
@@ -8,7 +9,8 @@ import { Card, Button, Typography } from '@mui/material'
 import { useResponsive } from 'src/hooks/use-responsive'
 
 import { useTranslate } from 'src/locales'
-import { BOT_WAPP_URL, NFT_MARKETPLACE_URL, NFT_IMAGE_REPOSITORY } from 'src/config-global'
+import { BOT_WAPP_URL, NFT_IMAGE_REPOSITORY } from 'src/config-global'
+import { getNftMarketplaceUrl } from 'src/config-chains'
 
 import { varFade } from 'src/components/animate'
 
@@ -26,7 +28,8 @@ export default function NftItemClaim({ nftId, nftData }: NftItemClaimProps) {
   const { t } = useTranslate()
 
   const handleOpenOpenSea = () => {
-    const url = `${NFT_MARKETPLACE_URL}/${nftData.minted_contract_address}/${nftId}`
+    // The NFT may have been minted on a network the app no longer operates on.
+    const url = `${getNftMarketplaceUrl(nftData.chain_id)}/${nftData.minted_contract_address}/${nftId}`
     window.open(url, '_blank')
   }
 
@@ -117,12 +120,10 @@ export default function NftItemClaim({ nftId, nftData }: NftItemClaimProps) {
               }}
               aria-label={t('nfts.claim.opensea-alt')}
             >
-              <Image
-                width={40}
-                height={40}
-                src='https://storage.googleapis.com/opensea-static/Logomark/Logomark-Blue.svg'
-                alt={t('nfts.claim.opensea-alt')}
-              />
+              {/* Was a logo loaded from a third-party bucket that now returns 403, so it
+                  rendered broken. A local icon also fits better now that the button may
+                  lead to the network's explorer instead of a marketplace. */}
+              <Icon icon='mdi:image-frame' width={40} height={40} />
             </button>
           </m.div>
         </Card>

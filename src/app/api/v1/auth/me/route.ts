@@ -14,6 +14,7 @@ const defaultUser: jwtPayloadUser = {
   displayName: '',
   wallet: '',
   walletEOA: '',
+  wallets: [],
   email: '',
   photoURL: '',
   phoneNumber: ''
@@ -38,6 +39,7 @@ export async function GET() {
               displayName: user.name,
               wallet: user.wallet,
               walletEOA: user.walletEOA || '',
+              wallets: user.wallets || [],
               email: user.email || '',
               photoURL: user.photo,
               phoneNumber: user.phone_number

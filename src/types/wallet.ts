@@ -56,6 +56,8 @@ export type INFT = {
   total_of_original?: number
   minted_contract_address: string
   metadata: INFTMetadata
+  /** Network the NFT was minted on. Absent on records written before it was tracked. */
+  chain_id?: number
 }
 
 export type ITransaction = {

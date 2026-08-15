@@ -1,0 +1,125 @@
+{
+  "lastUpdated": "2026-08-05T00:00:00",
+  "sections": [
+    {
+      "id": "free",
+      "icon": "solar:gift-bold-duotone",
+      "columns": ["action", "chatterpay_fee"],
+      "rows": [
+        {
+          "id": "create_wallet",
+          "cells": [{ "kind": "label" }, { "kind": "badge", "tone": "success", "value": "zero" }]
+        },
+        {
+          "id": "wallet_maintenance",
+          "cells": [{ "kind": "label" }, { "kind": "badge", "tone": "success", "value": "zero" }]
+        },
+        {
+          "id": "receive_funds",
+          "cells": [{ "kind": "label" }, { "kind": "badge", "tone": "success", "value": "zero" }]
+        },
+        {
+          "id": "create_nft",
+          "cells": [{ "kind": "label" }, { "kind": "badge", "tone": "success", "value": "zero" }]
+        },
+        {
+          "id": "copy_nft",
+          "cells": [{ "kind": "label" }, { "kind": "badge", "tone": "success", "value": "zero" }]
+        },
+        {
+          "id": "same_chain_contract",
+          "cells": [{ "kind": "label" }, { "kind": "badge", "tone": "success", "value": "zero" }]
+        }
+      ]
+    },
+    {
+      "id": "charges",
+      "icon": "solar:tag-price-bold-duotone",
+      "columns": ["action", "chatterpay_fee", "provider_fees"],
+      "rows": [
+        {
+          "id": "send",
+          "cells": [
+            { "kind": "label" },
+            { "kind": "text", "value": "flat_by_network" },
+            { "kind": "badge", "tone": "neutral", "value": "none" }
+          ]
+        },
+        {
+          "id": "swap",
+          "cells": [
+            { "kind": "label" },
+            { "kind": "amount", "value": "0.25%" },
+            { "kind": "badge", "tone": "warning", "value": "varies" }
+          ]
+        },
+        {
+          "id": "cross_network",
+          "cells": [
+            { "kind": "label" },
+            { "kind": "amount", "value": "0.25%" },
+            { "kind": "badge", "tone": "warning", "value": "varies" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "networks",
+      "icon": "solar:global-bold-duotone",
+      "columns": ["network", "send", "swap"],
+      "rows": [
+        {
+          "id": "scroll",
+          "logo": "https://raw.githubusercontent.com/lifinance/types/main/src/assets/icons/chains/scroll.svg",
+          "cells": [
+            { "kind": "label" },
+            { "kind": "amount", "value": "$0.08" },
+            { "kind": "badge", "tone": "success", "value": "available" }
+          ]
+        },
+        {
+          "id": "cardano",
+          "logo": "/assets/icons/networks/cardano.svg",
+          "cells": [
+            { "kind": "label" },
+            { "kind": "badge", "tone": "neutral", "value": "coming_soon" },
+            { "kind": "badge", "tone": "neutral", "value": "coming_soon" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "polymarket",
+      "iconImage": "/assets/icons/polymarket/logo.svg",
+      "columns": ["action", "chatterpay_fee", "provider_fees"],
+      "rows": [
+        {
+          "id": "move_in",
+          "cells": [
+            { "kind": "label" },
+            { "kind": "amount", "value": "0.25%" },
+            { "kind": "badge", "tone": "warning", "value": "varies" }
+          ]
+        },
+        {
+          "id": "move_out",
+          "cells": [
+            { "kind": "label" },
+            { "kind": "amount", "value": "0.25%" },
+            { "kind": "badge", "tone": "warning", "value": "varies" }
+          ]
+        },
+        {
+          "id": "place_order",
+          "cells": [
+            { "kind": "label" },
+            { "kind": "badge", "tone": "success", "value": "zero" },
+            { "kind": "badge", "tone": "warning", "value": "varies" }
+          ]
+        }
+      ],
+      "notes": ["network", "protocol_fee"]
+    }
+  ],
+  "disclaimer": ["custody", "provider_fees", "gas", "subject_to_change"]
+}

@@ -1,10 +1,14 @@
 import { m } from 'framer-motion'
 
 import Box from '@mui/material/Box'
+import Link from '@mui/material/Link'
 import Stack from '@mui/material/Stack'
 import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
 import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material'
+
+import { paths } from 'src/routes/paths'
+import { RouterLink } from 'src/routes/components'
 
 import { useTranslate } from 'src/locales'
 import { CHATIZALO_PHONE_NUMBER } from 'src/config-global'
@@ -57,6 +61,26 @@ const formatPhoneNumber = (phoneNumber: string) => {
   return `+${countryPhoneCode} ${formattedRest.trim()}`
 }
 
+// An answer may point at another page. The copy carries a {FEES_LINK} placeholder
+// rather than a spelled-out address, so the reader gets something clickable instead
+// of a URL to retype, and the label stays translatable.
+const renderAnswer = (answer: string, answerLink: string) => {
+  const text = answer.replace('{PHONE}', formatPhoneNumber(String(CHATIZALO_PHONE_NUMBER)))
+  const [before, after] = text.split('{FEES_LINK}')
+
+  if (after === undefined) return text
+
+  return (
+    <>
+      {before}
+      <Link component={RouterLink} href={paths.fees} underline='always' color='inherit'>
+        {answerLink || paths.fees}
+      </Link>
+      {after}
+    </>
+  )
+}
+
 export default function HomeFaQ() {
   const { t } = useTranslate()
 
@@ -65,7 +89,8 @@ export default function HomeFaQ() {
     return {
       id,
       question: t(`home.faq.faqs.faq${index + 1}.question`) || '',
-      answer: t(`home.faq.faqs.faq${index + 1}.answer`) || ''
+      answer: t(`home.faq.faqs.faq${index + 1}.answer`) || '',
+      answerLink: t(`home.faq.faqs.faq${index + 1}.answerLink`) || ''
     }
   })
 
@@ -104,12 +129,7 @@ export default function HomeFaQ() {
               </AccordionSummary>
 
               <AccordionDetails>
-                <Typography>
-                  {accordion.answer.replace(
-                    '{PHONE}',
-                    formatPhoneNumber(String(CHATIZALO_PHONE_NUMBER))
-                  )}
-                </Typography>
+                <Typography>{renderAnswer(accordion.answer, accordion.answerLink)}</Typography>
               </AccordionDetails>
             </Accordion>
           </m.div>

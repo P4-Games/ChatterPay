@@ -55,10 +55,12 @@ export default function UserHome() {
       color: 'primary',
       title: t('user.cards.profile.title'),
       description: t('user.cards.profile.description'),
+      // The email is the only optional field here, so a missing one is an
+      // incomplete profile, not an action the user has to take.
       status: {
         label: emailConfigured
-          ? t('user.cards.security.badge.configured')
-          : t('user.cards.security.badge.actionRequired'),
+          ? t('user.cards.profile.badge.complete')
+          : t('user.cards.profile.badge.incomplete'),
         color: emailConfigured ? 'success' : 'warning'
       }
     },

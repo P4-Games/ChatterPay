@@ -44,8 +44,10 @@ export default function NftsView() {
     }
   }, [user])
 
+  // Read-only view: show the collection of every network the user ever minted on,
+  // not just the active one. Operating still targets the active network only.
   const { data: nfts, isLoading: loadingNfts }: { data: INFT[]; isLoading: boolean } =
-    useGetWalletNfts(walletAddress)
+    useGetWalletNfts(walletAddress, { allChains: true })
 
   const loading = !walletAddress || loadingNfts
   const safeNfts: INFT[] = loading ? [] : (nfts ?? [])

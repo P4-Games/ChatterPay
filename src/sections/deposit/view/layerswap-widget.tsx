@@ -13,6 +13,7 @@ import { CoinsBitcoinIcon, LinkSquare02Icon } from '@hugeicons/core-free-icons'
 
 import { useTranslate } from 'src/locales'
 import { LAYERSWAP_BASE_URL } from 'src/config-global'
+import { getLayerswapNetwork } from 'src/config-chains'
 
 // ----------------------------------------------------------------------
 
@@ -35,16 +36,25 @@ type Props = {
 //
 // In development / testing environments LAYERSWAP_BASE_URL points at the
 // Layerswap sandbox so no real funds are involved.
+//
+// The destination network follows the active chain. It used to be fixed to
+// Scroll mainnet, which was correct only while that was the chain the app ran
+// on: destAddress is a per-chain proxy, so pairing it with a different network
+// tells the user to deposit at an address that is not theirs there. When
+// Layerswap does not support the active chain, the widget renders nothing
+// rather than offering a deposit that would be misrouted.
 // ----------------------------------------------------------------------
 
 export default function LayerswapWidget({ destAddress, plain = false }: Props) {
   const { t } = useTranslate()
   const theme = useTheme()
 
+  const destNetwork = getLayerswapNetwork()
+
   const layerswapUrl = useMemo(() => {
     const params = new URLSearchParams({
       // Destination config
-      to: 'SCROLL_MAINNET',
+      to: destNetwork,
       toAsset: 'USDT',
       fromAsset: 'USDT',
       destAddress,
@@ -64,9 +74,11 @@ export default function LayerswapWidget({ destAddress, plain = false }: Props) {
     })
 
     return `${LAYERSWAP_BASE_URL}?${params.toString()}`
-  }, [destAddress, t])
+  }, [destAddress, destNetwork, t])
 
   const isDark = theme.palette.mode === 'dark'
+
+  if (!destNetwork) return null
 
   return (
     <Box

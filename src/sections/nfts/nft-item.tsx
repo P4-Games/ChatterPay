@@ -16,7 +16,8 @@ import { alpha, useTheme } from '@mui/material/styles'
 
 import { useTranslate } from 'src/locales'
 import { fDate } from 'src/utils/format-time'
-import { NFT_SHARE, UI_BASE_URL, EXPLORER_NFT_URL, NFT_MARKETPLACE_URL } from 'src/config-global'
+import { NFT_SHARE, UI_BASE_URL, DEFAULT_CHAIN_ID } from 'src/config-global'
+import { getChainName, getNftExplorerUrl, getNftMarketplaceUrl } from 'src/config-chains'
 
 import Iconify from 'src/components/iconify'
 import CustomPopover, { usePopover } from 'src/components/custom-popover'
@@ -64,10 +65,17 @@ export default function NftItem({ nft }: Props) {
 
   const { trxId, nftId, metadata } = nft
 
-  const linkTrx = `${EXPLORER_NFT_URL}/tx/${trxId}`
-  const linkMarketplace = `${NFT_MARKETPLACE_URL}/${nft.minted_contract_address}/${nftId}`
+  // The gallery mixes networks, so explorer and marketplace follow the chain the
+  // NFT was minted on rather than the one the app is currently operating on.
+  const chainId = nft.chain_id
+  const isForeignChain = chainId != null && chainId !== DEFAULT_CHAIN_ID
 
-  const mintUrl = `${UI_BASE_URL}/nfts/mint/${nftId.toString()}`
+  const linkTrx = `${getNftExplorerUrl(chainId)}/tx/${trxId}`
+  const linkMarketplace = `${getNftMarketplaceUrl(chainId)}/${nft.minted_contract_address}/${nftId}`
+
+  // Token ids repeat across networks, so a shared link has to name the network
+  // its NFT belongs to; without it the link resolves against the active one.
+  const mintUrl = `${UI_BASE_URL}/nfts/mint/${nftId.toString()}${isForeignChain ? `?chainId=${chainId}` : ''}`
   const linkShare = `${NFT_SHARE.replace('MESSAGE', `${t('nfts.mint')}: ${mintUrl}`)}`
 
   const [openMetadata, setOpenMetadata] = useState(false)
@@ -194,6 +202,14 @@ export default function NftItem({ nft }: Props) {
           <Box sx={{ position: 'absolute', top: 12, right: 12, ...overlayChipSx }}>
             {editionLabel}
           </Box>
+
+          {/* Only flagged when it isn't the active network — otherwise every card
+              would carry the same redundant label. */}
+          {isForeignChain && (
+            <Box sx={{ position: 'absolute', bottom: 12, left: 12, ...overlayChipSx }}>
+              {getChainName(chainId)}
+            </Box>
+          )}
 
           <Link href={linkMarketplace} target='_blank' rel='noopener' underline='none'>
             <Box
