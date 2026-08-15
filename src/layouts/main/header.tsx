@@ -78,11 +78,6 @@ export default function Header() {
       path: paths.products.b2b
     },
     {
-      title: t('home.header.b2b'),
-      icon: <Iconify icon='solar:case-round-bold-duotone' />,
-      path: paths.products.b2b
-    },
-    {
       title: t('home.header.sign-in'),
       icon: <Iconify icon='solar:wallet-bold-duotone' />,
       path: paths.auth.jwt.login
