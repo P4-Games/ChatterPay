@@ -26,6 +26,7 @@ import Iconify from 'src/components/iconify'
 
 import type { IBalance, CurrencyKey } from 'src/types/wallet'
 import type { TokenPriceData } from 'src/app/api/services/coingecko/coingecko-service'
+import { tokenLogo } from 'src/utils/token-logo'
 
 // ----------------------------------------------------------------------
 
@@ -214,7 +215,7 @@ function CryptoAssetRow({
   const priceChange = price.usd_24h_change
   const hasPriceChange = priceData[balance.token] && priceChange !== 0
   const isPositiveChange = priceChange >= 0
-  const logoUrl = tokenLogos[balance.token]
+  const logoUrl = tokenLogo(tokenLogos, balance.token)
   const hasBalance = balance.balance > 0
 
   const currencyValue = balance.balance_conv[selectedCurrency] || 0

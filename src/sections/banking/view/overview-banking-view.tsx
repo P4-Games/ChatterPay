@@ -36,6 +36,8 @@ import type { ReceiveAddress } from '../dashboard-deposit-modal'
 import BankingRecentTransitions from '../banking-recent-transitions'
 import BankingPolymarketDrawer from '../banking-polymarket-drawer'
 import DashboardPortfolioBalance from '../dashboard-portfolio-balance'
+import { normalizeTicker } from 'src/utils/token-logo'
+
 import { mergePendingOps } from '../pending-op-transaction'
 import { usePolymarketActivity, PolymarketActivityProvider } from '../polymarket-activity-context'
 
@@ -147,12 +149,13 @@ function BankingDashboardContent() {
 
   // Create token logo mapping
   const tokenLogos = useMemo(() => {
+    // Keyed by normalized ticker. The catalogue says `USDT`, transactions carry `usdt`, and nothing
+    // guarantees a third source will not send `UsDt` — so the key is normalized here and the lookup
+    // is normalized at every call site through `tokenLogo()`.
     const logoMap: Record<string, string> = {}
     for (const token of tokens) {
-      logoMap[token.symbol] = token.logo
-      if (token.display_symbol && token.display_symbol !== token.symbol) {
-        logoMap[token.display_symbol] = token.logo
-      }
+      if (token.symbol) logoMap[normalizeTicker(token.symbol)] = token.logo
+      if (token.display_symbol) logoMap[normalizeTicker(token.display_symbol)] = token.logo
     }
     return logoMap
   }, [tokens])

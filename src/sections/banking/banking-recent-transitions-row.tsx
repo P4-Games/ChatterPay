@@ -42,6 +42,7 @@ import { TransactionRowAvatar, TransactionRowActions } from './banking-transacti
 import type { RowBadge } from './banking-transaction-row-parts'
 
 import type { ITransaction } from 'src/types/wallet'
+import { tokenLogo } from 'src/utils/token-logo'
 
 // ----------------------------------------------------------------------
 
@@ -230,7 +231,7 @@ export default function BankingRecentTransitionsRow({
     console.info('SHARE', row.id)
   }
 
-  const tokenLogo = tokenLogos[row.token]
+  const rowTokenLogo = tokenLogo(tokenLogos, row.token)
 
   const renderTokenIcon = (
     <Box
@@ -245,10 +246,10 @@ export default function BankingRecentTransitionsRow({
         flexShrink: 0
       }}
     >
-      {tokenLogo ? (
+      {rowTokenLogo ? (
         <Box
           component='img'
-          src={tokenLogo}
+          src={rowTokenLogo}
           alt={row.token}
           loading='lazy'
           decoding='async'
