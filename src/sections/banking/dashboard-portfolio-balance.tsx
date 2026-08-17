@@ -131,6 +131,70 @@ function StackedTokenIcons({
   )
 }
 
+/**
+ * What the crypto panel shows before the user holds anything.
+ *
+ * A wallet with no assets is the *first* thing every new user sees, so it is worth saying something
+ * rather than rendering an empty container — and worth offering the one action that changes the
+ * situation, which is depositing.
+ */
+function EmptyCryptoState({
+  title,
+  description,
+  actionLabel,
+  onAction,
+  isDark
+}: {
+  title: string
+  description: string
+  actionLabel: string
+  onAction: () => void
+  isDark: boolean
+}) {
+  const theme = useTheme()
+
+  return (
+    <Stack alignItems='center' spacing={1.5} sx={{ px: 3, py: 4, textAlign: 'center' }}>
+      <Box
+        sx={{
+          width: 56,
+          height: 56,
+          borderRadius: '50%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          bgcolor: alpha(theme.palette.primary.main, isDark ? 0.16 : 0.08)
+        }}
+      >
+        <Iconify
+          icon='solar:wallet-money-bold-duotone'
+          width={28}
+          sx={{ color: 'primary.main' }}
+        />
+      </Box>
+
+      <Stack spacing={0.5}>
+        <Typography variant='subtitle2' fontWeight={600}>
+          {title}
+        </Typography>
+        <Typography variant='caption' sx={{ color: 'text.secondary', maxWidth: 260 }}>
+          {description}
+        </Typography>
+      </Stack>
+
+      <Button
+        size='small'
+        variant='outlined'
+        onClick={onAction}
+        startIcon={<Iconify icon='eva:diagonal-arrow-left-down-fill' width={16} />}
+        sx={{ borderRadius: 2, textTransform: 'none' }}
+      >
+        {actionLabel}
+      </Button>
+    </Stack>
+  )
+}
+
 // Inline crypto asset row
 function CryptoAssetRow({
   balance,
@@ -285,9 +349,17 @@ export default function DashboardPortfolioBalance({
   const combinedTotal = totals[selectedCurrency] || 0
   const cryptoOnly = combinedTotal - polymarketConverted
 
-  // Sort balances by USD value for dropdown
+  // Sort balances by USD value for dropdown.
+  //
+  // The filter is not cosmetic. `defaultBalance` in config-global is a placeholder carrying an
+  // empty token name, returned whenever the backend answers nothing, and rendering it produces a
+  // row for a token that does not exist: a blank grey circle (its fallback initials come from an
+  // empty string), no name, and "$0". Dropping it is also what lets the empty state below appear.
   const sortedBalances = useMemo(
-    () => [...balances].sort((a, b) => (b.balance_conv?.usd ?? 0) - (a.balance_conv?.usd ?? 0)),
+    () =>
+      balances
+        .filter((balance) => balance.token?.trim())
+        .sort((a, b) => (b.balance_conv?.usd ?? 0) - (a.balance_conv?.usd ?? 0)),
     [balances]
   )
 
@@ -406,16 +478,26 @@ export default function DashboardPortfolioBalance({
               }
             }}
           >
-            {sortedBalances.map((balance) => (
-              <CryptoAssetRow
-                key={`${balance.network}-${balance.token}`}
-                balance={balance}
-                priceData={priceData}
-                tokenLogos={tokenLogos}
-                hideValues={hideValues}
-                selectedCurrency={selectedCurrency}
+            {sortedBalances.length === 0 ? (
+              <EmptyCryptoState
+                title={t('balances.empty-crypto-title')}
+                description={t('balances.empty-crypto-description')}
+                actionLabel={t('balances.deposit')}
+                onAction={onDepositClick}
+                isDark={isDark}
               />
-            ))}
+            ) : (
+              sortedBalances.map((balance) => (
+                <CryptoAssetRow
+                  key={`${balance.network}-${balance.token}`}
+                  balance={balance}
+                  priceData={priceData}
+                  tokenLogos={tokenLogos}
+                  hideValues={hideValues}
+                  selectedCurrency={selectedCurrency}
+                />
+              ))
+            )}
           </Box>
         </Collapse>
       </Card>

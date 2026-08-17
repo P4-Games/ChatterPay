@@ -1,12 +1,13 @@
 'use client'
 
 import QRCode from 'react-qr-code'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { enqueueSnackbar } from 'notistack'
 import { m, AnimatePresence } from 'framer-motion'
 
 import {
   Box,
+  Chip,
   Stack,
   Alert,
   Avatar,
@@ -24,16 +25,32 @@ import { Copy01Icon, QrCode01Icon } from '@hugeicons/core-free-icons'
 import { useTranslate } from 'src/locales'
 import Iconify from 'src/components/iconify'
 import { thinScroll } from 'src/theme/css'
+import { DEFAULT_CHAIN_ID } from 'src/config-global'
 import { getChainName, getChainLogoUrl, getLayerswapNetwork } from 'src/config-chains'
 
 import LayerswapWidget from 'src/sections/deposit/view/layerswap-widget'
 
 // ----------------------------------------------------------------------
 
+/** A network the user can receive on, and the address that receives there. */
+export type ReceiveAddress = {
+  chainId: number
+  address: string
+}
+
 type Props = {
   open: boolean
   onClose: () => void
   walletAddress: string
+  /**
+   * Addresses on networks other than the active one — today, Cardano.
+   *
+   * They matter because a Cardano address is not an alternative way to reach the same wallet: it
+   * is a different wallet on a different chain, and funds sent to the EVM address never arrive
+   * there. On top of that, Cardano has no Layerswap route and the user pays their own fees, so
+   * seeing and copying this address is the only way they can get started at all.
+   */
+  extraAddresses?: ReceiveAddress[]
 }
 
 const transition = { duration: 0.1, ease: 'easeOut' as const }
@@ -41,9 +58,14 @@ const transition = { duration: 0.1, ease: 'easeOut' as const }
 /**
  * Deposit modal with two views:
  * - Main: multichain deposit via Layerswap (primary CTA)
- * - Address: wallet address + QR on the active network (secondary)
+ * - Address: wallet address + QR, on a network the user picks (secondary)
  */
-export default function DashboardDepositModal({ open, onClose, walletAddress }: Props) {
+export default function DashboardDepositModal({
+  open,
+  onClose,
+  walletAddress,
+  extraAddresses = []
+}: Props) {
   const { t } = useTranslate()
 
   // Layerswap cannot deposit into every network. Where it can't, the widget
@@ -52,17 +74,31 @@ export default function DashboardDepositModal({ open, onClose, walletAddress }: 
   const hasLayerswap = Boolean(getLayerswapNetwork())
   const [showAddress, setShowAddress] = useState(!hasLayerswap)
 
-  // Deposits by address land on the network the app operates on, whichever it is.
-  const networkName = getChainName()
-  const networkLogo = getChainLogoUrl()
+  // The active network first: it is where every other operation happens, so it stays the default.
+  const receiveOptions = useMemo<ReceiveAddress[]>(
+    () => [
+      { chainId: DEFAULT_CHAIN_ID, address: walletAddress },
+      ...extraAddresses.filter((option) => option.address)
+    ],
+    [walletAddress, extraAddresses]
+  )
+  const [selectedChainId, setSelectedChainId] = useState<number>(DEFAULT_CHAIN_ID)
+
+  const selected =
+    receiveOptions.find((option) => option.chainId === selectedChainId) ?? receiveOptions[0]
+  const selectedAddress = selected?.address ?? walletAddress
+
+  const networkName = getChainName(selected?.chainId)
+  const networkLogo = getChainLogoUrl(selected?.chainId)
 
   const handleClose = () => {
     onClose()
     setShowAddress(!hasLayerswap)
+    setSelectedChainId(DEFAULT_CHAIN_ID)
   }
 
   const handleCopyAddress = () => {
-    navigator.clipboard.writeText(walletAddress)
+    navigator.clipboard.writeText(selectedAddress)
     enqueueSnackbar(t('balances.address-copied'), { variant: 'success' })
   }
 
@@ -125,8 +161,25 @@ export default function DashboardDepositModal({ open, onClose, walletAddress }: 
               transition={transition}
             >
               <Stack spacing={2} alignItems='center' sx={{ py: 2, px: 4 }}>
+                {receiveOptions.length > 1 && (
+                  <Stack direction='row' spacing={1} sx={{ width: 1, flexWrap: 'wrap', gap: 1 }}>
+                    {receiveOptions.map((option) => (
+                      <Chip
+                        key={option.chainId}
+                        label={getChainName(option.chainId)}
+                        size='small'
+                        onClick={() => setSelectedChainId(option.chainId)}
+                        color={option.chainId === selected?.chainId ? 'primary' : 'default'}
+                        variant={option.chainId === selected?.chainId ? 'filled' : 'outlined'}
+                      />
+                    ))}
+                  </Stack>
+                )}
+
                 <Box sx={{ p: 1.5, bgcolor: '#fff', borderRadius: 2 }}>
-                  <QRCode value={walletAddress} size={160} />
+                  {/* A Cardano address is over twice as long as an EVM one, so the QR needs more
+                      modules; at 160px they get too small to scan reliably. */}
+                  <QRCode value={selectedAddress} size={selectedAddress.length > 60 ? 200 : 160} />
                 </Box>
 
                 <Stack spacing={1} sx={{ width: 1 }}>
@@ -137,7 +190,7 @@ export default function DashboardDepositModal({ open, onClose, walletAddress }: 
                     variant='body2'
                     sx={{ wordBreak: 'break-all', fontFamily: 'monospace' }}
                   >
-                    {walletAddress}
+                    {selectedAddress}
                   </Typography>
                 </Stack>
 
