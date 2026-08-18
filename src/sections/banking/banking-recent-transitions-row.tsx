@@ -13,8 +13,8 @@ import { useSnackbar } from 'src/components/snackbar'
 import { fDate, fTime } from 'src/utils/format-time'
 
 import { useTranslate } from 'src/locales'
-import { EXPLORER_L2_URL, DEFAULT_CHAIN_ID } from 'src/config-global'
-import { getChainName, getExplorerUrl } from 'src/config-chains'
+import { DEFAULT_CHAIN_ID } from 'src/config-global'
+import { getTxUrl, getChainName, isOnChainTxHash } from 'src/config-chains'
 
 import { HugeiconsIcon } from '@hugeicons/react'
 import {
@@ -42,6 +42,7 @@ import { TransactionRowAvatar, TransactionRowActions } from './banking-transacti
 import type { RowBadge } from './banking-transaction-row-parts'
 
 import type { ITransaction } from 'src/types/wallet'
+import { tokenLogo } from 'src/utils/token-logo'
 
 // ----------------------------------------------------------------------
 
@@ -171,17 +172,17 @@ export default function BankingRecentTransitionsRow({
 
   // For unified polymarket_buy rows the bridge tx hash is the meaningful on-chain link
   const bridgeTxHash = row.polymarket_bridge_tx_hash
+  // A Cardano transaction id is 64 hex characters with no `0x`, so testing for that prefix here
+  // would classify every Cardano transfer as a synthetic id and strip its explorer link.
   const isRealHash =
-    (bridgeTxHash && bridgeTxHash.startsWith('0x')) ||
-    (row.trx_hash && row.trx_hash.startsWith('0x'))
+    isOnChainTxHash(bridgeTxHash, row.chain_id) || isOnChainTxHash(row.trx_hash, row.chain_id)
   // The history spans every network the user operated on, so the explorer comes
   // from the row's own chain — Polygon for Polymarket rows, the home chain of
   // that record otherwise. The bridge hash is always on the active home chain.
-  const explorerBase = getExplorerUrl(row.chain_id)
   const trxLink =
     bridgeTxHash && bridgeTxHash.startsWith('0x')
-      ? `${EXPLORER_L2_URL}/tx/${bridgeTxHash}`
-      : `${explorerBase}/tx/${row.trx_hash}`
+      ? getTxUrl(bridgeTxHash)
+      : getTxUrl(row.trx_hash, row.chain_id)
 
   // Only labelled when the row doesn't belong to the active network, so the
   // common case stays uncluttered.
@@ -230,7 +231,7 @@ export default function BankingRecentTransitionsRow({
     console.info('SHARE', row.id)
   }
 
-  const tokenLogo = tokenLogos[row.token]
+  const rowTokenLogo = tokenLogo(tokenLogos, row.token)
 
   const renderTokenIcon = (
     <Box
@@ -245,10 +246,10 @@ export default function BankingRecentTransitionsRow({
         flexShrink: 0
       }}
     >
-      {tokenLogo ? (
+      {rowTokenLogo ? (
         <Box
           component='img'
-          src={tokenLogo}
+          src={rowTokenLogo}
           alt={row.token}
           loading='lazy'
           decoding='async'
