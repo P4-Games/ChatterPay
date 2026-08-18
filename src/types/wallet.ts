@@ -15,6 +15,14 @@ export type CurrencyKey = 'usd' | 'ars' | 'brl' | 'uyu'
 
 export type IBalances = {
   wallet: string
+  /**
+   * Every address the portfolio covers, when the backend reports them.
+   *
+   * More than one once the user has assets on chains with different address formats. A Cardano
+   * address is not another way to reach the same wallet: it is a different wallet on a different
+   * chain, and funds sent to the EVM one never arrive there.
+   */
+  wallets?: string[]
   balances: IBalance[]
   totals: Record<CurrencyKey, number>
   polymarket?: {
