@@ -477,7 +477,9 @@
     "view-on-explorer": "Ver no Explorer",
     "no-polymarket-cta": "Começar a Prever",
     "predict": "Prever",
-    "predict-subtitle": "Preveja resultados"
+    "predict-subtitle": "Preveja resultados",
+    "empty-crypto-title": "Ainda não tens cripto",
+    "empty-crypto-description": "Faça um depósito para começar a operar da sua carteira."
   },
   "transactions": {
     "title": "Histórico",

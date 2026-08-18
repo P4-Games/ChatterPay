@@ -477,7 +477,9 @@
     "view-on-explorer": "View on Explorer",
     "no-polymarket-cta": "Start Predicting",
     "predict": "Predict",
-    "predict-subtitle": "Predict outcomes"
+    "predict-subtitle": "Predict outcomes",
+    "empty-crypto-title": "No crypto yet",
+    "empty-crypto-description": "Make a deposit to start operating from your wallet."
   },
   "transactions": {
     "title": "History",
