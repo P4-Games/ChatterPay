@@ -12,7 +12,15 @@ const options = {
     version: ServerApiVersion.v1,
     strict: true,
     deprecationErrors: true
-  }
+  },
+  // Retire pooled sockets before the load balancer drops them for being idle.
+  // Without this the driver hands out a socket the other end already closed and
+  // the write fails with EPIPE, which surfaces as a failed login.
+  maxIdleTimeMS: 60_000,
+  connectTimeoutMS: 10_000,
+  socketTimeoutMS: 45_000,
+  retryReads: true,
+  retryWrites: true
 }
 let clientBot: MongoClient
 let clientPromiseBot: any
