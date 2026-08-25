@@ -167,11 +167,7 @@ function EmptyCryptoState({
           bgcolor: alpha(theme.palette.primary.main, isDark ? 0.16 : 0.08)
         }}
       >
-        <Iconify
-          icon='solar:wallet-money-bold-duotone'
-          width={28}
-          sx={{ color: 'primary.main' }}
-        />
+        <Iconify icon='solar:wallet-money-bold-duotone' width={28} sx={{ color: 'primary.main' }} />
       </Box>
 
       <Stack spacing={0.5}>

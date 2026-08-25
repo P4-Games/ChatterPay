@@ -150,8 +150,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(finalResult)
   } catch (ex) {
     console.error(ex)
+    // 500, not 400: reaching here means the request was well formed and something
+    // on our side failed (a dropped database socket, most often). Answering 400
+    // sent callers looking for a bad payload that was never the problem.
     return new NextResponse(JSON.stringify({ error: 'Error in authentication' }), {
-      status: 400,
+      status: 500,
       headers: { 'Content-Type': 'application/json' }
     })
   }
