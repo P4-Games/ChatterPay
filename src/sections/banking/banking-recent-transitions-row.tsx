@@ -306,9 +306,20 @@ export default function BankingRecentTransitionsRow({
         />
         <ListItemText
           primary={message}
-          secondary={pendingStepLabel || contactIdentifier}
+          secondary={
+            <>
+              {pendingStepLabel || contactIdentifier}
+              {foreignChainLabel && (
+                <Box component='span' sx={{ display: 'block', color: 'text.disabled' }}>
+                  {foreignChainLabel}
+                </Box>
+              )}
+            </>
+          }
           secondaryTypographyProps={
-            pendingStepLabel ? { color: 'warning.main', fontWeight: 600 } : undefined
+            pendingStepLabel
+              ? { component: 'span', color: 'warning.main', fontWeight: 600 }
+              : { component: 'span' }
           }
           sx={{ minWidth: 0 }}
         />
@@ -332,11 +343,6 @@ export default function BankingRecentTransitionsRow({
         <Typography variant='caption' sx={{ color: 'text.secondary', display: 'block', mt: 0.5 }}>
           {fTime(new Date(row.date))}
         </Typography>
-        {foreignChainLabel && (
-          <Typography variant='caption' sx={{ color: 'text.disabled', display: 'block' }}>
-            {foreignChainLabel}
-          </Typography>
-        )}
       </TableCell>
 
       <TableCell align='right' sx={{ py: 2, pr: 3 }}>
@@ -367,9 +373,13 @@ export default function BankingRecentTransitionsRow({
               ) : (
                 contactIdentifier
               )}
+              {foreignChainLabel && (
+                <Box component='span' sx={{ display: 'block', color: 'text.disabled' }}>
+                  {foreignChainLabel}
+                </Box>
+              )}
               <Box component='span' sx={{ display: 'block', mt: 0.5 }}>
                 {`${fDate(new Date(row.date))} ${fTime(new Date(row.date))}`}
-                {foreignChainLabel ? ` · ${foreignChainLabel}` : ''}
               </Box>
             </>
           }
