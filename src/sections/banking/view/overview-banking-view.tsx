@@ -296,6 +296,7 @@ function BankingDashboardContent() {
             tableLabels={[
               { id: 'description', label: t('transactions.table-transaction') },
               { id: 'amount', label: t('transactions.table-amount') },
+              { id: 'fee', label: t('transactions.table-fee') },
               { id: 'date', label: t('transactions.table-date') },
               { id: '' }
             ]}
