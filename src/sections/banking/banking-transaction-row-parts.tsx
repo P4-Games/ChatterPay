@@ -1,6 +1,12 @@
+import { useState } from 'react'
+
 import Box from '@mui/material/Box'
 import Avatar from '@mui/material/Avatar'
 import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
+import ButtonBase from '@mui/material/ButtonBase'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import ClickAwayListener from '@mui/material/ClickAwayListener'
 import CircularProgress from '@mui/material/CircularProgress'
 import { Link } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
@@ -8,6 +14,9 @@ import Badge, { badgeClasses } from '@mui/material/Badge'
 
 import Iconify from 'src/components/iconify'
 import Avvvatars from 'avvvatars-react'
+
+import { useTranslate } from 'src/locales'
+import { fNumber } from 'src/utils/format-number'
 
 import { isPolymarketTrx } from './banking-transaction-helpers'
 
@@ -133,5 +142,112 @@ export function TransactionRowActions({
         <Iconify icon='eva:more-vertical-fill' />
       </IconButton>
     </Box>
+  )
+}
+
+// ----------------------------------------------------------------------
+
+type FeeProps = {
+  row: ITransaction
+  /** Compact rendering for the mobile layout, where the fee sits under the amount. */
+  dense?: boolean
+}
+
+/**
+ * The fee a row cost, with a breakdown behind an info affordance.
+ *
+ * Three different things get called "the fee" and only one of them is ours, so the headline shows
+ * the ChatterPay fee and the breakdown names the rest.
+ *
+ * **Hover and tap are handled separately, not together.** A phone fires a synthetic `mouseenter`
+ * on tap, so wiring both to the same state opens the tooltip on enter and closes it again on the
+ * click that follows — a tooltip that is unreachable on exactly the devices that cannot hover. So
+ * pointer devices get hover, touch devices get tap, and the keyboard gets focus.
+ *
+ * @param {FeeProps} props - The row, and whether to render compactly.
+ * @returns {JSX.Element | null} The fee cell, or null when the row cost nothing worth naming.
+ */
+export function TransactionRowFee({ row, dense = false }: FeeProps) {
+  const { t } = useTranslate()
+  const canHover = useMediaQuery('(hover: hover)')
+  const [open, setOpen] = useState(false)
+
+  const fee = row.fee || 0
+  const networkFee = row.network_fee || 0
+  const attachedAda = row.attached_ada || 0
+  if (fee <= 0 && networkFee <= 0 && attachedAda <= 0) return null
+
+  const networkFeeToken = row.network_fee_token || 'ADA'
+
+  const line = (label: string, value: string, note?: string) => (
+    <Box sx={{ '& + &': { mt: 0.75 } }}>
+      <Typography variant='caption' sx={{ display: 'block' }}>
+        {label}: {value}
+      </Typography>
+      {note && (
+        <Typography variant='caption' sx={{ display: 'block', opacity: 0.7 }}>
+          {note}
+        </Typography>
+      )}
+    </Box>
+  )
+
+  const breakdown = (
+    <Box sx={{ py: 0.5 }}>
+      {fee > 0 && line(t('transactions.fee-chatterpay'), `${fNumber(fee)} ${row.token}`)}
+      {networkFee > 0 &&
+        line(
+          t('transactions.fee-network'),
+          `${fNumber(networkFee)} ${networkFeeToken}`,
+          t('transactions.fee-network-covered')
+        )}
+      {attachedAda > 0 &&
+        line(
+          t('transactions.fee-attached'),
+          `${fNumber(attachedAda)} ${networkFeeToken}`,
+          t('transactions.fee-attached-note')
+        )}
+    </Box>
+  )
+
+  return (
+    <ClickAwayListener onClickAway={() => setOpen(false)}>
+      <Box
+        component='span'
+        sx={{ display: 'inline-flex', alignItems: 'center', whiteSpace: 'nowrap' }}
+      >
+        <Tooltip
+          open={open}
+          title={breakdown}
+          arrow
+          placement='top'
+          // Every listener is off: `open` above is the only thing that moves it, and letting MUI
+          // also react to pointer events would reintroduce the tap/hover collision.
+          disableHoverListener
+          disableFocusListener
+          disableTouchListener
+        >
+          <ButtonBase
+            onClick={canHover ? undefined : () => setOpen((value) => !value)}
+            onMouseEnter={canHover ? () => setOpen(true) : undefined}
+            onMouseLeave={canHover ? () => setOpen(false) : undefined}
+            onFocus={() => setOpen(true)}
+            onBlur={() => setOpen(false)}
+            aria-label={t('transactions.fee-details')}
+            sx={{
+              gap: 0.5,
+              borderRadius: 0.75,
+              px: dense ? 0 : 0.5,
+              py: 0.25,
+              color: 'text.secondary',
+              typography: dense ? 'caption' : 'body2'
+            }}
+          >
+            {fee > 0 ? `${fNumber(fee)} ${row.token}` : t('transactions.fee-none')}
+            <Iconify icon='eva:info-outline' width={dense ? 12 : 14} sx={{ opacity: 0.6 }} />
+          </ButtonBase>
+        </Tooltip>
+      </Box>
+    </ClickAwayListener>
   )
 }
