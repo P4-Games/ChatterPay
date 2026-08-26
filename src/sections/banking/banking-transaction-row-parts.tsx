@@ -147,6 +147,32 @@ export function TransactionRowActions({
 
 // ----------------------------------------------------------------------
 
+/**
+ * One line of the fee breakdown: a figure, and optionally what to make of it.
+ *
+ * At module scope because it closes over nothing — rebuilding it on every render would be work
+ * spent to produce the same function, and a new identity each time defeats memoized children.
+ *
+ * @param {string} label - What the figure is.
+ * @param {string} value - The figure, already formatted with its ticker.
+ * @param {string} [note] - A clarification, shown dimmed beneath.
+ * @returns {JSX.Element} The line.
+ */
+function feeLine(label: string, value: string, note?: string) {
+  return (
+    <Box sx={{ '& + &': { mt: 0.75 } }}>
+      <Typography variant='caption' sx={{ display: 'block' }}>
+        {label}: {value}
+      </Typography>
+      {note && (
+        <Typography variant='caption' sx={{ display: 'block', opacity: 0.7 }}>
+          {note}
+        </Typography>
+      )}
+    </Box>
+  )
+}
+
 type FeeProps = {
   row: ITransaction
   /** Compact rendering for the mobile layout, where the fee sits under the amount. */
@@ -188,30 +214,17 @@ export function TransactionRowFee({ row, dense = false }: FeeProps) {
     ...(attachedAda > 0 ? [`${fNumber(attachedAda)} ${networkFeeToken}`] : [])
   ]
 
-  const line = (label: string, value: string, note?: string) => (
-    <Box sx={{ '& + &': { mt: 0.75 } }}>
-      <Typography variant='caption' sx={{ display: 'block' }}>
-        {label}: {value}
-      </Typography>
-      {note && (
-        <Typography variant='caption' sx={{ display: 'block', opacity: 0.7 }}>
-          {note}
-        </Typography>
-      )}
-    </Box>
-  )
-
   const breakdown = (
     <Box sx={{ py: 0.5 }}>
-      {fee > 0 && line(t('transactions.fee-chatterpay'), `${fNumber(fee)} ${row.token}`)}
+      {fee > 0 && feeLine(t('transactions.fee-chatterpay'), `${fNumber(fee)} ${row.token}`)}
       {networkFee > 0 &&
-        line(
+        feeLine(
           t('transactions.fee-network'),
           `${fNumber(networkFee)} ${networkFeeToken}`,
           t('transactions.fee-network-covered')
         )}
       {attachedAda > 0 &&
-        line(
+        feeLine(
           t('transactions.fee-attached'),
           `${fNumber(attachedAda)} ${networkFeeToken}`,
           t('transactions.fee-attached-note')
