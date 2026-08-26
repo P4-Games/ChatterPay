@@ -56,6 +56,14 @@ type Props = {
 const transition = { duration: 0.1, ease: 'easeOut' as const }
 
 /**
+ * The empty default for {@link Props.extraAddresses}, at module scope so it keeps its identity.
+ *
+ * A `= []` default literal mints a new array on every render, and this one feeds the dependency
+ * array of the `useMemo` below — which then recomputed on every render and memoized nothing.
+ */
+const NO_EXTRA_ADDRESSES: ReceiveAddress[] = []
+
+/**
  * Deposit modal with two views:
  * - Main: multichain deposit via Layerswap (primary CTA)
  * - Address: wallet address + QR, on a network the user picks (secondary)
@@ -64,7 +72,7 @@ export default function DashboardDepositModal({
   open,
   onClose,
   walletAddress,
-  extraAddresses = []
+  extraAddresses = NO_EXTRA_ADDRESSES
 }: Props) {
   const { t } = useTranslate()
 
