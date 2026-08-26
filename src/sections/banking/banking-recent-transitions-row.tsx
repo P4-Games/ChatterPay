@@ -38,7 +38,11 @@ import {
   formatStepName
 } from './banking-transaction-helpers'
 import type { PolymarketSide } from './banking-transaction-helpers'
-import { TransactionRowAvatar, TransactionRowActions } from './banking-transaction-row-parts'
+import {
+  TransactionRowAvatar,
+  TransactionRowActions,
+  TransactionRowFee
+} from './banking-transaction-row-parts'
 import type { RowBadge } from './banking-transaction-row-parts'
 
 import type { ITransaction } from 'src/types/wallet'
@@ -320,6 +324,10 @@ export default function BankingRecentTransitionsRow({
       </TableCell>
 
       <TableCell sx={{ py: 2, whiteSpace: 'nowrap' }}>
+        {hideValues ? '***' : <TransactionRowFee row={row} />}
+      </TableCell>
+
+      <TableCell sx={{ py: 2, whiteSpace: 'nowrap' }}>
         <Typography variant='body2'>{fDate(new Date(row.date), 'dd MMM yyyy')}</Typography>
         <Typography variant='caption' sx={{ color: 'text.secondary', display: 'block', mt: 0.5 }}>
           {fTime(new Date(row.date))}
@@ -383,6 +391,11 @@ export default function BankingRecentTransitionsRow({
             primaryTypographyProps={{ typography: 'body2', fontWeight: 600 }}
           />
         </Box>
+        {!hideValues && (
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 0.25 }}>
+            <TransactionRowFee row={row} dense />
+          </Box>
+        )}
       </TableCell>
 
       <TableCell align='right' sx={{ py: 2, pr: 3 }}>
