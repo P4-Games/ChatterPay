@@ -179,6 +179,15 @@ export function TransactionRowFee({ row, dense = false }: FeeProps) {
 
   const networkFeeToken = row.network_fee_token || 'ADA'
 
+  // What actually left the sender on top of nothing: our fee, and — on a token transfer — the ADA
+  // the ledger makes travel with the token. The second is not a charge and the tooltip says so, but
+  // it does leave the wallet, and hiding it behind a hover is how a sender finds out only by
+  // reading the transaction. Both go in the headline; the tooltip explains which is which.
+  const charges = [
+    ...(fee > 0 ? [`${fNumber(fee)} ${row.token}`] : []),
+    ...(attachedAda > 0 ? [`${fNumber(attachedAda)} ${networkFeeToken}`] : [])
+  ]
+
   const line = (label: string, value: string, note?: string) => (
     <Box sx={{ '& + &': { mt: 0.75 } }}>
       <Typography variant='caption' sx={{ display: 'block' }}>
@@ -243,7 +252,26 @@ export function TransactionRowFee({ row, dense = false }: FeeProps) {
               typography: dense ? 'caption' : 'body2'
             }}
           >
-            {fee > 0 ? `${fNumber(fee)} ${row.token}` : t('transactions.fee-none')}
+            {charges.length === 0 ? (
+              t('transactions.fee-none')
+            ) : (
+              // Stacked on the narrow layout: two charges side by side overflow a phone-width cell.
+              <Box
+                component='span'
+                sx={{
+                  display: 'inline-flex',
+                  flexDirection: dense ? 'column' : 'row',
+                  alignItems: dense ? 'flex-end' : 'center',
+                  gap: dense ? 0 : 0.5
+                }}
+              >
+                {charges.map((charge, index) => (
+                  <Box component='span' key={charge}>
+                    {!dense && index > 0 ? `+ ${charge}` : charge}
+                  </Box>
+                ))}
+              </Box>
+            )}
             <Iconify icon='eva:info-outline' width={dense ? 12 : 14} sx={{ opacity: 0.6 }} />
           </ButtonBase>
         </Tooltip>
