@@ -88,7 +88,7 @@ export function getContactData(
   }
 
   // case: Identifier is a wallet
-  if (contactIdentifier.startsWith('0x')) {
+  if (contactIdentifier.startsWith('0x') || contactIdentifier.startsWith('addr')) {
     contactIdentifier = maskAddress(contactIdentifier)
   }
 
