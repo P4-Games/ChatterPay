@@ -25,10 +25,10 @@ import {
 } from '@hugeicons/core-free-icons'
 
 import Iconify from 'src/components/iconify'
-import CustomPopover, { usePopover } from 'src/components/custom-popover'
 import Avvvatars from 'avvvatars-react'
 
 import PolymarketPurchaseDrawer from './polymarket-purchase-drawer'
+import BankingTransactionDetailDrawer from './banking-transaction-detail-drawer'
 import {
   isPolymarketTrx,
   getPolymarketSide,
@@ -202,8 +202,8 @@ export default function BankingRecentTransitionsRow({
     ? formatStepName(row.polymarket_pending_step)
     : null
 
-  const popover = usePopover()
   const [purchaseDrawerOpen, setPurchaseDrawerOpen] = useState(false)
+  const [detailDrawerOpen, setDetailDrawerOpen] = useState(false)
 
   const hasPurchaseDetails =
     isPolymarket &&
@@ -219,21 +219,6 @@ export default function BankingRecentTransitionsRow({
 
   // Mask amount if enabled
   const displayAmount = hideValues ? '***' : calculatedAmount
-
-  const handleDownload = () => {
-    popover.onClose()
-    console.info('DOWNLOAD', row.id)
-  }
-
-  const handlePrint = () => {
-    popover.onClose()
-    console.info('PRINT', row.id)
-  }
-
-  const handleShare = () => {
-    popover.onClose()
-    console.info('SHARE', row.id)
-  }
 
   const rowTokenLogo = tokenLogo(tokenLogos, row.token)
 
@@ -276,19 +261,14 @@ export default function BankingRecentTransitionsRow({
 
   const badge = getRowBadge(polymarketSide, trxReceive, isFailed)
 
-  const detailsTooltip = hasPurchaseDetails
-    ? polymarketSide === 'sell'
-      ? t('transactions.polymarket-order-details')
-      : t('transactions.polymarket-purchase-details')
-    : null
-
+  // A Polymarket purchase has its own panel — the per-step breakdown of a flow this generic one
+  // knows nothing about — so the button leads there for those rows and to the generic detail for
+  // every other.
   const rowActions = (
     <TransactionRowActions
-      detailsTooltip={detailsTooltip}
-      onOpenDetails={() => setPurchaseDrawerOpen(true)}
-      explorerLink={isRealHash ? trxLink : null}
-      popoverOpen={popover.open !== null}
-      onOpenPopover={popover.onOpen}
+      onOpenDetails={() =>
+        hasPurchaseDetails ? setPurchaseDrawerOpen(true) : setDetailDrawerOpen(true)
+      }
       dense={!mdUp}
     />
   )
@@ -418,27 +398,12 @@ export default function BankingRecentTransitionsRow({
     <>
       {mdUp ? renderContentDesktop : renderContentMobile}
 
-      <CustomPopover
-        open={popover.open}
-        onClose={popover.onClose}
-        arrow='right-top'
-        sx={{ width: 160 }}
-      >
-        <MenuItem onClick={handleDownload}>
-          <Iconify icon='eva:cloud-download-fill' />
-          {t('transactions.table-download')}
-        </MenuItem>
-
-        <MenuItem onClick={handlePrint}>
-          <Iconify icon='solar:printer-minimalistic-bold' />
-          {t('transactions.table-print')}
-        </MenuItem>
-
-        <MenuItem onClick={handleShare}>
-          <Iconify icon='solar:share-bold' />
-          {t('transactions.table-share')}
-        </MenuItem>
-      </CustomPopover>
+      <BankingTransactionDetailDrawer
+        open={detailDrawerOpen}
+        onClose={() => setDetailDrawerOpen(false)}
+        row={row}
+        trxReceive={trxReceive}
+      />
 
       {hasPurchaseDetails && (
         <PolymarketPurchaseDrawer
