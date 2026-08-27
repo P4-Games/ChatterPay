@@ -4,6 +4,7 @@ import Box from '@mui/material/Box'
 import Avatar from '@mui/material/Avatar'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
+import Button from '@mui/material/Button'
 import ButtonBase from '@mui/material/ButtonBase'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import ClickAwayListener from '@mui/material/ClickAwayListener'
@@ -94,53 +95,41 @@ export function TransactionRowAvatar({
 // ----------------------------------------------------------------------
 
 type ActionsProps = {
-  detailsTooltip: string | null
   onOpenDetails: VoidFunction
-  explorerLink: string | null
-  popoverOpen: boolean
-  onOpenPopover: (event: React.MouseEvent<HTMLElement>) => void
   dense?: boolean
 }
 
 /**
- * Row action buttons: purchase details, explorer link and the more-menu trigger.
- * @param {ActionsProps} props - Visibility flags and handlers; `detailsTooltip`
- * and `explorerLink` hide their button when null.
- * @returns {JSX.Element} The action button group.
+ * The row's one action: open the detail panel.
+ *
+ * It used to be four — a details button, an explorer link, and a menu holding download, print and
+ * share. The menu's three did nothing at all, and the explorer link belongs with the hash it opens,
+ * which is in the panel. What is left is the button that leads to all of it.
+ *
+ * @param {ActionsProps} props - The handler, and whether to render compactly.
+ * @returns {JSX.Element} The action button.
  */
-export function TransactionRowActions({
-  detailsTooltip,
-  onOpenDetails,
-  explorerLink,
-  popoverOpen,
-  onOpenPopover,
-  dense = false
-}: ActionsProps) {
+export function TransactionRowActions({ onOpenDetails, dense = false }: ActionsProps) {
+  const { t } = useTranslate()
+
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 0.5 }}>
-      {detailsTooltip && (
-        <Tooltip title={detailsTooltip}>
-          <IconButton size='small' onClick={onOpenDetails}>
-            <Iconify icon='eva:info-outline' />
-          </IconButton>
-        </Tooltip>
+    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+      {dense ? (
+        <IconButton size='small' onClick={onOpenDetails} aria-label={t('transactions.detail-open')}>
+          <Iconify icon='eva:chevron-right-fill' />
+        </IconButton>
+      ) : (
+        <Button
+          size='small'
+          variant='outlined'
+          color='inherit'
+          onClick={onOpenDetails}
+          endIcon={<Iconify icon='eva:chevron-right-fill' width={16} />}
+          sx={{ whiteSpace: 'nowrap' }}
+        >
+          {t('transactions.detail-open')}
+        </Button>
       )}
-      {explorerLink && (
-        <Tooltip title='View on Explorer'>
-          <Link href={explorerLink} target='_blank' rel='noopener'>
-            <IconButton size='small'>
-              <Iconify icon='eva:external-link-outline' />
-            </IconButton>
-          </Link>
-        </Tooltip>
-      )}
-      <IconButton
-        color={popoverOpen ? 'inherit' : 'default'}
-        onClick={onOpenPopover}
-        size={dense ? 'small' : 'medium'}
-      >
-        <Iconify icon='eva:more-vertical-fill' />
-      </IconButton>
     </Box>
   )
 }
