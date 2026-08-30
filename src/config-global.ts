@@ -350,3 +350,13 @@ export const _socials = [
     path: 'https://linktr.ee/chatterpay'
   }
 ]
+
+/**
+ * Where users are sent for help and to appeal a suspension.
+ *
+ * Read off `_socials` so there is one place to change the invite, with a literal fallback in case
+ * that entry is ever renamed: a broken support link is worse than a stale one.
+ */
+export const DISCORD_SUPPORT_URL: string =
+  _socials.find((social) => social.value === 'discord')?.path ??
+  'https://discord.com/invite/5VHk28uUeq'

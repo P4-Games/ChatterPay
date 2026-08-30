@@ -387,9 +387,9 @@
   },
   "blocked": {
     "title": "Account suspended",
-    "description": "Your ChatterPay account has been suspended after activity our systems flagged as an attempt to attack the platform. While the suspension is in place you cannot sign in or operate.",
-    "appeal": "If you believe this is a mistake, open a ticket on our Discord and we will gladly review your case.",
-    "open-ticket": "Open a ticket on Discord",
+    "description": "Your account was suspended after activity our systems flagged as an attempt to attack the platform. You cannot sign in or operate while the suspension is in place.",
+    "appeal": "If you believe this is a mistake, open a ticket on Discord and we will review your case.",
+    "open-ticket": "Open a ticket",
     "go-home": "Go to Home"
   },
   "register": {

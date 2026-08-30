@@ -387,9 +387,9 @@
   },
   "blocked": {
     "title": "Conta suspensa",
-    "description": "Sua conta ChatterPay foi suspensa após atividade que nossos sistemas identificaram como uma tentativa de ataque à plataforma. Enquanto a suspensão estiver ativa você não poderá entrar nem operar.",
-    "appeal": "Se você acredita que isso é um engano, abra um ticket no nosso Discord e teremos prazer em analisar seu caso.",
-    "open-ticket": "Abrir um ticket no Discord",
+    "description": "Sua conta foi suspensa após atividade que nossos sistemas identificaram como uma tentativa de ataque à plataforma. Enquanto a suspensão estiver ativa você não poderá entrar nem operar.",
+    "appeal": "Se você acredita que isso é um engano, abra um ticket no Discord e vamos analisar seu caso.",
+    "open-ticket": "Abrir um ticket",
     "go-home": "Ir para o início"
   },
   "register": {
