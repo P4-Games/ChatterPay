@@ -81,6 +81,20 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    // Checked before the code is generated, so a blocked account cannot make us send it a message.
+    if (user.blocked) {
+      return new NextResponse(
+        JSON.stringify({
+          code: 'USER_BLOCKED',
+          error: 'account suspended after activity flagged as an attack on the platform'
+        }),
+        {
+          status: 403,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
     // Generate and store 2FA code
 
     const code: number = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000
