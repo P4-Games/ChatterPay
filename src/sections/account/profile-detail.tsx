@@ -108,7 +108,6 @@ export default function ProfileDetail() {
         ? [
             {
               wallet_proxy: user.wallet,
-              wallet_eoa: user.walletEOA || '',
               chain_id: DEFAULT_CHAIN_ID
             }
           ]
