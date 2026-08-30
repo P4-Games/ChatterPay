@@ -385,6 +385,13 @@
       "code-bot": "Enter this code *{2FA_CODE}* in the Chatterpay app to log in. It is very important that you do not share this information with anyone. If you did not request the code, disregard this message and contact us so we can help you!"
     }
   },
+  "blocked": {
+    "title": "Account suspended",
+    "description": "Your account was suspended after activity our systems flagged as an attempt to attack the platform. You cannot sign in or operate while the suspension is in place.",
+    "appeal": "If you believe this is a mistake, contact us through our support channels and we will review your case.",
+    "open-ticket": "Contact support",
+    "go-home": "Go to Home"
+  },
   "register": {
     "title": "Facilitate seamless payments and transfers through ChatterPay",
     "get-started": "Get started",
