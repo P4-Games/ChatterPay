@@ -32,6 +32,7 @@ export type IAccount = {
    */
   wallets?: IAccountWallet[]
   code?: string
+  blocked?: boolean
   front?: {
     sessions?: UserSession[]
   }
