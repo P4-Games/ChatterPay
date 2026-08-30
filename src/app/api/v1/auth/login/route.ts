@@ -98,7 +98,6 @@ export async function POST(req: NextRequest) {
       id: user.id,
       displayName: user.name || user.phone_number,
       wallet: user.wallet || '',
-      walletEOA: user.walletEOA || '',
       email: user.email || '',
       photoURL: user.photo || '/assets/images/avatars/generic-user.png',
       phoneNumber: user.phone_number || ''

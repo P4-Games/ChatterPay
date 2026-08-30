@@ -63,8 +63,7 @@ export default function ProfileName() {
         email: user.email,
         phone_number: user.phoneNumber,
         photo: user.photoURL,
-        wallet: user.wallet,
-        walletEOA: user.walletEOA
+        wallet: user.wallet
       }
       await updateContact(user.id, userData)
       updateUser({ ...user, displayName: values.displayName })
