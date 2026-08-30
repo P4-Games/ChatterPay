@@ -81,9 +81,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Refuse before a code is generated or a WhatsApp message is sent: a blocked account must not
-    // be able to make the platform send it anything, and the sweep that motivated the block was
-    // hitting this endpoint repeatedly.
+    // Checked before the code is generated, so a blocked account cannot make us send it a message.
     if (user.blocked) {
       return new NextResponse(
         JSON.stringify({

@@ -47,10 +47,8 @@ export async function validateRequestSecurity(
     )
   }
 
-  // 4. Refuse a banned account, whatever its session says. Checked here rather than per route so
-  // an endpoint added later is covered without anyone remembering to opt in. It is a distinct code
-  // from NOT_AUTHORIZED on purpose: the client sends the user to the suspension page instead of
-  // bouncing them back to a login they can never complete.
+  // 4. Refuse a banned account, whatever its session says. A distinct code from NOT_AUTHORIZED so
+  // the client sends the user to the suspension page instead of a login they cannot complete.
   if (await isUserBlocked(userId)) {
     return NextResponse.json(
       { code: 'USER_BLOCKED', error: 'account suspended after activity flagged as an attack' },

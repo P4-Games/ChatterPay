@@ -388,8 +388,8 @@
   "blocked": {
     "title": "Account suspended",
     "description": "Your account was suspended after activity our systems flagged as an attempt to attack the platform. You cannot sign in or operate while the suspension is in place.",
-    "appeal": "If you believe this is a mistake, open a ticket on Discord and we will review your case.",
-    "open-ticket": "Open a ticket",
+    "appeal": "If you believe this is a mistake, contact us through our support channels and we will review your case.",
+    "open-ticket": "Contact support",
     "go-home": "Go to Home"
   },
   "register": {

@@ -139,8 +139,6 @@ export default function JwtLoginView() {
 
         const apiError = getApiError(ex)
 
-        // A suspended account is not a failed attempt to retry, so it leaves the form entirely
-        // rather than showing an alert that invites another try.
         if (apiError.code === 'USER_BLOCKED') {
           router.push(paths.pageBlocked)
           return

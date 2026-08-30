@@ -32,9 +32,6 @@ export async function GET() {
     if (userId) {
       const user = await getUserById(userId)
       if (user?.blocked) {
-        // A session opened before the block was set is still a valid cookie. Answering 403 here is
-        // what makes an already-open tab drop out on its next poll instead of running until the
-        // token expires.
         return NextResponse.json(
           { code: 'USER_BLOCKED', error: 'account suspended after activity flagged as an attack' },
           { status: 403 }

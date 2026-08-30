@@ -8,7 +8,7 @@ import { useOffSetTop } from 'src/hooks/use-off-set-top'
 
 import { bgBlur } from 'src/theme/css'
 import { useTranslate } from 'src/locales'
-import { DISCORD_SUPPORT_URL } from 'src/config-global'
+import { SUPPORT_URL } from 'src/config-global'
 
 import Logo from 'src/components/logo'
 
@@ -48,9 +48,8 @@ export default function HeaderSimple() {
         <Logo />
 
         <Stack direction='row' alignItems='center' spacing={1}>
-          {/* Was `href='#'`, which left the only support affordance on these pages going nowhere. */}
           <Link
-            href={DISCORD_SUPPORT_URL}
+            href={SUPPORT_URL}
             target='_blank'
             rel='noopener noreferrer'
             color='inherit'

@@ -44,8 +44,6 @@ export async function POST(req: NextRequest) {
       return notAuthorized()
     }
 
-    // A blocked account does not get its session renewed, so a block set mid-session is not
-    // outlived by a cookie that keeps sliding forward.
     if (await isUserBlocked(userId)) {
       return NextResponse.json(
         { code: 'USER_BLOCKED', error: 'account suspended after activity flagged as an attack' },

@@ -351,12 +351,6 @@ export const _socials = [
   }
 ]
 
-/**
- * Where users are sent for help and to appeal a suspension.
- *
- * Read off `_socials` so there is one place to change the invite, with a literal fallback in case
- * that entry is ever renamed: a broken support link is worse than a stale one.
- */
-export const DISCORD_SUPPORT_URL: string =
-  _socials.find((social) => social.value === 'discord')?.path ??
-  'https://discord.com/invite/5VHk28uUeq'
+/** Where users are sent for help and to appeal a suspension. */
+export const SUPPORT_URL: string =
+  _socials.find((social) => social.value === 'linktree')?.path ?? ''

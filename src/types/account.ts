@@ -32,11 +32,6 @@ export type IAccount = {
    */
   wallets?: IAccountWallet[]
   code?: string
-  /**
-   * Whether the account is banned from operating. Set by hand on the record of an account caught
-   * abusing the API. Absent on every user written before the field existed, so only an explicit
-   * `true` blocks anyone.
-   */
   blocked?: boolean
   front?: {
     sessions?: UserSession[]

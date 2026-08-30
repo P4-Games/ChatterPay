@@ -36,9 +36,6 @@ axiosInstance.interceptors.response.use(
       return Promise.reject(error)
     }
 
-    // A suspension can land mid-session, so it has to be handled wherever the app happens to be
-    // rather than only on the login form. Handled here, one already-open tab drops onto the
-    // suspension page on its next request instead of showing an unexplained error.
     if (error.response?.status === 403 && error.response?.data?.code === 'USER_BLOCKED') {
       if (typeof window !== 'undefined' && window.location.pathname !== paths.pageBlocked) {
         window.location.href = paths.pageBlocked

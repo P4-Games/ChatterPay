@@ -58,8 +58,6 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Checked before the code, so a blocked account is told why rather than being left guessing
-    // at an "invalid code" it can never get right.
     if (user.blocked) {
       return new NextResponse(
         JSON.stringify({

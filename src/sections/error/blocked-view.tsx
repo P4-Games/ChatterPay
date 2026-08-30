@@ -10,7 +10,7 @@ import { RouterLink } from 'src/routes/components'
 
 import { useTranslate } from 'src/locales'
 import CompactLayout from 'src/layouts/compact'
-import { DISCORD_SUPPORT_URL } from 'src/config-global'
+import { SUPPORT_URL } from 'src/config-global'
 import { ForbiddenIllustration } from 'src/assets/illustrations'
 
 import Iconify from 'src/components/iconify'
@@ -18,19 +18,6 @@ import { varBounce, MotionContainer } from 'src/components/animate'
 
 // ----------------------------------------------------------------------
 
-/**
- * Shown to an account that has been suspended for activity flagged as an attack on the platform.
- *
- * It is a page of its own rather than an alert on the login form because the suspension is not a
- * failed attempt the user can retry: the form would invite them to keep trying a login that can
- * never succeed. The Discord ticket is the one action left, so it is the primary button.
- *
- * It carries more copy than the other error views and has two buttons instead of one, and
- * `CompactLayout` centres its children inside a `100vh` box with 96px of padding while a fixed
- * 80px header overlays the top. At the 403 view's proportions the buttons landed below the fold on
- * a short viewport, so the heading, the illustration and the vertical rhythm are all a step
- * smaller here, and the illustration shrinks again on the shorter mobile viewport.
- */
 export default function BlockedView() {
   const { t } = useTranslate()
 
@@ -58,11 +45,11 @@ export default function BlockedView() {
         <Stack spacing={1.5} direction={{ xs: 'column', sm: 'row' }} justifyContent='center'>
           <Button
             component='a'
-            href={DISCORD_SUPPORT_URL}
+            href={SUPPORT_URL}
             target='_blank'
             rel='noopener noreferrer'
             variant='contained'
-            startIcon={<Iconify icon='ic:baseline-discord' />}
+            startIcon={<Iconify icon='eva:message-circle-fill' />}
           >
             {t('blocked.open-ticket')}
           </Button>

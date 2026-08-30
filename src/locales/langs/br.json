@@ -388,8 +388,8 @@
   "blocked": {
     "title": "Conta suspensa",
     "description": "Sua conta foi suspensa após atividade que nossos sistemas identificaram como uma tentativa de ataque à plataforma. Enquanto a suspensão estiver ativa você não poderá entrar nem operar.",
-    "appeal": "Se você acredita que isso é um engano, abra um ticket no Discord e vamos analisar seu caso.",
-    "open-ticket": "Abrir um ticket",
+    "appeal": "Se você acredita que isso é um engano, fale com o suporte e vamos analisar seu caso.",
+    "open-ticket": "Falar com o suporte",
     "go-home": "Ir para o início"
   },
   "register": {
