@@ -1153,5 +1153,11 @@
       "description": "Cuéntanos sobre tu producto y volúmenes y volveremos con un plan de integración.",
       "button": "Solicita tu plan de integración"
     }
+  },
+  "news": {
+    "expand": "Ver el aviso completo",
+    "collapse": "Ocultar el aviso",
+    "close": "Cerrar el aviso",
+    "goTo": "Ver aviso {{number}}"
   }
 }
