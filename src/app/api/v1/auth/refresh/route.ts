@@ -3,6 +3,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { getIpFromRequest } from 'src/app/api/middleware/utils/network-utils'
 import { CHP_DSH_NAME, USER_SESSION_ABSOLUTE_HOURS } from 'src/config-global'
 import {
+  isUserBlocked,
   getUserSession,
   checkUserHaveActiveSession
 } from 'src/app/api/services/db/chatterpay-db-service'
@@ -41,6 +42,13 @@ export async function POST(req: NextRequest) {
     const validAccessToken = await checkUserHaveActiveSession(userId, jwtTokenDecoded, ip)
     if (!validAccessToken) {
       return notAuthorized()
+    }
+
+    if (await isUserBlocked(userId)) {
+      return NextResponse.json(
+        { code: 'USER_BLOCKED', error: 'account suspended after activity flagged as an attack' },
+        { status: 403, headers: { 'Cache-Control': 'no-store' } }
+      )
     }
 
     // Absolute cap: never renew beyond USER_SESSION_ABSOLUTE_HOURS from session creation
