@@ -3,7 +3,10 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { CHP_DSH_NAME } from 'src/config-global'
 import { getIpFromRequest } from 'src/app/api/middleware/utils/network-utils'
 import { extractJwtTokenFromCookie } from 'src/app/api/middleware/utils/jwt-utils'
-import { checkUserHaveActiveSession } from 'src/app/api/services/db/chatterpay-db-service'
+import {
+  isUserBlocked,
+  checkUserHaveActiveSession
+} from 'src/app/api/services/db/chatterpay-db-service'
 
 import type { JwtPayload } from 'src/types/jwt'
 
@@ -41,6 +44,17 @@ export async function validateRequestSecurity(
     return NextResponse.json(
       { code: 'NOT_AUTHORIZED', error: 'Invalid Access Token' },
       { status: 401 }
+    )
+  }
+
+  // 4. Refuse a banned account, whatever its session says. Checked here rather than per route so
+  // an endpoint added later is covered without anyone remembering to opt in. It is a distinct code
+  // from NOT_AUTHORIZED on purpose: the client sends the user to the suspension page instead of
+  // bouncing them back to a login they can never complete.
+  if (await isUserBlocked(userId)) {
+    return NextResponse.json(
+      { code: 'USER_BLOCKED', error: 'account suspended after activity flagged as an attack' },
+      { status: 403 }
     )
   }
 

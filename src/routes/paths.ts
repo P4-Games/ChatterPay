@@ -7,6 +7,7 @@ const ROOTS = {
 
 export const paths = {
   page403: '/error/403',
+  pageBlocked: '/error/blocked',
   page404: '/error/404',
   page500: '/error/500',
   terms: '/terms',

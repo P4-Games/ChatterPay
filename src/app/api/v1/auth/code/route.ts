@@ -81,6 +81,22 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    // Refuse before a code is generated or a WhatsApp message is sent: a blocked account must not
+    // be able to make the platform send it anything, and the sweep that motivated the block was
+    // hitting this endpoint repeatedly.
+    if (user.blocked) {
+      return new NextResponse(
+        JSON.stringify({
+          code: 'USER_BLOCKED',
+          error: 'account suspended after activity flagged as an attack on the platform'
+        }),
+        {
+          status: 403,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
     // Generate and store 2FA code
 
     const code: number = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000

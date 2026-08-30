@@ -58,6 +58,21 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    // Checked before the code, so a blocked account is told why rather than being left guessing
+    // at an "invalid code" it can never get right.
+    if (user.blocked) {
+      return new NextResponse(
+        JSON.stringify({
+          code: 'USER_BLOCKED',
+          error: 'account suspended after activity flagged as an attack on the platform'
+        }),
+        {
+          status: 403,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
     if (!user.code || code.toString() !== user.code.toString()) {
       return new NextResponse(
         JSON.stringify({ code: 'AUTH_INVALID_CODE', error: 'invalid code' }),

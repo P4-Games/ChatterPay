@@ -35,6 +35,8 @@ export interface IAccountDB {
   phone_number: string
   photo: string
   code?: string
+  /** Set by hand to ban an account; absent on every document written before the field existed. */
+  blocked?: boolean
   settings: {
     notifications: {
       language: string
@@ -184,6 +186,32 @@ export async function getUserById(id: string): Promise<IAccount | undefined> {
   }
 
   return user
+}
+
+/**
+ * Whether an account is banned from operating.
+ *
+ * Projected down to the one field because it is read on every authenticated request; pulling the
+ * whole document here would load wallets and sessions to answer a boolean. A lookup that fails
+ * reads as "not blocked": this guard sits in front of every route, and a dropped database socket
+ * must not lock the whole site out.
+ *
+ * @param {string} userId - ChatterPay user id.
+ * @returns {Promise<boolean>} True when the account is blocked.
+ */
+export async function isUserBlocked(userId: string): Promise<boolean> {
+  try {
+    const data = await findOneCommon(
+      DB_CHATTERPAY_NAME,
+      SCHEMA_USERS,
+      { _id: getObjectId(userId) },
+      { blocked: 1 }
+    )
+    return data?.blocked === true
+  } catch (error) {
+    console.error('isUserBlocked', userId, error.message)
+    return false
+  }
 }
 
 export async function getUserIdByWallet(userWallet: string): Promise<string | undefined> {
