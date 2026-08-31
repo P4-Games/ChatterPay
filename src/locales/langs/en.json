@@ -1153,5 +1153,11 @@
       "description": "Tell us about your product and volumes, we'll come back with an integration plan.",
       "button": "Get your integration plan"
     }
+  },
+  "news": {
+    "expand": "Read the full notice",
+    "collapse": "Hide the notice",
+    "close": "Dismiss the notice",
+    "goTo": "Show notice {{number}}"
   }
 }

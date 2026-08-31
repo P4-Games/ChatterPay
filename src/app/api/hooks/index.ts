@@ -6,6 +6,8 @@ export { useGetChatterpointsSummary } from './use-chatterpoints'
 
 export { useGetTokens } from './use-tokens'
 
+export { useGetActiveNews } from './use-news'
+
 export { useGetLifiChainsSummary, type LifiChainSummary } from './use-lifi'
 
 export {

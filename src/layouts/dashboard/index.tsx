@@ -3,6 +3,7 @@ import Box from '@mui/material/Box'
 import { useBoolean } from 'src/hooks/use-boolean'
 import { useResponsive } from 'src/hooks/use-responsive'
 
+import { NewsBanner } from 'src/components/news-banner'
 import { useSettingsContext } from 'src/components/settings'
 
 import Main from './main'
@@ -30,6 +31,14 @@ export default function DashboardLayout({ children }: Props) {
 
   const renderNavVertical = <NavVertical openNav={nav.value} onCloseNav={nav.onFalse} />
 
+  // Mounted with the layout rather than with the page, so closing it survives navigation inside the
+  // dashboard while a fresh entry brings it back.
+  const renderNews = (
+    <Box sx={{ mb: 3 }}>
+      <NewsBanner dismissible />
+    </Box>
+  )
+
   if (isHorizontal) {
     return (
       <BaseLayout>
@@ -37,7 +46,10 @@ export default function DashboardLayout({ children }: Props) {
 
         {lgUp ? renderHorizontal : renderNavVertical}
 
-        <Main>{children}</Main>
+        <Main>
+          {renderNews}
+          {children}
+        </Main>
       </BaseLayout>
     )
   }
@@ -55,7 +67,10 @@ export default function DashboardLayout({ children }: Props) {
       >
         {renderNavVertical}
 
-        <Main>{children}</Main>
+        <Main>
+          {renderNews}
+          {children}
+        </Main>
       </Box>
     </BaseLayout>
   )

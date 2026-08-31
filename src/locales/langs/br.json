@@ -1153,5 +1153,11 @@
       "description": "Conte sobre seu produto e volumes e voltaremos com um plano de integração.",
       "button": "Solicite seu plano de integração"
     }
+  },
+  "news": {
+    "expand": "Ver o aviso completo",
+    "collapse": "Ocultar o aviso",
+    "close": "Fechar o aviso",
+    "goTo": "Ver aviso {{number}}"
   }
 }

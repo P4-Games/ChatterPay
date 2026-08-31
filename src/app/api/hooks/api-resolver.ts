@@ -108,6 +108,7 @@ export const endpoints = {
       getFullUIEndpoint(`nft/${id}${chainId ? `?chainId=${chainId}` : ''}`)
   },
   tokens: getFullUIEndpoint('tokens'),
+  news: (lang: string) => getFullUIEndpoint(`news?lang=${encodeURIComponent(lang)}`),
   proxy: {
     lifiChainsSummary: getFullUIEndpoint('proxy/lifi/chains?fields=summary')
   },
