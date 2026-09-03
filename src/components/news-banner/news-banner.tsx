@@ -16,6 +16,8 @@ import { useGetActiveNews } from 'src/app/api/hooks'
 
 import Iconify from 'src/components/iconify'
 
+import type { NewsTarget } from 'src/types/news'
+
 // ----------------------------------------------------------------------
 
 // Long enough to read a one-line headline without hurrying, short enough that a visitor who stays
@@ -34,18 +36,22 @@ const ROW_HEIGHT_COMPACT = 20
 const BACKDROP_FADE = 'linear-gradient(to right, #000 0%, #000 55%, transparent 92%)'
 
 /**
- * Whether any announcement is live, for layouts that need to reserve room for the banner.
+ * Whether any announcement is live on a surface, for layouts that need to reserve room for the
+ * banner.
  *
- * Shares the SWR key with the banner itself, so asking here costs no extra request.
+ * Shares the SWR key with the banner itself, so asking here costs no extra request, as long as both
+ * are asked about the same surface.
  */
-export function useHasActiveNews(): boolean {
+export function useHasActiveNews(target: NewsTarget): boolean {
   const { i18n } = useTranslate()
-  const { news } = useGetActiveNews(i18n.language)
+  const { news } = useGetActiveNews(i18n.language, target)
 
   return news.length > 0
 }
 
 type Props = {
+  /** Surface the banner is rendered on, which decides the announcements it receives. */
+  target: NewsTarget
   /** Shows the close button. The banner then disappears until the layout mounts again. */
   dismissible?: boolean
   /** Tighter vertical rhythm, for the landing, where the banner sits over the hero. */
@@ -59,10 +65,10 @@ type Props = {
  * hovers or has the full text open, so reading is never cut short. Renders nothing at all when
  * there is nothing active, which is what keeps it out of the way for most of the year.
  */
-export default function NewsBanner({ dismissible = false, compact = false }: Props) {
+export default function NewsBanner({ target, dismissible = false, compact = false }: Props) {
   const { t, i18n } = useTranslate()
 
-  const { news } = useGetActiveNews(i18n.language)
+  const { news } = useGetActiveNews(i18n.language, target)
 
   const [index, setIndex] = useState(0)
   const [expanded, setExpanded] = useState(false)

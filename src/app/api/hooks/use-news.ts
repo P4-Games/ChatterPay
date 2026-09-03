@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 
 import { fetcher, endpoints } from 'src/app/api/hooks/api-resolver'
 
-import type { INewsItem } from 'src/types/news'
+import type { INewsItem, NewsTarget } from 'src/types/news'
 
 // ----------------------------------------------------------------------
 
@@ -14,13 +14,17 @@ const REFRESH_INTERVAL = 60 * 60 * 1000
 // ----------------------------------------------------------------------
 
 /**
- * Hook for fetching the announcements active right now, in the given language.
+ * Hook for fetching the announcements active right now on one surface, in the given language.
+ *
+ * The surface is part of the SWR key, so the landing and the dashboard keep separate caches and
+ * neither ever renders what belongs to the other.
  *
  * @param lang - UI language code
+ * @param target - Surface asking for the announcements
  * @returns The active announcements and the loading state
  */
-export function useGetActiveNews(lang: string) {
-  const { data, error, isLoading } = useSWR(endpoints.news(lang), fetcher, {
+export function useGetActiveNews(lang: string, target: NewsTarget) {
+  const { data, error, isLoading } = useSWR(endpoints.news(lang, target), fetcher, {
     refreshInterval: REFRESH_INTERVAL,
     revalidateOnFocus: false,
     shouldRetryOnError: false
