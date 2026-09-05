@@ -23,7 +23,7 @@ export default function MainLayout({ children }: Props) {
 
   // The banner rides inside the fixed header, so pages that start below the header have to account
   // for it too. Full-bleed heroes are meant to run under the header, banner included.
-  const hasNews = useHasActiveNews()
+  const hasNews = useHasActiveNews('landing')
   const newsOffset = hasNews ? NEWS_BANNER_HEIGHT_COMPACT : 0
 
   return (

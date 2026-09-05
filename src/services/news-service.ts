@@ -2,7 +2,7 @@ import axios from 'axios'
 
 import { UI_BASE_URL, BACKEND_API_URL, BACKEND_API_TOKEN } from 'src/config-global'
 
-import type { INewsItem } from 'src/types/news'
+import type { INewsItem, NewsTarget } from 'src/types/news'
 
 // ----------------------------------------------------------------------
 
@@ -30,13 +30,14 @@ export function toBackendLang(lang: string | null | undefined): 'en' | 'es' | 'p
 }
 
 /**
- * Fetches the announcements the backend considers active right now.
+ * Fetches the announcements the backend considers active right now for one surface.
  *
  * @param lang UI language code, mapped to the backend one before the call
+ * @param target Surface being rendered, so the backend leaves out what belongs to the other one
  */
-export async function getActiveNews(lang: string): Promise<INewsItem[]> {
+export async function getActiveNews(lang: string, target: NewsTarget): Promise<INewsItem[]> {
   const response = await axios.get<BackendResponse<{ news?: INewsItem[] }>>(
-    `${BACKEND_API_URL}/news?lang=${toBackendLang(lang)}`,
+    `${BACKEND_API_URL}/news?lang=${toBackendLang(lang)}&target=${encodeURIComponent(target)}`,
     {
       headers: {
         Origin: UI_BASE_URL,

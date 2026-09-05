@@ -35,7 +35,7 @@ export default function DashboardLayout({ children }: Props) {
   // dashboard while a fresh entry brings it back.
   const renderNews = (
     <Box sx={{ mb: 3 }}>
-      <NewsBanner dismissible />
+      <NewsBanner target='dashboard' dismissible />
     </Box>
   )
 

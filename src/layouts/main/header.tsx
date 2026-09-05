@@ -226,7 +226,7 @@ export default function Header() {
         </Box>
       </Toolbar>
 
-      <NewsBanner compact dismissible />
+      <NewsBanner target='landing' compact dismissible />
 
       {offsetTop && <HeaderShadow />}
     </AppBar>
