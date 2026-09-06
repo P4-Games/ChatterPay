@@ -28,6 +28,14 @@ export type ChainConfig = {
   name: string
   /** Block explorer base URL (no trailing slash). */
   explorerUrl: string
+  /**
+   * Path segment the explorer uses for a transaction, between the base URL and the hash.
+   *
+   * Every EVM explorer uses `/tx`, which is why callers used to hardcode it. Cardanoscan uses
+   * `/transaction`, and a link built with the wrong one is a 404 pointing at a transaction that
+   * really happened. Defaults to `/tx` when a chain does not say otherwise.
+   */
+  txPath?: string
   /** Explorer used for NFT mint transactions — usually the same as `explorerUrl`. */
   nftExplorerUrl: string
   /** NFT marketplace collection base URL: `<url>/<contract>/<tokenId>`. */
@@ -59,6 +67,14 @@ export const ARBITRUM_CHAIN_ID = 42161
 export const ARBITRUM_SEPOLIA_CHAIN_ID = 421614
 /** Polymarket runs on Polygon mainnet, regardless of the active ChatterPay network. */
 export const POLYGON_CHAIN_ID = 137
+
+/**
+ * Cardano has no EIP-155 chain id, so the backend assigns internal ones: `9e11 + network magic`.
+ * They must match `src/config/cardanoConfig.ts` in the backend exactly — they are what a wallet, a
+ * transaction and a token row carry in the database.
+ */
+export const CARDANO_PREPROD_CHAIN_ID = 900000000001
+export const CARDANO_MAINNET_CHAIN_ID = 900764824073
 
 export const CHAINS: Record<number, ChainConfig> = {
   [SCROLL_CHAIN_ID]: {
@@ -115,6 +131,32 @@ export const CHAINS: Record<number, ChainConfig> = {
     logo: '',
     layerswapNetwork: 'POLYGON_MAINNET',
     testnet: false
+  },
+  [CARDANO_PREPROD_CHAIN_ID]: {
+    chainId: CARDANO_PREPROD_CHAIN_ID,
+    name: 'Cardano Preprod',
+    explorerUrl: 'https://preprod.cardanoscan.io',
+    // Cardanoscan does not use `/tx`.
+    txPath: '/transaction',
+    nftExplorerUrl: 'https://preprod.cardanoscan.io',
+    // No NFTs on Cardano in this release; the explorer's own page is the only sensible target.
+    nftMarketplaceUrl: 'https://preprod.cardanoscan.io',
+    logo: '',
+    // Layerswap does not list Cardano, so the deposit widget hides itself — which is correct, and
+    // why the wallet needs its own "receive" view instead.
+    layerswapNetwork: '',
+    testnet: true
+  },
+  [CARDANO_MAINNET_CHAIN_ID]: {
+    chainId: CARDANO_MAINNET_CHAIN_ID,
+    name: 'Cardano',
+    explorerUrl: 'https://cardanoscan.io',
+    txPath: '/transaction',
+    nftExplorerUrl: 'https://cardanoscan.io',
+    nftMarketplaceUrl: 'https://cardanoscan.io',
+    logo: '',
+    layerswapNetwork: '',
+    testnet: false
   }
 }
 
@@ -150,6 +192,52 @@ export function getChainName(chainId?: number): string {
 export function getExplorerUrl(chainId?: number): string {
   if (isActiveChain(chainId)) return stripTrailingSlash(EXPLORER_L2_URL)
   return stripTrailingSlash(getChainConfig(chainId)?.explorerUrl || EXPLORER_L2_URL)
+}
+
+/**
+ * Whether a chain id belongs to the Cardano family.
+ *
+ * @param {number} [chainId] - Chain id to test.
+ * @returns {boolean} True for either Cardano network.
+ */
+export function isCardanoChain(chainId?: number): boolean {
+  return chainId === CARDANO_PREPROD_CHAIN_ID || chainId === CARDANO_MAINNET_CHAIN_ID
+}
+
+/**
+ * Whether a transaction record points at something really on a chain.
+ *
+ * Not every row does: Polymarket orders and withdrawals carry synthetic ids (`pm-order-…`), and
+ * linking those to an explorer produces a dead page. EVM hashes are recognised by their `0x`
+ * prefix, which is why the check used to be just that — but **a Cardano transaction id is 64 hex
+ * characters with no prefix**, so the same test silently strips the link off every Cardano
+ * transfer.
+ *
+ * @param {string | undefined} txHash - The hash on the record.
+ * @param {number} [chainId] - Chain the record belongs to.
+ * @returns {boolean} True when the hash can be linked to an explorer.
+ */
+export function isOnChainTxHash(txHash?: string, chainId?: number): boolean {
+  if (!txHash) return false
+  if (isCardanoChain(chainId)) return /^[0-9a-f]{64}$/i.test(txHash)
+  return txHash.startsWith('0x')
+}
+
+/**
+ * Link to a transaction on its own chain's explorer.
+ *
+ * Use this instead of concatenating `/tx/`: the path is not the same on every explorer, and a link
+ * built with the wrong one is a dead page for a transaction that really settled. The chain id comes
+ * from the transaction record, so a row belonging to a network the app is not currently operating
+ * on still links correctly.
+ *
+ * @param {string} txHash - Transaction hash or id, as the chain reports it.
+ * @param {number} [chainId] - Chain the transaction belongs to; defaults to the active chain.
+ * @returns {string} Absolute URL of the transaction on its explorer.
+ */
+export function getTxUrl(txHash: string, chainId?: number): string {
+  const path = getChainConfig(chainId)?.txPath || '/tx'
+  return `${getExplorerUrl(chainId)}${path}/${txHash}`
 }
 
 /**

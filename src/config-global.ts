@@ -350,3 +350,7 @@ export const _socials = [
     path: 'https://linktr.ee/chatterpay'
   }
 ]
+
+/** Where users are sent for help and to appeal a suspension. */
+export const SUPPORT_URL: string =
+  _socials.find((social) => social.value === 'linktree')?.path ?? ''

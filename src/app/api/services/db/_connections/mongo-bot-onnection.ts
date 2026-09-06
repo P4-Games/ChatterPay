@@ -12,7 +12,20 @@ const options = {
     version: ServerApiVersion.v1,
     strict: true,
     deprecationErrors: true
-  }
+  },
+  // Sockets this instance may hold at once. The driver's default is 100, which is a ceiling
+  // written for one long-lived server, not for an autoscaled one: every instance opens its own
+  // pool, so the cluster sees the default multiplied by the instance count. Past the cluster's
+  // own connection limit Atlas stops answering the handshake, and every login fails at once.
+  maxPoolSize: 10,
+  // Retire pooled sockets before the load balancer drops them for being idle.
+  // Without this the driver hands out a socket the other end already closed and
+  // the write fails with EPIPE, which surfaces as a failed login.
+  maxIdleTimeMS: 60_000,
+  connectTimeoutMS: 10_000,
+  socketTimeoutMS: 45_000,
+  retryReads: true,
+  retryWrites: true
 }
 let clientBot: MongoClient
 let clientPromiseBot: any

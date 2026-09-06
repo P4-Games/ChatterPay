@@ -13,7 +13,6 @@ const defaultUser: jwtPayloadUser = {
   id: '',
   displayName: '',
   wallet: '',
-  walletEOA: '',
   wallets: [],
   email: '',
   photoURL: '',
@@ -31,6 +30,12 @@ export async function GET() {
     const userId = payload.user?.id
     if (userId) {
       const user = await getUserById(userId)
+      if (user?.blocked) {
+        return NextResponse.json(
+          { code: 'USER_BLOCKED', error: 'account suspended after activity flagged as an attack' },
+          { status: 403 }
+        )
+      }
       if (user) {
         return NextResponse.json(
           {
@@ -38,7 +43,6 @@ export async function GET() {
               id: user.id,
               displayName: user.name,
               wallet: user.wallet,
-              walletEOA: user.walletEOA || '',
               wallets: user.wallets || [],
               email: user.email || '',
               photoURL: user.photo,

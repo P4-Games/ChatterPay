@@ -188,7 +188,7 @@
       "legend": "Transfer crypto easily through WhatsApp using our Web3 platform.",
       "new": {
         "title": "Send and receive crypto with WhatsApp",
-        "button": "Open the app",
+        "button": "Start on WhatsApp",
         "subtitle": "Instant transfers with minimal fees, no bank needed. If you have WhatsApp, you already have a wallet.",
         "b2b_link": "ChatterPay for business"
       }
@@ -385,6 +385,13 @@
       "code-bot": "Enter this code *{2FA_CODE}* in the Chatterpay app to log in. It is very important that you do not share this information with anyone. If you did not request the code, disregard this message and contact us so we can help you!"
     }
   },
+  "blocked": {
+    "title": "Account suspended",
+    "description": "Your account was suspended after activity our systems flagged as an attempt to attack the platform. You cannot sign in or operate while the suspension is in place.",
+    "appeal": "If you believe this is a mistake, contact us through our support channels and we will review your case.",
+    "open-ticket": "Contact support",
+    "go-home": "Go to Home"
+  },
   "register": {
     "title": "Facilitate seamless payments and transfers through ChatterPay",
     "get-started": "Get started",
@@ -477,12 +484,47 @@
     "view-on-explorer": "View on Explorer",
     "no-polymarket-cta": "Start Predicting",
     "predict": "Predict",
-    "predict-subtitle": "Predict outcomes"
+    "predict-subtitle": "Predict outcomes",
+    "empty-crypto-title": "No crypto yet",
+    "empty-crypto-description": "Make a deposit to start operating from your wallet."
   },
   "transactions": {
     "title": "History",
     "table-transaction": "Transaction",
     "table-amount": "Amount",
+    "table-fee": "Fee",
+    "fee-chatterpay": "ChatterPay fee",
+    "fee-network": "Network fee",
+    "fee-network-covered": "Covered by ChatterPay, not charged to you",
+    "fee-attached": "ADA sent with the token",
+    "fee-attached-note": "Not a fee: the recipient keeps it",
+    "fee-none": "No fee",
+    "fee-details": "See fee breakdown",
+    "detail-open": "Details",
+    "detail-title": "Transaction details",
+    "detail-copy": "Copy",
+    "detail-copied": "Copied",
+    "detail-network-date": "Network and date",
+    "detail-network": "Network",
+    "detail-parties": "From and to",
+    "detail-from": "From",
+    "detail-to": "To",
+    "detail-your-wallet": "Your wallet",
+    "detail-amounts": "Amounts",
+    "detail-you-sent": "You sent",
+    "detail-sent": "They sent",
+    "detail-received": "The recipient got",
+    "detail-you-received": "You received",
+    "detail-ada-costs": "Costs in ADA",
+    "detail-transaction": "Transaction",
+    "detail-hash": "Hash",
+    "detail-explorer": "View on the explorer",
+    "status-completed": "Completed",
+    "status-pending": "Pending",
+    "status-submitted": "Submitted",
+    "status-in_progress": "In progress",
+    "status-failed": "Failed",
+    "status-cancelled": "Cancelled",
     "table-date": "Date",
     "table-type": "Tipo",
     "table-status": "Status",
@@ -1111,5 +1153,11 @@
       "description": "Tell us about your product and volumes, we'll come back with an integration plan.",
       "button": "Get your integration plan"
     }
+  },
+  "news": {
+    "expand": "Read the full notice",
+    "collapse": "Hide the notice",
+    "close": "Dismiss the notice",
+    "goTo": "Show notice {{number}}"
   }
 }

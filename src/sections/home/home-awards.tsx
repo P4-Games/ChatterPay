@@ -71,7 +71,9 @@ export default function HomeAwards() {
     { name: 'Push', image: '/assets/images/home/awards/push.png', height: 50 },
     { name: 'Circle', image: '/assets/images/home/awards/circle.png' },
     { name: 'Ethereum Argentina', image: '/assets/images/home/awards/etharg.png' },
-    { name: 'Ethereum Uruguay', image: '/assets/images/home/awards/ethuy.png' }
+    { name: 'Ethereum Uruguay', image: '/assets/images/home/awards/ethuy.png' },
+    { name: 'Cardano', image: '/assets/images/home/awards/cardano.png' },
+    { name: 'Draper University', image: '/assets/images/home/awards/draper.png' }
   ]
 
   // Handle scroll direction detection

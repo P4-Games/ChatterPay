@@ -81,6 +81,20 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    // Checked before the code is generated, so a blocked account cannot make us send it a message.
+    if (user.blocked) {
+      return new NextResponse(
+        JSON.stringify({
+          code: 'USER_BLOCKED',
+          error: 'account suspended after activity flagged as an attack on the platform'
+        }),
+        {
+          status: 403,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
     // Generate and store 2FA code
 
     const code: number = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000
@@ -150,8 +164,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(finalResult)
   } catch (ex) {
     console.error(ex)
+    // 500, not 400: reaching here means the request was well formed and something
+    // on our side failed (a dropped database socket, most often). Answering 400
+    // sent callers looking for a bad payload that was never the problem.
     return new NextResponse(JSON.stringify({ error: 'Error in authentication' }), {
-      status: 400,
+      status: 500,
       headers: { 'Content-Type': 'application/json' }
     })
   }
