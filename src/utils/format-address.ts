@@ -1,8 +1,9 @@
 /**
- * Mask the address with the first 5 and last 4 characters
+ * Mask the address keeping its prefix and last 4 characters
  * @param address
  * @returns
  */
 export function maskAddress(address: string): string {
-  return `${address.slice(0, 4)}****${address.slice(-4)}`
+  const prefixLength = address.startsWith('addr') ? 10 : 4
+  return `${address.slice(0, prefixLength)}****${address.slice(-4)}`
 }

@@ -27,12 +27,17 @@ import { useBoolean } from 'src/hooks/use-boolean'
 import { useSettingsContext } from 'src/components/settings'
 import { useSnackbar } from 'src/components/snackbar'
 
+import { CARDANO_PREPROD_CHAIN_ID, CARDANO_MAINNET_CHAIN_ID } from 'src/config-chains'
+
 import type { IToken, IBalances, ITransaction } from 'src/types/wallet'
 import type { TokenPriceData } from 'src/app/api/services/coingecko/coingecko-service'
+import type { ReceiveAddress } from '../dashboard-deposit-modal'
 
 import BankingRecentTransitions from '../banking-recent-transitions'
 import BankingPolymarketDrawer from '../banking-polymarket-drawer'
 import DashboardPortfolioBalance from '../dashboard-portfolio-balance'
+import { normalizeTicker } from 'src/utils/token-logo'
+
 import { mergePendingOps } from '../pending-op-transaction'
 import { usePolymarketActivity, PolymarketActivityProvider } from '../polymarket-activity-context'
 
@@ -144,12 +149,13 @@ function BankingDashboardContent() {
 
   // Create token logo mapping
   const tokenLogos = useMemo(() => {
+    // Keyed by normalized ticker. The catalogue says `USDT`, transactions carry `usdt`, and nothing
+    // guarantees a third source will not send `UsDt` — so the key is normalized here and the lookup
+    // is normalized at every call site through `tokenLogo()`.
     const logoMap: Record<string, string> = {}
     for (const token of tokens) {
-      logoMap[token.symbol] = token.logo
-      if (token.display_symbol && token.display_symbol !== token.symbol) {
-        logoMap[token.display_symbol] = token.logo
-      }
+      if (token.symbol) logoMap[normalizeTicker(token.symbol)] = token.logo
+      if (token.display_symbol) logoMap[normalizeTicker(token.display_symbol)] = token.logo
     }
     return logoMap
   }, [tokens])
@@ -159,6 +165,24 @@ function BankingDashboardContent() {
     !walletAddress || isLoadingBalances
       ? { wallet: '', balances: [], totals: { usd: 0, ars: 0, brl: 0, uyu: 0 } }
       : balances || { wallet: '', balances: [], totals: { usd: 0, ars: 0, brl: 0, uyu: 0 } }
+
+  // Addresses on chains whose format is not EVM's, so the user can be shown where to receive.
+  //
+  // They come back with the balances because the backend derives them from the user's identity:
+  // a Cardano address exists before the user has ever touched the chain, which is exactly when
+  // they need to see it — funding it themselves is how they get started.
+  const cardanoAddresses = useMemo<ReceiveAddress[]>(
+    () =>
+      (safeBalances.wallets ?? [])
+        .filter((address) => address.startsWith('addr1') || address.startsWith('addr_test1'))
+        .map((address) => ({
+          chainId: address.startsWith('addr_test1')
+            ? CARDANO_PREPROD_CHAIN_ID
+            : CARDANO_MAINNET_CHAIN_ID,
+          address
+        })),
+    [safeBalances.wallets]
+  )
 
   // Stable reference: the `[]` fallback would otherwise be a new array every
   // render and invalidate the merge memo below on each update.
@@ -272,6 +296,7 @@ function BankingDashboardContent() {
             tableLabels={[
               { id: 'description', label: t('transactions.table-transaction') },
               { id: 'amount', label: t('transactions.table-amount') },
+              { id: 'fee', label: t('transactions.table-fee') },
               { id: 'date', label: t('transactions.table-date') },
               { id: '' }
             ]}
@@ -290,6 +315,7 @@ function BankingDashboardContent() {
         open={depositModal.value}
         onClose={depositModal.onFalse}
         walletAddress={walletAddress}
+        extraAddresses={cardanoAddresses}
       />
 
       {/* Withdraw Modal */}

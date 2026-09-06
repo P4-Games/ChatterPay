@@ -188,7 +188,7 @@
       "legend": "Transfira cripto facilmente através do WhatsApp usando nossa plataforma Web3.",
       "new": {
         "title": "Envie e receba cripto com WhatsApp",
-        "button": "Ir para o app",
+        "button": "Começar no WhatsApp",
         "subtitle": "Transferências instantâneas com taxas mínimas, sem banco. Se você tem WhatsApp, já tem uma carteira.",
         "b2b_link": "ChatterPay para empresas"
       }
@@ -385,6 +385,13 @@
       "code-bot": "Insira este código *{2FA_CODE}* no app Chatterpay para entrar. É muito importante que você não compartilhe esta informação com ninguém. Se você não solicitou o código, desconsidere esta mensagem e entre em contato conosco para que possamos ajudar!"
     }
   },
+  "blocked": {
+    "title": "Conta suspensa",
+    "description": "Sua conta foi suspensa após atividade que nossos sistemas identificaram como uma tentativa de ataque à plataforma. Enquanto a suspensão estiver ativa você não poderá entrar nem operar.",
+    "appeal": "Se você acredita que isso é um engano, fale com o suporte e vamos analisar seu caso.",
+    "open-ticket": "Falar com o suporte",
+    "go-home": "Ir para o início"
+  },
   "register": {
     "title": "Facilite pagamentos e transferências sem interrupções através do ChatterPay",
     "get-started": "Começar",
@@ -477,12 +484,47 @@
     "view-on-explorer": "Ver no Explorer",
     "no-polymarket-cta": "Começar a Prever",
     "predict": "Prever",
-    "predict-subtitle": "Preveja resultados"
+    "predict-subtitle": "Preveja resultados",
+    "empty-crypto-title": "Ainda não tens cripto",
+    "empty-crypto-description": "Faça um depósito para começar a operar da sua carteira."
   },
   "transactions": {
     "title": "Histórico",
     "table-transaction": "Transação",
     "table-amount": "Valor",
+    "table-fee": "Taxa",
+    "fee-chatterpay": "Taxa ChatterPay",
+    "fee-network": "Taxa de rede",
+    "fee-network-covered": "Coberta pela ChatterPay, não é cobrada de você",
+    "fee-attached": "ADA que viaja com o token",
+    "fee-attached-note": "Não é uma taxa: quem recebe fica com ela",
+    "fee-none": "Sem taxa",
+    "fee-details": "Ver detalhe das taxas",
+    "detail-open": "Detalhes",
+    "detail-title": "Detalhes da transação",
+    "detail-copy": "Copiar",
+    "detail-copied": "Copiado",
+    "detail-network-date": "Rede e data",
+    "detail-network": "Rede",
+    "detail-parties": "Origem e destino",
+    "detail-from": "De",
+    "detail-to": "Para",
+    "detail-your-wallet": "Sua carteira",
+    "detail-amounts": "Valores",
+    "detail-you-sent": "Você enviou",
+    "detail-sent": "Enviaram",
+    "detail-received": "O destinatário recebeu",
+    "detail-you-received": "Você recebeu",
+    "detail-ada-costs": "Custos em ADA",
+    "detail-transaction": "Transação",
+    "detail-hash": "Hash",
+    "detail-explorer": "Ver no explorador",
+    "status-completed": "Concluída",
+    "status-pending": "Pendente",
+    "status-submitted": "Enviada",
+    "status-in_progress": "Em andamento",
+    "status-failed": "Falhou",
+    "status-cancelled": "Cancelada",
     "table-date": "Data",
     "table-type": "Tipo",
     "table-status": "Status",
@@ -1111,5 +1153,11 @@
       "description": "Conte sobre seu produto e volumes e voltaremos com um plano de integração.",
       "button": "Solicite seu plano de integração"
     }
+  },
+  "news": {
+    "expand": "Ver o aviso completo",
+    "collapse": "Ocultar o aviso",
+    "close": "Fechar o aviso",
+    "goTo": "Ver aviso {{number}}"
   }
 }

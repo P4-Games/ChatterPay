@@ -188,7 +188,7 @@
       "legend": "Envia y recibe crypto a través de WhatsApp. ChatterPay es software de una wallet non-custodial, no un banco, exchange, bróker ni entidad de pago.",
       "new": {
         "title": "Envía y recibe cripto con WhatsApp",
-        "button": "Ir a la app",
+        "button": "Empezar en WhatsApp",
         "subtitle": "Transferencias instantáneas con comisiones mínimas, sin banco. Si tienes WhatsApp, ya tienes una billetera.",
         "b2b_link": "ChatterPay para empresas"
       }
@@ -385,6 +385,13 @@
       "code-bot": "Ingresá este código *{2FA_CODE}* en la app de Chatterpay para iniciar sesión. Es muy importante que no compartas esta información con nadie. Si no solicitaste el código, desestimá este mensaje y contactate con nosotros para que podamos ayudarte!"
     }
   },
+  "blocked": {
+    "title": "Cuenta suspendida",
+    "description": "Tu cuenta fue suspendida tras detectar actividad que nuestros sistemas identificaron como un intento de ataque a la plataforma. Mientras la suspensión esté activa no vas a poder iniciar sesión ni operar.",
+    "appeal": "Si creés que se trata de un error, contactanos por nuestros canales de soporte y revisamos tu caso.",
+    "open-ticket": "Contactar soporte",
+    "go-home": "Ir al inicio"
+  },
   "register": {
     "title": "Realiza pagos y transferencias sin problemas a través de ChatterPay",
     "get-started": "Empezar",
@@ -477,12 +484,47 @@
     "view-on-explorer": "Ver en Explorador",
     "no-polymarket-cta": "Empezar a Predecir",
     "predict": "Predecir",
-    "predict-subtitle": "Predice resultados"
+    "predict-subtitle": "Predice resultados",
+    "empty-crypto-title": "Todavía no tenés cripto",
+    "empty-crypto-description": "Depositá para empezar a operar desde tu wallet."
   },
   "transactions": {
     "title": "Historial",
     "table-transaction": "Transacción",
     "table-amount": "Monto",
+    "table-fee": "Comisión",
+    "fee-chatterpay": "Comisión ChatterPay",
+    "fee-network": "Comisión de red",
+    "fee-network-covered": "La cubre ChatterPay, no te la cobramos",
+    "fee-attached": "ADA que viaja con el token",
+    "fee-attached-note": "No es una comisión: la recibe el destinatario",
+    "fee-none": "Sin comisión",
+    "fee-details": "Ver detalle de comisiones",
+    "detail-open": "Detalle",
+    "detail-title": "Detalle de la transacción",
+    "detail-copy": "Copiar",
+    "detail-copied": "Copiado",
+    "detail-network-date": "Red y fecha",
+    "detail-network": "Red",
+    "detail-parties": "Origen y destino",
+    "detail-from": "Desde",
+    "detail-to": "Hacia",
+    "detail-your-wallet": "Tu wallet",
+    "detail-amounts": "Montos",
+    "detail-you-sent": "Enviaste",
+    "detail-sent": "Enviaron",
+    "detail-received": "Recibió el destinatario",
+    "detail-you-received": "Recibiste",
+    "detail-ada-costs": "Costos en ADA",
+    "detail-transaction": "Transacción",
+    "detail-hash": "Hash",
+    "detail-explorer": "Ver en el explorador",
+    "status-completed": "Completada",
+    "status-pending": "Pendiente",
+    "status-submitted": "Enviada",
+    "status-in_progress": "En curso",
+    "status-failed": "Fallida",
+    "status-cancelled": "Cancelada",
     "table-date": "Fecha",
     "table-type": "Tipo",
     "table-status": "Estado",
@@ -1111,5 +1153,11 @@
       "description": "Cuéntanos sobre tu producto y volúmenes y volveremos con un plan de integración.",
       "button": "Solicita tu plan de integración"
     }
+  },
+  "news": {
+    "expand": "Ver el aviso completo",
+    "collapse": "Ocultar el aviso",
+    "close": "Cerrar el aviso",
+    "goTo": "Ver aviso {{number}}"
   }
 }

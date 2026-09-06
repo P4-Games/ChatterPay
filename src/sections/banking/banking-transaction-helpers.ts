@@ -83,12 +83,16 @@ export function getContactData(
     // 'transfer' or 'deposit'
     contactName = (trxReceive ? data.contact_from_name : data.contact_to_name) || ''
     contactIdentifier = (trxReceive ? data.contact_from_phone : data.contact_to_phone) || ''
-    // Subtract fee when sending, not when receiving
-    calculatedAmount = fNumber(data.amount - (!trxReceive ? data.fee || 0 : 0))
+    // `amount` is what the sender was debited; `fee` is already inside it, so `amount - fee` is
+    // what landed on the other side. Each party is shown their own side of the transfer.
+    //
+    // This used to be the other way round — the fee subtracted when sending — which showed the
+    // sender the recipient's figure and the recipient the sender's.
+    calculatedAmount = fNumber(data.amount - (trxReceive ? data.fee || 0 : 0))
   }
 
   // case: Identifier is a wallet
-  if (contactIdentifier.startsWith('0x')) {
+  if (contactIdentifier.startsWith('0x') || contactIdentifier.startsWith('addr')) {
     contactIdentifier = maskAddress(contactIdentifier)
   }
 
