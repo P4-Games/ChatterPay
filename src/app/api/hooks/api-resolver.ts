@@ -1,5 +1,7 @@
 import axios, { AxiosHeaders, type AxiosRequestConfig } from 'axios'
 
+import { paths } from 'src/routes/paths'
+
 import { BOT_API_URL, UI_BASE_URL } from 'src/config-global'
 
 // ----------------------------------------------------------------------
@@ -30,6 +32,13 @@ axiosInstance.interceptors.response.use(
       const errorCode = error.response?.data?.code
       if (typeof window !== 'undefined' && errorCode === 'NOT_AUTHORIZED') {
         window.dispatchEvent(new Event('auth:unauthorized'))
+      }
+      return Promise.reject(error)
+    }
+
+    if (error.response?.status === 403 && error.response?.data?.code === 'USER_BLOCKED') {
+      if (typeof window !== 'undefined' && window.location.pathname !== paths.pageBlocked) {
+        window.location.href = paths.pageBlocked
       }
       return Promise.reject(error)
     }
@@ -99,6 +108,8 @@ export const endpoints = {
       getFullUIEndpoint(`nft/${id}${chainId ? `?chainId=${chainId}` : ''}`)
   },
   tokens: getFullUIEndpoint('tokens'),
+  news: (lang: string, target: string) =>
+    getFullUIEndpoint(`news?lang=${encodeURIComponent(lang)}&target=${encodeURIComponent(target)}`),
   proxy: {
     lifiChainsSummary: getFullUIEndpoint('proxy/lifi/chains?fields=summary')
   },

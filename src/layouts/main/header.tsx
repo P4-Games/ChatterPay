@@ -20,6 +20,7 @@ import { IS_TESTNET_HOST } from 'src/config-global'
 
 import Iconify from 'src/components/iconify'
 import { LogoWithName } from 'src/components/logo'
+import { NewsBanner } from 'src/components/news-banner'
 
 import NavMobile from './nav/mobile'
 import { HEADER } from '../config-layout'
@@ -224,6 +225,8 @@ export default function Header() {
           </Stack>
         </Box>
       </Toolbar>
+
+      <NewsBanner target='landing' compact dismissible />
 
       {offsetTop && <HeaderShadow />}
     </AppBar>

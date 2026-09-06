@@ -15,6 +15,14 @@ export type CurrencyKey = 'usd' | 'ars' | 'brl' | 'uyu'
 
 export type IBalances = {
   wallet: string
+  /**
+   * Every address the portfolio covers, when the backend reports them.
+   *
+   * More than one once the user has assets on chains with different address formats. A Cardano
+   * address is not another way to reach the same wallet: it is a different wallet on a different
+   * chain, and funds sent to the EVM one never arrive there.
+   */
+  wallets?: string[]
   balances: IBalance[]
   totals: Record<CurrencyKey, number>
   polymarket?: {
@@ -74,7 +82,19 @@ export type ITransaction = {
   contact_to_avatar_url: string | null
   token: string
   amount: number
+  /** ChatterPay's fee, in the same token as `amount` and already deducted from it. */
   fee: number
+  /** What the chain charged, in its own coin. Covered by ChatterPay, so the user never pays it. */
+  network_fee?: number
+  /** Coin `network_fee` is denominated in, e.g. `ADA`. */
+  network_fee_token?: string
+  /**
+   * ADA the ledger forced to travel with a token, on a Cardano token transfer.
+   *
+   * Not a fee — the recipient keeps it — but it does leave the sender's wallet, and it is the only
+   * figure that explains why sending USDCx also moved ADA.
+   */
+  attached_ada?: number
   type: string
   status: string
   user_notes?: string

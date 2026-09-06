@@ -35,6 +35,7 @@ export interface IAccountDB {
   phone_number: string
   photo: string
   code?: string
+  blocked?: boolean
   settings: {
     notifications: {
       language: string
@@ -86,7 +87,6 @@ function normalizeWallets(wallets: IAccountDB['wallets']): IAccountWallet[] {
     .filter((w) => !!w?.wallet_proxy)
     .map((w) => ({
       wallet_proxy: w.wallet_proxy,
-      wallet_eoa: w.wallet_eoa,
       chain_id: w.chain_id,
       status: w.status
     }))
@@ -103,11 +103,9 @@ function normalizeWallets(wallets: IAccountDB['wallets']): IAccountWallet[] {
  * Picking by chain matters once a user has wallets on more than one network:
  * `wallets[0]` is whichever chain they used first, not the one the app operates on.
  * @param {IAccountDB['wallets']} wallets - Raw wallets array from Mongo.
- * @returns {{ wallet: string; walletEOA: string; wallets: IAccountWallet[] }} Active wallet and list.
  */
 function resolveUserWallets(wallets: IAccountDB['wallets']): {
   wallet: string
-  walletEOA: string
   wallets: IAccountWallet[]
 } {
   const all = normalizeWallets(wallets)
@@ -117,7 +115,6 @@ function resolveUserWallets(wallets: IAccountDB['wallets']): {
 
   return {
     wallet: active?.wallet_proxy || '',
-    walletEOA: active?.wallet_eoa || '',
     wallets: all
   }
 }
@@ -144,13 +141,12 @@ export async function getUserByPhone(phone: string): Promise<IAccount | undefine
 
   const { _id, wallets, ...rest } = data
 
-  const { wallet, walletEOA, wallets: userWallets } = resolveUserWallets(wallets)
+  const { wallet, wallets: userWallets } = resolveUserWallets(wallets)
 
   // Transform the user object to match the old model
   const user: IAccount = {
     id: getFormattedId(_id),
     wallet,
-    walletEOA,
     wallets: userWallets,
     ...rest
   }
@@ -172,18 +168,38 @@ export async function getUserById(id: string): Promise<IAccount | undefined> {
   // Destructure _id and other properties from the user data
   const { _id, wallets, ...rest } = data
 
-  const { wallet, walletEOA, wallets: userWallets } = resolveUserWallets(wallets)
+  const { wallet, wallets: userWallets } = resolveUserWallets(wallets)
 
   // Transform the user data to match the IAccount model
   const user: IAccount = {
     id: getFormattedId(_id), // Add the formatted user ID
     wallet, // Active-chain proxy wallet
-    walletEOA, // Active-chain EOA
     wallets: userWallets, // Every wallet, one per chain
     ...rest
   }
 
   return user
+}
+
+/**
+ * Whether an account is banned from operating.
+ *
+ * @param {string} userId - ChatterPay user id.
+ * @returns {Promise<boolean>} True when the account is blocked.
+ */
+export async function isUserBlocked(userId: string): Promise<boolean> {
+  try {
+    const data = await findOneCommon(
+      DB_CHATTERPAY_NAME,
+      SCHEMA_USERS,
+      { _id: getObjectId(userId) },
+      { blocked: 1 }
+    )
+    return data?.blocked === true
+  } catch (error) {
+    console.error('isUserBlocked', userId, error.message)
+    return false
+  }
 }
 
 export async function getUserIdByWallet(userWallet: string): Promise<string | undefined> {
@@ -732,6 +748,9 @@ export async function getUserTransactions(
           token: 1,
           amount: 1,
           fee: 1,
+          network_fee: 1,
+          network_fee_token: 1,
+          attached_ada: 1,
           type: 1,
           status: 1,
           trx_hash: 1,

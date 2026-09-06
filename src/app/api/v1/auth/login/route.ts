@@ -58,6 +58,19 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    if (user.blocked) {
+      return new NextResponse(
+        JSON.stringify({
+          code: 'USER_BLOCKED',
+          error: 'account suspended after activity flagged as an attack on the platform'
+        }),
+        {
+          status: 403,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
     if (!user.code || code.toString() !== user.code.toString()) {
       return new NextResponse(
         JSON.stringify({ code: 'AUTH_INVALID_CODE', error: 'invalid code' }),
@@ -85,7 +98,6 @@ export async function POST(req: NextRequest) {
       id: user.id,
       displayName: user.name || user.phone_number,
       wallet: user.wallet || '',
-      walletEOA: user.walletEOA || '',
       email: user.email || '',
       photoURL: user.photo || '/assets/images/avatars/generic-user.png',
       phoneNumber: user.phone_number || ''

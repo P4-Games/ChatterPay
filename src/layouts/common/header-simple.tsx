@@ -4,12 +4,11 @@ import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import { useTheme } from '@mui/material/styles'
 
-import { RouterLink } from 'src/routes/components'
-
 import { useOffSetTop } from 'src/hooks/use-off-set-top'
 
 import { bgBlur } from 'src/theme/css'
 import { useTranslate } from 'src/locales'
+import { SUPPORT_URL } from 'src/config-global'
 
 import Logo from 'src/components/logo'
 
@@ -49,7 +48,13 @@ export default function HeaderSimple() {
         <Logo />
 
         <Stack direction='row' alignItems='center' spacing={1}>
-          <Link href='#' component={RouterLink} color='inherit' sx={{ typography: 'subtitle2' }}>
+          <Link
+            href={SUPPORT_URL}
+            target='_blank'
+            rel='noopener noreferrer'
+            color='inherit'
+            sx={{ typography: 'subtitle2' }}
+          >
             {t('home.help.need-help')}
           </Link>
         </Stack>

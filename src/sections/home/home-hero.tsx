@@ -15,8 +15,7 @@ import {
   buttonPressedShadow
 } from 'src/theme/overrides/components/button'
 
-import { paths } from 'src/routes/paths'
-import { RouterLink } from 'src/routes/components'
+import { CHATIZALO_PHONE_NUMBER } from 'src/config-global'
 
 import { useResponsive } from 'src/hooks/use-responsive'
 
@@ -270,6 +269,8 @@ export default function HomeHero() {
   // Get localized mockup image path
   const mockupImagePath = getLanguageMockupPath(currentLang.value)
 
+  const whatsappHref = `https://wa.me/${CHATIZALO_PHONE_NUMBER}?text=${encodeURIComponent(t('home.cta.whatsapp_message'))}`
+
   // Find the word "WhatsApp" in the title
   const titleWords = t('home.hero.new.title').split(' ')
   const whatsAppIndex = titleWords.findIndex((word) => word.toLowerCase().includes('whatsapp'))
@@ -384,8 +385,9 @@ export default function HomeHero() {
 
             <m.div variants={varFade().in}>
               <StyledCreateButton
-                component={RouterLink}
-                href={paths.auth.jwt.login}
+                href={whatsappHref}
+                target='_blank'
+                rel='noopener'
                 variant='contained'
                 endIcon={
                   <Box

@@ -13,8 +13,8 @@ import { useSnackbar } from 'src/components/snackbar'
 import { fDate, fTime } from 'src/utils/format-time'
 
 import { useTranslate } from 'src/locales'
-import { EXPLORER_L2_URL, DEFAULT_CHAIN_ID } from 'src/config-global'
-import { getChainName, getExplorerUrl } from 'src/config-chains'
+import { DEFAULT_CHAIN_ID } from 'src/config-global'
+import { getTxUrl, getChainName, isOnChainTxHash } from 'src/config-chains'
 
 import { HugeiconsIcon } from '@hugeicons/react'
 import {
@@ -25,10 +25,10 @@ import {
 } from '@hugeicons/core-free-icons'
 
 import Iconify from 'src/components/iconify'
-import CustomPopover, { usePopover } from 'src/components/custom-popover'
 import Avvvatars from 'avvvatars-react'
 
 import PolymarketPurchaseDrawer from './polymarket-purchase-drawer'
+import BankingTransactionDetailDrawer from './banking-transaction-detail-drawer'
 import {
   isPolymarketTrx,
   getPolymarketSide,
@@ -38,10 +38,15 @@ import {
   formatStepName
 } from './banking-transaction-helpers'
 import type { PolymarketSide } from './banking-transaction-helpers'
-import { TransactionRowAvatar, TransactionRowActions } from './banking-transaction-row-parts'
+import {
+  TransactionRowAvatar,
+  TransactionRowActions,
+  TransactionRowFee
+} from './banking-transaction-row-parts'
 import type { RowBadge } from './banking-transaction-row-parts'
 
 import type { ITransaction } from 'src/types/wallet'
+import { tokenLogo } from 'src/utils/token-logo'
 
 // ----------------------------------------------------------------------
 
@@ -171,17 +176,17 @@ export default function BankingRecentTransitionsRow({
 
   // For unified polymarket_buy rows the bridge tx hash is the meaningful on-chain link
   const bridgeTxHash = row.polymarket_bridge_tx_hash
+  // A Cardano transaction id is 64 hex characters with no `0x`, so testing for that prefix here
+  // would classify every Cardano transfer as a synthetic id and strip its explorer link.
   const isRealHash =
-    (bridgeTxHash && bridgeTxHash.startsWith('0x')) ||
-    (row.trx_hash && row.trx_hash.startsWith('0x'))
+    isOnChainTxHash(bridgeTxHash, row.chain_id) || isOnChainTxHash(row.trx_hash, row.chain_id)
   // The history spans every network the user operated on, so the explorer comes
   // from the row's own chain — Polygon for Polymarket rows, the home chain of
   // that record otherwise. The bridge hash is always on the active home chain.
-  const explorerBase = getExplorerUrl(row.chain_id)
   const trxLink =
     bridgeTxHash && bridgeTxHash.startsWith('0x')
-      ? `${EXPLORER_L2_URL}/tx/${bridgeTxHash}`
-      : `${explorerBase}/tx/${row.trx_hash}`
+      ? getTxUrl(bridgeTxHash)
+      : getTxUrl(row.trx_hash, row.chain_id)
 
   // Only labelled when the row doesn't belong to the active network, so the
   // common case stays uncluttered.
@@ -197,8 +202,8 @@ export default function BankingRecentTransitionsRow({
     ? formatStepName(row.polymarket_pending_step)
     : null
 
-  const popover = usePopover()
   const [purchaseDrawerOpen, setPurchaseDrawerOpen] = useState(false)
+  const [detailDrawerOpen, setDetailDrawerOpen] = useState(false)
 
   const hasPurchaseDetails =
     isPolymarket &&
@@ -215,22 +220,7 @@ export default function BankingRecentTransitionsRow({
   // Mask amount if enabled
   const displayAmount = hideValues ? '***' : calculatedAmount
 
-  const handleDownload = () => {
-    popover.onClose()
-    console.info('DOWNLOAD', row.id)
-  }
-
-  const handlePrint = () => {
-    popover.onClose()
-    console.info('PRINT', row.id)
-  }
-
-  const handleShare = () => {
-    popover.onClose()
-    console.info('SHARE', row.id)
-  }
-
-  const tokenLogo = tokenLogos[row.token]
+  const rowTokenLogo = tokenLogo(tokenLogos, row.token)
 
   const renderTokenIcon = (
     <Box
@@ -245,10 +235,10 @@ export default function BankingRecentTransitionsRow({
         flexShrink: 0
       }}
     >
-      {tokenLogo ? (
+      {rowTokenLogo ? (
         <Box
           component='img'
-          src={tokenLogo}
+          src={rowTokenLogo}
           alt={row.token}
           loading='lazy'
           decoding='async'
@@ -271,19 +261,14 @@ export default function BankingRecentTransitionsRow({
 
   const badge = getRowBadge(polymarketSide, trxReceive, isFailed)
 
-  const detailsTooltip = hasPurchaseDetails
-    ? polymarketSide === 'sell'
-      ? t('transactions.polymarket-order-details')
-      : t('transactions.polymarket-purchase-details')
-    : null
-
+  // A Polymarket purchase has its own panel — the per-step breakdown of a flow this generic one
+  // knows nothing about — so the button leads there for those rows and to the generic detail for
+  // every other.
   const rowActions = (
     <TransactionRowActions
-      detailsTooltip={detailsTooltip}
-      onOpenDetails={() => setPurchaseDrawerOpen(true)}
-      explorerLink={isRealHash ? trxLink : null}
-      popoverOpen={popover.open !== null}
-      onOpenPopover={popover.onOpen}
+      onOpenDetails={() =>
+        hasPurchaseDetails ? setPurchaseDrawerOpen(true) : setDetailDrawerOpen(true)
+      }
       dense={!mdUp}
     />
   )
@@ -301,9 +286,20 @@ export default function BankingRecentTransitionsRow({
         />
         <ListItemText
           primary={message}
-          secondary={pendingStepLabel || contactIdentifier}
+          secondary={
+            <>
+              {pendingStepLabel || contactIdentifier}
+              {foreignChainLabel && (
+                <Box component='span' sx={{ display: 'block', color: 'text.disabled' }}>
+                  {foreignChainLabel}
+                </Box>
+              )}
+            </>
+          }
           secondaryTypographyProps={
-            pendingStepLabel ? { color: 'warning.main', fontWeight: 600 } : undefined
+            pendingStepLabel
+              ? { component: 'span', color: 'warning.main', fontWeight: 600 }
+              : { component: 'span' }
           }
           sx={{ minWidth: 0 }}
         />
@@ -319,15 +315,14 @@ export default function BankingRecentTransitionsRow({
       </TableCell>
 
       <TableCell sx={{ py: 2, whiteSpace: 'nowrap' }}>
+        {hideValues ? '***' : <TransactionRowFee row={row} />}
+      </TableCell>
+
+      <TableCell sx={{ py: 2, whiteSpace: 'nowrap' }}>
         <Typography variant='body2'>{fDate(new Date(row.date), 'dd MMM yyyy')}</Typography>
         <Typography variant='caption' sx={{ color: 'text.secondary', display: 'block', mt: 0.5 }}>
           {fTime(new Date(row.date))}
         </Typography>
-        {foreignChainLabel && (
-          <Typography variant='caption' sx={{ color: 'text.disabled', display: 'block' }}>
-            {foreignChainLabel}
-          </Typography>
-        )}
       </TableCell>
 
       <TableCell align='right' sx={{ py: 2, pr: 3 }}>
@@ -358,9 +353,13 @@ export default function BankingRecentTransitionsRow({
               ) : (
                 contactIdentifier
               )}
+              {foreignChainLabel && (
+                <Box component='span' sx={{ display: 'block', color: 'text.disabled' }}>
+                  {foreignChainLabel}
+                </Box>
+              )}
               <Box component='span' sx={{ display: 'block', mt: 0.5 }}>
                 {`${fDate(new Date(row.date))} ${fTime(new Date(row.date))}`}
-                {foreignChainLabel ? ` · ${foreignChainLabel}` : ''}
               </Box>
             </>
           }
@@ -382,6 +381,11 @@ export default function BankingRecentTransitionsRow({
             primaryTypographyProps={{ typography: 'body2', fontWeight: 600 }}
           />
         </Box>
+        {!hideValues && (
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 0.25 }}>
+            <TransactionRowFee row={row} dense />
+          </Box>
+        )}
       </TableCell>
 
       <TableCell align='right' sx={{ py: 2, pr: 3 }}>
@@ -394,27 +398,12 @@ export default function BankingRecentTransitionsRow({
     <>
       {mdUp ? renderContentDesktop : renderContentMobile}
 
-      <CustomPopover
-        open={popover.open}
-        onClose={popover.onClose}
-        arrow='right-top'
-        sx={{ width: 160 }}
-      >
-        <MenuItem onClick={handleDownload}>
-          <Iconify icon='eva:cloud-download-fill' />
-          {t('transactions.table-download')}
-        </MenuItem>
-
-        <MenuItem onClick={handlePrint}>
-          <Iconify icon='solar:printer-minimalistic-bold' />
-          {t('transactions.table-print')}
-        </MenuItem>
-
-        <MenuItem onClick={handleShare}>
-          <Iconify icon='solar:share-bold' />
-          {t('transactions.table-share')}
-        </MenuItem>
-      </CustomPopover>
+      <BankingTransactionDetailDrawer
+        open={detailDrawerOpen}
+        onClose={() => setDetailDrawerOpen(false)}
+        row={row}
+        trxReceive={trxReceive}
+      />
 
       {hasPurchaseDetails && (
         <PolymarketPurchaseDrawer
