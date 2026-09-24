@@ -9,6 +9,9 @@ export const NODE_ENV = process.env.NODE_ENV?.toString().toLowerCase() || 'devel
 export const { MONGODB, MONGODB_BOT } = process.env
 export const { BOT_API_TOKEN, BOT_API_URL } = process.env
 export const { BACKEND_API_URL, BACKEND_API_TOKEN } = process.env
+// Shared with the backend and with nothing else. Deliberately not a `NEXT_PUBLIC_` variable: Next.js
+// only inlines those into client bundles, so this one cannot reach a browser.
+export const { CARDANO_STAKING_BFF_SECRET } = process.env
 export const botApiWappEnabled =
   (process.env.BOT_API_WAPP_ENABLED?.toString().toLowerCase() || 'true') === 'true'
 export const nodeProviderUrlSepolia = process.env.NODE_PROVIDER_SEPOLIA_URL

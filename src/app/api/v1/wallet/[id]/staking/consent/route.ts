@@ -3,6 +3,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { getUserById } from 'src/app/api/services/db/chatterpay-db-service'
 import { setStakingConsent } from 'src/app/api/services/staking/staking-service'
 import { validateRequestSecurity } from 'src/app/api/middleware/validators/base-security-validator'
+import { validateStateChangingRequest } from 'src/app/api/middleware/validators/state-change-validator'
 import { validateWalletCommonsInputs as validateWalletCommonInputs } from 'src/app/api/middleware/validators/wallet-common-inputs-validator'
 
 // ----------------------------------------------------------------------
@@ -19,6 +20,9 @@ type IParams = {
  * @route POST /api/v1/wallet/:id/staking/consent
  */
 export async function POST(req: NextRequest, { params }: { params: IParams }) {
+  const crossSite = validateStateChangingRequest(req)
+  if (crossSite) return crossSite
+
   const walletValidationResult = await validateWalletCommonInputs(req, params.id)
   if (walletValidationResult instanceof NextResponse) return walletValidationResult
 

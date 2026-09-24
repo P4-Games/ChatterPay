@@ -2,6 +2,8 @@ import axios from 'axios'
 
 import { UI_BASE_URL, BACKEND_API_URL, BACKEND_API_TOKEN } from 'src/config-global'
 
+import { signStakingAssertion } from './staking-assertion'
+
 // ----------------------------------------------------------------------
 
 /**
@@ -118,17 +120,54 @@ export async function setStakingConsent(
   }
 }
 
+export async function authorizeStakingAction(
+  phoneNumber: string,
+  action: StakingAction,
+  pin: string,
+  recipientAddress: string | null
+): Promise<StakingServiceResult<{ grant: string; expiresAt: string; action: string }>> {
+  try {
+    const response = await axios.post<
+      BackendResponse<{ grant: string; expiresAt: string; action: string }>
+    >(
+      `${BACKEND_API_URL}/cardano/staking/authorize`,
+      {
+        channel_user_id: phoneNumber,
+        action,
+        recipient_address: recipientAddress,
+        pin,
+        // Signed over the phone number this route resolved from the session, not one the browser sent.
+        bff_assertion: signStakingAssertion(phoneNumber, action, recipientAddress)
+      },
+      { headers: headers() }
+    )
+    if (response.data.status !== 'success') {
+      return { ok: false, status: 502, code: 'BACKEND_ERROR', message: response.data.data.message }
+    }
+    return { ok: true, data: response.data.data }
+  } catch (error) {
+    return toFailure(error)
+  }
+}
+
 export async function requestStakingAction(
   phoneNumber: string,
   action: StakingAction,
-  recipientAddress: string | null
+  recipientAddress: string | null,
+  pinGrant: string | null
 ): Promise<StakingServiceResult<{ operationId: string; txId: string | null; outcome: string }>> {
   try {
     const response = await axios.post<
       BackendResponse<{ operationId: string; txId: string | null; outcome: string }>
     >(
       `${BACKEND_API_URL}/cardano/staking/action`,
-      { channel_user_id: phoneNumber, action, recipient_address: recipientAddress },
+      {
+        channel_user_id: phoneNumber,
+        action,
+        recipient_address: recipientAddress,
+        bff_assertion: signStakingAssertion(phoneNumber, action, recipientAddress),
+        pin_grant: pinGrant
+      },
       { headers: headers() }
     )
     if (response.data.status !== 'success') {

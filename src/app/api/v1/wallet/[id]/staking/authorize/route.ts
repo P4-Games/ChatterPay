@@ -2,12 +2,12 @@ import { type NextRequest, NextResponse } from 'next/server'
 
 import { getUserById } from 'src/app/api/services/db/chatterpay-db-service'
 import { validateRequestSecurity } from 'src/app/api/middleware/validators/base-security-validator'
+import { validateStateChangingRequest } from 'src/app/api/middleware/validators/state-change-validator'
 import {
-  requestStakingAction,
+  authorizeStakingAction,
   STAKING_ACTIONS,
   type StakingAction
 } from 'src/app/api/services/staking/staking-service'
-import { validateStateChangingRequest } from 'src/app/api/middleware/validators/state-change-validator'
 import { validateWalletCommonsInputs as validateWalletCommonInputs } from 'src/app/api/middleware/validators/wallet-common-inputs-validator'
 
 // ----------------------------------------------------------------------
@@ -19,22 +19,21 @@ type IParams = {
 // ----------------------------------------------------------------------
 
 /**
- * Takes a staking action on the wallet in the path.
+ * Verifies the PIN for one staking action and returns a grant bound to it.
  *
- * This is the one route here that moves money, and three things stand in front of it. The wallet
- * resolves to an owner and the session has to be that owner's. The action has to be one of a fixed
- * list, checked against the list rather than passed through. And the backend, which does the signing,
- * resolves the credential from the phone number this route looked up — so even a request that got
- * this far cannot be aimed at a wallet the authenticated user does not own.
+ * Two steps rather than one, and the reason is what the PIN is being asked for. A PIN checked once and
+ * then trusted for whatever comes next is a session, not an authorisation; this one is verified against
+ * a named operation — "authorise withdrawing your rewards", "authorise sending everything to this
+ * address" — and the grant that comes back carries that operation inside its signature. It cannot be
+ * presented for a different action, a different destination or a different person, and it is good for
+ * one operation because its nonce becomes that operation's idempotency key.
  *
- * The PIN gate lives in the backend rather than here, alongside the operation it guards, so that the
- * gate cannot be satisfied by a caller that skips this route.
+ * The PIN itself is never stored here and never returned. It goes to the backend, which owns the
+ * verification and the failed-attempt counter, and what comes back is the grant.
  *
- * @route POST /api/v1/wallet/:id/staking/action
+ * @route POST /api/v1/wallet/:id/staking/authorize
  */
 export async function POST(req: NextRequest, { params }: { params: IParams }) {
-  // First, and before anything is read. The session cookie is SameSite=Lax, which already stops a
-  // cross-site POST from carrying it; this refuses the request outright rather than relying on that.
   const crossSite = validateStateChangingRequest(req)
   if (crossSite) return crossSite
 
@@ -46,7 +45,7 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
   const securityCheckResult = await validateRequestSecurity(req, userId)
   if (securityCheckResult instanceof NextResponse) return securityCheckResult
 
-  let body: { action?: unknown; recipientAddress?: unknown; pinGrant?: unknown }
+  let body: { action?: unknown; pin?: unknown; recipientAddress?: unknown }
   try {
     body = await req.json()
   } catch {
@@ -66,13 +65,20 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
     )
   }
 
+  if (typeof body.pin !== 'string' || body.pin.trim() === '') {
+    return NextResponse.json(
+      { error: { code: 'INVALID_REQUEST_BODY', message: 'pin is required' } },
+      { status: 400 }
+    )
+  }
+
   const recipientAddress =
     typeof body.recipientAddress === 'string' && body.recipientAddress.trim() !== ''
       ? body.recipientAddress.trim()
       : null
 
-  // Only an exit has a destination. Carrying one on any other action would be a parameter with no
-  // meaning, and a parameter with no meaning is the kind that acquires one later by accident.
+  // The destination is part of what is being authorised, so it has to be the same one the action will
+  // carry. Authorising an exit and then redirecting it is the thing the binding exists to prevent.
   if (recipientAddress !== null && action !== 'exit_and_send_max') {
     return NextResponse.json(
       {
@@ -90,11 +96,11 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
     return NextResponse.json({ error: { code: 'USER_NOT_FOUND' } }, { status: 404 })
   }
 
-  const result = await requestStakingAction(
+  const result = await authorizeStakingAction(
     user.phone_number,
     action as StakingAction,
-    recipientAddress,
-    typeof body.pinGrant === 'string' && body.pinGrant.trim() !== '' ? body.pinGrant.trim() : null
+    body.pin,
+    recipientAddress
   )
   if (!result.ok) {
     return NextResponse.json(

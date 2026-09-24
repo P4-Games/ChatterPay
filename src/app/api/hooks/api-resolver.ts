@@ -173,6 +173,7 @@ export const endpoints = {
       staking: {
         root: (id: string) => getFullUIEndpoint(`wallet/${id}/staking`),
         consent: (id: string) => getFullUIEndpoint(`wallet/${id}/staking/consent`),
+        authorize: (id: string) => getFullUIEndpoint(`wallet/${id}/staking/authorize`),
         action: (id: string) => getFullUIEndpoint(`wallet/${id}/staking/action`)
       },
       governance: (id: string) => getFullUIEndpoint(`wallet/${id}/governance`),
