@@ -42,6 +42,10 @@ export const paths = {
     chatterpoints: {
       root: `${ROOTS.DASHBOARD}/chatterpoints`
     },
+    staking: {
+      root: `${ROOTS.DASHBOARD}/staking`,
+      governance: `${ROOTS.DASHBOARD}/governance`
+    },
     transfer: {
       all: `${ROOTS.DASHBOARD}/transfer/all`
     },

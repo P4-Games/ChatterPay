@@ -592,6 +592,180 @@
       "wapp-msg": "I would like to mint the NFT"
     }
   },
+  "staking": {
+    "title": "Staking",
+    "description": "Delegate your ADA and earn rewards without giving up control of it.",
+    "loading": "Loading your staking position...",
+    "unavailable": "Staking is not available right now.",
+    "consent": {
+      "title": "Join staking",
+      "description": "Your ADA stays in your wallet. Delegating locks a refundable deposit and earns rewards each epoch.",
+      "terms": "I have read and accept the staking terms.",
+      "accept": "Start staking",
+      "decline": "Stop staking",
+      "acceptedOn": "Accepted on {{date}}",
+      "version": "Terms version {{version}}",
+      "newVersion": "The terms have changed since you accepted them. Review and accept version {{version}} to continue."
+    },
+    "notices": {
+      "notSignableTitle": "This wallet cannot be operated from here",
+      "notSignableBody": "We can read this position but we do not hold the keys that sign for it, so no operation can be started. You can still see your rewards and your delegation.",
+      "optedOutTitle": "You left staking",
+      "optedOutBody": "You stopped staking on {{date}}. Nothing will delegate this wallet again until you join explicitly.",
+      "optedOutRejoin": "Join again",
+      "rewardsBlockedTitle": "Your rewards are not withdrawable yet",
+      "rewardsBlockedBody": "Cardano requires your stake to have delegated its voting power before rewards can be withdrawn. Delegate your vote and the withdrawal becomes available.",
+      "balanceUnavailableTitle": "We could not read your balance",
+      "balanceUnavailableBody": "The network could not be reached, so we are not showing a figure rather than showing a wrong one. Nothing has changed in your wallet.",
+      "snapshotStaleTitle": "These figures are not current",
+      "snapshotStaleBody": "Your position was last read on {{date}}. It is shown for information and no operation can be started on it until it refreshes.",
+      "pendingTitle": "An operation is in progress",
+      "pendingBody": "{{operation}} was submitted and the network has not settled it yet. Nothing else can start until it does."
+    },
+    "summary": {
+      "title": "Your ADA",
+      "total": "Total",
+      "utxo": "In your wallet",
+      "deposit": "Refundable deposit",
+      "depositHint": "Locked by the network while you stake. Returned in full when you leave.",
+      "rewards": "Withdrawable rewards",
+      "pending": "Rewards being calculated",
+      "pendingHint": "Not withdrawable yet and not counted in your total.",
+      "lastSync": "Last read {{date}}",
+      "never": "never"
+    },
+    "state": {
+      "awaiting_consent": "Not staking",
+      "awaiting_funds": "Waiting for funds",
+      "activation_pending": "Starting",
+      "signing": "Signing",
+      "submitted": "Submitted to the network",
+      "active": "Staking",
+      "exit_pending": "Leaving",
+      "exit_submitted": "Leaving, submitted",
+      "reconcile_required": "Checking with the network",
+      "manual_review": "Under review"
+    },
+    "position": {
+      "title": "Your delegation",
+      "pool": "Pool",
+      "poolNone": "No pool",
+      "vote": "Voting power",
+      "voteNone": "Not delegated",
+      "origin": "Registered by",
+      "originChatterpay": "ChatterPay",
+      "originExternal": "You, outside ChatterPay",
+      "originUnknown": "Unknown"
+    },
+    "actions": {
+      "title": "What you can do",
+      "register_and_delegate": "Start staking",
+      "delegate_vote": "Delegate my vote",
+      "redelegate_pool": "Change pool",
+      "withdraw_rewards": "Withdraw rewards",
+      "deregister": "Stop staking and recover the deposit",
+      "exit_and_send_max": "Send everything",
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "started": "Submitted to the network.",
+      "startedWithTx": "Submitted to the network. Transaction {{tx}}",
+      "failed": "Could not be started: {{reason}}"
+    },
+    "refusals": {
+      "no_confirmed_chain_read": "We have not read this wallet on the network yet.",
+      "staking_disabled": "Staking is off in this environment.",
+      "no_terms_consent": "Accept the staking terms first.",
+      "not_opted_in": "Staking is not switched on for this wallet.",
+      "opted_out": "You left staking. Join again to use this.",
+      "not_eligible": "This wallet does not hold enough ADA yet.",
+      "already_registered": "This wallet is already staking.",
+      "not_registered": "This wallet is not staking.",
+      "no_rewards": "There are no rewards to withdraw.",
+      "vote_delegation_required": "Delegate your voting power first.",
+      "deposit_unknown": "We do not know the deposit that was paid, so we will not build a transaction that cannot balance.",
+      "operation_in_flight": "Another operation is still in progress.",
+      "already_delegated": "Already delegated to that pool.",
+      "no_pool_configured": "No pool is configured.",
+      "not_allowlisted": "Staking is not open to this wallet yet.",
+      "signer_unavailable": "We do not hold the keys that sign for this wallet.",
+      "not_available": "Not available."
+    },
+    "exit": {
+      "title": "Send everything",
+      "description": "Stops staking, recovers the deposit and sends the whole balance to the address you choose. This cannot be undone.",
+      "recipient": "Send to",
+      "recipientPlaceholder": "addr1... or addr_test1...",
+      "recipientInvalid": "That is not a valid Cardano address for this network.",
+      "quoteTitle": "What will be sent",
+      "gross": "Your balance",
+      "networkFee": "Network fee",
+      "commercialFee": "ChatterPay fee",
+      "refund": "Deposit returned",
+      "net": "The address receives",
+      "warning": "Everything leaves this wallet. Check the address character by character."
+    },
+    "pin": {
+      "title": "Confirm with your PIN",
+      "description": "Your PIN authorises this operation only: {{operation}}.",
+      "label": "PIN",
+      "submit": "Authorise",
+      "rejected": "That PIN is not right.",
+      "blocked": "Your PIN is blocked. Try again later.",
+      "notSet": "Set up a PIN before operating."
+    },
+    "history": {
+      "title": "Operations",
+      "empty": "No operations yet.",
+      "operation": "Operation",
+      "status": "Status",
+      "transaction": "Transaction",
+      "fee": "Network fee",
+      "date": "Date",
+      "informative": "In progress",
+      "informativeHint": "Shown for information. The network has not settled it."
+    },
+    "rewards": {
+      "title": "Rewards",
+      "empty": "No rewards yet. The first one arrives a couple of epochs after you start.",
+      "epoch": "Epoch",
+      "amount": "Amount",
+      "source": "Source"
+    }
+  },
+  "governance": {
+    "title": "Governance",
+    "description": "Your stake carries voting power in Cardano governance. Delegating it is what lets you withdraw rewards.",
+    "readOnlyNotice": "You can delegate your voting power here. Registering as a DRep and voting directly are not available.",
+    "current": {
+      "title": "Your voting power",
+      "none": "Not delegated",
+      "always_abstain": "Abstaining",
+      "always_no_confidence": "No confidence",
+      "drep": "Delegated to {{drep}}",
+      "not_registered": "This wallet is not staking."
+    },
+    "options": {
+      "title": "Delegate your vote",
+      "description": "Pick where your voting power goes. You can change it whenever you want.",
+      "always_abstain": "Abstain",
+      "always_abstainHint": "Your stake counts towards quorum and votes on nothing. This is the neutral choice and it unlocks your rewards.",
+      "always_no_confidence": "No confidence",
+      "always_no_confidenceHint": "Your stake votes against every governance action.",
+      "drep": "A delegate representative",
+      "drepHint": "Your stake follows how that representative votes.",
+      "delegate": "Delegate",
+      "empty": "No representatives could be listed right now."
+    },
+    "history": {
+      "title": "Governance history",
+      "empty": "Nothing recorded yet.",
+      "kind": "Delegation",
+      "date": "Date",
+      "actor": "Recorded by",
+      "actorChain": "Read from the network",
+      "actorUser": "You"
+    }
+  },
   "chatterpoints": {
     "hero": {
       "title": "Get rewarded for every move",

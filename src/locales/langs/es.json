@@ -592,6 +592,180 @@
       "wapp-msg": "Me gustaría mintear el NFT"
     }
   },
+  "staking": {
+    "title": "Staking",
+    "description": "Delegá tus ADA y ganá recompensas sin dejar de controlarlos.",
+    "loading": "Cargando tu posición de staking...",
+    "unavailable": "El staking no está disponible en este momento.",
+    "consent": {
+      "title": "Empezar a hacer staking",
+      "description": "Tus ADA quedan en tu billetera. Delegar inmoviliza un depósito reembolsable y genera recompensas en cada época.",
+      "terms": "Leí y acepto los términos de staking.",
+      "accept": "Empezar",
+      "decline": "Dejar de hacer staking",
+      "acceptedOn": "Aceptado el {{date}}",
+      "version": "Versión de términos {{version}}",
+      "newVersion": "Los términos cambiaron desde que los aceptaste. Revisá y aceptá la versión {{version}} para continuar."
+    },
+    "notices": {
+      "notSignableTitle": "Esta billetera no se puede operar desde acá",
+      "notSignableBody": "Podemos leer esta posición pero no tenemos las claves que la firman, así que no se puede iniciar ninguna operación. Sí podés ver tus recompensas y tu delegación.",
+      "optedOutTitle": "Dejaste el staking",
+      "optedOutBody": "Dejaste de hacer staking el {{date}}. Nada va a volver a delegar esta billetera hasta que te sumes explícitamente.",
+      "optedOutRejoin": "Volver a sumarme",
+      "rewardsBlockedTitle": "Todavía no podés retirar tus recompensas",
+      "rewardsBlockedBody": "Cardano exige que tu stake haya delegado su poder de voto antes de poder retirar recompensas. Delegá tu voto y el retiro queda disponible.",
+      "balanceUnavailableTitle": "No pudimos leer tu saldo",
+      "balanceUnavailableBody": "No se pudo contactar la red, así que preferimos no mostrar un número antes que mostrar uno equivocado. Nada cambió en tu billetera.",
+      "snapshotStaleTitle": "Estos números no están actualizados",
+      "snapshotStaleBody": "Tu posición se leyó por última vez el {{date}}. Se muestra a modo informativo y no se puede operar sobre ella hasta que se actualice.",
+      "pendingTitle": "Hay una operación en curso",
+      "pendingBody": "{{operation}} se envió y la red todavía no la resolvió. Nada más puede empezar hasta que lo haga."
+    },
+    "summary": {
+      "title": "Tus ADA",
+      "total": "Total",
+      "utxo": "En tu billetera",
+      "deposit": "Depósito reembolsable",
+      "depositHint": "Inmovilizado por la red mientras hacés staking. Vuelve completo cuando salís.",
+      "rewards": "Recompensas retirables",
+      "pending": "Recompensas en cálculo",
+      "pendingHint": "Todavía no son retirables y no se suman a tu total.",
+      "lastSync": "Última lectura {{date}}",
+      "never": "nunca"
+    },
+    "state": {
+      "awaiting_consent": "Sin staking",
+      "awaiting_funds": "Esperando fondos",
+      "activation_pending": "Iniciando",
+      "signing": "Firmando",
+      "submitted": "Enviado a la red",
+      "active": "Haciendo staking",
+      "exit_pending": "Saliendo",
+      "exit_submitted": "Saliendo, enviado",
+      "reconcile_required": "Verificando con la red",
+      "manual_review": "En revisión"
+    },
+    "position": {
+      "title": "Tu delegación",
+      "pool": "Pool",
+      "poolNone": "Sin pool",
+      "vote": "Poder de voto",
+      "voteNone": "Sin delegar",
+      "origin": "Registrada por",
+      "originChatterpay": "ChatterPay",
+      "originExternal": "Vos, fuera de ChatterPay",
+      "originUnknown": "Desconocido"
+    },
+    "actions": {
+      "title": "Qué podés hacer",
+      "register_and_delegate": "Empezar a hacer staking",
+      "delegate_vote": "Delegar mi voto",
+      "redelegate_pool": "Cambiar de pool",
+      "withdraw_rewards": "Retirar recompensas",
+      "deregister": "Dejar de hacer staking y recuperar el depósito",
+      "exit_and_send_max": "Enviar todo",
+      "confirm": "Confirmar",
+      "cancel": "Cancelar",
+      "started": "Enviado a la red.",
+      "startedWithTx": "Enviado a la red. Transacción {{tx}}",
+      "failed": "No se pudo iniciar: {{reason}}"
+    },
+    "refusals": {
+      "no_confirmed_chain_read": "Todavía no leímos esta billetera en la red.",
+      "staking_disabled": "El staking está apagado en este ambiente.",
+      "no_terms_consent": "Primero aceptá los términos de staking.",
+      "not_opted_in": "El staking no está activado para esta billetera.",
+      "opted_out": "Dejaste el staking. Sumate de nuevo para usar esto.",
+      "not_eligible": "Esta billetera todavía no tiene suficientes ADA.",
+      "already_registered": "Esta billetera ya está haciendo staking.",
+      "not_registered": "Esta billetera no está haciendo staking.",
+      "no_rewards": "No hay recompensas para retirar.",
+      "vote_delegation_required": "Primero delegá tu poder de voto.",
+      "deposit_unknown": "No sabemos qué depósito se pagó, así que no vamos a armar una transacción que no puede cuadrar.",
+      "operation_in_flight": "Hay otra operación en curso.",
+      "already_delegated": "Ya está delegada a ese pool.",
+      "no_pool_configured": "No hay ningún pool configurado.",
+      "not_allowlisted": "El staking todavía no está abierto para esta billetera.",
+      "signer_unavailable": "No tenemos las claves que firman por esta billetera.",
+      "not_available": "No disponible."
+    },
+    "exit": {
+      "title": "Enviar todo",
+      "description": "Deja de hacer staking, recupera el depósito y envía todo el saldo a la dirección que elijas. Esto no se puede deshacer.",
+      "recipient": "Enviar a",
+      "recipientPlaceholder": "addr1... o addr_test1...",
+      "recipientInvalid": "Esa no es una dirección de Cardano válida para esta red.",
+      "quoteTitle": "Qué se va a enviar",
+      "gross": "Tu saldo",
+      "networkFee": "Comisión de red",
+      "commercialFee": "Comisión de ChatterPay",
+      "refund": "Depósito devuelto",
+      "net": "La dirección recibe",
+      "warning": "Todo sale de esta billetera. Revisá la dirección carácter por carácter."
+    },
+    "pin": {
+      "title": "Confirmá con tu PIN",
+      "description": "Tu PIN autoriza solamente esta operación: {{operation}}.",
+      "label": "PIN",
+      "submit": "Autorizar",
+      "rejected": "Ese PIN no es correcto.",
+      "blocked": "Tu PIN está bloqueado. Intentá más tarde.",
+      "notSet": "Configurá un PIN antes de operar."
+    },
+    "history": {
+      "title": "Operaciones",
+      "empty": "Todavía no hay operaciones.",
+      "operation": "Operación",
+      "status": "Estado",
+      "transaction": "Transacción",
+      "fee": "Comisión de red",
+      "date": "Fecha",
+      "informative": "En curso",
+      "informativeHint": "Se muestra a modo informativo. La red todavía no la resolvió."
+    },
+    "rewards": {
+      "title": "Recompensas",
+      "empty": "Todavía no hay recompensas. La primera llega un par de épocas después de empezar.",
+      "epoch": "Época",
+      "amount": "Monto",
+      "source": "Origen"
+    }
+  },
+  "governance": {
+    "title": "Gobernanza",
+    "description": "Tu stake tiene poder de voto en la gobernanza de Cardano. Delegarlo es lo que te habilita a retirar recompensas.",
+    "readOnlyNotice": "Acá podés delegar tu poder de voto. Registrarte como DRep y votar directamente no están disponibles.",
+    "current": {
+      "title": "Tu poder de voto",
+      "none": "Sin delegar",
+      "always_abstain": "Absteniéndose",
+      "always_no_confidence": "Sin confianza",
+      "drep": "Delegado a {{drep}}",
+      "not_registered": "Esta billetera no está haciendo staking."
+    },
+    "options": {
+      "title": "Delegá tu voto",
+      "description": "Elegí dónde va tu poder de voto. Lo podés cambiar cuando quieras.",
+      "always_abstain": "Abstenerse",
+      "always_abstainHint": "Tu stake cuenta para el quórum y no vota nada. Es la opción neutral y desbloquea tus recompensas.",
+      "always_no_confidence": "Sin confianza",
+      "always_no_confidenceHint": "Tu stake vota en contra de toda acción de gobernanza.",
+      "drep": "Un representante delegado",
+      "drepHint": "Tu stake sigue cómo vota ese representante.",
+      "delegate": "Delegar",
+      "empty": "No se pudo listar ningún representante en este momento."
+    },
+    "history": {
+      "title": "Historial de gobernanza",
+      "empty": "Todavía no hay nada registrado.",
+      "kind": "Delegación",
+      "date": "Fecha",
+      "actor": "Registrado por",
+      "actorChain": "Leído de la red",
+      "actorUser": "Vos"
+    }
+  },
   "chatterpoints": {
     "hero": {
       "title": "Ganá recompensas por cada movimiento",
