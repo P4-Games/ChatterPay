@@ -75,12 +75,17 @@ describe('StakingPinDialog', () => {
 })
 
 describe('StakingExitDialog', () => {
+  // The figures from the wallet this was verified against on Preprod, so the arithmetic below is
+  // the real one: 10000 ada in outputs, a 2 ada deposit coming back, and ChatterPay charging 0.45.
+  // The network fee is in the quote and is not subtracted, because the sponsor pays it.
   const quote = {
-    grossLovelace: '10000000',
-    networkFeeLovelace: '180000',
-    commercialFeeLovelace: '500000',
+    utxoLovelace: '10000000000',
     refundLovelace: '2000000',
-    netLovelace: '11500000'
+    grossLovelace: '10002000000',
+    networkFeeLovelace: '187853',
+    networkFeePaidBy: 'sponsor' as const,
+    commercialFeeLovelace: '450000',
+    netLovelace: '10001550000'
   }
 
   it('refuses to confirm while the quote is still being computed', () => {
@@ -95,11 +100,42 @@ describe('StakingExitDialog', () => {
   it('shows the whole sum rather than one number', () => {
     render(<StakingExitDialog open quote={quote} onCancel={vi.fn()} onConfirm={vi.fn()} />)
 
-    expect(screen.getByTestId('staking-exit-gross')).toHaveTextContent('10.000000 ADA')
-    expect(screen.getByTestId('staking-exit-refund')).toHaveTextContent('2.000000 ADA')
-    expect(screen.getByTestId('staking-exit-networkFee')).toHaveTextContent('0.180000 ADA')
-    expect(screen.getByTestId('staking-exit-commercialFee')).toHaveTextContent('0.500000 ADA')
-    expect(screen.getByTestId('staking-exit-net')).toHaveTextContent('11.500000 ADA')
+    // Read top to bottom this has to add up, and the line that used to be missing is the total.
+    // Showing the outputs alone as the balance understates what the user owns by the deposit, and
+    // then the amount the address receives looks larger than the balance it came out of.
+    //
+    // Compared by digits: grouping and the decimal separator follow the browser's locale, and this
+    // assertion is about which figure lands in which row. The formatting has its own tests.
+    const digits = (id: string): string =>
+      (screen.getByTestId(id).textContent ?? '').replace(/\D/g, '')
+
+    expect(digits('staking-exit-utxo')).toBe('10000000000')
+    expect(digits('staking-exit-refund')).toBe('2000000')
+    expect(digits('staking-exit-gross')).toBe('10002000000')
+    expect(digits('staking-exit-commercialFee')).toBe('0450000')
+    expect(digits('staking-exit-net')).toBe('10001550000')
+  })
+
+  it('says the network fee is not coming out of the amount', () => {
+    // A fee listed beside an amount reads as subtracted from it. This one is not: the sponsor pays
+    // it, and the label is the only thing that says so.
+    render(<StakingExitDialog open quote={quote} onCancel={vi.fn()} onConfirm={vi.fn()} />)
+
+    expect(
+      (screen.getByTestId('staking-exit-networkFee').textContent ?? '').replace(/\D/g, '')
+    ).toBe('0187853')
+    expect(screen.getByText('staking.exit.networkFeeSponsored')).toBeInTheDocument()
+  })
+
+  it('adds up', () => {
+    // The property behind the labels: the total is what the user owns, and the net is the total
+    // less the one fee that is actually deducted.
+    expect(BigInt(quote.grossLovelace)).toBe(
+      BigInt(quote.utxoLovelace) + BigInt(quote.refundLovelace)
+    )
+    expect(BigInt(quote.netLovelace)).toBe(
+      BigInt(quote.grossLovelace) - BigInt(quote.commercialFeeLovelace)
+    )
   })
 
   it('will not confirm without a destination', () => {

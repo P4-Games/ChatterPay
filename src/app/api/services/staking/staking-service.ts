@@ -125,20 +125,24 @@ export async function getStakingExitQuote(
   recipientAddress: string
 ): Promise<
   StakingServiceResult<{
+    utxoLovelace: string
+    refundLovelace: string
     grossLovelace: string
     networkFeeLovelace: string
+    networkFeePaidBy: 'sponsor'
     commercialFeeLovelace: string
-    refundLovelace: string
     netLovelace: string
   }>
 > {
   try {
     const response = await axios.get<
       BackendResponse<{
+        utxoLovelace: string
+        refundLovelace: string
         grossLovelace: string
         networkFeeLovelace: string
+        networkFeePaidBy: 'sponsor'
         commercialFeeLovelace: string
-        refundLovelace: string
         netLovelace: string
       }>
     >(`${BACKEND_API_URL}/cardano/staking/exit-quote`, {

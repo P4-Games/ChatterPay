@@ -115,10 +115,12 @@ export type StakingView = {
 
 /** What an exit would move. Every figure in lovelace, as a string. */
 export type StakingExitQuote = {
+  utxoLovelace: string
+  refundLovelace: string
   grossLovelace: string
   networkFeeLovelace: string
+  networkFeePaidBy: 'sponsor'
   commercialFeeLovelace: string
-  refundLovelace: string
   netLovelace: string
 }
 

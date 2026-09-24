@@ -22,14 +22,18 @@ import { formatAdaWithUnit } from './staking-amount'
 
 /** What the backend says an exit would move. Every figure in lovelace, as a string. */
 export type StakingExitQuote = {
-  /** What the wallet holds in outputs before anything is deducted. */
-  grossLovelace: string
-  /** The network fee, paid by the sponsor unless the quote says otherwise. */
-  networkFeeLovelace: string
-  /** ChatterPay's commercial fee on the amount being sent. */
-  commercialFeeLovelace: string
+  /** The ada sitting in the wallet's own outputs. Not the user's balance: see `grossLovelace`. */
+  utxoLovelace: string
   /** The registration deposit coming back. */
   refundLovelace: string
+  /** What the user owns before any fee: the outputs plus the deposit. */
+  grossLovelace: string
+  /** What the transaction costs the chain. */
+  networkFeeLovelace: string
+  /** Who pays it. Always the sponsor, and shown as such so it does not read as a deduction. */
+  networkFeePaidBy: 'sponsor'
+  /** ChatterPay's commercial fee on the amount being sent. */
+  commercialFeeLovelace: string
   /** What the destination actually receives. */
   netLovelace: string
 }
@@ -90,10 +94,21 @@ export default function StakingExitDialog({
     onRecipientChange?.(value.trim())
   }
 
+  // Read top to bottom it has to add up, which is why the estate is its own line rather than a
+  // heading: the two figures above it are what it is made of, and the two below are what comes off
+  // it. The network fee is inside that list and is not subtracted, so its label says who pays.
   const rows: { key: string; label: string; value: string | undefined; strong?: boolean }[] = [
-    { key: 'gross', label: t('staking.exit.gross'), value: quote?.grossLovelace },
+    { key: 'utxo', label: t('staking.exit.utxo'), value: quote?.utxoLovelace },
     { key: 'refund', label: t('staking.exit.refund'), value: quote?.refundLovelace },
-    { key: 'networkFee', label: t('staking.exit.networkFee'), value: quote?.networkFeeLovelace },
+    { key: 'gross', label: t('staking.exit.gross'), value: quote?.grossLovelace, strong: true },
+    {
+      key: 'networkFee',
+      label:
+        quote?.networkFeePaidBy === 'sponsor'
+          ? t('staking.exit.networkFeeSponsored')
+          : t('staking.exit.networkFee'),
+      value: quote?.networkFeeLovelace
+    },
     {
       key: 'commercialFee',
       label: t('staking.exit.commercialFee'),
