@@ -16,6 +16,7 @@ import {
   requestStakingAction,
   setStakingConsent,
   useGetWalletBalance,
+  useStakingExitQuote,
   useStakingState,
   type StakingActionName
 } from 'src/app/api/hooks'
@@ -73,6 +74,9 @@ export default function StakingDashboardView(): JSX.Element {
   const [recipient, setRecipient] = useState<string | null>(null)
   const [failure, setFailure] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
+
+  // Follows the address as it is typed, and only asks once there is one worth quoting.
+  const { data: quote, isLoading: quoteLoading } = useStakingExitQuote(cardanoAddress, recipient)
 
   const reset = (): void => {
     setPending(null)
@@ -211,10 +215,10 @@ export default function StakingDashboardView(): JSX.Element {
 
       <StakingExitDialog
         open={stage === 'exit'}
-        // Wired to the backend quote; until it answers there is nothing to confirm, which is what the
-        // dialog's disabled state is for.
-        quote={null}
-        quoteLoading
+        // From the backend, which assembles and balances the real transaction to answer. Until it does
+        // there is nothing to confirm, which is what the dialog's disabled state is for.
+        quote={quote ?? null}
+        quoteLoading={quoteLoading}
         submitting={busy !== null}
         error={failure}
         onCancel={reset}

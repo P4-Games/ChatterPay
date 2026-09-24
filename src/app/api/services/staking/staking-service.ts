@@ -120,6 +120,40 @@ export async function setStakingConsent(
   }
 }
 
+export async function getStakingExitQuote(
+  phoneNumber: string,
+  recipientAddress: string
+): Promise<
+  StakingServiceResult<{
+    grossLovelace: string
+    networkFeeLovelace: string
+    commercialFeeLovelace: string
+    refundLovelace: string
+    netLovelace: string
+  }>
+> {
+  try {
+    const response = await axios.get<
+      BackendResponse<{
+        grossLovelace: string
+        networkFeeLovelace: string
+        commercialFeeLovelace: string
+        refundLovelace: string
+        netLovelace: string
+      }>
+    >(`${BACKEND_API_URL}/cardano/staking/exit-quote`, {
+      params: { channel_user_id: phoneNumber, recipient_address: recipientAddress },
+      headers: headers()
+    })
+    if (response.data.status !== 'success') {
+      return { ok: false, status: 502, code: 'BACKEND_ERROR', message: response.data.data.message }
+    }
+    return { ok: true, data: response.data.data }
+  } catch (error) {
+    return toFailure(error)
+  }
+}
+
 export async function authorizeStakingAction(
   phoneNumber: string,
   action: StakingAction,

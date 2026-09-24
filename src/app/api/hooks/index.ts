@@ -48,6 +48,7 @@ export {
 export {
   useStakingState,
   useGovernance,
+  useStakingExitQuote,
   setStakingConsent,
   authorizeStakingAction,
   requestStakingAction,
@@ -57,5 +58,6 @@ export {
   type StakingAccountState,
   type StakingOperationView,
   type StakingRewardView,
-  type GovernanceView
+  type GovernanceView,
+  type StakingExitQuote
 } from './use-staking'

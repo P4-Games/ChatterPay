@@ -113,6 +113,15 @@ export type StakingView = {
   lastSyncAt: string | null
 }
 
+/** What an exit would move. Every figure in lovelace, as a string. */
+export type StakingExitQuote = {
+  grossLovelace: string
+  networkFeeLovelace: string
+  commercialFeeLovelace: string
+  refundLovelace: string
+  netLovelace: string
+}
+
 export type GovernanceDRep = {
   id: string
   idCip129?: string
@@ -166,6 +175,32 @@ export function useGovernance(walletId?: string) {
     walletId ? { headers: getAuthorizationHeader() } : {}
   ) as {
     data?: GovernanceView
+    isLoading: boolean
+    error: unknown
+    isValidating: boolean
+  }
+}
+
+/**
+ * What sending everything would move, for the destination currently typed.
+ *
+ * Suspended until there is an address worth quoting: the backend assembles and balances a real
+ * transaction to answer, so asking it once per keystroke would be several chain reads per character.
+ *
+ * @param walletId - The wallet.
+ * @param recipientAddress - The destination, or `null` while it is incomplete.
+ */
+export function useStakingExitQuote(walletId?: string, recipientAddress?: string | null) {
+  const ready =
+    walletId !== undefined &&
+    typeof recipientAddress === 'string' &&
+    /^(addr1|addr_test1)[0-9a-z]{20,}$/.test(recipientAddress)
+
+  return useGetCommon(
+    ready ? endpoints.dashboard.wallet.staking.exitQuote(walletId, recipientAddress) : null,
+    ready ? { headers: getAuthorizationHeader() } : {}
+  ) as {
+    data?: StakingExitQuote
     isLoading: boolean
     error: unknown
     isValidating: boolean
