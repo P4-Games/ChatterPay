@@ -23,6 +23,7 @@ import {
 
 import StakingActions from '../staking-actions'
 import StakingConsent from '../staking-consent'
+import StakingDeactivateDialog from '../staking-deactivate-dialog'
 import StakingExitDialog from '../staking-exit-dialog'
 import StakingHistory from '../staking-history'
 import StakingNotices from '../staking-notices'
@@ -74,6 +75,9 @@ export default function StakingDashboardView(): JSX.Element {
   const [recipient, setRecipient] = useState<string | null>(null)
   const [failure, setFailure] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
+  // Leaving is confirmed before it is recorded, because the consequence the user has to weigh is
+  // not the one the button says: staking will not resume on its own afterwards.
+  const [deactivating, setDeactivating] = useState(false)
 
   // Follows the address as it is typed, and only asks once there is one worth quoting.
   const { data: quote, isLoading: quoteLoading } = useStakingExitQuote(cardanoAddress, recipient)
@@ -184,7 +188,7 @@ export default function StakingDashboardView(): JSX.Element {
           staking={staking}
           submitting={busy !== null}
           onAccept={() => changeConsent(true)}
-          onDecline={() => changeConsent(false)}
+          onDecline={() => setDeactivating(true)}
         />
 
         <StakingActions
@@ -226,6 +230,23 @@ export default function StakingDashboardView(): JSX.Element {
         onConfirm={(to) => {
           setRecipient(to)
           setStage('pin')
+        }}
+      />
+
+      <StakingDeactivateDialog
+        open={deactivating}
+        submitting={busy !== null}
+        // Absent when the balance could not be read, and that is the right value to pass: a warning
+        // about rewards we could not ask about would be inventing a figure.
+        pendingRewardsLovelace={
+          staking.balance.availability === 'unavailable'
+            ? null
+            : staking.balance.pendingRewardsLovelace
+        }
+        onCancel={() => setDeactivating(false)}
+        onConfirm={() => {
+          setDeactivating(false)
+          void changeConsent(false)
         }}
       />
     </Container>

@@ -12,6 +12,8 @@ export { default as StakingSummary } from './staking-summary'
 
 export { default as StakingPinDialog } from './staking-pin-dialog'
 
+export { default as StakingDeactivateDialog } from './staking-deactivate-dialog'
+
 export { default as GovernanceDelegation } from './governance-delegation'
 
 export { default as StakingExitDialog, type StakingExitQuote } from './staking-exit-dialog'
