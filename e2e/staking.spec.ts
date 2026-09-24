@@ -128,3 +128,65 @@ test.describe('the governance page', () => {
     await expect(page.getByTestId('governance-delegate')).toHaveCount(1)
   })
 })
+
+test.describe('navigating the staking section', () => {
+  test('reaches staking from the sidebar', async ({ page }) => {
+    await page.goto('/dashboard')
+
+    await page.getByRole('link', { name: /staking/i }).first().click()
+
+    await expect(page).toHaveURL(/\/dashboard\/staking/)
+  })
+
+  test('offers both pages as tabs', async ({ page }) => {
+    await page.goto('/dashboard/staking')
+
+    await expect(page.getByTestId('staking-tab-staking')).toBeVisible()
+    await expect(page.getByTestId('staking-tab-governance')).toBeVisible()
+  })
+
+  test('moves to governance without a reload of the section', async ({ page }) => {
+    await page.goto('/dashboard/staking')
+
+    await page.getByTestId('staking-tab-governance').click()
+
+    await expect(page).toHaveURL(/\/dashboard\/governance/)
+    await expect(page.getByTestId('staking-tab-governance')).toHaveAttribute(
+      'aria-selected',
+      'true'
+    )
+  })
+
+  test('selects the right tab on a direct visit', async ({ page }) => {
+    // The property the separate routes exist for: a shared or refreshed URL lands where it says.
+    await page.goto('/dashboard/governance')
+
+    await expect(page.getByTestId('staking-tab-governance')).toHaveAttribute(
+      'aria-selected',
+      'true'
+    )
+  })
+
+  test('comes back to staking from governance', async ({ page }) => {
+    await page.goto('/dashboard/governance')
+
+    await page.getByTestId('staking-tab-staking').click()
+
+    await expect(page).toHaveURL(/\/dashboard\/staking/)
+  })
+})
+
+test.describe('joining, where it is not something the user does', () => {
+  test('offers no terms checkbox when enrolment is automatic', async ({ page }) => {
+    await page.goto('/dashboard/staking')
+
+    // Reads whichever flow this deployment is configured for, and only asserts on the automatic one.
+    const membership = page.getByTestId('staking-membership-pending')
+    const active = page.getByTestId('staking-membership-active')
+    const belowMinimum = page.getByTestId('staking-membership-below-minimum')
+
+    if ((await membership.count()) + (await active.count()) + (await belowMinimum.count()) > 0) {
+      await expect(page.getByTestId('staking-consent-checkbox')).toHaveCount(0)
+    }
+  })
+})

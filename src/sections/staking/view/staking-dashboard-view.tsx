@@ -22,7 +22,8 @@ import {
 } from 'src/app/api/hooks'
 
 import StakingActions from '../staking-actions'
-import StakingConsent from '../staking-consent'
+import StakingMembership from '../staking-membership'
+import StakingTabs from '../staking-tabs'
 import StakingDeactivateDialog from '../staking-deactivate-dialog'
 import StakingExitDialog from '../staking-exit-dialog'
 import StakingHistory from '../staking-history'
@@ -169,6 +170,8 @@ export default function StakingDashboardView(): JSX.Element {
         {t('staking.description')}
       </Typography>
 
+      <StakingTabs />
+
       <Stack spacing={3}>
         {notice && (
           <Alert severity='success' onClose={() => setNotice(null)}>
@@ -184,11 +187,11 @@ export default function StakingDashboardView(): JSX.Element {
 
         <StakingSummary staking={staking} />
 
-        <StakingConsent
+        <StakingMembership
           staking={staking}
           submitting={busy !== null}
-          onAccept={() => changeConsent(true)}
-          onDecline={() => setDeactivating(true)}
+          onJoin={() => changeConsent(true)}
+          onLeave={() => setDeactivating(true)}
         />
 
         <StakingActions

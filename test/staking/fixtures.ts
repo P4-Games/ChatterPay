@@ -18,6 +18,8 @@ export function stakingView(overrides: Partial<StakingView> = {}): StakingView {
     optOut: null,
     termsVersion: 'v1',
     currentTermsVersion: 'v1',
+    consentRequired: false,
+    minimumEnrolmentLovelace: '10000000',
     registered: true,
     registrationOrigin: 'chatterpay',
     poolId: 'pool1testpoolidfortestsonly000000000000000000000000000',

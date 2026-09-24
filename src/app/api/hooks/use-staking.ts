@@ -100,6 +100,10 @@ export type StakingView = {
   optOut: StakingOptOut | null
   termsVersion: string | null
   currentTermsVersion: string
+  /** Whether this deployment asks the user to accept the terms before anything enrols the wallet. */
+  consentRequired: boolean
+  /** The balance automatic enrolment requires, in lovelace. */
+  minimumEnrolmentLovelace: string
   registered: boolean
   registrationOrigin: 'unknown' | 'chatterpay' | 'external'
   poolId: string | null

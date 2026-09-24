@@ -2,6 +2,10 @@ export { default as StakingActions } from './staking-actions'
 
 export { default as StakingConsent } from './staking-consent'
 
+export { default as StakingTabs } from './staking-tabs'
+
+export { default as StakingMembership } from './staking-membership'
+
 export { default as StakingHistory } from './staking-history'
 
 export { default as StakingNotices } from './staking-notices'

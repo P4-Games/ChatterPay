@@ -21,6 +21,7 @@ import {
 
 import GovernanceDelegation from '../governance-delegation'
 import StakingPinDialog from '../staking-pin-dialog'
+import StakingTabs from '../staking-tabs'
 
 import type { AuthUserType } from 'src/auth/types'
 
@@ -126,6 +127,8 @@ export default function GovernanceDashboardView(): JSX.Element {
       <Typography variant='body2' sx={{ mb: 3, color: 'text.secondary' }}>
         {t('governance.description')}
       </Typography>
+
+      <StakingTabs />
 
       {notice && (
         <Alert severity='success' sx={{ mb: 3 }} onClose={() => setNotice(null)}>

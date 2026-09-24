@@ -5,6 +5,7 @@ import {
   Analytics01Icon,
   Image02Icon,
   StarSquareIcon,
+  SafeIcon,
   AccountSetting02Icon
 } from '@hugeicons/core-free-icons'
 
@@ -34,6 +35,7 @@ const ICONS = {
   nft: <HugeiconsIcon icon={Image02Icon} size={28} />,
   chatterpoints: <HugeiconsIcon icon={StarSquareIcon} size={28} />,
   banking: <HugeiconsIcon icon={Analytics01Icon} size={28} />,
+  staking: <HugeiconsIcon icon={SafeIcon} size={28} />,
   polymarket: polymarketIcon
 }
 
@@ -52,6 +54,15 @@ export function useNavData() {
             title: t('menu._dashboard'),
             path: paths.dashboard.root,
             icon: ICONS.banking
+          },
+          {
+            title: t('menu.staking'),
+            path: paths.dashboard.staking.root,
+            // Governance is a tab of this section rather than an entry of its own, so the sidebar
+            // has to stay on Staking while the user is on it. Without this, moving between the two
+            // tabs reads as having left the section.
+            activePaths: [paths.dashboard.staking.governance],
+            icon: ICONS.staking
           },
           {
             title: t('menu.polymarket'),
