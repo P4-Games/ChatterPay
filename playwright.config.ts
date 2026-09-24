@@ -34,6 +34,8 @@ const BASE_URL = process.env.E2E_BASE_URL ?? 'http://localhost:3000'
 
 export default defineConfig({
   testDir: './e2e',
+  // Says what is missing when the session has not been created yet, instead of failing on the file.
+  globalSetup: require.resolve('./e2e/require-session'),
   // One worker: these share one hand-made session, and parallel workers would race on it.
   workers: 1,
   fullyParallel: false,
