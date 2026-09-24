@@ -6,6 +6,26 @@ import { STORAGE_STATE } from '../playwright.config'
 // ----------------------------------------------------------------------
 
 /**
+ * Which projects this run was asked for.
+ *
+ * @returns The names passed with `--project`, or every project's name when none was passed, since
+ *   that runs all of them.
+ */
+function selectedProjects(): string[] {
+  const names: string[] = []
+  const argv = process.argv
+
+  for (let index = 0; index < argv.length; index += 1) {
+    const argument = argv[index]
+    if (argument.startsWith('--project=')) names.push(argument.slice('--project='.length))
+    else if (argument === '--project' && index + 1 < argv.length) names.push(argv[index + 1])
+  }
+
+  // No filter means every project runs, and the auth project is one of them.
+  return names.length > 0 ? names : ['auth', 'staking']
+}
+
+/**
  * Refuses to start the authenticated specs when nobody has signed in yet.
  *
  * Without this the run fails on a missing file, somewhere inside Playwright, with an `ENOENT` naming
@@ -18,10 +38,13 @@ import { STORAGE_STATE } from '../playwright.config'
  * @param config - The resolved configuration, holding the projects this run will actually execute.
  */
 async function globalSetup(config: FullConfig): Promise<void> {
-  // Only the authenticated project needs the session. Running `--project=auth` is how the session
-  // gets created, so demanding it there would make it impossible to ever create.
-  const needsSession = config.projects.some((project) => project.name === 'staking')
-  if (!needsSession || existsSync(STORAGE_STATE)) return
+  // Read off the command line rather than off `config.projects`, which is not narrowed by
+  // `--project` at this point and lists every project whatever was asked for. Both readings of it
+  // are wrong in opposite directions: looking for `staking` refuses the auth run that would create
+  // the session, and looking for `auth` lets the staking run through to a bare ENOENT.
+  //
+  // A run that includes the auth project is about to create the session, so there is nothing to say.
+  if (selectedProjects().includes('auth') || existsSync(STORAGE_STATE)) return
 
   throw new Error(
     [
