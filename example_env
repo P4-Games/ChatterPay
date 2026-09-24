@@ -13,6 +13,11 @@ BACKEND_API_TOKEN='backend token'
 # says which session a staking mutation came from, so holding the internal token is no longer
 # enough to name a user. Never prefixed NEXT_PUBLIC_: that is what would inline it into a browser
 # bundle. Empty means staking mutations are refused, which is the safe state.
+#
+# Deployed, it is set on the Cloud Run service itself, the same way BACKEND_API_TOKEN is, and
+# not through the image: the Dockerfile builds in stages and the stage that runs inherits no
+# environment from the stage that builds, so a value passed as a build argument exists only
+# while the bundle is compiled. It has to be the same value the backend holds under this name.
 CARDANO_STAKING_BFF_SECRET=''
 BOT_API_WAPP_ENABLED=true
 MONGODB='mongodb://localhost:27017'
