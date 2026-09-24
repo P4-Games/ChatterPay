@@ -9,6 +9,11 @@ BOT_API_TOKEN={api token}
 BOT_API_URL=http://localhost:3000
 BACKEND_API_URL=https://dev.back.chatterpay.net
 BACKEND_API_TOKEN='backend token'
+# Shared with the backend under the same name, and with nothing else. It signs the assertion that
+# says which session a staking mutation came from, so holding the internal token is no longer
+# enough to name a user. Never prefixed NEXT_PUBLIC_: that is what would inline it into a browser
+# bundle. Empty means staking mutations are refused, which is the safe state.
+CARDANO_STAKING_BFF_SECRET=''
 BOT_API_WAPP_ENABLED=true
 MONGODB='mongodb://localhost:27017'
 MONGODB_BOT='BOT mongo db url'
