@@ -133,7 +133,10 @@ test.describe('navigating the staking section', () => {
   test('reaches staking from the sidebar', async ({ page }) => {
     await page.goto('/dashboard')
 
-    await page.getByRole('link', { name: /staking/i }).first().click()
+    await page
+      .getByRole('link', { name: /staking/i })
+      .first()
+      .click()
 
     await expect(page).toHaveURL(/\/dashboard\/staking/)
   })
