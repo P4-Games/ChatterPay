@@ -773,7 +773,10 @@
       "gate": "We could not check your PIN. Try again in a moment."
     },
     "history": {
-      "title": "Operations",
+      "explorer": "View on the explorer",
+      "close": "Close",
+      "copy": "Copy",
+      "title": "History",
       "empty": "No operations yet.",
       "operation": "Operation",
       "status": "Status",

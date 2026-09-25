@@ -1,9 +1,10 @@
 'use client'
 
+import { useState } from 'react'
+
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Chip from '@mui/material/Chip'
-import Link from '@mui/material/Link'
 import Stack from '@mui/material/Stack'
 import Table from '@mui/material/Table'
 import Tooltip from '@mui/material/Tooltip'
@@ -13,12 +14,16 @@ import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import Typography from '@mui/material/Typography'
 
+import { TransactionRowActions } from 'src/sections/banking/banking-transaction-row-parts'
+
+import { fDate, fTime } from 'src/utils/format-time'
 import { useTranslate } from 'src/locales'
 
 import { useStakingStyles } from './staking-style'
 import { formatAdaWithUnit } from './staking-amount'
+import StakingOperationDrawer from './staking-operation-drawer'
 
-import type { StakingView } from 'src/app/api/hooks/use-staking'
+import type { StakingView, StakingOperationView } from 'src/app/api/hooks/use-staking'
 
 // ----------------------------------------------------------------------
 
@@ -27,9 +32,6 @@ type Props = {
   /** Where a transaction id links to, with a trailing slash. Absent hides the links. */
   explorerUrl?: string
 }
-
-/** How much of a transaction id is enough to recognise it without wrapping the column. */
-const ID_PREFIX = 10
 
 // ----------------------------------------------------------------------
 
@@ -40,10 +42,16 @@ const ID_PREFIX = 10
  * has not. An unsettled row is marked as informative and is never presented as a completed fact: on
  * Cardano a submitted transaction can still be dropped, and a history that shows "sent" as though it
  * meant "done" is a history that is briefly wrong in the direction that matters.
+ *
+ * The transaction id is not a column. A 64-character hash is unreadable at any width a table can
+ * give it, so it was shown truncated and led nowhere useful; it lives in the detail panel, where
+ * there is room for the whole thing, a control to copy it and a link to an explorer. The row's last
+ * cell is the button that opens that panel, the same control the dashboard's own history uses.
  */
 export default function StakingHistory({ staking, explorerUrl }: Props): JSX.Element {
   const { t } = useTranslate()
   const { card } = useStakingStyles()
+  const [detail, setDetail] = useState<StakingOperationView | null>(null)
 
   if (staking.operations.length === 0) {
     return (
@@ -71,15 +79,11 @@ export default function StakingHistory({ staking, explorerUrl }: Props): JSX.Ele
                 {t('staking.history.operation')}
               </TableCell>
               <TableCell sx={{ color: 'text.secondary' }}>{t('staking.history.status')}</TableCell>
-              <TableCell sx={{ color: 'text.secondary' }}>
-                {t('staking.history.transaction')}
-              </TableCell>
               <TableCell align='right' sx={{ color: 'text.secondary' }}>
                 {t('staking.history.fee')}
               </TableCell>
-              <TableCell align='right' sx={{ color: 'text.secondary' }}>
-                {t('staking.history.date')}
-              </TableCell>
+              <TableCell sx={{ color: 'text.secondary' }}>{t('staking.history.date')}</TableCell>
+              <TableCell />
             </TableRow>
           </TableHead>
 
@@ -113,23 +117,26 @@ export default function StakingHistory({ staking, explorerUrl }: Props): JSX.Ele
                   </Stack>
                 </TableCell>
 
-                <TableCell>
-                  {operation.txId ? (
-                    explorerUrl ? (
-                      <Link
-                        href={`${explorerUrl}${operation.txId}`}
-                        target='_blank'
-                        rel='noopener'
-                        underline='hover'
-                        variant='caption'
-                      >
-                        {operation.txId.slice(0, ID_PREFIX)}…
-                      </Link>
-                    ) : (
-                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>
-                        {operation.txId.slice(0, ID_PREFIX)}…
+                <TableCell align='right' sx={{ whiteSpace: 'nowrap' }}>
+                  {operation.networkFeeLovelace
+                    ? formatAdaWithUnit(operation.networkFeeLovelace)
+                    : '—'}
+                </TableCell>
+
+                {/* Same shape as the dashboard's own history: the day, and the time under it. */}
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                  {operation.createdAt ? (
+                    <>
+                      <Typography variant='body2'>
+                        {fDate(new Date(operation.createdAt), 'dd MMM yyyy')}
                       </Typography>
-                    )
+                      <Typography
+                        variant='caption'
+                        sx={{ color: 'text.secondary', display: 'block' }}
+                      >
+                        {fTime(new Date(operation.createdAt))}
+                      </Typography>
+                    </>
                   ) : (
                     <Typography variant='caption' sx={{ color: 'text.disabled' }}>
                       —
@@ -137,20 +144,21 @@ export default function StakingHistory({ staking, explorerUrl }: Props): JSX.Ele
                   )}
                 </TableCell>
 
-                <TableCell align='right' sx={{ whiteSpace: 'nowrap' }}>
-                  {operation.networkFeeLovelace
-                    ? formatAdaWithUnit(operation.networkFeeLovelace)
-                    : '—'}
-                </TableCell>
-
-                <TableCell align='right' sx={{ whiteSpace: 'nowrap', color: 'text.secondary' }}>
-                  {operation.createdAt ? new Date(operation.createdAt).toLocaleDateString() : '—'}
+                <TableCell align='right'>
+                  <TransactionRowActions dense onOpenDetails={() => setDetail(operation)} />
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </Box>
+
+      <StakingOperationDrawer
+        open={detail !== null}
+        onClose={() => setDetail(null)}
+        operation={detail}
+        {...(explorerUrl === undefined ? {} : { explorerUrl })}
+      />
     </Card>
   )
 }

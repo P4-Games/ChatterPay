@@ -773,7 +773,10 @@
       "gate": "No pudimos verificar tu PIN. Probá de nuevo en un momento."
     },
     "history": {
-      "title": "Operaciones",
+      "explorer": "Ver en el explorador",
+      "close": "Cerrar",
+      "copy": "Copiar",
+      "title": "Historial",
       "empty": "Todavía no hay operaciones.",
       "operation": "Operación",
       "status": "Estado",
