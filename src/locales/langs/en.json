@@ -50,6 +50,7 @@
     "email": "Email Change",
     "notifications": "Notifications",
     "security": "Security",
+    "staking": "Staking",
     "polymarket": "Predict"
   },
   "user": {
@@ -300,9 +301,8 @@
       "action": "Action",
       "chatterpay_fee": "ChatterPay Fee",
       "provider_fees": "Provider Fees",
-      "network": "Network",
-      "send": "Send (same network)",
-      "swap": "Swap"
+      "operation": "Operation",
+      "fee_status": "Fee or status"
     },
     "values": {
       "zero": "$0",
@@ -310,7 +310,8 @@
       "varies": "Yes, varies",
       "available": "Available",
       "coming_soon": "Coming soon",
-      "flat_by_network": "Flat fee, varies by network. See below"
+      "flat_by_network": "Flat fee, varies by network. See below",
+      "in_token": "(equivalent, charged in the token)"
     },
     "sections": {
       "free": {
@@ -334,13 +335,38 @@
         }
       },
       "networks": {
-        "title": "Supported networks",
-        "rows": {
-          "scroll": "Scroll",
-          "cardano": "Cardano"
+        "title": "Networks",
+        "tabs": {
+          "evm": {
+            "name": "EVM (Base / Arbitrum)",
+            "rows": {
+              "send": "Transfer on the same network",
+              "swap": "Swap"
+            }
+          },
+          "cardano": {
+            "name": "Cardano",
+            "rows": {
+              "send_ada": "Sending ADA",
+              "send_token_held": "Sending tokens: the recipient already holds the token",
+              "send_token_new": "Sending tokens: the recipient does not hold the token yet",
+              "swap": "Swap"
+            },
+            "notes": {
+              "covered": "ChatterPay covers the network fees and, where it applies, the minimum ADA the recipient needs to receive the token. You do not need to hold ADA to send tokens."
+            }
+          },
+          "bitcoin": {
+            "name": "Bitcoin",
+            "empty": "Transfers and swaps are not available in ChatterPay yet."
+          },
+          "stellar": {
+            "name": "Stellar",
+            "empty": "Transfers and swaps are not available in ChatterPay yet."
+          }
         },
         "other_networks": "Send to +{{total}} networks:",
-        "other_networks_hint": "Available for cross-network transfers, from your Scroll balance, any token to any token. The cross-network transfer fee applies."
+        "other_networks_hint": "Destinations for cross-network transfers, any token to any token, through our bridge provider. They are not networks where ChatterPay runs your wallet. The cross-network transfer fee applies."
       },
       "polymarket": {
         "title": "Polymarket",
@@ -594,42 +620,58 @@
   },
   "staking": {
     "title": "Staking",
-    "description": "Delegate your ADA and earn rewards without giving up control of it.",
-    "loading": "Loading your staking position...",
+    "description": "Delegate your ADA and earn rewards without giving up control.",
+    "loading": "Loading your position...",
     "unavailable": "Staking is not available right now.",
     "consent": {
-      "title": "Join staking",
+      "title": "Start staking",
       "description": "Your ADA stays in your wallet. Delegating locks a refundable deposit and earns rewards each epoch.",
-      "terms": "I have read and accept the staking terms.",
+      "terms": "I accept the staking terms.",
       "accept": "Start staking",
       "decline": "Turn staking off",
       "acceptedOn": "Accepted on {{date}}",
       "version": "Terms version {{version}}",
-      "newVersion": "The terms have changed since you accepted them. Review and accept version {{version}} to continue."
+      "newVersion": "The terms have changed. Accept version {{version}} to continue."
     },
     "deactivate": {
       "title": "Turn staking off",
-      "body": "Turning staking off stops us delegating your ADA, and returns your registration deposit once the operation confirms.",
+      "body": "We stop delegating your ADA and return your refundable deposit once the operation confirms.",
       "noAutoRejoin": "YOU WILL NOT TAKE PART AGAIN AUTOMATICALLY, EVEN IF YOU RECEIVE MORE ADA.",
-      "howToReturn": "To stake again you will have to come back to this section and choose “Turn staking back on”.",
-      "pendingRewards": "You have {{amount}} in rewards the network has not released yet. Leaving before they are released forfeits them.",
+      "howToReturn": "To come back, return to this section and choose “Turn staking back on”.",
+      "pendingRewards": "You have {{amount}} in rewards the network has not released yet. Leaving first forfeits them.",
       "cancel": "Cancel",
       "confirm": "Turn staking off"
     },
+    "tabs": {
+      "position": "My staking",
+      "governance": "Governance"
+    },
+    "membership": {
+      "activeTitle": "Staking active",
+      "pool": "Pool {{pool}}",
+      "deposit": "Deposit {{amount}}",
+      "pendingTitle": "Automatic activation pending",
+      "pendingBody": "Your wallet is eligible. Staking will start on the next sync cycle.",
+      "belowMinimumTitle": "Minimum not reached yet",
+      "belowMinimumBody": "At least {{minimum}} is needed. Once your balance reaches it, activation is automatic.",
+      "blockedTitle": "Cannot be activated yet",
+      "leavingTitle": "Deactivation in progress",
+      "leavingBody": "We are withdrawing your delegation and recovering the deposit."
+    },
     "notices": {
-      "notSignableTitle": "This wallet cannot be operated from here",
-      "notSignableBody": "We can read this position but we do not hold the keys that sign for it, so no operation can be started. You can still see your rewards and your delegation.",
-      "optedOutTitle": "You turned staking off",
-      "optedOutBody": "You turned staking off on {{date}}. Nothing will delegate this wallet again, even if you receive more ADA, until you turn it back on.",
+      "notSignableTitle": "External staking wallet",
+      "notSignableBody": "This wallet can be viewed here, but staking actions are unavailable.",
+      "optedOutTitle": "Staking disabled by you",
+      "optedOutBody": "You turned it off on {{date}}. Automatic staking is off, even if you receive more ADA.",
       "optedOutRejoin": "Turn staking back on",
-      "rewardsBlockedTitle": "Your rewards are not withdrawable yet",
-      "rewardsBlockedBody": "Cardano requires your stake to have delegated its voting power before rewards can be withdrawn. Delegate your vote and the withdrawal becomes available.",
-      "balanceUnavailableTitle": "We could not read your balance",
-      "balanceUnavailableBody": "The network could not be reached, so we are not showing a figure rather than showing a wrong one. Nothing has changed in your wallet.",
-      "snapshotStaleTitle": "These figures are not current",
-      "snapshotStaleBody": "Your position was last read on {{date}}. It is shown for information and no operation can be started on it until it refreshes.",
-      "pendingTitle": "An operation is in progress",
-      "pendingBody": "{{operation}} was submitted and the network has not settled it yet. Nothing else can start until it does."
+      "rewardsBlockedTitle": "Rewards blocked",
+      "rewardsBlockedBody": "Cardano requires your voting power to be delegated before rewards can be withdrawn.",
+      "balanceUnavailableTitle": "Balance could not be read",
+      "balanceUnavailableBody": "The network could not be reached. No figure is shown rather than a wrong one.",
+      "snapshotStaleTitle": "Figures are not current",
+      "snapshotStaleBody": "Last read {{date}}. No operation can start until it refreshes.",
+      "pendingTitle": "Operation in progress",
+      "pendingBody": "{{operation}} was submitted and the network has not settled it."
     },
     "summary": {
       "title": "Your ADA",
@@ -639,7 +681,7 @@
       "depositHint": "Locked by the network while you stake. Returned in full when you leave.",
       "rewards": "Withdrawable rewards",
       "pending": "Rewards being calculated",
-      "pendingHint": "Not withdrawable yet and not counted in your total.",
+      "pendingHint": "Not withdrawable yet and not counted in the total.",
       "lastSync": "Last read {{date}}",
       "never": "never"
     },
@@ -648,11 +690,11 @@
       "awaiting_funds": "Waiting for funds",
       "activation_pending": "Starting",
       "signing": "Signing",
-      "submitted": "Submitted to the network",
-      "active": "Staking",
+      "submitted": "Submitted",
+      "active": "Active",
       "exit_pending": "Leaving",
       "exit_submitted": "Leaving, submitted",
-      "reconcile_required": "Checking with the network",
+      "reconcile_required": "Checking",
       "manual_review": "Under review"
     },
     "position": {
@@ -667,13 +709,13 @@
       "originUnknown": "Unknown"
     },
     "actions": {
-      "title": "What you can do",
+      "title": "Actions",
       "register_and_delegate": "Start staking",
-      "delegate_vote": "Delegate my vote",
+      "delegate_vote": "Delegate vote",
       "redelegate_pool": "Change pool",
       "withdraw_rewards": "Withdraw rewards",
-      "deregister": "Stop staking and recover the deposit",
-      "exit_and_send_max": "Send everything",
+      "deregister": "Stop staking",
+      "exit_and_send_max": "Send all",
       "confirm": "Confirm",
       "cancel": "Cancel",
       "started": "Submitted to the network.",
@@ -681,27 +723,28 @@
       "failed": "Could not be started: {{reason}}"
     },
     "refusals": {
-      "no_confirmed_chain_read": "We have not read this wallet on the network yet.",
+      "no_confirmed_chain_read": "This wallet has not been read on the network yet.",
       "staking_disabled": "Staking is off in this environment.",
       "no_terms_consent": "Accept the staking terms first.",
       "not_opted_in": "Staking is not switched on for this wallet.",
-      "opted_out": "You left staking. Join again to use this.",
+      "opted_out": "You turned staking off. Turn it back on to use this.",
       "not_eligible": "This wallet does not hold enough ADA yet.",
       "already_registered": "This wallet is already staking.",
       "not_registered": "This wallet is not staking.",
       "no_rewards": "There are no rewards to withdraw.",
       "vote_delegation_required": "Delegate your voting power first.",
-      "deposit_unknown": "We do not know the deposit that was paid, so we will not build a transaction that cannot balance.",
-      "operation_in_flight": "Another operation is still in progress.",
+      "deposit_unknown": "The deposit that was paid is unknown, so the transaction is not built.",
+      "operation_in_flight": "Another operation is in progress.",
       "already_delegated": "Already delegated to that pool.",
       "no_pool_configured": "No pool is configured.",
       "not_allowlisted": "Staking is not open to this wallet yet.",
       "signer_unavailable": "We do not hold the keys that sign for this wallet.",
-      "not_available": "Not available."
+      "not_available": "Not available.",
+      "sponsored_reentry_limit": "You have reached the limit of funded registrations for this period."
     },
     "exit": {
-      "title": "Send everything",
-      "description": "Stops staking, recovers the deposit and sends the whole balance to the address you choose. This cannot be undone.",
+      "title": "Send all",
+      "description": "Stops staking, recovers the deposit and sends the whole balance. This cannot be undone.",
       "recipient": "Send to",
       "recipientPlaceholder": "addr1... or addr_test1...",
       "recipientInvalid": "That is not a valid Cardano address for this network.",
@@ -730,10 +773,10 @@
       "operation": "Operation",
       "status": "Status",
       "transaction": "Transaction",
-      "fee": "Network fee",
+      "fee": "Fee",
       "date": "Date",
       "informative": "In progress",
-      "informativeHint": "Shown for information. The network has not settled it."
+      "informativeHint": "The network has not settled it."
     },
     "rewards": {
       "title": "Rewards",
@@ -745,7 +788,7 @@
   },
   "governance": {
     "title": "Governance",
-    "description": "Your stake carries voting power in Cardano governance. Delegating it is what lets you withdraw rewards.",
+    "description": "Your stake carries voting power. Delegating it enables reward withdrawals.",
     "readOnlyNotice": "You can delegate your voting power here. Registering as a DRep and voting directly are not available.",
     "current": {
       "title": "Your voting power",
@@ -759,16 +802,18 @@
       "title": "Delegate your vote",
       "description": "Pick where your voting power goes. You can change it whenever you want.",
       "always_abstain": "Abstain",
-      "always_abstainHint": "Your stake counts towards quorum and votes on nothing. This is the neutral choice and it unlocks your rewards.",
+      "always_abstainHint": "Counts towards quorum, votes on nothing and unlocks your rewards.",
       "always_no_confidence": "No confidence",
       "always_no_confidenceHint": "Your stake votes against every governance action.",
-      "drep": "A delegate representative",
-      "drepHint": "Your stake follows how that representative votes.",
+      "drep": "Delegate representative",
+      "drepHint": "Your stake follows how the representative you pick votes.",
+      "drepLabel": "Representative",
       "delegate": "Delegate",
-      "empty": "No representatives could be listed right now."
+      "unavailable": "Not available from this screen.",
+      "empty": "No representatives could be listed."
     },
     "history": {
-      "title": "Governance history",
+      "title": "History",
       "empty": "Nothing recorded yet.",
       "kind": "Delegation",
       "date": "Date",
@@ -1041,7 +1086,7 @@
       },
       "staking": {
         "title": "Staking",
-        "description": "Earn while supporting the network."
+        "description": "Native Cardano staking and participation in ecosystem governance."
       },
       "b2b": {
         "title": "B2B",
@@ -1055,6 +1100,56 @@
         "title": "Polymarket",
         "description": "Trade prediction markets on real-world events, right from your ChatterPay wallet."
       }
+    },
+    "staking-view": {
+      "badge": "In development",
+      "hero": {
+        "title": "Your ADA can earn rewards",
+        "description": "Delegate your ADA from ChatterPay and take part in the Cardano ecosystem. The funds stay in your wallet and you keep control of them."
+      },
+      "how": {
+        "title": "How it works",
+        "receive": {
+          "title": "Receive ADA",
+          "description": "You receive ADA in your ChatterPay wallet, like any other token."
+        },
+        "delegate": {
+          "title": "Automatic delegation",
+          "description": "Wallets that meet the requirements are delegated to a stake pool automatically, unless you turn staking off."
+        },
+        "rewards": {
+          "title": "Rewards",
+          "description": "Cardano calculates rewards per epoch. You will be able to check them from your dashboard once the feature is available."
+        },
+        "control": {
+          "title": "You decide",
+          "description": "You can turn staking off at any time from your dashboard."
+        }
+      },
+      "balance": {
+        "title": "How your ADA looks",
+        "description": "Staking does not move your ADA out of your wallet. The balance is shown split into three parts.",
+        "available": {
+          "title": "Available ADA",
+          "description": "The balance you can send or swap whenever you want. Delegating does not lock it."
+        },
+        "deposit": {
+          "title": "Refundable deposit",
+          "description": "Cardano holds a fixed deposit while the wallet is registered for staking. It comes back in full when you stop staking."
+        },
+        "rewards": {
+          "title": "Rewards",
+          "description": "What your delegation accrues. They are calculated per epoch and can be withdrawn once the network releases them."
+        }
+      },
+      "governance": {
+        "title": "Cardano governance",
+        "description": "On Cardano, decisions about the protocol and the use of the treasury are voted on. The ADA you have delegated gives you voting power, and you exercise it by choosing where that power goes.",
+        "scope": "From ChatterPay you will be able to choose between abstaining, voting no confidence, or following a delegate representative (DRep). Registering as a representative and voting on each proposal yourself are not part of ChatterPay.",
+        "distinction": "Delegating your ADA to a stake pool and delegating your voting power are two separate decisions: the pool produces blocks, the vote shapes governance.",
+        "rewards_link": "Cardano requires the stake to have its voting power delegated before rewards can be withdrawn."
+      },
+      "disclaimer": "Rewards are set by the Cardano network, vary by epoch and are not guaranteed."
     },
     "polymarket-view": {
       "status": "🔮 Available now from your ChatterPay wallet.",
@@ -1250,9 +1345,8 @@
       "cac_old_label": "app-store funnel",
       "cac_new_label": "CAC per wallet on WhatsApp rails",
       "cta_mail": "Let's talk",
-      "cta_whatsapp": "Try it live on WhatsApp",
-      "mail_subject": "ChatterPay B2B - Integration inquiry",
-      "whatsapp_msg": "Hi! I want to create an account"
+      "cta_sandbox": "Try it live in the Sandbox",
+      "mail_subject": "ChatterPay B2B - Integration inquiry"
     },
     "loop": {
       "eyebrow": "Distribution",

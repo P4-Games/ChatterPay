@@ -50,6 +50,7 @@
     "email": "Alterar Email",
     "notifications": "Notificações",
     "security": "Segurança",
+    "staking": "Staking",
     "polymarket": "Prever"
   },
   "user": {
@@ -300,9 +301,8 @@
       "action": "Ação",
       "chatterpay_fee": "Taxa do ChatterPay",
       "provider_fees": "Taxas de terceiros",
-      "network": "Rede",
-      "send": "Enviar (mesma rede)",
-      "swap": "Swap"
+      "operation": "Operação",
+      "fee_status": "Taxa ou status"
     },
     "values": {
       "zero": "$0",
@@ -310,7 +310,8 @@
       "varies": "Sim, variam",
       "available": "Disponível",
       "coming_soon": "Em breve",
-      "flat_by_network": "Taxa fixa, varia por rede. Veja abaixo"
+      "flat_by_network": "Taxa fixa, varia por rede. Veja abaixo",
+      "in_token": "(equivalente, cobrada no token)"
     },
     "sections": {
       "free": {
@@ -334,13 +335,38 @@
         }
       },
       "networks": {
-        "title": "Redes suportadas",
-        "rows": {
-          "scroll": "Scroll",
-          "cardano": "Cardano"
+        "title": "Redes",
+        "tabs": {
+          "evm": {
+            "name": "EVM (Base / Arbitrum)",
+            "rows": {
+              "send": "Transferência na mesma rede",
+              "swap": "Swap"
+            }
+          },
+          "cardano": {
+            "name": "Cardano",
+            "rows": {
+              "send_ada": "Enviar ADA",
+              "send_token_held": "Enviar tokens: o destinatário já tem o token",
+              "send_token_new": "Enviar tokens: o destinatário ainda não tem o token",
+              "swap": "Swap"
+            },
+            "notes": {
+              "covered": "O ChatterPay cobre as taxas de rede e, quando se aplica, o ADA mínimo necessário para o destinatário receber o token. Você não precisa ter ADA para enviar tokens."
+            }
+          },
+          "bitcoin": {
+            "name": "Bitcoin",
+            "empty": "As transferências e os swaps ainda não estão disponíveis no ChatterPay."
+          },
+          "stellar": {
+            "name": "Stellar",
+            "empty": "As transferências e os swaps ainda não estão disponíveis no ChatterPay."
+          }
         },
         "other_networks": "Envie para +{{total}} redes:",
-        "other_networks_hint": "Disponíveis para transferências entre redes, a partir do seu saldo na Scroll, qualquer token para qualquer token. Aplica-se a taxa de transferência entre redes."
+        "other_networks_hint": "Destinos de transferências entre redes, qualquer token para qualquer token, através do nosso provedor de pontes. Não são redes onde o ChatterPay opera a sua carteira. Aplica-se a taxa de transferência entre redes."
       },
       "polymarket": {
         "title": "Polymarket",
@@ -594,52 +620,68 @@
   },
   "staking": {
     "title": "Staking",
-    "description": "Delegue seus ADA e ganhe recompensas sem deixar de controlá-los.",
-    "loading": "Carregando sua posição de staking...",
+    "description": "Delegue seus ADA e ganhe recompensas sem perder o controle.",
+    "loading": "Carregando sua posição...",
     "unavailable": "O staking não está disponível neste momento.",
     "consent": {
-      "title": "Começar a fazer staking",
-      "description": "Seus ADA ficam na sua carteira. Delegar imobiliza um depósito reembolsável e gera recompensas em cada época.",
-      "terms": "Li e aceito os termos de staking.",
+      "title": "Começar staking",
+      "description": "Seus ADA ficam na sua carteira. Delegar imobiliza um depósito reembolsável e gera recompensas por época.",
+      "terms": "Aceito os termos de staking.",
       "accept": "Começar",
       "decline": "Desativar staking",
       "acceptedOn": "Aceito em {{date}}",
       "version": "Versão dos termos {{version}}",
-      "newVersion": "Os termos mudaram desde que você os aceitou. Revise e aceite a versão {{version}} para continuar."
+      "newVersion": "Os termos mudaram. Aceite a versão {{version}} para continuar."
     },
     "deactivate": {
       "title": "Desativar staking",
-      "body": "Ao desativar o staking, vamos parar de delegar seus ADA e devolver seu depósito de registro quando a operação for confirmada.",
+      "body": "Paramos de delegar seus ADA e devolvemos seu depósito reembolsável quando a operação for confirmada.",
       "noAutoRejoin": "VOCÊ NÃO VAI PARTICIPAR DE NOVO AUTOMATICAMENTE, MESMO QUE RECEBA NOVOS ADA.",
-      "howToReturn": "Para voltar a fazer staking você terá que entrar nesta seção e selecionar “Voltar a ativar staking”.",
-      "pendingRewards": "Você tem {{amount}} em recompensas que a rede ainda não liberou. Sair antes que sejam liberadas faz você perdê-las.",
+      "howToReturn": "Para voltar, entre nesta seção e escolha “Voltar a ativar staking”.",
+      "pendingRewards": "Você tem {{amount}} em recompensas que a rede ainda não liberou. Sair antes faz você perdê-las.",
       "cancel": "Cancelar",
       "confirm": "Desativar staking"
     },
+    "tabs": {
+      "position": "Meu staking",
+      "governance": "Governança"
+    },
+    "membership": {
+      "activeTitle": "Staking ativo",
+      "pool": "Pool {{pool}}",
+      "deposit": "Depósito {{amount}}",
+      "pendingTitle": "Ativação automática pendente",
+      "pendingBody": "Sua carteira é elegível. O staking começa no próximo ciclo de sincronização.",
+      "belowMinimumTitle": "Mínimo ainda não atingido",
+      "belowMinimumBody": "São necessários {{minimum}}. Quando seu saldo chegar, a ativação é automática.",
+      "blockedTitle": "Ainda não pode ser ativado",
+      "leavingTitle": "Desativação em andamento",
+      "leavingBody": "Estamos retirando sua delegação e recuperando o depósito."
+    },
     "notices": {
-      "notSignableTitle": "Esta carteira não pode ser operada aqui",
-      "notSignableBody": "Podemos ler esta posição, mas não temos as chaves que a assinam, então nenhuma operação pode ser iniciada. Você ainda pode ver suas recompensas e sua delegação.",
+      "notSignableTitle": "Carteira de staking externa",
+      "notSignableBody": "Você pode vê-la aqui, mas não há operações de staking disponíveis.",
       "optedOutTitle": "Staking desativado por você",
-      "optedOutBody": "Você desativou o staking em {{date}}. Nada vai delegar esta carteira novamente, mesmo que receba novos ADA, até que a ative de novo.",
+      "optedOutBody": "Você desativou em {{date}}. O staking automático está desligado, mesmo que receba novos ADA.",
       "optedOutRejoin": "Voltar a ativar staking",
-      "rewardsBlockedTitle": "Suas recompensas ainda não podem ser retiradas",
-      "rewardsBlockedBody": "A Cardano exige que seu stake tenha delegado seu poder de voto antes de permitir a retirada de recompensas. Delegue seu voto e a retirada fica disponível.",
+      "rewardsBlockedTitle": "Recompensas bloqueadas",
+      "rewardsBlockedBody": "A Cardano exige delegar seu poder de voto antes de retirar recompensas.",
       "balanceUnavailableTitle": "Não conseguimos ler seu saldo",
-      "balanceUnavailableBody": "Não foi possível contatar a rede, então preferimos não mostrar um número em vez de mostrar um errado. Nada mudou na sua carteira.",
-      "snapshotStaleTitle": "Estes números não estão atualizados",
-      "snapshotStaleBody": "Sua posição foi lida por último em {{date}}. É mostrada a título informativo e nenhuma operação pode ser iniciada até que ela se atualize.",
-      "pendingTitle": "Há uma operação em andamento",
-      "pendingBody": "{{operation}} foi enviada e a rede ainda não a resolveu. Nada mais pode começar até que isso aconteça."
+      "balanceUnavailableBody": "Não foi possível contatar a rede. Preferimos não mostrar um número em vez de mostrar um errado.",
+      "snapshotStaleTitle": "Números não atualizados",
+      "snapshotStaleBody": "Última leitura {{date}}. Não é possível operar até que atualize.",
+      "pendingTitle": "Operação em andamento",
+      "pendingBody": "{{operation}} foi enviada e a rede ainda não resolveu."
     },
     "summary": {
       "title": "Seus ADA",
       "total": "Total",
       "utxo": "Na sua carteira",
       "deposit": "Depósito reembolsável",
-      "depositHint": "Imobilizado pela rede enquanto você faz staking. Volta integralmente quando você sai.",
+      "depositHint": "Imobilizado pela rede enquanto você faz staking. Volta integral ao sair.",
       "rewards": "Recompensas retiráveis",
       "pending": "Recompensas em cálculo",
-      "pendingHint": "Ainda não são retiráveis e não entram no seu total.",
+      "pendingHint": "Ainda não são retiráveis e não entram no total.",
       "lastSync": "Última leitura {{date}}",
       "never": "nunca"
     },
@@ -649,10 +691,10 @@
       "activation_pending": "Iniciando",
       "signing": "Assinando",
       "submitted": "Enviado à rede",
-      "active": "Fazendo staking",
+      "active": "Ativo",
       "exit_pending": "Saindo",
       "exit_submitted": "Saindo, enviado",
-      "reconcile_required": "Verificando com a rede",
+      "reconcile_required": "Verificando",
       "manual_review": "Em revisão"
     },
     "position": {
@@ -667,12 +709,12 @@
       "originUnknown": "Desconhecido"
     },
     "actions": {
-      "title": "O que você pode fazer",
-      "register_and_delegate": "Começar a fazer staking",
-      "delegate_vote": "Delegar meu voto",
-      "redelegate_pool": "Trocar de pool",
+      "title": "Ações",
+      "register_and_delegate": "Começar staking",
+      "delegate_vote": "Delegar voto",
+      "redelegate_pool": "Trocar pool",
       "withdraw_rewards": "Retirar recompensas",
-      "deregister": "Parar de fazer staking e recuperar o depósito",
+      "deregister": "Parar staking",
       "exit_and_send_max": "Enviar tudo",
       "confirm": "Confirmar",
       "cancel": "Cancelar",
@@ -685,23 +727,24 @@
       "staking_disabled": "O staking está desligado neste ambiente.",
       "no_terms_consent": "Primeiro aceite os termos de staking.",
       "not_opted_in": "O staking não está ativado para esta carteira.",
-      "opted_out": "Você saiu do staking. Entre de novo para usar isso.",
+      "opted_out": "Você desativou o staking. Ative de novo para usar isso.",
       "not_eligible": "Esta carteira ainda não tem ADA suficiente.",
       "already_registered": "Esta carteira já está fazendo staking.",
       "not_registered": "Esta carteira não está fazendo staking.",
       "no_rewards": "Não há recompensas para retirar.",
       "vote_delegation_required": "Primeiro delegue seu poder de voto.",
-      "deposit_unknown": "Não sabemos qual depósito foi pago, então não vamos montar uma transação que não pode fechar.",
+      "deposit_unknown": "Não sabemos qual depósito foi pago, então não montamos a transação.",
       "operation_in_flight": "Há outra operação em andamento.",
       "already_delegated": "Já está delegada a esse pool.",
       "no_pool_configured": "Não há nenhum pool configurado.",
       "not_allowlisted": "O staking ainda não está aberto para esta carteira.",
       "signer_unavailable": "Não temos as chaves que assinam por esta carteira.",
-      "not_available": "Não disponível."
+      "not_available": "Não disponível.",
+      "sponsored_reentry_limit": "Você atingiu o limite de registros financiados neste período."
     },
     "exit": {
       "title": "Enviar tudo",
-      "description": "Para de fazer staking, recupera o depósito e envia todo o saldo para o endereço que você escolher. Isso não pode ser desfeito.",
+      "description": "Para o staking, recupera o depósito e envia todo o saldo. Não pode ser desfeito.",
       "recipient": "Enviar para",
       "recipientPlaceholder": "addr1... ou addr_test1...",
       "recipientInvalid": "Esse não é um endereço Cardano válido para esta rede.",
@@ -713,7 +756,7 @@
       "networkFeeSponsored": "Taxa de rede (paga pela ChatterPay)",
       "commercialFee": "Taxa da ChatterPay",
       "net": "O endereço recebe",
-      "warning": "Tudo sai desta carteira. Confira o endereço carácter por carácter."
+      "warning": "Tudo sai desta carteira. Confira o endereço caractere por caractere."
     },
     "pin": {
       "title": "Confirme com seu PIN",
@@ -730,10 +773,10 @@
       "operation": "Operação",
       "status": "Status",
       "transaction": "Transação",
-      "fee": "Taxa de rede",
+      "fee": "Taxa",
       "date": "Data",
       "informative": "Em andamento",
-      "informativeHint": "Mostrada a título informativo. A rede ainda não a resolveu."
+      "informativeHint": "A rede ainda não resolveu."
     },
     "rewards": {
       "title": "Recompensas",
@@ -745,8 +788,8 @@
   },
   "governance": {
     "title": "Governança",
-    "description": "Seu stake tem poder de voto na governança da Cardano. Delegá-lo é o que permite retirar recompensas.",
-    "readOnlyNotice": "Aqui você pode delegar seu poder de voto. Registrar-se como DRep e votar diretamente não estão disponíveis.",
+    "description": "Seu stake tem poder de voto. Delegá-lo habilita a retirada de recompensas.",
+    "readOnlyNotice": "Você pode delegar seu poder de voto. Registrar-se como DRep e votar direto não estão disponíveis.",
     "current": {
       "title": "Seu poder de voto",
       "none": "Sem delegar",
@@ -756,19 +799,21 @@
       "not_registered": "Esta carteira não está fazendo staking."
     },
     "options": {
-      "title": "Delegue seu voto",
+      "title": "Delegar seu voto",
       "description": "Escolha para onde vai seu poder de voto. Você pode mudar quando quiser.",
       "always_abstain": "Abster-se",
-      "always_abstainHint": "Seu stake conta para o quórum e não vota em nada. É a opção neutra e desbloqueia suas recompensas.",
+      "always_abstainHint": "Conta para o quórum, não vota em nada e desbloqueia suas recompensas.",
       "always_no_confidence": "Sem confiança",
       "always_no_confidenceHint": "Seu stake vota contra toda ação de governança.",
-      "drep": "Um representante delegado",
-      "drepHint": "Seu stake segue como esse representante vota.",
+      "drep": "Representante delegado",
+      "drepHint": "Seu stake segue o voto do representante que você escolher.",
+      "drepLabel": "Representante",
       "delegate": "Delegar",
-      "empty": "Não foi possível listar nenhum representante neste momento."
+      "unavailable": "Não disponível nesta tela.",
+      "empty": "Não foi possível listar nenhum representante."
     },
     "history": {
-      "title": "Histórico de governança",
+      "title": "Histórico",
       "empty": "Ainda não há nada registrado.",
       "kind": "Delegação",
       "date": "Data",
@@ -1041,7 +1086,7 @@
       },
       "staking": {
         "title": "Staking",
-        "description": "Ganhe enquanto apoia a rede."
+        "description": "Staking nativo de Cardano e participação na governança do ecossistema."
       },
       "b2b": {
         "title": "B2B",
@@ -1055,6 +1100,56 @@
         "title": "Polymarket",
         "description": "Opere mercados de previsão sobre eventos reais, direto da sua carteira ChatterPay."
       }
+    },
+    "staking-view": {
+      "badge": "Em desenvolvimento",
+      "hero": {
+        "title": "Seu ADA pode gerar recompensas",
+        "description": "Delegue seu ADA pelo ChatterPay e participe do ecossistema Cardano. Os fundos ficam na sua carteira e você continua no controle."
+      },
+      "how": {
+        "title": "Como funciona?",
+        "receive": {
+          "title": "Receba ADA",
+          "description": "Você recebe ADA na sua carteira ChatterPay, como qualquer outro token."
+        },
+        "delegate": {
+          "title": "Delegação automática",
+          "description": "As carteiras que cumprem os requisitos são delegadas a um stake pool automaticamente, a menos que você desative o staking."
+        },
+        "rewards": {
+          "title": "Recompensas",
+          "description": "A Cardano calcula as recompensas por época. Você vai poder consultá-las no seu dashboard quando a funcionalidade estiver disponível."
+        },
+        "control": {
+          "title": "Você decide",
+          "description": "Você pode desativar o staking a qualquer momento pelo seu dashboard."
+        }
+      },
+      "balance": {
+        "title": "Como aparece o seu ADA",
+        "description": "O staking não tira seus ADA da sua carteira. O saldo aparece separado em três partes.",
+        "available": {
+          "title": "ADA disponível",
+          "description": "O saldo que você pode enviar ou trocar quando quiser. Delegar não o imobiliza."
+        },
+        "deposit": {
+          "title": "Depósito reembolsável",
+          "description": "A Cardano retém um depósito fixo enquanto a carteira está registrada para staking. Ele volta integral quando você para de fazer staking."
+        },
+        "rewards": {
+          "title": "Recompensas",
+          "description": "O que a sua delegação acumula. São calculadas por época e podem ser sacadas assim que a rede as libera."
+        }
+      },
+      "governance": {
+        "title": "Governança da Cardano",
+        "description": "Na Cardano, as decisões sobre o protocolo e o uso do tesouro são votadas. O ADA que você tem delegado dá poder de voto, e você o exerce escolhendo para onde esse poder vai.",
+        "scope": "Pelo ChatterPay você vai poder escolher entre se abster, votar sem confiança ou seguir um representante (DRep). Registrar-se como representante e votar em cada proposta por conta própria não fazem parte do ChatterPay.",
+        "distinction": "Delegar seu ADA a um stake pool e delegar seu poder de voto são duas decisões separadas: o pool produz blocos, o voto define a governança.",
+        "rewards_link": "A Cardano exige que o stake tenha o poder de voto delegado para poder sacar recompensas."
+      },
+      "disclaimer": "As recompensas são definidas pela rede Cardano, variam por época e não são garantidas."
     },
     "polymarket-view": {
       "status": "🔮 Já disponível na sua carteira ChatterPay.",
@@ -1250,9 +1345,8 @@
       "cac_old_label": "funil das app stores",
       "cac_new_label": "CAC por carteira em trilhos de WhatsApp",
       "cta_mail": "Vamos conversar",
-      "cta_whatsapp": "Teste ao vivo no WhatsApp",
-      "mail_subject": "ChatterPay B2B - Consulta de integração",
-      "whatsapp_msg": "Oi! Quero criar uma conta"
+      "cta_sandbox": "Teste ao vivo no Sandbox",
+      "mail_subject": "ChatterPay B2B - Consulta de integração"
     },
     "loop": {
       "eyebrow": "Distribuição",
