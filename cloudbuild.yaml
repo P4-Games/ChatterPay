@@ -24,6 +24,7 @@ steps:
       - NEXT_PUBLIC_USE_MOCK=${_NEXT_PUBLIC_USE_MOCK}
       - API3_ENABLED=${_API3_ENABLED}
       - JWT_SECRET=${_JWT_SECRET}
+      - CARDANO_STAKING_BFF_SECRET
       - NEXT_PUBLIC_UI_URL=${_NEXT_PUBLIC_UI_URL}
       - NEXT_PUBLIC_ALLOWED_ORIGINS=${_NEXT_PUBLIC_ALLOWED_ORIGINS}
       - RECAPTCHA_API_KEY=${_RECAPTCHA_API_KEY}
@@ -45,7 +46,8 @@ steps:
       - POLYMARKET_CLOB_API_URL=${_POLYMARKET_CLOB_API_URL}
       - NEXT_PUBLIC_POLYMARKET_WS_URL=${_NEXT_PUBLIC_POLYMARKET_WS_URL}
     secretEnv: [
-      POLYMARKET_ADAPTER_AUTH_TOKEN
+      POLYMARKET_ADAPTER_AUTH_TOKEN,
+      CARDANO_STAKING_BFF_SECRET
     ]
   #
   # Build docker imagen.
@@ -98,7 +100,8 @@ steps:
       '.'
     ]
     secretEnv: [
-      POLYMARKET_ADAPTER_AUTH_TOKEN
+      POLYMARKET_ADAPTER_AUTH_TOKEN,
+      CARDANO_STAKING_BFF_SECRET
     ]
   #
   # push the container images to Container Registry
@@ -135,7 +138,9 @@ availableSecrets:
   secretManager:
     - versionName: projects/$PROJECT_ID/secrets/${_POLYMARKET_ADAPTER_AUTH_TOKEN_NAME}/versions/latest
       env: 'POLYMARKET_ADAPTER_AUTH_TOKEN'
-
+    - versionName: projects/$PROJECT_ID/secrets/${_CARDANO_STAKING_BFF_SECRET_NAME}/versions/latest
+      env: 'CARDANO_STAKING_BFF_SECRET'
+  
 images:
   - $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
 
