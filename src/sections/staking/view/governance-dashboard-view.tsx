@@ -22,6 +22,7 @@ import {
 import GovernanceDelegation from '../governance-delegation'
 import StakingPinDialog from '../staking-pin-dialog'
 import StakingTabs from '../staking-tabs'
+import { useStakingStyles } from '../staking-style'
 
 import type { AuthUserType } from 'src/auth/types'
 
@@ -41,6 +42,7 @@ import type { AuthUserType } from 'src/auth/types'
 export default function GovernanceDashboardView(): JSX.Element {
   const { t } = useTranslate()
   const settings = useSettingsContext()
+  const { heading } = useStakingStyles()
   const { user }: { user: AuthUserType } = useAuthContext()
 
   const { data: balances } = useGetWalletBalance(user?.wallet)
@@ -121,17 +123,25 @@ export default function GovernanceDashboardView(): JSX.Element {
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-      <Typography variant='h4' sx={{ mb: 1 }}>
+      <Typography
+        sx={{
+          color: heading,
+          fontSize: 24,
+          fontWeight: 700,
+          lineHeight: 'normal',
+          letterSpacing: '-0.24px'
+        }}
+      >
         {t('governance.title')}
       </Typography>
-      <Typography variant='body2' sx={{ mb: 3, color: 'text.secondary' }}>
+      <Typography variant='caption' sx={{ color: 'text.secondary', display: 'block', mt: 0.5 }}>
         {t('governance.description')}
       </Typography>
 
       <StakingTabs />
 
       {notice && (
-        <Alert severity='success' sx={{ mb: 3 }} onClose={() => setNotice(null)}>
+        <Alert severity='success' sx={{ mb: 2, py: 0.5 }} onClose={() => setNotice(null)}>
           {notice}
         </Alert>
       )}

@@ -1,16 +1,15 @@
 'use client'
 
+import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
-import Stack from '@mui/material/Stack'
 import Button from '@mui/material/Button'
-import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
-import CardContent from '@mui/material/CardContent'
-import { alpha, useTheme } from '@mui/material/styles'
 
 import Iconify from 'src/components/iconify'
 
 import { useTranslate } from 'src/locales'
+
+import { useStakingStyles } from './staking-style'
 
 import type { StakingView, StakingActionName } from 'src/app/api/hooks/use-staking'
 
@@ -47,80 +46,94 @@ const LEAVING: StakingActionName[] = ['deregister', 'exit_and_send_max']
  * What the user can do, and why they cannot do the rest.
  *
  * The backend answers with a refusal per action rather than a list of what is permitted, and that
- * shape is kept all the way to the screen: a disabled button carries the reason it is disabled in its
- * tooltip. "Delegate your voting power first" is something a user can act on; a greyed-out button with
- * no explanation is something they file a support ticket about.
+ * shape is kept all the way to the screen: a disabled control carries the reason it is disabled as a
+ * line under it. "Delegate your voting power first" is something a user can act on; a greyed-out
+ * button with no explanation is something they file a support ticket about. The reason is never folded
+ * into the label — a label that changes length per wallet is what breaks the grid — and it is not
+ * hidden in a tooltip either, since a disabled control takes no pointer events on a phone.
  *
  * An action the backend did not mention at all is not rendered. That happens when a deployment does
  * not offer it, and inventing a disabled control for it would imply it exists somewhere.
  *
- * Laid out as a wrapping row of icon buttons, the same way the dashboard offers deposit, withdraw and
- * swap. The controls are peers of those, and a column of full-width bars read as a form to work
- * through rather than as a set of things one may do.
+ * Laid out as a grid of equal cells — three per row on a desktop, two on a tablet, one on a phone —
+ * so the set reads as things one may do rather than as a form to work through.
  */
 export default function StakingActions({ staking, busy = null, onAction }: Props): JSX.Element {
   const { t } = useTranslate()
-  const theme = useTheme()
-
-  const isDark = theme.palette.mode === 'dark'
-  const btnColor = isDark ? '#7EDBB8' : '#0D352C'
+  const { card, accent, theme } = useStakingStyles()
 
   const available = ORDER.filter(({ action }) => action in staking.actions)
 
   return (
-    <Card>
-      <CardContent>
-        <Typography variant='h6' sx={{ mb: 2 }}>
-          {t('staking.actions.title')}
-        </Typography>
+    <Card sx={card}>
+      <Typography variant='subtitle2' sx={{ mb: 1.5 }}>
+        {t('staking.actions.title')}
+      </Typography>
 
-        <Stack direction='row' spacing={1.5} useFlexGap sx={{ flexWrap: 'wrap' }}>
-          {available.map(({ action, icon }) => {
-            const refusal = staking.actions[action] ?? null
-            const leaving = LEAVING.includes(action)
-            const disabled = refusal !== null || busy !== null
-            const color = leaving ? theme.palette.error.main : btnColor
+      <Box
+        data-testid='staking-actions-grid'
+        sx={{
+          display: 'grid',
+          gap: 1.5,
+          gridTemplateColumns: {
+            xs: '1fr',
+            sm: 'repeat(2, minmax(0, 1fr))',
+            md: 'repeat(3, minmax(0, 1fr))'
+          }
+        }}
+      >
+        {available.map(({ action, icon }) => {
+          const refusal = staking.actions[action] ?? null
+          const leaving = LEAVING.includes(action)
+          const disabled = refusal !== null || busy !== null
+          const color = leaving ? theme.palette.error.main : accent
 
-            const button = (
-              <span style={{ display: 'inline-block' }}>
-                <Button
-                  variant='outlined'
-                  startIcon={<Iconify icon={icon} />}
-                  disabled={disabled}
-                  onClick={() => onAction(action)}
-                  data-testid={`staking-action-${action}`}
+          return (
+            <Box key={action} sx={{ minWidth: 0 }}>
+              <Button
+                fullWidth
+                variant='outlined'
+                startIcon={<Iconify icon={icon} width={18} />}
+                disabled={disabled}
+                onClick={() => onAction(action)}
+                data-testid={`staking-action-${action}`}
+                sx={{
+                  height: 44,
+                  px: 2,
+                  justifyContent: 'flex-start',
+                  color,
+                  borderColor: color,
+                  borderWidth: '0.5px',
+                  '&:hover': { borderColor: color, borderWidth: '0.5px' },
+                  '& .MuiButton-startIcon': { flexShrink: 0 }
+                }}
+              >
+                <Box
+                  component='span'
                   sx={{
-                    px: 3,
-                    py: 1.2,
-                    color,
-                    borderColor: color,
-                    borderWidth: '0.5px',
-                    '&:hover': {
-                      borderColor: color,
-                      bgcolor: alpha(color, 0.06),
-                      borderWidth: '0.5px'
-                    }
+                    minWidth: 0,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap'
                   }}
                 >
                   {t(`staking.actions.${action}`)}
-                </Button>
-              </span>
-            )
+                </Box>
+              </Button>
 
-            // The tooltip wraps a span because MUI cannot attach one to a disabled button, and the
-            // reason is precisely what a disabled button needs to carry.
-            return (
-              <Tooltip
-                key={action}
-                title={refusal ? t(`staking.refusals.${refusal}`, { defaultValue: refusal }) : ''}
-                placement='top'
-              >
-                {button}
-              </Tooltip>
-            )
-          })}
-        </Stack>
-      </CardContent>
+              {refusal !== null && (
+                <Typography
+                  variant='caption'
+                  data-testid={`staking-action-reason-${action}`}
+                  sx={{ display: 'block', mt: 0.5, color: 'text.disabled', lineHeight: 1.4 }}
+                >
+                  {t(`staking.refusals.${refusal}`, { defaultValue: refusal })}
+                </Typography>
+              )}
+            </Box>
+          )
+        })}
+      </Box>
     </Card>
   )
 }

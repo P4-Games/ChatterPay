@@ -31,6 +31,7 @@ import StakingNotices from '../staking-notices'
 import StakingPinDialog from '../staking-pin-dialog'
 import StakingRewards from '../staking-rewards'
 import StakingSummary from '../staking-summary'
+import { useStakingStyles } from '../staking-style'
 
 import type { AuthUserType } from 'src/auth/types'
 
@@ -39,10 +40,13 @@ import type { AuthUserType } from 'src/auth/types'
 /**
  * The staking page.
  *
- * The flow it implements is deliberately three steps rather than one: choose an action, authorise it
- * with the PIN, then send it. The middle step is what makes the PIN specific to an operation — what
- * comes back from it is a grant that names this action, so it cannot be carried to another one — and
- * it is why the action request carries a grant rather than a PIN.
+ * Three sections, in the order the questions come: what the user holds, where the position stands, and
+ * what can be done about it. Everything below them is history.
+ *
+ * The flow the actions implement is deliberately three steps rather than one: choose an action,
+ * authorise it with the PIN, then send it. The middle step is what makes the PIN specific to an
+ * operation — what comes back from it is a grant that names this action, so it cannot be carried to
+ * another one — and it is why the action request carries a grant rather than a PIN.
  *
  * The wallet is never chosen here. It is read from the balances the backend returns for the
  * authenticated user, which is the same place the dashboard finds it, so this page cannot be pointed
@@ -51,6 +55,7 @@ import type { AuthUserType } from 'src/auth/types'
 export default function StakingDashboardView(): JSX.Element {
   const { t } = useTranslate()
   const settings = useSettingsContext()
+  const { heading } = useStakingStyles()
   const { user }: { user: AuthUserType } = useAuthContext()
 
   const { data: balances } = useGetWalletBalance(user?.wallet)
@@ -163,27 +168,31 @@ export default function StakingDashboardView(): JSX.Element {
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-      <Typography variant='h4' sx={{ mb: 1 }}>
+      <Typography
+        sx={{
+          color: heading,
+          fontSize: 24,
+          fontWeight: 700,
+          lineHeight: 'normal',
+          letterSpacing: '-0.24px'
+        }}
+      >
         {t('staking.title')}
       </Typography>
-      <Typography variant='body2' sx={{ mb: 3, color: 'text.secondary' }}>
+      <Typography variant='caption' sx={{ color: 'text.secondary', display: 'block', mt: 0.5 }}>
         {t('staking.description')}
       </Typography>
 
       <StakingTabs />
 
-      <Stack spacing={3}>
+      <Stack spacing={2}>
         {notice && (
-          <Alert severity='success' onClose={() => setNotice(null)}>
+          <Alert severity='success' onClose={() => setNotice(null)} sx={{ py: 0.5 }}>
             {notice}
           </Alert>
         )}
 
-        <StakingNotices
-          staking={staking}
-          onRejoin={() => changeConsent(true)}
-          rejoining={busy !== null}
-        />
+        <StakingNotices staking={staking} />
 
         <StakingSummary staking={staking} />
 

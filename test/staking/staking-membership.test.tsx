@@ -128,8 +128,9 @@ describe('StakingMembership', () => {
       expect(onLeave).toHaveBeenCalledOnce()
     })
 
-    it('offers nothing on a wallet this deployment cannot sign for', () => {
-      // Registered elsewhere and readable. An exit offered here could not be carried out.
+    it('is named as an external wallet when this deployment cannot sign for it', () => {
+      // Registered elsewhere and readable. An exit offered here could not be carried out, and the
+      // state is named rather than shown as an active position with a button missing.
       const staking = stakingView({
         consentRequired: false,
         registered: true,
@@ -139,7 +140,8 @@ describe('StakingMembership', () => {
 
       render(<StakingMembership staking={staking} {...noop} />)
 
-      expect(screen.getByTestId('staking-membership-active')).toBeInTheDocument()
+      expect(screen.getByTestId('staking-membership-external')).toBeInTheDocument()
+      expect(screen.queryByTestId('staking-membership-active')).not.toBeInTheDocument()
       expect(screen.queryByTestId('staking-membership-leave')).not.toBeInTheDocument()
     })
 
@@ -168,20 +170,42 @@ describe('StakingMembership', () => {
   })
 
   describe('a wallet that left', () => {
-    it('is left to the notice above, so the decision has one control', () => {
-      const staking = stakingView({
-        consentRequired: false,
-        optOut: {
-          at: '2026-01-02T00:00:00.000Z',
-          reason: 'user_request',
-          source: 'dashboard',
-          preferenceVersion: 1
-        }
-      })
+    const left = {
+      at: '2026-01-02T00:00:00.000Z',
+      reason: 'user_request',
+      source: 'dashboard',
+      preferenceVersion: 1
+    } as const
 
-      const { container } = render(<StakingMembership staking={staking} {...noop} />)
+    it('is described as switched off by the user, with the date', () => {
+      const staking = stakingView({ consentRequired: false, optOut: left })
 
-      expect(container).toBeEmptyDOMElement()
+      render(<StakingMembership staking={staking} {...noop} />)
+
+      expect(screen.getByTestId('staking-membership-opted-out')).toHaveTextContent(
+        'staking.notices.optedOutTitle'
+      )
+    })
+
+    it('offers the one control that reverses it', async () => {
+      // Nothing else brings the wallet back: the recorded opt-out outranks the pass that would
+      // otherwise enrol it again, so the way back has to be on screen.
+      const onJoin = vi.fn()
+      const staking = stakingView({ consentRequired: false, optOut: left })
+
+      render(<StakingMembership staking={staking} onJoin={onJoin} onLeave={vi.fn()} />)
+
+      await userEvent.click(screen.getByTestId('staking-membership-reactivate'))
+
+      expect(onJoin).toHaveBeenCalledOnce()
+    })
+
+    it('does not also offer to leave', () => {
+      const staking = stakingView({ consentRequired: false, optOut: left })
+
+      render(<StakingMembership staking={staking} {...noop} />)
+
+      expect(screen.queryByTestId('staking-membership-leave')).not.toBeInTheDocument()
     })
   })
 

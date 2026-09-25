@@ -31,13 +31,14 @@ type Props = {
  *
  * Turning it off is not the mirror image of turning it on. Joining is reversible by leaving; leaving
  * is reversible only by coming back here and saying so, because the decision is recorded and it
- * outranks everything the system would otherwise do on the user's behalf — including the daily pass
- * that enrols wallets automatically as soon as they hold enough. Somebody who leaves and later
- * receives ada will not be re-enrolled, and nothing on the outside will tell them that.
+ * outranks everything the system would otherwise do on the user's behalf — including the pass that
+ * enrols wallets automatically as soon as they hold enough. Somebody who leaves and later receives ada
+ * will not be re-enrolled, and nothing on the outside will tell them that.
  *
  * So the consequence is stated in the confirmation rather than in a notice afterwards, and stated in
  * the terms the user thinks in: not "an opt-out will be recorded" but "you will not take part again,
- * even if you receive more ada".
+ * even if you receive more ada". That sentence is a product requirement and is pinned by a test
+ * against the locale files.
  *
  * Pending rewards get their own warning when there are any. They are ada the ledger has computed and
  * not yet released, and leaving before they are released forfeits them — which is the one loss here
@@ -60,23 +61,36 @@ export default function StakingDeactivateDialog({
       : null
 
   return (
-    <Dialog open={open} onClose={onCancel} fullWidth maxWidth='sm'>
-      <DialogTitle>{t('staking.deactivate.title')}</DialogTitle>
+    <Dialog open={open} onClose={onCancel} fullWidth maxWidth='xs'>
+      <DialogTitle sx={{ pb: 1, typography: 'subtitle1' }}>
+        {t('staking.deactivate.title')}
+      </DialogTitle>
 
-      <DialogContent>
-        <Stack spacing={2}>
-          <Typography variant='body2'>{t('staking.deactivate.body')}</Typography>
+      <DialogContent sx={{ pb: 1 }}>
+        <Stack spacing={1.25}>
+          <Typography variant='body2' sx={{ color: 'text.secondary' }}>
+            {t('staking.deactivate.body')}
+          </Typography>
 
-          <Typography variant='subtitle2' data-testid='staking-deactivate-warning'>
+          <Typography
+            variant='subtitle2'
+            data-testid='staking-deactivate-warning'
+            sx={{ color: 'error.main' }}
+          >
             {t('staking.deactivate.noAutoRejoin')}
           </Typography>
 
-          <Typography variant='body2' sx={{ color: 'text.secondary' }}>
+          <Typography variant='caption' sx={{ color: 'text.secondary' }}>
             {t('staking.deactivate.howToReturn')}
           </Typography>
 
           {pending && (
-            <Alert severity='warning' data-testid='staking-deactivate-pending'>
+            <Alert
+              severity='warning'
+              variant='outlined'
+              data-testid='staking-deactivate-pending'
+              sx={{ py: 0.5, fontSize: '0.8125rem' }}
+            >
               {t('staking.deactivate.pendingRewards', {
                 amount: formatAdaWithUnit(pending)
               })}
@@ -85,16 +99,23 @@ export default function StakingDeactivateDialog({
         </Stack>
       </DialogContent>
 
-      <DialogActions>
-        <Button onClick={onCancel} disabled={submitting} data-testid='staking-deactivate-cancel'>
+      <DialogActions sx={{ px: 3, pb: 2 }}>
+        <Button
+          size='small'
+          onClick={onCancel}
+          disabled={submitting}
+          data-testid='staking-deactivate-cancel'
+        >
           {t('staking.deactivate.cancel')}
         </Button>
         <Button
+          size='small'
           variant='contained'
           color='error'
           onClick={onConfirm}
           disabled={submitting}
           data-testid='staking-deactivate-confirm'
+          sx={{ whiteSpace: 'nowrap' }}
         >
           {t('staking.deactivate.confirm')}
         </Button>

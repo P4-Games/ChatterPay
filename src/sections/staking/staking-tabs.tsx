@@ -41,8 +41,16 @@ export default function StakingTabs(): JSX.Element {
     <Tabs
       value={selected}
       onChange={(_event, value: string) => router.push(value)}
+      variant='scrollable'
+      scrollButtons='auto'
+      allowScrollButtonsMobile
       data-testid='staking-tabs'
-      sx={{ mb: 3 }}
+      sx={{
+        mt: 1.5,
+        mb: 2,
+        minHeight: 40,
+        '& .MuiTab-root': { minHeight: 40, py: 1, px: 0, mr: 3, fontSize: '0.875rem' }
+      }}
     >
       {TABS.map((tab) => (
         <Tab

@@ -21,26 +21,6 @@ describe('StakingActions', () => {
     expect(screen.getByTestId('staking-action-withdraw_rewards')).toBeDisabled()
   })
 
-  it('carries the reason a disabled action is disabled', async () => {
-    // The point of keeping the refusal all the way to the screen. "Delegate your voting power first" is
-    // something a user can act on; a greyed-out button is something they open a ticket about.
-    render(
-      <StakingActions
-        staking={stakingView({
-          actions: { withdraw_rewards: 'vote_delegation_required' }
-        })}
-        onAction={vi.fn()}
-      />
-    )
-
-    // Hovered on the wrapper, not the button: a disabled button has `pointer-events: none`, which is
-    // exactly why the tooltip is attached to a span around it rather than to the button itself.
-    const disabled = screen.getByTestId('staking-action-withdraw_rewards')
-    await userEvent.hover(disabled.parentElement as HTMLElement)
-
-    expect(await screen.findByText('staking.refusals.vote_delegation_required')).toBeInTheDocument()
-  })
-
   it('does not render an action the backend never mentioned', () => {
     // A deployment that does not offer something should not show a disabled control implying it exists.
     render(
@@ -127,5 +107,92 @@ describe('StakingActions', () => {
     ]) {
       expect(screen.getByTestId(`staking-action-${action}`)).toBeDisabled()
     }
+  })
+
+  describe('the reason an action is refused', () => {
+    it('is shown as text under the control rather than in a tooltip', () => {
+      // A disabled button takes no pointer events, so a tooltip on it is unreachable — and on a phone
+      // there is no hover at all. "Delegate your voting power first" is something a user can act on;
+      // a greyed-out button is something they open a ticket about.
+      render(
+        <StakingActions
+          staking={stakingView({ actions: { withdraw_rewards: 'vote_delegation_required' } })}
+          onAction={vi.fn()}
+        />
+      )
+
+      expect(screen.getByTestId('staking-action-reason-withdraw_rewards')).toHaveTextContent(
+        'staking.refusals.vote_delegation_required'
+      )
+    })
+
+    it('is never folded into the label', () => {
+      // A label that grows with the refusal is a label that wraps to two lines in one cell and one in
+      // the next, which is what makes the grid look broken.
+      render(
+        <StakingActions
+          staking={stakingView({ actions: { withdraw_rewards: 'vote_delegation_required' } })}
+          onAction={vi.fn()}
+        />
+      )
+
+      const button = screen.getByTestId('staking-action-withdraw_rewards')
+
+      expect(button).toHaveTextContent('staking.actions.withdraw_rewards')
+      expect(button.textContent).not.toContain('staking.refusals')
+    })
+
+    it('is absent for an action that is allowed', () => {
+      render(<StakingActions staking={stakingView()} onAction={vi.fn()} />)
+
+      expect(screen.queryByTestId('staking-action-reason-deregister')).toBeNull()
+    })
+
+    it('falls back to the backend code when there is no translation for it', () => {
+      render(
+        <StakingActions
+          staking={stakingView({ actions: { withdraw_rewards: 'something_new' } })}
+          onAction={vi.fn()}
+        />
+      )
+
+      expect(screen.getByTestId('staking-action-reason-withdraw_rewards')).toBeInTheDocument()
+    })
+  })
+
+  describe('the layout', () => {
+    it('puts every offered action in the same grid', () => {
+      // One grid rather than a column of bars: the controls are peers, and equal cells are what keeps
+      // them the same width and height whatever the wallet's state.
+      render(<StakingActions staking={stakingView()} onAction={vi.fn()} />)
+
+      const grid = screen.getByTestId('staking-actions-grid')
+
+      expect(grid.children).toHaveLength(6)
+    })
+
+    it('holds only the actions the backend mentioned', () => {
+      render(
+        <StakingActions
+          staking={stakingView({ actions: { deregister: null, exit_and_send_max: null } })}
+          onAction={vi.fn()}
+        />
+      )
+
+      expect(screen.getByTestId('staking-actions-grid').children).toHaveLength(2)
+    })
+
+    it('gives each cell one control and at most one reason', () => {
+      render(
+        <StakingActions
+          staking={stakingView({ actions: { withdraw_rewards: 'no_rewards' } })}
+          onAction={vi.fn()}
+        />
+      )
+
+      const cell = screen.getByTestId('staking-actions-grid').children[0]
+
+      expect(cell.children).toHaveLength(2)
+    })
   })
 })

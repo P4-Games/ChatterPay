@@ -32,6 +32,8 @@ type StakingCopy = {
     deactivate: Record<string, string>
     notices: Record<string, string>
     consent: Record<string, string>
+    membership: Record<string, string>
+    actions: Record<string, string>
   }
 }
 
@@ -121,5 +123,119 @@ describe('the deactivation copy', () => {
       expect(staking.consent.decline).toBe(staking.deactivate.title)
       expect(staking.consent.decline).toBe(staking.deactivate.confirm)
     })
+  })
+})
+
+// ----------------------------------------------------------------------
+
+/** The two subtrees these screens read, in every locale. */
+const SUBTREES = ['staking', 'governance'] as const
+
+/** The six action labels, in the order the screen offers them. */
+const ACTION_LABELS = [
+  'register_and_delegate',
+  'delegate_vote',
+  'redelegate_pool',
+  'withdraw_rewards',
+  'deregister',
+  'exit_and_send_max'
+] as const
+
+/**
+ * The longest a control's label may be.
+ *
+ * The actions are a grid of equal cells, so a label is only correct if it fits one line of one cell.
+ * Twenty-two characters is what the narrowest cell holds at the button's font size; past that the
+ * label wraps, the cell grows, and the row stops lining up.
+ */
+const LABEL_LIMIT = 22
+
+/**
+ * Every key path under a subtree, so two locales can be compared rather than spot-checked.
+ *
+ * @param value - The subtree.
+ * @param prefix - The path so far.
+ * @returns Every leaf path, sorted.
+ */
+function paths(value: unknown, prefix = ''): string[] {
+  if (typeof value !== 'object' || value === null) return [prefix]
+  return Object.entries(value as Record<string, unknown>)
+    .flatMap(([key, child]) => paths(child, prefix === '' ? key : `${prefix}.${key}`))
+    .sort()
+}
+
+describe('the staking and governance copy', () => {
+  it.each(SUBTREES)('carries the same keys in all three locales, under %s', (subtree) => {
+    // The three files are maintained line for line. A key added to one and forgotten in another shows
+    // up as a raw key on somebody's screen rather than as an error, so it is checked here instead.
+    const [first, ...rest] = Object.values(LOCALES).map((locale) =>
+      paths((locale as Record<string, unknown>)[subtree])
+    )
+
+    for (const other of rest) expect(other).toEqual(first)
+  })
+
+  it.each(SUBTREES)('leaves nothing empty, under %s', (subtree) => {
+    for (const [name, locale] of Object.entries(LOCALES)) {
+      const tree = (locale as Record<string, unknown>)[subtree]
+      for (const path of paths(tree)) {
+        const value = path
+          .split('.')
+          .reduce<unknown>((node, key) => (node as Record<string, unknown>)[key], tree)
+        expect(String(value).trim(), `${name}.${subtree}.${path}`).not.toBe('')
+      }
+    }
+  })
+})
+
+describe('the action labels', () => {
+  it('exist for every action the screen can offer', () => {
+    for (const [name, locale] of Object.entries(LOCALES)) {
+      const labels = (locale as StakingCopy).staking.actions
+      for (const action of ACTION_LABELS) {
+        expect(labels[action], `${name}.${action}`).toBeTruthy()
+      }
+    }
+  })
+
+  it('are short enough to sit on one line of one grid cell', () => {
+    for (const [name, locale] of Object.entries(LOCALES)) {
+      const labels = (locale as StakingCopy).staking.actions
+      for (const action of ACTION_LABELS) {
+        expect(labels[action].length, `${name}.${action}: ${labels[action]}`).toBeLessThanOrEqual(
+          LABEL_LIMIT
+        )
+      }
+    }
+  })
+
+  it('carry no reason inside them, which is what the helper line is for', () => {
+    // A label that explains itself is a label that changes length per wallet, and the grid is built on
+    // labels that do not.
+    for (const [name, locale] of Object.entries(LOCALES)) {
+      const labels = (locale as StakingCopy).staking.actions
+      for (const action of ACTION_LABELS) {
+        expect(labels[action], `${name}.${action}`).not.toMatch(/[.:]/)
+      }
+    }
+  })
+})
+
+describe('the status card copy', () => {
+  it('names each state and says what follows from it', () => {
+    for (const [name, locale] of Object.entries(LOCALES)) {
+      const membership = (locale as StakingCopy).staking.membership
+
+      for (const key of ['pendingTitle', 'pendingBody', 'leavingTitle', 'leavingBody']) {
+        expect(membership[key], `${name}.${key}`).toBeTruthy()
+      }
+    }
+  })
+
+  it('describes an external wallet as viewable rather than broken', () => {
+    const notices = (en as StakingCopy).staking.notices
+
+    expect(notices.notSignableTitle).toBe('External staking wallet')
+    expect(notices.notSignableBody).toContain('viewed here')
   })
 })
