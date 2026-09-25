@@ -107,6 +107,8 @@ export const NFT_SHARE = 'https://api.whatsapp.com/send/?text=MESSAGE'
 export const STORAGE_KEY_TOKEN = `chatterpay_${APP_ENV}_jwtToken`
 export const STORAGE_KEY_SETTINGS = `chatterpay_${APP_ENV}_settings`
 export const CONTACT_EMAIL = 'contacto@chatterpay.com.ar'
+// Where the B2B page sends a partner to try the integration without talking to anyone first.
+export const B2B_SANDBOX_URL = 'https://partners.chatterpay.net/en/sandbox'
 export const LAYERSWAP_BG = '#0c1526'
 export const LAYERSWAP_BASE_URL =
   process.env.NEXT_PUBLIC_LAYERSWAP_BASE_URL || 'https://testnet.layerswap.io/app'

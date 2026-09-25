@@ -127,7 +127,7 @@ export default function ProductView(): JSX.Element {
                   title={`💎 ${t('products.hero.staking.title', 'Staking')}`}
                   description={t(
                     'products.hero.staking.description',
-                    'Earn while supporting the network.'
+                    'Native Cardano staking and participation in ecosystem governance.'
                   )}
                   badge={t('products.hero.states.dev', 'In development')}
                   cta={`${t('products.hero.cta', 'Learn more')} →`}
