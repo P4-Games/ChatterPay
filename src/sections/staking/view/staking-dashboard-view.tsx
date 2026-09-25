@@ -23,7 +23,7 @@ import {
 
 import StakingActions from '../staking-actions'
 import StakingMembership from '../staking-membership'
-import StakingTabs from '../staking-tabs'
+import StakingPageShell from '../staking-page-shell'
 import StakingDeactivateDialog from '../staking-deactivate-dialog'
 import StakingExitDialog from '../staking-exit-dialog'
 import StakingHistory from '../staking-history'
@@ -167,24 +167,7 @@ export default function StakingDashboardView(): JSX.Element {
   }
 
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-      <Typography
-        sx={{
-          color: heading,
-          fontSize: 24,
-          fontWeight: 700,
-          lineHeight: 'normal',
-          letterSpacing: '-0.24px'
-        }}
-      >
-        {t('staking.title')}
-      </Typography>
-      <Typography variant='caption' sx={{ color: 'text.secondary', display: 'block', mt: 0.5 }}>
-        {t('staking.description')}
-      </Typography>
-
-      <StakingTabs />
-
+    <StakingPageShell title={t('staking.title')}>
       <Stack spacing={2}>
         {notice && (
           <Alert severity='success' onClose={() => setNotice(null)} sx={{ py: 0.5 }}>
@@ -258,9 +241,20 @@ export default function StakingDashboardView(): JSX.Element {
         onCancel={() => setDeactivating(false)}
         onConfirm={() => {
           setDeactivating(false)
+          // One decision, carried out in the way the state allows. A registered wallet leaves by
+          // deregistering, which is what returns the two ada deposit the dialog promises back — the
+          // backend records the opt-out before it builds that transaction, so the decision is stored
+          // even if the transaction never lands. A wallet that was never registered has nothing to
+          // undo on chain, and switching the preference off is the whole of leaving for it.
+          if (staking.registered) {
+            setFailure(null)
+            setPending('deregister')
+            setStage('pin')
+            return
+          }
           void changeConsent(false)
         }}
       />
-    </Container>
+    </StakingPageShell>
   )
 }

@@ -95,13 +95,24 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
       </StyledNavItem>
     )
 
+    // On the collapsed rail the label is faded out and clipped, so the icon is the only thing left to
+    // read. The tooltip carries the label, and MUI also maps it to the button's accessible name.
+    const renderItem =
+      collapsed && !subItem ? (
+        <Tooltip title={title} placement='right'>
+          {renderContent}
+        </Tooltip>
+      ) : (
+        renderContent
+      )
+
     // Hidden item by role
     if (roles && !roles.includes(`${currentRole}`)) {
       return null
     }
 
     if (hasChild) {
-      return renderContent
+      return renderItem
     }
 
     if (externalLink)
@@ -118,7 +129,7 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
             })
           }}
         >
-          {renderContent}
+          {renderItem}
         </Link>
       )
 
@@ -134,7 +145,7 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
           })
         }}
       >
-        {renderContent}
+        {renderItem}
       </Link>
     )
   }

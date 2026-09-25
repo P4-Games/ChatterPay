@@ -3,9 +3,13 @@
 import Card from '@mui/material/Card'
 import Stack from '@mui/material/Stack'
 import Button from '@mui/material/Button'
+import Tooltip from '@mui/material/Tooltip'
+import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 
 import Iconify from 'src/components/iconify'
+
+import { useCopyToClipboard } from 'src/hooks/use-copy-to-clipboard'
 
 import { useTranslate } from 'src/locales'
 
@@ -57,21 +61,32 @@ export default function StakingMembership({
 }: Props): JSX.Element | null {
   const { t } = useTranslate()
   const { card, accent, theme } = useStakingStyles()
+  const { copy } = useCopyToClipboard()
+
+  /**
+   * A bech32 identifier, short enough to sit on one line.
+   *
+   * @param value - The identifier, or `null` when there is none.
+   * @returns The abbreviation, or the copy for having none.
+   */
+  const abbreviate = (value: string | null): string =>
+    value === null ? t('staking.position.poolNone') : `${value.slice(0, 10)}…${value.slice(-6)}`
 
   /**
    * One state, rendered the same way every time.
    *
    * @param testId - What identifies this state on screen and in the tests.
    * @param title - The state.
-   * @param body - What follows from it.
-   * @param meta - The position's own figures, where there are any to show.
+   * @param body - What follows from it, where the state needs saying twice over. An active
+   *   position does not: its title and its pool row say everything a sentence would.
+   * @param meta - What identifies the position, where there is anything to identify it by.
    * @param control - The one thing the user can do, where there is one.
    */
   const status = (
     testId: string,
     title: string,
-    body: string,
-    meta?: string,
+    body?: string,
+    meta?: JSX.Element,
     control?: JSX.Element
   ): JSX.Element => (
     <Card sx={card}>
@@ -85,14 +100,12 @@ export default function StakingMembership({
           <Typography variant='subtitle2' data-testid={testId}>
             {title}
           </Typography>
-          <Typography variant='caption' sx={{ color: 'text.secondary' }}>
-            {body}
-          </Typography>
-          {meta !== undefined && (
-            <Typography variant='caption' sx={{ color: 'text.disabled', wordBreak: 'break-all' }}>
-              {meta}
+          {body !== undefined && (
+            <Typography variant='caption' sx={{ color: 'text.secondary' }}>
+              {body}
             </Typography>
           )}
+          {meta}
         </Stack>
         {control}
       </Stack>
@@ -173,18 +186,27 @@ export default function StakingMembership({
   }
 
   if (staking.registered) {
-    const deposit =
-      staking.balance.availability === 'unavailable'
-        ? null
-        : staking.balance.userOwnedRefundableDepositLovelace
-
-    const pool = t('staking.membership.pool', {
-      pool: staking.poolId ?? t('staking.position.poolNone')
-    })
-    const meta =
-      deposit === null
-        ? pool
-        : `${pool} · ${t('staking.membership.deposit', { amount: formatAdaWithUnit(deposit) })}`
+    // The pool id is 56 characters of bech32. Shown abbreviated because the whole string tells a
+    // reader nothing the ends do not, and copyable because the only use for the whole string is
+    // pasting it into an explorer.
+    const meta = (
+      <Stack direction='row' spacing={0.5} alignItems='center' sx={{ minWidth: 0 }}>
+        <Typography variant='caption' sx={{ color: 'text.disabled' }}>
+          {t('staking.membership.pool', { pool: abbreviate(staking.poolId) })}
+        </Typography>
+        {staking.poolId !== null && (
+          <Tooltip title={t('staking.membership.copyPool')}>
+            <IconButton
+              size='small'
+              onClick={() => void copy(staking.poolId as string)}
+              data-testid='staking-membership-copy-pool'
+            >
+              <Iconify icon='solar:copy-bold' width={14} />
+            </IconButton>
+          </Tooltip>
+        )}
+      </Stack>
+    )
 
     // Read-only is a state of its own rather than an active position with a missing button: the
     // wallet was registered somewhere this deployment holds no keys for, and saying so is what
@@ -203,8 +225,8 @@ export default function StakingMembership({
     return status(
       'staking-membership-active',
       t('staking.membership.activeTitle'),
-      meta,
       undefined,
+      meta,
       control(
         'staking-membership-leave',
         t('staking.deactivate.confirm'),

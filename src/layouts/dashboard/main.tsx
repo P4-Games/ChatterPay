@@ -5,7 +5,8 @@ import { useResponsive } from 'src/hooks/use-responsive'
 
 import { useSettingsContext } from 'src/components/settings'
 
-import { NAV, HEADER } from '../config-layout'
+import { HEADER } from '../config-layout'
+import { useNavWidth } from './use-nav-width'
 
 // ----------------------------------------------------------------------
 
@@ -18,9 +19,9 @@ export default function Main({ children, sx, ...other }: BoxProps) {
 
   const lgUp = useResponsive('up', 'lg')
 
-  const isNavHorizontal = settings.themeLayout === 'horizontal'
+  const { navWidth } = useNavWidth()
 
-  const isNavMini = settings.themeLayout === 'mini'
+  const isNavHorizontal = settings.themeLayout === 'horizontal'
 
   if (isNavHorizontal) {
     return (
@@ -55,12 +56,9 @@ export default function Main({ children, sx, ...other }: BoxProps) {
         ...(lgUp && {
           px: 2,
           py: `${HEADER.H_DESKTOP + SPACING}px`,
-          width: `calc(100% - ${NAV.W_VERTICAL}px)`,
+          width: `calc(100% - ${navWidth}px)`,
           transition: theme.transitions.create('width', {
             duration: theme.transitions.duration.standard
-          }),
-          ...(isNavMini && {
-            width: `calc(100% - ${NAV.W_MINI}px)`
           })
         }),
         ...sx

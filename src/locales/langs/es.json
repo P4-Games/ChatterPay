@@ -51,7 +51,9 @@
     "notifications": "Notificaciones",
     "security": "Seguridad",
     "staking": "Staking",
-    "polymarket": "Predecir"
+    "polymarket": "Predecir",
+    "collapseNav": "Ocultar los nombres del menú",
+    "expandNav": "Mostrar los nombres del menú"
   },
   "user": {
     "account": {
@@ -647,6 +649,7 @@
       "governance": "Gobernanza"
     },
     "membership": {
+      "copyPool": "Copiar el pool",
       "activeTitle": "Staking activo",
       "pool": "Pool {{pool}}",
       "deposit": "Depósito {{amount}}",
@@ -709,6 +712,7 @@
       "originUnknown": "Desconocido"
     },
     "actions": {
+      "leavingGroup": "Salir con el saldo",
       "title": "Acciones",
       "register_and_delegate": "Empezar staking",
       "delegate_vote": "Delegar voto",
@@ -765,7 +769,8 @@
       "submit": "Autorizar",
       "rejected": "Ese PIN no es correcto.",
       "blocked": "Tu PIN está bloqueado. Intentá más tarde.",
-      "notSet": "Configurá un PIN antes de operar."
+      "notSet": "Configurá un PIN antes de operar.",
+      "gate": "No pudimos verificar tu PIN. Probá de nuevo en un momento."
     },
     "history": {
       "title": "Operaciones",

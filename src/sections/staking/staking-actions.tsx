@@ -21,24 +21,40 @@ type Props = {
   onAction: (action: StakingActionName) => void
 }
 
-/**
- * The order the actions are offered in, and the icon each one carries.
- *
- * Joining first, then the things that keep a position healthy, then the ways out. The two that move
- * the whole balance are last and drawn in the warning colour, because a destructive control beside a
- * routine one is a control that gets pressed by accident.
- */
-const ORDER: { action: StakingActionName; icon: string }[] = [
+/** What keeps a position healthy, in the order it is offered. */
+const ROUTINE: { action: StakingActionName; icon: string }[] = [
   { action: 'register_and_delegate', icon: 'solar:play-circle-bold' },
   { action: 'delegate_vote', icon: 'solar:hand-stars-bold' },
   { action: 'redelegate_pool', icon: 'solar:refresh-circle-bold' },
-  { action: 'withdraw_rewards', icon: 'solar:hand-money-bold' },
-  { action: 'deregister', icon: 'solar:logout-2-bold' },
+  { action: 'withdraw_rewards', icon: 'solar:hand-money-bold' }
+]
+
+/**
+ * Leaving with the balance.
+ *
+ * Grouped apart rather than coloured like a warning. Stopping staking lives on the status card and
+ * is the single way out of participation; this one also moves every lovelace to an address, so it is
+ * separated by position and by a label naming the group — which survives a colourblind viewer and a
+ * greyscale screenshot in a way a red border does not.
+ */
+const LEAVING: { action: StakingActionName; icon: string }[] = [
   { action: 'exit_and_send_max', icon: 'solar:square-arrow-right-up-bold' }
 ]
 
-/** The ones that end participation. */
-const LEAVING: StakingActionName[] = ['deregister', 'exit_and_send_max']
+/**
+ * Refusals that mean the action does not apply to this wallet at all.
+ *
+ * A control for one of these is noise: "start staking — already registered" describes a state the
+ * user can already see, and a line of explanation under every inapplicable button is how a card
+ * becomes a wall of text. Every other refusal is one the user may be able to act on, so it is shown
+ * with its reason.
+ */
+const NOT_APPLICABLE = [
+  'already_registered',
+  'not_registered',
+  'not_available',
+  'already_delegated'
+]
 
 // ----------------------------------------------------------------------
 
@@ -46,23 +62,89 @@ const LEAVING: StakingActionName[] = ['deregister', 'exit_and_send_max']
  * What the user can do, and why they cannot do the rest.
  *
  * The backend answers with a refusal per action rather than a list of what is permitted, and that
- * shape is kept all the way to the screen: a disabled control carries the reason it is disabled as a
- * line under it. "Delegate your voting power first" is something a user can act on; a greyed-out
- * button with no explanation is something they file a support ticket about. The reason is never folded
- * into the label — a label that changes length per wallet is what breaks the grid — and it is not
- * hidden in a tooltip either, since a disabled control takes no pointer events on a phone.
+ * shape is kept all the way to the screen: a control that is offered but refused carries the reason
+ * as a short line under it. "Delegate your voting power first" is something a user can act on; a
+ * greyed-out button with no explanation is something they file a support ticket about.
  *
- * An action the backend did not mention at all is not rendered. That happens when a deployment does
- * not offer it, and inventing a disabled control for it would imply it exists somewhere.
+ * The reason is never folded into the label, because a label whose length depends on the wallet is
+ * what makes a row of buttons ragged, and it is not hidden in a tooltip either, since a disabled
+ * control takes no pointer events and a phone has no hover.
  *
- * Laid out as a grid of equal cells — three per row on a desktop, two on a tablet, one on a phone —
- * so the set reads as things one may do rather than as a form to work through.
+ * Buttons are sized by their content and wrap. Equal cells across a wide screen produce controls
+ * several times wider than their labels, which reads as a form to work through rather than as a set
+ * of things one may do. They do stretch on a phone, where full width is the ordinary shape.
+ *
+ * Deregistration is deliberately absent. It is the same decision as switching staking off, and it is
+ * offered once, on the status card, so that the voluntary exit has a single entry point.
  */
-export default function StakingActions({ staking, busy = null, onAction }: Props): JSX.Element {
+export default function StakingActions({
+  staking,
+  busy = null,
+  onAction
+}: Props): JSX.Element | null {
   const { t } = useTranslate()
-  const { card, accent, theme } = useStakingStyles()
+  const { card, accent } = useStakingStyles()
 
-  const available = ORDER.filter(({ action }) => action in staking.actions)
+  /**
+   * Whether an action is worth a control for this wallet.
+   *
+   * @param entry - The action and its icon.
+   * @returns Whether to render it.
+   */
+  const offered = (entry: { action: StakingActionName }): boolean => {
+    if (!(entry.action in staking.actions)) return false
+    const refusal = staking.actions[entry.action] ?? null
+    return refusal === null || !NOT_APPLICABLE.includes(refusal)
+  }
+
+  const routine = ROUTINE.filter(offered)
+  const leaving = LEAVING.filter(offered)
+
+  if (routine.length === 0 && leaving.length === 0) return null
+
+  /**
+   * One control, with its reason when it has one.
+   *
+   * @param entry - The action and the icon it carries.
+   * @returns The control.
+   */
+  const control = (entry: { action: StakingActionName; icon: string }): JSX.Element => {
+    const refusal = staking.actions[entry.action] ?? null
+
+    return (
+      <Box key={entry.action} sx={{ width: { xs: '100%', sm: 'auto' } }}>
+        <Button
+          variant='outlined'
+          startIcon={<Iconify icon={entry.icon} width={18} />}
+          disabled={refusal !== null || busy !== null}
+          onClick={() => onAction(entry.action)}
+          data-testid={`staking-action-${entry.action}`}
+          sx={{
+            height: 42,
+            px: 2,
+            width: { xs: '100%', sm: 'auto' },
+            whiteSpace: 'nowrap',
+            color: accent,
+            borderColor: accent,
+            borderWidth: '0.5px',
+            '&:hover': { borderColor: accent, borderWidth: '0.5px' }
+          }}
+        >
+          {t(`staking.actions.${entry.action}`)}
+        </Button>
+
+        {refusal !== null && (
+          <Typography
+            variant='caption'
+            data-testid={`staking-action-reason-${entry.action}`}
+            sx={{ display: 'block', mt: 0.5, color: 'text.disabled', lineHeight: 1.4 }}
+          >
+            {t(`staking.refusals.${refusal}`, { defaultValue: refusal })}
+          </Typography>
+        )}
+      </Box>
+    )
+  }
 
   return (
     <Card sx={card}>
@@ -70,70 +152,37 @@ export default function StakingActions({ staking, busy = null, onAction }: Props
         {t('staking.actions.title')}
       </Typography>
 
-      <Box
-        data-testid='staking-actions-grid'
-        sx={{
-          display: 'grid',
-          gap: 1.5,
-          gridTemplateColumns: {
-            xs: '1fr',
-            sm: 'repeat(2, minmax(0, 1fr))',
-            md: 'repeat(3, minmax(0, 1fr))'
-          }
-        }}
-      >
-        {available.map(({ action, icon }) => {
-          const refusal = staking.actions[action] ?? null
-          const leaving = LEAVING.includes(action)
-          const disabled = refusal !== null || busy !== null
-          const color = leaving ? theme.palette.error.main : accent
+      {routine.length > 0 && (
+        <Box
+          data-testid='staking-actions-grid'
+          sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', gap: 1.5 }}
+        >
+          {routine.map(control)}
+        </Box>
+      )}
 
-          return (
-            <Box key={action} sx={{ minWidth: 0 }}>
-              <Button
-                fullWidth
-                variant='outlined'
-                startIcon={<Iconify icon={icon} width={18} />}
-                disabled={disabled}
-                onClick={() => onAction(action)}
-                data-testid={`staking-action-${action}`}
-                sx={{
-                  height: 44,
-                  px: 2,
-                  justifyContent: 'flex-start',
-                  color,
-                  borderColor: color,
-                  borderWidth: '0.5px',
-                  '&:hover': { borderColor: color, borderWidth: '0.5px' },
-                  '& .MuiButton-startIcon': { flexShrink: 0 }
-                }}
-              >
-                <Box
-                  component='span'
-                  sx={{
-                    minWidth: 0,
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap'
-                  }}
-                >
-                  {t(`staking.actions.${action}`)}
-                </Box>
-              </Button>
+      {leaving.length > 0 && (
+        <>
+          <Typography
+            variant='caption'
+            sx={{
+              display: 'block',
+              mt: routine.length > 0 ? 2.5 : 0,
+              mb: 1,
+              color: 'text.secondary'
+            }}
+          >
+            {t('staking.actions.leavingGroup')}
+          </Typography>
 
-              {refusal !== null && (
-                <Typography
-                  variant='caption'
-                  data-testid={`staking-action-reason-${action}`}
-                  sx={{ display: 'block', mt: 0.5, color: 'text.disabled', lineHeight: 1.4 }}
-                >
-                  {t(`staking.refusals.${refusal}`, { defaultValue: refusal })}
-                </Typography>
-              )}
-            </Box>
-          )
-        })}
-      </Box>
+          <Box
+            data-testid='staking-actions-leaving'
+            sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', gap: 1.5 }}
+          >
+            {leaving.map(control)}
+          </Box>
+        </>
+      )}
     </Card>
   )
 }

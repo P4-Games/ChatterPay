@@ -90,12 +90,38 @@ describe('StakingMembership', () => {
   })
 
   describe('a position that exists', () => {
-    it('is described as active, with its pool and its deposit', () => {
+    it('is described as active, and identified by its pool', () => {
       render(<StakingMembership staking={stakingView({ consentRequired: false })} {...noop} />)
 
       expect(screen.getByTestId('staking-membership-active')).toBeInTheDocument()
       expect(screen.getByText(/staking\.membership\.pool/)).toBeInTheDocument()
-      expect(screen.getByText(/staking\.membership\.deposit/)).toBeInTheDocument()
+    })
+
+    it('abbreviates the pool id and offers to copy it', () => {
+      // 56 characters of bech32 tell a reader nothing the ends do not, and the only use for the
+      // whole string is pasting it somewhere else.
+      const pool = `pool1${'q'.repeat(51)}`
+
+      render(
+        <StakingMembership
+          staking={stakingView({ consentRequired: false, poolId: pool })}
+          {...noop}
+        />
+      )
+
+      const shown = screen.getByText(/staking\.membership\.pool/).textContent ?? ''
+
+      expect(shown).not.toContain(pool)
+      expect(shown).toContain(pool.slice(0, 10))
+      expect(shown).toContain(pool.slice(-6))
+      expect(screen.getByTestId('staking-membership-copy-pool')).toBeInTheDocument()
+    })
+
+    it('does not repeat the deposit the summary already states', () => {
+      // One figure, one place. Two copies of an amount is something a reader has to reconcile.
+      render(<StakingMembership staking={stakingView({ consentRequired: false })} {...noop} />)
+
+      expect(screen.queryByText(/staking\.membership\.deposit/)).toBeNull()
     })
 
     it('offers to leave although nobody ever opted in', () => {
@@ -145,7 +171,7 @@ describe('StakingMembership', () => {
       expect(screen.queryByTestId('staking-membership-leave')).not.toBeInTheDocument()
     })
 
-    it('shows the pool and deposit of that external wallet all the same', () => {
+    it('shows the pool of that external wallet all the same', () => {
       const staking = stakingView({ consentRequired: false, signable: false })
 
       render(<StakingMembership staking={staking} {...noop} />)

@@ -11,7 +11,8 @@ import Logo from 'src/components/logo'
 import SvgColor from 'src/components/svg-color'
 import { useSettingsContext } from 'src/components/settings'
 
-import { NAV, HEADER } from '../config-layout'
+import { HEADER } from '../config-layout'
+import { useNavWidth } from './use-nav-width'
 import AccountPopover from '../common/account-popover'
 import SettingsButton from '../common/settings-button'
 import LanguagePopover from '../common/language-popover'
@@ -28,9 +29,9 @@ export default function Header({ onOpenNav }: Props) {
 
   const settings = useSettingsContext()
 
-  const isNavHorizontal = settings.themeLayout === 'horizontal'
+  const { navWidth } = useNavWidth()
 
-  const isNavMini = settings.themeLayout === 'mini'
+  const isNavHorizontal = settings.themeLayout === 'horizontal'
 
   const lgUp = useResponsive('up', 'lg')
 
@@ -43,7 +44,7 @@ export default function Header({ onOpenNav }: Props) {
       {lgUp && isNavHorizontal && <Logo sx={{ mr: 2.5 }} />}
 
       {!lgUp && (
-        <IconButton onClick={onOpenNav}>
+        <IconButton onClick={onOpenNav} sx={{ pointerEvents: 'auto' }}>
           <SvgColor src='/assets/icons/navbar/ic_menu_item.svg' />
         </IconButton>
       )}
@@ -54,6 +55,7 @@ export default function Header({ onOpenNav }: Props) {
         alignItems='center'
         justifyContent='flex-end'
         spacing={{ xs: 0.5, sm: 1 }}
+        sx={{ '& > *': { pointerEvents: 'auto' } }}
       >
         <LanguagePopover />
 
@@ -74,11 +76,17 @@ export default function Header({ onOpenNav }: Props) {
         bgcolor: 'transparent',
         backdropFilter: 'none',
         boxShadow: 'none',
+        // The bar is transparent and fixed, so the page scrolls visibly underneath it. Without this
+        // the bar still hit-tests across its whole area and swallows clicks on the cards and buttons
+        // that pass below it; only its own controls opt back in. The horizontal layout keeps the
+        // default behaviour because there the bar is opaque and hides what is under it.
+        ...(!isNavHorizontal && { pointerEvents: 'none' }),
         transition: theme.transitions.create(['height', 'width'], {
           duration: theme.transitions.duration.shorter
         }),
         ...(lgUp && {
-          width: `calc(100% - ${NAV.W_VERTICAL + 1}px)`,
+          // +1 for the rail's right border, so the bar starts where the rail ends.
+          width: `calc(100% - ${navWidth + 1}px)`,
           height: HEADER.H_DESKTOP,
           ...(offsetTop && {
             height: HEADER.H_DESKTOP_OFFSET
@@ -88,9 +96,6 @@ export default function Header({ onOpenNav }: Props) {
             bgcolor: 'background.default',
             height: HEADER.H_DESKTOP_OFFSET,
             borderBottom: `dashed 1px ${theme.palette.divider}`
-          }),
-          ...(isNavMini && {
-            width: `calc(100% - ${NAV.W_MINI + 1}px)`
           })
         })
       }}

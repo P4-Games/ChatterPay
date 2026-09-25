@@ -12,7 +12,28 @@ describe('StakingActions', () => {
   it('enables an action the backend did not refuse', () => {
     render(<StakingActions staking={stakingView()} onAction={vi.fn()} />)
 
-    expect(screen.getByTestId('staking-action-deregister')).toBeEnabled()
+    expect(screen.getByTestId('staking-action-exit_and_send_max')).toBeEnabled()
+  })
+
+  it('does not offer to stop staking, which the status card owns', () => {
+    // One entry point to the voluntary exit. Two controls for one decision is two places to keep
+    // the confirmation, and one of them eventually loses it.
+    render(<StakingActions staking={stakingView()} onAction={vi.fn()} />)
+
+    expect(screen.queryByTestId('staking-action-deregister')).toBeNull()
+  })
+
+  it('does not offer an action that does not apply to this wallet', () => {
+    // "Start staking — already registered" describes a state the user can already see, and a line
+    // of explanation under every inapplicable control is how a card becomes a wall of text.
+    render(
+      <StakingActions
+        staking={stakingView({ actions: { register_and_delegate: 'already_registered' } })}
+        onAction={vi.fn()}
+      />
+    )
+
+    expect(screen.queryByTestId('staking-action-register_and_delegate')).toBeNull()
   })
 
   it('disables an action the backend refused', () => {
@@ -37,17 +58,17 @@ describe('StakingActions', () => {
     const onAction = vi.fn()
     render(<StakingActions staking={stakingView()} onAction={onAction} />)
 
-    await userEvent.click(screen.getByTestId('staking-action-deregister'))
+    await userEvent.click(screen.getByTestId('staking-action-exit_and_send_max'))
 
-    expect(onAction).toHaveBeenCalledWith('deregister')
+    expect(onAction).toHaveBeenCalledWith('exit_and_send_max')
   })
 
   it('disables everything while one action is running', () => {
     // Two staking operations cannot be live for one credential, so offering a second is offering a
     // refusal.
-    render(<StakingActions staking={stakingView()} busy='deregister' onAction={vi.fn()} />)
+    render(<StakingActions staking={stakingView()} busy='withdraw_rewards' onAction={vi.fn()} />)
 
-    expect(screen.getByTestId('staking-action-deregister')).toBeDisabled()
+    expect(screen.getByTestId('staking-action-exit_and_send_max')).toBeDisabled()
     expect(screen.getByTestId('staking-action-delegate_vote')).toBeDisabled()
   })
 
@@ -76,7 +97,6 @@ describe('StakingActions', () => {
     )
 
     expect(screen.getByTestId('staking-action-withdraw_rewards')).toBeEnabled()
-    expect(screen.getByTestId('staking-action-deregister')).toBeEnabled()
     expect(screen.getByTestId('staking-action-exit_and_send_max')).toBeEnabled()
     expect(screen.getByTestId('staking-action-delegate_vote')).toBeDisabled()
   })
@@ -102,7 +122,6 @@ describe('StakingActions', () => {
       'register_and_delegate',
       'delegate_vote',
       'withdraw_rewards',
-      'deregister',
       'exit_and_send_max'
     ]) {
       expect(screen.getByTestId(`staking-action-${action}`)).toBeDisabled()
@@ -145,7 +164,7 @@ describe('StakingActions', () => {
     it('is absent for an action that is allowed', () => {
       render(<StakingActions staking={stakingView()} onAction={vi.fn()} />)
 
-      expect(screen.queryByTestId('staking-action-reason-deregister')).toBeNull()
+      expect(screen.queryByTestId('staking-action-reason-exit_and_send_max')).toBeNull()
     })
 
     it('falls back to the backend code when there is no translation for it', () => {
@@ -161,28 +180,28 @@ describe('StakingActions', () => {
   })
 
   describe('the layout', () => {
-    it('puts every offered action in the same grid', () => {
-      // One grid rather than a column of bars: the controls are peers, and equal cells are what keeps
-      // them the same width and height whatever the wallet's state.
+    it('keeps what maintains a position apart from leaving with the balance', () => {
+      // Separated by position and by a group label rather than by colour, which survives a
+      // colourblind viewer and a greyscale screenshot.
       render(<StakingActions staking={stakingView()} onAction={vi.fn()} />)
 
-      const grid = screen.getByTestId('staking-actions-grid')
-
-      expect(grid.children).toHaveLength(6)
+      expect(screen.getByTestId('staking-actions-grid')).toBeInTheDocument()
+      expect(screen.getByTestId('staking-actions-leaving')).toBeInTheDocument()
     })
 
     it('holds only the actions the backend mentioned', () => {
       render(
         <StakingActions
-          staking={stakingView({ actions: { deregister: null, exit_and_send_max: null } })}
+          staking={stakingView({ actions: { delegate_vote: null, withdraw_rewards: null } })}
           onAction={vi.fn()}
         />
       )
 
       expect(screen.getByTestId('staking-actions-grid').children).toHaveLength(2)
+      expect(screen.queryByTestId('staking-actions-leaving')).toBeNull()
     })
 
-    it('gives each cell one control and at most one reason', () => {
+    it('gives each control one button and at most one reason', () => {
       render(
         <StakingActions
           staking={stakingView({ actions: { withdraw_rewards: 'no_rewards' } })}
@@ -193,6 +212,18 @@ describe('StakingActions', () => {
       const cell = screen.getByTestId('staking-actions-grid').children[0]
 
       expect(cell.children).toHaveLength(2)
+    })
+
+    it('renders nothing at all when no action applies', () => {
+      // An empty card titled "what you can do" is worse than no card.
+      const { container } = render(
+        <StakingActions
+          staking={stakingView({ actions: { register_and_delegate: 'already_registered' } })}
+          onAction={vi.fn()}
+        />
+      )
+
+      expect(container).toBeEmptyDOMElement()
     })
   })
 })
