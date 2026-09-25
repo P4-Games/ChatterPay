@@ -57,6 +57,44 @@ describe('StakingPinDialog', () => {
     expect(screen.getByText('staking.pin.rejected')).toBeInTheDocument()
   })
 
+  // A refusal the user resolves themselves is shown as a sentence. `security_gate` on screen tells them
+  // nothing they can act on, and the three situations behind it are resolved differently: set a PIN,
+  // wait for the block to lift, type it again.
+  it.each([
+    ['SECURITY_PIN_NOT_SET', 'staking.pin.notSet'],
+    ['SECURITY_PIN_BLOCKED', 'staking.pin.blocked'],
+    ['SECURITY_PIN_REJECTED', 'staking.pin.rejected'],
+    ['security_gate', 'staking.pin.gate']
+  ])('explains %s rather than showing the code', (code, key) => {
+    render(
+      <StakingPinDialog
+        open
+        action='delegate_vote'
+        error={code}
+        onCancel={vi.fn()}
+        onConfirm={vi.fn()}
+      />
+    )
+
+    expect(screen.getByText(key)).toBeInTheDocument()
+    expect(screen.queryByText(code)).not.toBeInTheDocument()
+  })
+
+  it('shows a refusal it cannot explain as it arrived', () => {
+    // A diagnosable refusal is more use to whoever is reading it than a generic apology.
+    render(
+      <StakingPinDialog
+        open
+        action='withdraw_rewards'
+        error='refused: rewards_blocked_by_governance'
+        onCancel={vi.fn()}
+        onConfirm={vi.fn()}
+      />
+    )
+
+    expect(screen.getByText('refused: rewards_blocked_by_governance')).toBeInTheDocument()
+  })
+
   it('does not accept input while a submission is running', async () => {
     render(
       <StakingPinDialog

@@ -28,6 +28,22 @@ type Props = {
 }
 
 /**
+ * The refusal codes this dialog can explain, and the message for each.
+ *
+ * What reaches `error` is the backend's own refusal code, which is what keeps one failure from reading
+ * like another. The codes below are the ones the user resolves themselves, so they are shown as a
+ * sentence; anything else is shown as it arrived, because a diagnosable refusal such as a governance
+ * block is more use to the person reading it than a generic apology.
+ */
+const MESSAGE_OF: Record<string, string> = {
+  SECURITY_PIN_NOT_SET: 'staking.pin.notSet',
+  SECURITY_PIN_BLOCKED: 'staking.pin.blocked',
+  SECURITY_PIN_REJECTED: 'staking.pin.rejected',
+  // The gate refused and did not say which situation it was, which happens when it could not be read.
+  security_gate: 'staking.pin.gate'
+}
+
+/**
  * Asks for the PIN against a named operation.
  *
  * The operation is in the prompt on purpose. A PIN dialog that says only "enter your PIN" trains
@@ -73,7 +89,11 @@ export default function StakingPinDialog({
             })}
           </Typography>
 
-          {error && <Alert severity='error'>{error}</Alert>}
+          {error && (
+            <Alert severity='error'>
+              {MESSAGE_OF[error] === undefined ? error : t(MESSAGE_OF[error])}
+            </Alert>
+          )}
 
           <TextField
             autoFocus

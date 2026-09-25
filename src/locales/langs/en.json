@@ -796,12 +796,14 @@
     "description": "Your stake carries voting power. Delegating it enables reward withdrawals.",
     "readOnlyNotice": "You can delegate your voting power here. Registering as a DRep and voting directly are not available.",
     "current": {
-      "title": "Your voting power",
+      "title": "Your delegation",
       "none": "Not delegated",
       "always_abstain": "Abstaining",
       "always_no_confidence": "No confidence",
       "drep": "Delegated to {{drep}}",
-      "not_registered": "This wallet is not staking."
+      "not_registered": "This wallet is not staking.",
+      "stakeLabel": "Balance in this wallet",
+      "stakeNotice": "This is the wallet balance, not your voting power on the network: that comes from each epoch's snapshot and ChatterPay does not read it."
     },
     "options": {
       "title": "Delegate your vote",
@@ -814,7 +816,9 @@
       "drepHint": "Your stake follows how the representative you pick votes.",
       "drepLabel": "Representative",
       "delegate": "Delegate",
-      "unavailable": "Not available from this screen.",
+      "drepNotice": "ChatterPay does not recommend any representative.",
+      "drepRequired": "Pick a representative.",
+      "alreadyHere": "Your vote already goes here.",
       "empty": "No representatives could be listed."
     },
     "history": {

@@ -5,6 +5,7 @@ import { validateRequestSecurity } from 'src/app/api/middleware/validators/base-
 import { validateStateChangingRequest } from 'src/app/api/middleware/validators/state-change-validator'
 import {
   authorizeStakingAction,
+  readGovernanceTarget,
   STAKING_ACTIONS,
   type StakingAction
 } from 'src/app/api/services/staking/staking-service'
@@ -31,6 +32,10 @@ type IParams = {
  * The PIN itself is never stored here and never returned. It goes to the backend, which owns the
  * verification and the failed-attempt counter, and what comes back is the grant.
  *
+ * For a vote delegation the named operation includes what the vote is delegated *to*. Abstaining,
+ * voting no confidence and following a named representative are three different instructions, so a
+ * grant for one of them is not a grant for the others.
+ *
  * @route POST /api/v1/wallet/:id/staking/authorize
  */
 export async function POST(req: NextRequest, { params }: { params: IParams }) {
@@ -45,7 +50,12 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
   const securityCheckResult = await validateRequestSecurity(req, userId)
   if (securityCheckResult instanceof NextResponse) return securityCheckResult
 
-  let body: { action?: unknown; pin?: unknown; recipientAddress?: unknown }
+  let body: {
+    action?: unknown
+    pin?: unknown
+    recipientAddress?: unknown
+    governanceTarget?: unknown
+  }
   try {
     body = await req.json()
   } catch {
@@ -91,6 +101,17 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
     )
   }
 
+  // The target is part of what is being authorised, so it is read before the PIN is sent anywhere.
+  // Authorising an abstention and then delegating to a representative is the thing the binding exists
+  // to prevent, and it is prevented by the target being inside the grant's signature.
+  const governance = readGovernanceTarget(body.governanceTarget, action as StakingAction)
+  if (!governance.ok) {
+    return NextResponse.json(
+      { error: { code: 'INVALID_REQUEST_BODY', message: governance.message } },
+      { status: 400 }
+    )
+  }
+
   const user = await getUserById(userId)
   if (!user?.phone_number) {
     return NextResponse.json({ error: { code: 'USER_NOT_FOUND' } }, { status: 404 })
@@ -100,7 +121,8 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
     user.phone_number,
     action as StakingAction,
     body.pin,
-    recipientAddress
+    recipientAddress,
+    governance.target
   )
   if (!result.ok) {
     return NextResponse.json(

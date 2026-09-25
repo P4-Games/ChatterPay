@@ -796,12 +796,14 @@
     "description": "Tu stake tiene poder de voto. Delegarlo habilita el retiro de recompensas.",
     "readOnlyNotice": "Podés delegar tu poder de voto. Registrarte como DRep y votar directo no están disponibles.",
     "current": {
-      "title": "Tu poder de voto",
+      "title": "Tu delegación",
       "none": "Sin delegar",
       "always_abstain": "Absteniéndose",
       "always_no_confidence": "Sin confianza",
       "drep": "Delegado a {{drep}}",
-      "not_registered": "Esta billetera no está haciendo staking."
+      "not_registered": "Esta billetera no está haciendo staking.",
+      "stakeLabel": "Saldo de esta billetera",
+      "stakeNotice": "Es el saldo de la billetera, no tu poder de voto en la red: ese surge del registro de cada época y ChatterPay no lo lee."
     },
     "options": {
       "title": "Delegar tu voto",
@@ -814,7 +816,9 @@
       "drepHint": "Tu stake sigue el voto del representante que elijas.",
       "drepLabel": "Representante",
       "delegate": "Delegar",
-      "unavailable": "No disponible desde esta pantalla.",
+      "drepNotice": "ChatterPay no recomienda ningún representante.",
+      "drepRequired": "Elegí un representante.",
+      "alreadyHere": "Tu voto ya está delegado acá.",
       "empty": "No se pudo listar ningún representante."
     },
     "history": {

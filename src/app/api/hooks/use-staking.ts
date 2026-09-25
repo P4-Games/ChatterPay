@@ -32,6 +32,21 @@ export type StakingActionName =
   | 'deregister'
   | 'exit_and_send_max'
 
+/** The three targets a vote may be delegated to. */
+export type GovernanceTargetKind = 'always_abstain' | 'always_no_confidence' | 'drep'
+
+/**
+ * Where a vote delegation sends the voting power.
+ *
+ * Tagged, and it stays tagged as far as the signature the BFF produces. A representative cannot be
+ * named without an identifier and a predefined target cannot carry one, so neither mistake reaches the
+ * request: the compiler refuses to express it.
+ */
+export type GovernanceTarget =
+  | { kind: 'always_abstain' }
+  | { kind: 'always_no_confidence' }
+  | { kind: 'drep'; drepId: string }
+
 export type StakingAccountState =
   | 'awaiting_consent'
   | 'awaiting_funds'
@@ -128,11 +143,25 @@ export type StakingExitQuote = {
   netLovelace: string
 }
 
+/**
+ * One representative, as the backend lists it.
+ *
+ * `idCip129` is the identifier: canonical, and the one a delegation names. `idCip105` is the legacy
+ * spelling of the same credential, carried for display beside it because explorers still print that
+ * form; it is never what a request sends.
+ *
+ * `votingPowerLovelace` is the stake delegated to that representative, when the provider reported it.
+ * It is a property of the representative and says nothing about this wallet.
+ *
+ * The list arrives in whatever order the chain gave it. Nothing in it marks a representative as
+ * recommended, because ChatterPay does not recommend one.
+ */
 export type GovernanceDRep = {
-  id: string
-  idCip129?: string
-  status?: string
-  amountLovelace?: string
+  idCip129: string
+  idCip105?: string
+  credential?: { type: 'key_hash' | 'script_hash'; hashHex: string }
+  status?: 'active' | 'retired' | 'unknown'
+  votingPowerLovelace?: string | null
 }
 
 export type GovernanceView = {
@@ -230,24 +259,29 @@ export async function setStakingConsent(
 /**
  * Verifies the PIN for one action and returns a grant bound to it.
  *
- * The grant is short-lived and single-use. It is not a session: it names this action and this
- * destination, so it cannot be carried over to a different operation.
+ * The grant is short-lived and single-use. It is not a session: it names this action, this destination
+ * and, for a vote delegation, this target — so it cannot be carried over to a different operation, nor
+ * spent on delegating the vote somewhere other than where the PIN was typed for.
  *
  * @param walletId - The wallet.
  * @param action - What is being authorised.
  * @param pin - The user's PIN. Sent once, never stored.
  * @param recipientAddress - An exit's destination, or `null`.
+ * @param governanceTarget - Where a vote delegation sends the voting power. Required for
+ *   `delegate_vote` and refused for every other action.
  */
 export async function authorizeStakingAction(
   walletId: string,
   action: StakingActionName,
   pin: string,
-  recipientAddress: string | null = null
+  recipientAddress: string | null = null,
+  governanceTarget: GovernanceTarget | null = null
 ): Promise<StakingMutationResult> {
   return mutate(endpoints.dashboard.wallet.staking.authorize(walletId), {
     action,
     pin,
-    recipientAddress
+    recipientAddress,
+    governanceTarget
   })
 }
 
@@ -256,17 +290,23 @@ export async function authorizeStakingAction(
  *
  * @param walletId - The wallet.
  * @param action - What to do.
- * @param options - The grant and, for an exit, where to send.
+ * @param options - The grant, for an exit where to send, and for a vote delegation what to delegate to.
+ *   The target must be the same one the grant was obtained for; presenting another is refused.
  */
 export async function requestStakingAction(
   walletId: string,
   action: StakingActionName,
-  options: { pinGrant?: string | null; recipientAddress?: string | null } = {}
+  options: {
+    pinGrant?: string | null
+    recipientAddress?: string | null
+    governanceTarget?: GovernanceTarget | null
+  } = {}
 ): Promise<StakingMutationResult> {
   return mutate(endpoints.dashboard.wallet.staking.action(walletId), {
     action,
     pinGrant: options.pinGrant ?? null,
-    recipientAddress: options.recipientAddress ?? null
+    recipientAddress: options.recipientAddress ?? null,
+    governanceTarget: options.governanceTarget ?? null
   })
 }
 

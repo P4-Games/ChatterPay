@@ -17,7 +17,12 @@ import { useTranslate } from 'src/locales'
 import { useStakingStyles } from './staking-style'
 import { formatAdaWithUnit } from './staking-amount'
 
-import type { StakingView, GovernanceView } from 'src/app/api/hooks/use-staking'
+import type {
+  StakingView,
+  GovernanceView,
+  GovernanceTarget,
+  GovernanceTargetKind
+} from 'src/app/api/hooks/use-staking'
 
 // ----------------------------------------------------------------------
 
@@ -25,25 +30,20 @@ type Props = {
   staking: StakingView
   governance: GovernanceView | null
   submitting?: boolean
-  onDelegate: () => void
+  onDelegate: (target: GovernanceTarget) => void
 }
 
 /** How much of a DRep identifier is enough to recognise one. */
 const ID_PREFIX = 12
 
 /**
- * The delegations offered, and which of them this deployment can actually carry out.
+ * The three delegations Cardano offers a delegator, in the order they are presented.
  *
- * `wired` is not a style flag. The action request carries an action name and nothing else — there is
- * no field naming a governance target — so abstaining is the only delegation the backend can be asked
- * for from here. The other two are listed because they exist on Cardano and a user comparing options
- * needs to see them, and each says plainly that it cannot be chosen here rather than failing on press.
+ * All three are requestable. The order is the order of the ledger's own variants and carries no
+ * recommendation: the first row is not a suggestion, and none of the representatives in the third row
+ * is either.
  */
-const OPTIONS: { kind: 'always_abstain' | 'always_no_confidence' | 'drep'; wired: boolean }[] = [
-  { kind: 'always_abstain', wired: true },
-  { kind: 'always_no_confidence', wired: false },
-  { kind: 'drep', wired: false }
-]
+const OPTIONS: readonly GovernanceTargetKind[] = ['always_abstain', 'always_no_confidence', 'drep']
 
 // ----------------------------------------------------------------------
 
@@ -59,6 +59,19 @@ const OPTIONS: { kind: 'always_abstain' | 'always_no_confidence' | 'drep'; wired
  * The options are rows rather than cards: they are alternatives to compare, each with one line of
  * description and one control, and a full-width bar per option makes three choices look like three
  * separate decisions.
+ *
+ * Two things this screen deliberately does not claim.
+ *
+ * **The figure in the first card is the wallet's balance, not on-chain voting power.** Those are
+ * different numbers. Voting power is the stake recorded against the credential in the governance
+ * snapshot of an epoch, and the backend does not report it: the staking read carries a wallet balance
+ * assembled from outputs, a refundable deposit and rewards. Labelling that as voting power would tell
+ * the user a figure the chain never agreed to, so it is labelled as what it is.
+ *
+ * **No representative is recommended or pre-selected.** The selector starts empty and stays empty until
+ * the user picks, the list is shown in the order the chain gave it, and the row says in words that
+ * ChatterPay does not recommend one. A default selection in a governance control is an opinion about
+ * how somebody else's stake should vote.
  */
 export default function GovernanceDelegation({
   staking,
@@ -81,15 +94,31 @@ export default function GovernanceDelegation({
         })
       : t(`governance.current.${kind}`, { defaultValue: t('governance.current.none') })
 
-  // The stake that backs the vote. Absent when the balance could not be read, and absent is shown as
-  // absent rather than as zero.
-  const power =
+  // The wallet's balance. Absent when it could not be read, and absent is shown as absent rather than
+  // as zero — the same rule the rest of staking follows.
+  const walletStake =
     staking.balance.availability === 'unavailable'
       ? '—'
       : formatAdaWithUnit(staking.balance.totalAdaLovelace)
 
   const dreps = governance?.dreps ?? []
   const events = governance?.events ?? []
+
+  /**
+   * Whether a row is the delegation the credential already has.
+   *
+   * A delegation to where the vote already goes costs a network fee and changes nothing, and the
+   * backend refuses it — so the row says so instead of offering a transaction that does nothing. For a
+   * representative the comparison is against the identifier currently selected, because that is what
+   * the row would ask for.
+   *
+   * @param option - The row.
+   * @returns `true` when pressing it would change nothing.
+   */
+  const alreadyHere = (option: GovernanceTargetKind): boolean => {
+    if (option !== 'drep') return kind === option
+    return kind === 'drep' && drep !== '' && delegation?.idCip129 === drep
+  }
 
   return (
     <Stack spacing={2}>
@@ -114,12 +143,20 @@ export default function GovernanceDelegation({
           sx={{ mt: 1.25 }}
         >
           <Typography variant='caption' sx={{ color: 'text.secondary' }}>
-            {t('staking.position.vote')}
+            {t('governance.current.stakeLabel')}
           </Typography>
           <Typography variant='caption' sx={{ fontWeight: 600 }} data-testid='governance-power'>
-            {power}
+            {walletStake}
           </Typography>
         </Stack>
+
+        <Typography
+          variant='caption'
+          data-testid='governance-power-notice'
+          sx={{ color: 'text.disabled', display: 'block', mt: 0.5 }}
+        >
+          {t('governance.current.stakeNotice')}
+        </Typography>
 
         <Typography variant='caption' sx={{ color: 'text.disabled', display: 'block', mt: 1.25 }}>
           {t('governance.readOnlyNotice')}
@@ -134,35 +171,43 @@ export default function GovernanceDelegation({
 
         <Box sx={{ mt: 1 }}>
           {OPTIONS.map((option, index) => {
-            const isDrep = option.kind === 'drep'
-            // A row that cannot be carried out here says so; a row that can defers to the backend's
-            // own refusal for this wallet.
-            const reason = option.wired
-              ? refusal && t(`staking.refusals.${refusal}`, { defaultValue: refusal })
-              : t('governance.options.unavailable')
-            const disabled =
-              submitting ||
-              !option.wired ||
-              refusal !== null ||
-              (isDrep && (drep === '' || dreps.length === 0))
+            const isDrep = option === 'drep'
+            const needsChoice = isDrep && drep === ''
+            // One line under the row, and which one depends on what stands in the way: the backend's
+            // own refusal for this wallet first, because it applies to every row, then the two things
+            // that are true of one row only.
+            const reason =
+              (refusal !== null && t(`staking.refusals.${refusal}`, { defaultValue: refusal })) ||
+              (alreadyHere(option) && t('governance.options.alreadyHere')) ||
+              (needsChoice && dreps.length > 0 && t('governance.options.drepRequired')) ||
+              null
+            const disabled = submitting || refusal !== null || alreadyHere(option) || needsChoice
 
             return (
               <Stack
-                key={option.kind}
+                key={option}
                 direction={{ xs: 'column', sm: 'row' }}
                 spacing={1.5}
                 alignItems={{ xs: 'stretch', sm: 'center' }}
                 justifyContent='space-between'
-                data-testid={`governance-option-${option.kind}`}
+                data-testid={`governance-option-${option}`}
                 sx={{ py: 1.5, borderTop: index === 0 ? 'none' : divider }}
               >
                 <Stack spacing={0.5} sx={{ minWidth: 0 }}>
-                  <Typography variant='subtitle2'>
-                    {t(`governance.options.${option.kind}`)}
-                  </Typography>
+                  <Typography variant='subtitle2'>{t(`governance.options.${option}`)}</Typography>
                   <Typography variant='caption' sx={{ color: 'text.secondary' }}>
-                    {t(`governance.options.${option.kind}Hint`)}
+                    {t(`governance.options.${option}Hint`)}
                   </Typography>
+
+                  {isDrep && (
+                    <Typography
+                      variant='caption'
+                      data-testid='governance-drep-notice'
+                      sx={{ color: 'text.disabled' }}
+                    >
+                      {t('governance.options.drepNotice')}
+                    </Typography>
+                  )}
 
                   {isDrep &&
                     (dreps.length === 0 ? (
@@ -180,8 +225,8 @@ export default function GovernanceDelegation({
                         sx={{ mt: 0.5, maxWidth: { sm: 260 } }}
                       >
                         {dreps.map((entry) => (
-                          <MenuItem key={entry.id} value={entry.id}>
-                            {`${(entry.idCip129 ?? entry.id).slice(0, ID_PREFIX)}…`}
+                          <MenuItem key={entry.idCip129} value={entry.idCip129}>
+                            {`${entry.idCip129.slice(0, ID_PREFIX)}…`}
                           </MenuItem>
                         ))}
                       </TextField>
@@ -190,7 +235,7 @@ export default function GovernanceDelegation({
                   {reason && (
                     <Typography
                       variant='caption'
-                      data-testid={`governance-reason-${option.kind}`}
+                      data-testid={`governance-reason-${option}`}
                       sx={{ color: 'text.disabled' }}
                     >
                       {reason}
@@ -201,12 +246,17 @@ export default function GovernanceDelegation({
                 <Button
                   variant='outlined'
                   size='small'
-                  onClick={onDelegate}
+                  // The target travels with the press. Everything downstream — the assertion, the PIN
+                  // grant, the certificate — is bound to this exact value, so the button cannot mean
+                  // one delegation while the request carries another.
+                  onClick={() =>
+                    onDelegate(isDrep ? { kind: 'drep', drepId: drep } : { kind: option })
+                  }
                   disabled={disabled}
                   data-testid={
-                    option.kind === 'always_abstain'
+                    option === 'always_abstain'
                       ? 'governance-delegate'
-                      : `governance-delegate-${option.kind}`
+                      : `governance-delegate-${option}`
                   }
                   sx={{
                     ...outlined(accent),

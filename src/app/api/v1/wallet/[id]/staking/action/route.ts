@@ -3,6 +3,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { getUserById } from 'src/app/api/services/db/chatterpay-db-service'
 import { validateRequestSecurity } from 'src/app/api/middleware/validators/base-security-validator'
 import {
+  readGovernanceTarget,
   requestStakingAction,
   STAKING_ACTIONS,
   type StakingAction
@@ -27,6 +28,10 @@ type IParams = {
  * resolves the credential from the phone number this route looked up — so even a request that got
  * this far cannot be aimed at a wallet the authenticated user does not own.
  *
+ * A vote delegation carries a governance target and it is validated the same way: against a fixed set,
+ * and only on the action that has one. The target then travels inside the assertion this route signs,
+ * so the grant the user's PIN buys is good for that target and no other.
+ *
  * The PIN gate lives in the backend rather than here, alongside the operation it guards, so that the
  * gate cannot be satisfied by a caller that skips this route.
  *
@@ -46,7 +51,12 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
   const securityCheckResult = await validateRequestSecurity(req, userId)
   if (securityCheckResult instanceof NextResponse) return securityCheckResult
 
-  let body: { action?: unknown; recipientAddress?: unknown; pinGrant?: unknown }
+  let body: {
+    action?: unknown
+    recipientAddress?: unknown
+    pinGrant?: unknown
+    governanceTarget?: unknown
+  }
   try {
     body = await req.json()
   } catch {
@@ -85,6 +95,17 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
     )
   }
 
+  // A vote delegation names a target as well as an action, and the target has to be checked here
+  // because it is about to be signed. Exactly one action carries one; on any other it is a parameter
+  // with no meaning, and a parameter with no meaning is the kind that acquires one later by accident.
+  const governance = readGovernanceTarget(body.governanceTarget, action as StakingAction)
+  if (!governance.ok) {
+    return NextResponse.json(
+      { error: { code: 'INVALID_REQUEST_BODY', message: governance.message } },
+      { status: 400 }
+    )
+  }
+
   const user = await getUserById(userId)
   if (!user?.phone_number) {
     return NextResponse.json({ error: { code: 'USER_NOT_FOUND' } }, { status: 404 })
@@ -94,7 +115,8 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
     user.phone_number,
     action as StakingAction,
     recipientAddress,
-    typeof body.pinGrant === 'string' && body.pinGrant.trim() !== '' ? body.pinGrant.trim() : null
+    typeof body.pinGrant === 'string' && body.pinGrant.trim() !== '' ? body.pinGrant.trim() : null,
+    governance.target
   )
   if (!result.ok) {
     return NextResponse.json(

@@ -17,6 +17,11 @@ import { CARDANO_STAKING_BFF_SECRET } from 'src/config-global'
  * the action is inside the signature too, so a captured assertion cannot be replayed against a
  * different operation or a different destination.
  *
+ * A vote delegation names a target as well as an action, and the target is inside the signature for the
+ * same reason: `delegate_vote` on its own does not say whether the voting power goes to abstaining, to
+ * a vote of no confidence or to a named representative, and an assertion that left that out would
+ * authorise whichever of the three the request happened to carry.
+ *
  * This module runs only on the server. The secret is shared with the backend and with nothing else, and
  * it must never reach a browser bundle: it is read from a non-`NEXT_PUBLIC_` variable, which Next.js
  * will not inline into client code.
@@ -29,11 +34,23 @@ import { CARDANO_STAKING_BFF_SECRET } from 'src/config-global'
 /** How long an assertion is accepted. One request, not a session. */
 const TTL_SECONDS = 120
 
+/**
+ * The shape of the canonical form, as a number inside the signature.
+ *
+ * Raised when the canonical form gains or loses a field. Version 2 added the governance target, so a
+ * version 1 assertion canonicalises its fields into different positions and the backend refuses it
+ * outright rather than comparing fields that mean something else. Both sides of this contract ship
+ * together, so a mismatch is a half-applied deployment rather than a caller to accommodate.
+ */
+const ASSERTION_VERSION = 2
+
 type StakingAssertionClaims = {
-  v: 1
+  v: typeof ASSERTION_VERSION
   sub: string
   act: string
   rcp: string | null
+  /** The canonical governance target, or `null` for an action that has none. */
+  gov: string | null
   nonce: string
   iat: number
   exp: number
@@ -53,8 +70,12 @@ function formatPhone(phoneNumber: string): string {
 /**
  * The exact string both sides sign.
  *
- * Fixed field order and a delimiter that cannot appear in any field. Signing a JSON object instead
- * would make the signature depend on key order and on how each runtime spells a number.
+ * Fixed field order and a delimiter that cannot appear in any field. That last property is why a
+ * governance target reaches this function only after `governanceTargetCanonical` has restricted a
+ * representative's identifier to lowercase alphanumerics and the underscore: a field able to carry a
+ * `|` could be chosen to make two different claim sets produce the same string, and one signature
+ * would then verify for both. Signing a JSON object instead would make the signature depend on key
+ * order and on how each runtime spells a number.
  */
 function canonical(claims: StakingAssertionClaims): string {
   return [
@@ -62,6 +83,7 @@ function canonical(claims: StakingAssertionClaims): string {
     claims.sub,
     claims.act,
     claims.rcp ?? '-',
+    claims.gov ?? '-',
     claims.nonce,
     claims.iat,
     claims.exp
@@ -76,23 +98,26 @@ function canonical(claims: StakingAssertionClaims): string {
  * @param phoneNumber - The phone number this route resolved from the session.
  * @param action - The action being asked for.
  * @param recipientAddress - An exit's destination, or `null`.
+ * @param governanceTarget - The canonical governance target, or `null` for an action that has none.
  * @returns The assertion, or `null` when no secret is configured — in which case the backend refuses
  *   the request unless it has been explicitly told not to require one.
  */
 export function signStakingAssertion(
   phoneNumber: string,
   action: string,
-  recipientAddress: string | null = null
+  recipientAddress: string | null = null,
+  governanceTarget: string | null = null
 ): string | null {
   const secret = (CARDANO_STAKING_BFF_SECRET ?? '').trim()
   if (secret === '') return null
 
   const seconds = Math.floor(Date.now() / 1000)
   const claims: StakingAssertionClaims = {
-    v: 1,
+    v: ASSERTION_VERSION,
     sub: formatPhone(phoneNumber),
     act: action,
     rcp: recipientAddress ?? null,
+    gov: governanceTarget ?? null,
     nonce: crypto.randomBytes(16).toString('hex'),
     iat: seconds,
     exp: seconds + TTL_SECONDS

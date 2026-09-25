@@ -25,16 +25,23 @@ import StakingTabs from '../staking-tabs'
 import { useStakingStyles } from '../staking-style'
 
 import type { AuthUserType } from 'src/auth/types'
+import type { GovernanceTarget } from 'src/app/api/hooks/use-staking'
 
 // ----------------------------------------------------------------------
 
 /**
  * The governance page.
  *
- * It offers exactly one mutation — delegating the voting power to abstain — and it is here rather than
- * on the staking page because of what it unblocks. In Conway a credential that has never delegated its
- * vote cannot withdraw rewards at all, so this is the page a user is sent to when their rewards look
- * stuck, and the copy says so.
+ * It offers one mutation — delegating the voting power — with the three targets Cardano defines, and it
+ * is here rather than on the staking page because of what it unblocks. In Conway a credential that has
+ * never delegated its vote cannot withdraw rewards at all, so this is the page a user is sent to when
+ * their rewards look stuck, and the copy says so.
+ *
+ * The target the user pressed is held in state for exactly as long as the PIN dialog is open, and it is
+ * the same value that is authorised and then requested. That matters more than it looks: the PIN buys a
+ * grant bound by signature to one target, so authorising with one target and requesting with another is
+ * refused by the backend rather than quietly delegating somewhere the user did not choose. Holding it in
+ * one place is what keeps the two calls describing the same decision.
  *
  * Registering a DRep and casting votes directly are not offered. Those kinds exist in the backend so
  * the shape is settled and are refused while their flag is off; nothing here routes to them.
@@ -59,23 +66,36 @@ export default function GovernanceDashboardView(): JSX.Element {
   const { data: governance } = useGovernance(cardanoAddress)
   const staking = data?.staking
 
-  const [asking, setAsking] = useState(false)
+  // The target the user pressed, held until the PIN dialog closes. `null` means no dialog is open, so
+  // there is no state in which a PIN could be confirmed without a target to spend it on.
+  const [asking, setAsking] = useState<GovernanceTarget | null>(null)
   const [busy, setBusy] = useState(false)
   const [failure, setFailure] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
 
   /**
-   * Delegates the vote, authorising it with the PIN first.
+   * Delegates the vote to one target, authorising it with the PIN first.
    *
    * Same two-step shape as every other staking mutation: the PIN buys a grant that names this action,
-   * and the request carries the grant rather than the PIN.
+   * and the request carries the grant rather than the PIN. The target is passed to both calls from the
+   * same variable, because the grant is bound to it — a grant obtained for abstaining cannot be spent
+   * on a representative, and the backend says so rather than delegating to either.
+   *
+   * @param target - Where the voting power goes.
+   * @param pin - The user's PIN, sent once.
    */
-  const delegate = async (pin: string): Promise<void> => {
+  const delegate = async (target: GovernanceTarget, pin: string): Promise<void> => {
     if (!cardanoAddress) return
     setBusy(true)
     setFailure(null)
 
-    const authorised = await authorizeStakingAction(cardanoAddress, 'delegate_vote', pin, null)
+    const authorised = await authorizeStakingAction(
+      cardanoAddress,
+      'delegate_vote',
+      pin,
+      null,
+      target
+    )
     if (!authorised.ok) {
       setFailure(authorised.message)
       setBusy(false)
@@ -83,7 +103,8 @@ export default function GovernanceDashboardView(): JSX.Element {
     }
 
     const started = await requestStakingAction(cardanoAddress, 'delegate_vote', {
-      pinGrant: String(authorised.data.grant ?? '')
+      pinGrant: String(authorised.data.grant ?? ''),
+      governanceTarget: target
     })
     if (!started.ok) {
       setFailure(started.message)
@@ -97,7 +118,7 @@ export default function GovernanceDashboardView(): JSX.Element {
         ? t('staking.actions.startedWithTx', { tx: `${txId.slice(0, 10)}…` })
         : t('staking.actions.started')
     )
-    setAsking(false)
+    setAsking(null)
     setBusy(false)
   }
 
@@ -150,19 +171,23 @@ export default function GovernanceDashboardView(): JSX.Element {
         staking={staking}
         governance={governance ?? null}
         submitting={busy}
-        onDelegate={() => {
+        onDelegate={(target) => {
           setFailure(null)
-          setAsking(true)
+          setAsking(target)
         }}
       />
 
       <StakingPinDialog
-        open={asking}
+        open={asking !== null}
         action='delegate_vote'
         submitting={busy}
         error={failure}
-        onCancel={() => setAsking(false)}
-        onConfirm={(pin) => void delegate(pin)}
+        onCancel={() => setAsking(null)}
+        onConfirm={(pin) => {
+          // Guarded rather than asserted: the dialog only opens with a target, and a confirmation
+          // without one must do nothing rather than send a delegation with no destination.
+          if (asking !== null) void delegate(asking, pin)
+        }}
       />
     </Container>
   )
