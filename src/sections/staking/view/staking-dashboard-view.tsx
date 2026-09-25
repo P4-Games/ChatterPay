@@ -85,8 +85,14 @@ export default function StakingDashboardView(): JSX.Element {
   // not the one the button says: staking will not resume on its own afterwards.
   const [deactivating, setDeactivating] = useState(false)
 
-  // Follows the address as it is typed, and only asks once there is one worth quoting.
-  const { data: quote, isLoading: quoteLoading } = useStakingExitQuote(cardanoAddress, recipient)
+  // Follows the address as it is typed, and only asks once there is one worth quoting. A failure is
+  // carried into the dialog rather than dropped: with no figures and nothing said, a refused quote
+  // is indistinguishable from one still being computed.
+  const {
+    data: quote,
+    isLoading: quoteLoading,
+    error: quoteError
+  } = useStakingExitQuote(cardanoAddress, recipient)
 
   const reset = (): void => {
     setPending(null)
@@ -218,6 +224,7 @@ export default function StakingDashboardView(): JSX.Element {
         // there is nothing to confirm, which is what the dialog's disabled state is for.
         quote={quote ?? null}
         quoteLoading={quoteLoading}
+        quoteFailed={Boolean(quoteError)}
         submitting={busy !== null}
         error={failure}
         onCancel={reset}

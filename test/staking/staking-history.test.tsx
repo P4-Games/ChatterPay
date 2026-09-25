@@ -1,10 +1,16 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import StakingHistory from 'src/sections/staking/staking-history'
 
 import { stakingView } from './fixtures'
+
+// Iconify fetches its sets at runtime and draws nothing offline, so the name it was asked for never
+// reaches the DOM. The stub keeps that name where a test can read it.
+vi.mock('@iconify/react', () => ({
+  Icon: ({ icon, ...rest }: { icon: string }) => <span data-icon={icon} {...rest} />
+}))
 
 // ----------------------------------------------------------------------
 
@@ -76,23 +82,55 @@ describe('StakingHistory', () => {
       expect(screen.getByText('staking.history.transaction')).toBeInTheDocument()
     })
 
-    it('links to an explorer when one is configured', async () => {
-      render(<StakingHistory staking={withOperation()} explorerUrl='https://explorer.test/tx/' />)
+    it('links to the explorer of the network the wallet lives on', async () => {
+      // Nothing is configured per screen: the link comes from the chain registry, as the dashboard's
+      // own detail panel does. The fixture wallet is a preprod address, and Cardanoscan's
+      // transaction path is not `/tx`.
+      render(<StakingHistory staking={withOperation()} />)
 
       await userEvent.click(screen.getByRole('button', { name: 'transactions.detail-open' }))
 
       expect(screen.getByTestId('staking-operation-explorer')).toHaveAttribute(
         'href',
-        `https://explorer.test/tx/${TX}`
+        `https://preprod.cardanoscan.io/transaction/${TX}`
       )
     })
 
-    it('offers no explorer link when none is configured', async () => {
-      render(<StakingHistory staking={withOperation()} />)
+    it('offers no explorer link for an operation with no transaction', async () => {
+      render(<StakingHistory staking={withOperation({ txId: null })} />)
 
       await userEvent.click(screen.getByRole('button', { name: 'transactions.detail-open' }))
 
       expect(screen.queryByTestId('staking-operation-explorer')).toBeNull()
+    })
+  })
+
+  describe('the layout', () => {
+    // jsdom matches no media query, so what renders here is the narrow layout — the one the
+    // dashboard's history also switches to at `md`.
+    it('collapses to three columns and drops the header on a narrow screen', () => {
+      render(<StakingHistory staking={withOperation()} />)
+
+      expect(screen.getAllByTestId('staking-history-row')[0].querySelectorAll('td')).toHaveLength(3)
+      expect(screen.queryAllByRole('columnheader')).toHaveLength(0)
+    })
+
+    it('measures header and rows against one set of column widths', () => {
+      // A `colgroup` on a fixed layout is what keeps a heading over the cell it names, instead of
+      // each row negotiating its own widths from its content.
+      const { container } = render(<StakingHistory staking={withOperation()} />)
+
+      expect(container.querySelectorAll('colgroup col')).toHaveLength(3)
+    })
+
+    it('names the operation with the icon its action carries elsewhere', () => {
+      render(<StakingHistory staking={withOperation()} />)
+
+      // The same icon the action button for `delegate_vote` shows, from the shared map.
+      expect(screen.getByTestId('staking-history-icon')).toHaveAttribute(
+        'data-icon',
+        'solar:hand-stars-bold'
+      )
     })
   })
 

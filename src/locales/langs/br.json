@@ -753,6 +753,8 @@
       "recipientPlaceholder": "addr1... ou addr_test1...",
       "recipientInvalid": "Esse não é um endereço Cardano válido para esta rede.",
       "quoteTitle": "O que será enviado",
+      "quoteAwaiting": "Informe o endereço de destino para ver os valores.",
+      "quoteFailed": "Não foi possível calcular os valores. Confira o endereço e tente novamente.",
       "utxo": "Saldo disponível",
       "refund": "Depósito devolvido",
       "gross": "Total antes das taxas",

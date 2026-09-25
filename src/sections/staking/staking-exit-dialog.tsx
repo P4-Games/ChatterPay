@@ -42,6 +42,8 @@ type Props = {
   open: boolean
   quote: StakingExitQuote | null
   quoteLoading?: boolean
+  /** Whether the request for the quote failed. The figures then stay empty, and say why. */
+  quoteFailed?: boolean
   submitting?: boolean
   error?: string | null
   onCancel: () => void
@@ -70,6 +72,7 @@ export default function StakingExitDialog({
   open,
   quote,
   quoteLoading = false,
+  quoteFailed = false,
   submitting = false,
   error = null,
   onCancel,
@@ -82,6 +85,13 @@ export default function StakingExitDialog({
 
   const valid = ADDRESS_PATTERN.test(recipient.trim())
   const showError = touched && recipient.trim() !== '' && !valid
+
+  // Every figure depends on the destination, so nothing is asked of the backend until there is an
+  // address worth quoting. Until then the amounts are blank and the panel says why: a skeleton
+  // states that a request is in flight, and one shown before anything has been typed is a dialog
+  // that appears to have hung at the moment it opened. A failed quote is likewise not a wait.
+  const awaitingAddress = !valid
+  const pendingQuote = !awaitingAddress && !quoteFailed && (quoteLoading || quote === null)
 
   const close = (): void => {
     setRecipient('')
@@ -147,6 +157,22 @@ export default function StakingExitDialog({
 
           <Typography variant='subtitle2'>{t('staking.exit.quoteTitle')}</Typography>
 
+          {awaitingAddress && !showError && (
+            <Typography
+              variant='caption'
+              data-testid='staking-exit-awaiting'
+              sx={{ color: 'text.secondary' }}
+            >
+              {t('staking.exit.quoteAwaiting')}
+            </Typography>
+          )}
+
+          {quoteFailed && !awaitingAddress && (
+            <Alert severity='error' data-testid='staking-exit-quote-failed'>
+              {t('staking.exit.quoteFailed')}
+            </Alert>
+          )}
+
           <Stack spacing={1}>
             {rows.map((row) => (
               <Stack
@@ -162,8 +188,12 @@ export default function StakingExitDialog({
                 >
                   {row.label}
                 </Typography>
-                {quoteLoading || row.value === undefined ? (
+                {pendingQuote ? (
                   <Skeleton width={110} />
+                ) : row.value === undefined ? (
+                  <Typography variant='body2' sx={{ color: 'text.disabled' }}>
+                    —
+                  </Typography>
                 ) : (
                   <Typography variant={row.strong ? 'subtitle2' : 'body2'}>
                     {formatAdaWithUnit(row.value)}

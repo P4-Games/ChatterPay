@@ -208,6 +208,44 @@ describe('StakingExitDialog', () => {
     expect(screen.getByText('staking.exit.warning')).toBeInTheDocument()
   })
 
+  describe('the figures', () => {
+    /** A dialog renders in a portal, so its skeletons are counted on the document, not the mount. */
+    const skeletons = (): number => document.body.querySelectorAll('.MuiSkeleton-root').length
+
+    it('are blank, and say why, before there is a destination', () => {
+      // Nothing has been asked of the backend: the quote depends on the address. A skeleton claims a
+      // request is in flight, and one shown the moment the dialog opens reads as a hang.
+      render(<StakingExitDialog open quote={null} onCancel={vi.fn()} onConfirm={vi.fn()} />)
+
+      expect(skeletons()).toBe(0)
+      expect(screen.getByTestId('staking-exit-awaiting')).toBeInTheDocument()
+    })
+
+    it('are shown as loading once there is an address worth quoting', async () => {
+      render(
+        <StakingExitDialog open quote={null} quoteLoading onCancel={vi.fn()} onConfirm={vi.fn()} />
+      )
+
+      await userEvent.type(screen.getByTestId('staking-exit-recipient'), RECIPIENT)
+
+      expect(skeletons()).toBeGreaterThan(0)
+      expect(screen.queryByTestId('staking-exit-awaiting')).toBeNull()
+    })
+
+    it('stop waiting when the quote failed', async () => {
+      // A refused quote and one still being computed look the same when both are six grey bars.
+      render(
+        <StakingExitDialog open quote={null} quoteFailed onCancel={vi.fn()} onConfirm={vi.fn()} />
+      )
+
+      await userEvent.type(screen.getByTestId('staking-exit-recipient'), RECIPIENT)
+
+      expect(screen.getByTestId('staking-exit-quote-failed')).toBeInTheDocument()
+      expect(skeletons()).toBe(0)
+      expect(screen.getByTestId('staking-exit-confirm')).toBeDisabled()
+    })
+  })
+
   it('reports the destination as it is typed, so a quote can follow it', async () => {
     const onRecipientChange = vi.fn()
     render(

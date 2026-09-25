@@ -14,7 +14,9 @@ import Iconify from 'src/components/iconify'
 import { useCopyToClipboard } from 'src/hooks/use-copy-to-clipboard'
 
 import { fDate, fTime } from 'src/utils/format-time'
+import { maskAddress } from 'src/utils/format-address'
 import { useTranslate } from 'src/locales'
+import { getTxUrl, isOnChainTxHash } from 'src/config-chains'
 
 import { formatAdaWithUnit } from './staking-amount'
 
@@ -26,12 +28,9 @@ type Props = {
   open: boolean
   onClose: VoidFunction
   operation: StakingOperationView | null
-  /** Where a transaction id links to, with a trailing slash. Absent hides the link. */
-  explorerUrl?: string
+  /** The chain the operation settled on. Decides which explorer the link opens. */
+  chainId?: number
 }
-
-/** How much of a transaction id is enough to recognise it on one line. */
-const ID_PREFIX = 12
 
 // ----------------------------------------------------------------------
 
@@ -93,13 +92,21 @@ export default function StakingOperationDrawer({
   open,
   onClose,
   operation,
-  explorerUrl
+  chainId
 }: Props): JSX.Element | null {
   const { t } = useTranslate()
 
   if (operation === null) return null
 
   const created = operation.createdAt ? new Date(operation.createdAt) : null
+
+  // The same link the dashboard's transaction panel offers, built by the same helper: the explorer
+  // and its transaction path come from the chain registry, so a preprod operation opens on preprod
+  // and the Cardanoscan path is not guessed as `/tx`.
+  const explorerLink =
+    operation.txId !== null && isOnChainTxHash(operation.txId, chainId)
+      ? getTxUrl(operation.txId, chainId)
+      : null
 
   return (
     <Drawer
@@ -158,25 +165,35 @@ export default function StakingOperationDrawer({
           {operation.txId !== null && (
             <Row
               label={t('staking.history.transaction')}
-              value={`${operation.txId.slice(0, ID_PREFIX)}…`}
+              value={maskAddress(operation.txId)}
               copy={operation.txId}
             />
           )}
         </Box>
 
-        {operation.txId !== null && explorerUrl !== undefined && (
+        {explorerLink !== null && (
           <>
             <Divider />
             <Stack sx={{ px: 2.5, py: 2 }}>
               <Link
-                href={`${explorerUrl}${operation.txId}`}
+                href={explorerLink}
                 target='_blank'
                 rel='noopener'
-                underline='hover'
-                variant='body2'
                 data-testid='staking-operation-explorer'
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 0.75,
+                  py: 1.25,
+                  borderRadius: 1,
+                  border: (theme) => `1px solid ${theme.palette.divider}`,
+                  typography: 'body2',
+                  fontWeight: 600
+                }}
               >
                 {t('staking.history.explorer')}
+                <Iconify icon='eva:external-link-outline' width={16} />
               </Link>
             </Stack>
           </>

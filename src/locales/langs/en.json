@@ -753,6 +753,8 @@
       "recipientPlaceholder": "addr1... or addr_test1...",
       "recipientInvalid": "That is not a valid Cardano address for this network.",
       "quoteTitle": "What will be sent",
+      "quoteAwaiting": "Enter the destination address to see the amounts.",
+      "quoteFailed": "The amounts could not be calculated. Check the address and try again.",
       "utxo": "Available balance",
       "refund": "Deposit returned",
       "gross": "Total before fees",

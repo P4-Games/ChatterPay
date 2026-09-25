@@ -10,6 +10,7 @@ import Iconify from 'src/components/iconify'
 import { useTranslate } from 'src/locales'
 
 import { useStakingStyles } from './staking-style'
+import { STAKING_ACTION_ICONS } from './staking-operation-icons'
 
 import type { StakingView, StakingActionName } from 'src/app/api/hooks/use-staking'
 
@@ -21,12 +22,17 @@ type Props = {
   onAction: (action: StakingActionName) => void
 }
 
-/** What keeps a position healthy, in the order it is offered. */
+/**
+ * What keeps a position healthy, in the order it is offered.
+ *
+ * The icons come from the shared map so that an operation is drawn the same here and in the history
+ * that records it.
+ */
 const ROUTINE: { action: StakingActionName; icon: string }[] = [
-  { action: 'register_and_delegate', icon: 'solar:play-circle-bold' },
-  { action: 'delegate_vote', icon: 'solar:hand-stars-bold' },
-  { action: 'redelegate_pool', icon: 'solar:refresh-circle-bold' },
-  { action: 'withdraw_rewards', icon: 'solar:hand-money-bold' }
+  { action: 'register_and_delegate', icon: STAKING_ACTION_ICONS.register_and_delegate },
+  { action: 'delegate_vote', icon: STAKING_ACTION_ICONS.delegate_vote },
+  { action: 'redelegate_pool', icon: STAKING_ACTION_ICONS.redelegate_pool },
+  { action: 'withdraw_rewards', icon: STAKING_ACTION_ICONS.withdraw_rewards }
 ]
 
 /**
@@ -38,7 +44,7 @@ const ROUTINE: { action: StakingActionName; icon: string }[] = [
  * greyscale screenshot in a way a red border does not.
  */
 const LEAVING: { action: StakingActionName; icon: string }[] = [
-  { action: 'exit_and_send_max', icon: 'solar:square-arrow-right-up-bold' }
+  { action: 'exit_and_send_max', icon: STAKING_ACTION_ICONS.exit_and_send_max }
 ]
 
 /**
@@ -163,13 +169,15 @@ export default function StakingActions({
 
       {leaving.length > 0 && (
         <>
+          {/* A heading, styled as the card's own. Grey caption text is what a refused button's reason
+              looks like, and it sits under its control; reusing it above a button made one caption
+              read as the explanation of the other. */}
           <Typography
-            variant='caption'
+            variant='subtitle2'
             sx={{
               display: 'block',
               mt: routine.length > 0 ? 2.5 : 0,
-              mb: 1,
-              color: 'text.secondary'
+              mb: 1.5
             }}
           >
             {t('staking.actions.leavingGroup')}
