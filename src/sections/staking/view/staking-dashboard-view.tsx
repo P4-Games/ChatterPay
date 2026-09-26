@@ -8,6 +8,8 @@ import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
 import CircularProgress from '@mui/material/CircularProgress'
 
+import { paths } from 'src/routes/paths'
+import { useRouter } from 'src/routes/hooks'
 import { useAuthContext } from 'src/auth/hooks'
 import { useTranslate } from 'src/locales'
 import { useSettingsContext } from 'src/components/settings'
@@ -54,6 +56,7 @@ import type { AuthUserType } from 'src/auth/types'
  */
 export default function StakingDashboardView(): JSX.Element {
   const { t } = useTranslate()
+  const router = useRouter()
   const settings = useSettingsContext()
   const { heading } = useStakingStyles()
   const { user }: { user: AuthUserType } = useAuthContext()
@@ -197,6 +200,16 @@ export default function StakingDashboardView(): JSX.Element {
           busy={busy}
           onAction={(action) => {
             setFailure(null)
+
+            // Delegating the vote needs a target, and this screen has nowhere to choose one. The grant
+            // the PIN buys is signed over that target — an authorisation to abstain cannot be spent on
+            // a representative — so there is nothing to authorise until it is picked. The governance
+            // screen is where it is picked, and it runs the same two-step flow from there.
+            if (action === 'delegate_vote') {
+              router.push(paths.dashboard.staking.governance)
+              return
+            }
+
             setPending(action)
             setStage(action === 'exit_and_send_max' ? 'exit' : 'pin')
           }}
