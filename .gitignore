@@ -48,3 +48,8 @@ yarn-error.log*
 **/public/workbox-*.js.map
 **/public/worker-*.js.map
 
+
+# Playwright: a session created by hand, and its reports. Never committed.
+e2e/.auth/
+playwright-report/
+test-results/
