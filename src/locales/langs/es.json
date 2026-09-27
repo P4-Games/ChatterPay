@@ -723,6 +723,7 @@
       "cancel": "Cancelar",
       "started": "Enviado a la red.",
       "startedWithTx": "Enviado a la red. Transacción {{tx}}",
+      "consentedNotRegistered": "Activaste el staking. La wallet se va a registrar cuando sea posible: {{reason}}",
       "failed": "No se pudo iniciar: {{reason}}"
     },
     "refusals": {
