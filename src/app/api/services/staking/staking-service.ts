@@ -247,10 +247,15 @@ function toFailure(error: unknown): {
       | undefined
     const message = payload?.data?.message ?? payload?.message ?? error.message
     const detail = (payload?.data?.details ?? '').trim()
+    // `refused` carries the decision's own reason first in `details` ("sponsored_reentry_limit: 1 in
+    // 30d"). That reason is what the screen translates; `refused` alone tells the user nothing.
+    const decision = detail.split(':')[0].trim()
     const code =
       message === 'security_gate' && SECURITY_GATE_CODES[detail] !== undefined
         ? SECURITY_GATE_CODES[detail]
-        : message
+        : message === 'refused' && decision !== ''
+          ? decision
+          : message
     const pin = readPinRefusal(payload?.data?.pin)
     return pin === undefined
       ? { ok: false, status, code, message }
