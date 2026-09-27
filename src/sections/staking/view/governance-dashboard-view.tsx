@@ -22,7 +22,11 @@ import GovernanceDelegation from '../governance-delegation'
 import GovernanceHistory from '../governance-history'
 import StakingNotices from '../staking-notices'
 import StakingPageShell from '../staking-page-shell'
-import StakingPinDialog from '../staking-pin-dialog'
+import StakingPinDialog, {
+  isPinBlocked,
+  useStakingFailureMessage,
+  type StakingFailure
+} from '../staking-pin-dialog'
 import { useCardanoAddress } from '../use-cardano-address'
 import { useStakingMode } from '../use-staking-mode'
 import { MetricCard, NoticeCard, StakingModeToggle } from '../ui'
@@ -47,9 +51,11 @@ const ID_PREFIX = 12
  * layout, which is where the targets are listed. Both share the history.
  *
  * The target the user pressed is held in state for exactly as long as the PIN dialog is open, and it is
- * the same value that is authorised and then requested. The PIN buys a grant bound by signature to one
- * target, so authorising with one target and requesting with another is refused by the backend rather
- * than delegating somewhere the user did not choose.
+ * the same value that is authorised and then requested. The authorisation buys a grant bound by
+ * signature to one target, so authorising with one target and requesting with another is refused by the
+ * backend rather than delegating somewhere the user did not choose.
+ *
+ * The PIN is asked for only when the backend reports `pinRequired`, by the same rule as the staking tab.
  */
 export default function GovernanceDashboardView(): JSX.Element {
   const { t } = useTranslate()
@@ -57,7 +63,7 @@ export default function GovernanceDashboardView(): JSX.Element {
   const [mode, setMode] = useStakingMode()
 
   const { address: cardanoAddress, loading: addressLoading } = useCardanoAddress()
-  const { data, isLoading, error } = useStakingState(cardanoAddress)
+  const { data, isLoading, error, mutate: refresh } = useStakingState(cardanoAddress)
   const { data: governance } = useGovernance(cardanoAddress)
   const staking = data?.staking
 
@@ -65,17 +71,18 @@ export default function GovernanceDashboardView(): JSX.Element {
   // target to spend it on.
   const [asking, setAsking] = useState<GovernanceTarget | null>(null)
   const [busy, setBusy] = useState(false)
-  const [failure, setFailure] = useState<string | null>(null)
+  const [failure, setFailure] = useState<StakingFailure | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
+  const failureMessage = useStakingFailureMessage()
 
   /**
-   * Delegates the vote to one target, authorising it with the PIN first.
+   * Delegates the vote to one target, authorising it first.
    *
    * @param target - Where the voting power goes. Passed to both calls from the same variable, because
    *   the grant is bound to it.
-   * @param pin - The user's PIN, sent once.
+   * @param pin - The user's PIN, sent once, or `null` when the user has none set.
    */
-  const delegate = async (target: GovernanceTarget, pin: string): Promise<void> => {
+  const delegate = async (target: GovernanceTarget, pin: string | null): Promise<void> => {
     if (!cardanoAddress) return
     setBusy(true)
     setFailure(null)
@@ -88,8 +95,16 @@ export default function GovernanceDashboardView(): JSX.Element {
       target
     )
     if (!authorised.ok) {
-      setFailure(authorised.message)
+      setFailure({ code: authorised.message, pin: authorised.pin })
       setBusy(false)
+      // The PIN was set, or became blocked, after the position was read. Reading it again brings
+      // `pinRequired` and the block up to date; a PIN set since then opens the dialog for this target.
+      if (authorised.message === 'SECURITY_PIN_REQUIRED') {
+        setAsking(target)
+        await refresh()
+      } else if (authorised.message === 'SECURITY_PIN_BLOCKED') {
+        await refresh()
+      }
       return
     }
 
@@ -98,7 +113,7 @@ export default function GovernanceDashboardView(): JSX.Element {
       governanceTarget: target
     })
     if (!started.ok) {
-      setFailure(started.message)
+      setFailure({ code: started.message, pin: started.pin })
       setBusy(false)
       return
     }
@@ -111,6 +126,31 @@ export default function GovernanceDashboardView(): JSX.Element {
     )
     setAsking(null)
     setBusy(false)
+  }
+
+  /**
+   * Starts a delegation: asks for the PIN when the backend says this user needs one, and authorises it
+   * directly otherwise. A blocked PIN is reported without opening the dialog.
+   *
+   * @param target - Where the voting power goes.
+   */
+  const choose = (target: GovernanceTarget): void => {
+    setFailure(null)
+    if (!staking) return
+    // Absent from a backend that predates the field: ask, and let the backend decide.
+    const pinRequired = staking.pinRequired !== false
+    if (pinRequired && isPinBlocked(staking.pinBlockedUntil)) {
+      setFailure({
+        code: 'SECURITY_PIN_BLOCKED',
+        pin: { remainingAttempts: null, blockedUntil: staking.pinBlockedUntil ?? null }
+      })
+      return
+    }
+    if (pinRequired) {
+      setAsking(target)
+      return
+    }
+    void delegate(target, null)
   }
 
   if (addressLoading || isLoading) {
@@ -160,6 +200,19 @@ export default function GovernanceDashboardView(): JSX.Element {
 
       {/* The same notices as the staking tab. An operation still in flight is what disables delegating,
           and the notice is what says so. */}
+      {/* A refusal with no dialog open to show it: a blocked PIN, or a delegation that did not ask for
+          one. */}
+      {failure && asking === null && (
+        <Alert
+          severity='error'
+          onClose={() => setFailure(null)}
+          sx={{ py: 0.5 }}
+          data-testid='staking-failure'
+        >
+          {failureMessage(failure)}
+        </Alert>
+      )}
+
       <StakingNotices staking={staking} />
 
       {mode === 'simple' ? (
@@ -200,10 +253,7 @@ export default function GovernanceDashboardView(): JSX.Element {
           staking={staking}
           governance={governance ?? null}
           submitting={busy}
-          onDelegate={(target) => {
-            setFailure(null)
-            setAsking(target)
-          }}
+          onDelegate={choose}
         />
       )}
 
@@ -212,7 +262,10 @@ export default function GovernanceDashboardView(): JSX.Element {
         action='delegate_vote'
         submitting={busy}
         error={failure}
-        onCancel={() => setAsking(null)}
+        onCancel={() => {
+          setFailure(null)
+          setAsking(null)
+        }}
         onConfirm={(pin) => {
           // Guarded rather than asserted: a confirmation without a target must do nothing rather than
           // send a delegation with no destination.
