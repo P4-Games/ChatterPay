@@ -34,6 +34,25 @@ const LEAVING_STATES = ['exit_pending', 'exit_submitted']
 // ----------------------------------------------------------------------
 
 /**
+ * Whether turning staking on has to record a consent before the registration is sent.
+ *
+ * A recorded opt-out needs one because the consent write is the only thing that clears it, and the
+ * backend refuses to register a wallet that still carries it. Where the deployment requires the terms,
+ * a wallet that never accepted them, or accepted an older version, needs one as well.
+ *
+ * @param staking - The position.
+ * @returns `true` when the consent goes first.
+ */
+export function needsConsent(staking: StakingView): boolean {
+  if (staking.optOut !== null) return true
+  const termsChanged =
+    staking.termsVersion !== null && staking.termsVersion !== staking.currentTermsVersion
+  return staking.consentRequired && (!staking.optedIn || termsChanged)
+}
+
+// ----------------------------------------------------------------------
+
+/**
  * Where this wallet stands with staking, and the one control that changes it.
  *
  * Every case is a title and a line: what the position is now, and what follows from it. The card
@@ -41,11 +60,12 @@ const LEAVING_STATES = ['exit_pending', 'exit_submitted']
  * about it — and a state with nothing to do is still worth a sentence, since otherwise the actions
  * below read as arbitrarily disabled.
  *
- * Two enrolment flows exist and the deployment decides which, so this component chooses rather than
- * showing both. Where the terms must be accepted, joining is an act: the consent card collects it.
- * Where they need not be, enrolment is automatic and there is nothing to accept — a card offering to
- * start would offer a step that does not exist, and a user who did not press it would still be
- * enrolled.
+ * Turning staking on is offered only here, and every variant of it calls `onJoin`: after an opt-out,
+ * after accepting the terms, and on an eligible wallet the sweep has not enrolled yet. The page runs
+ * all of them as one operation under one PIN, recording the consent first where one is needed, so
+ * there is no second control that finishes what the first one started. Where enrolment is automatic
+ * the sweep would register an eligible wallet anyway; the control lets the user do it now, and the
+ * copy says both.
  *
  * Leaving is offered on what is true of the position rather than on `optedIn`. That flag records
  * whether somebody once switched staking on, and a wallet enrolled automatically has it false while
@@ -178,10 +198,8 @@ export default function StakingMembership({
     )
   }
 
-  const termsChanged =
-    staking.termsVersion !== null && staking.termsVersion !== staking.currentTermsVersion
-
-  if (staking.consentRequired && (!staking.optedIn || termsChanged)) {
+  // The opt-out was handled above, so this is the terms case alone.
+  if (needsConsent(staking)) {
     return <StakingConsent staking={staking} submitting={submitting} onAccept={onJoin} />
   }
 
@@ -243,7 +261,15 @@ export default function StakingMembership({
     return status(
       'staking-membership-pending',
       t('staking.membership.pendingTitle'),
-      t('staking.membership.pendingBody')
+      t('staking.membership.pendingBody'),
+      undefined,
+      control(
+        'staking-membership-activate',
+        t('staking.actions.register_and_delegate'),
+        'solar:play-circle-bold',
+        onJoin,
+        accent
+      )
     )
   }
 
