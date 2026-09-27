@@ -771,7 +771,10 @@
       "rejected": "Ese PIN no es correcto.",
       "blocked": "Tu PIN está bloqueado. Intentá más tarde.",
       "notSet": "Configurá un PIN antes de operar.",
-      "gate": "No pudimos verificar tu PIN. Probá de nuevo en un momento."
+      "gate": "No pudimos verificar tu PIN. Probá de nuevo en un momento.",
+      "rejectedAttempts": "Ese PIN no es correcto. Intentos restantes: {{count}}.",
+      "blockedUntil": "Tu PIN está bloqueado hasta {{time}}.",
+      "required": "Tenés un PIN configurado. Ingresalo para autorizar la operación."
     },
     "history": {
       "explorer": "Ver en el explorador",
