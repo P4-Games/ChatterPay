@@ -120,7 +120,7 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
   )
   if (!result.ok) {
     return NextResponse.json(
-      { error: { code: result.code, message: result.message } },
+      { error: { code: result.code, message: result.message, pin: result.pin } },
       { status: result.status }
     )
   }
