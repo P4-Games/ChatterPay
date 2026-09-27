@@ -9,6 +9,9 @@ export const NODE_ENV = process.env.NODE_ENV?.toString().toLowerCase() || 'devel
 export const { MONGODB, MONGODB_BOT } = process.env
 export const { BOT_API_TOKEN, BOT_API_URL } = process.env
 export const { BACKEND_API_URL, BACKEND_API_TOKEN } = process.env
+// Shared with the backend and with nothing else. Deliberately not a `NEXT_PUBLIC_` variable: Next.js
+// only inlines those into client bundles, so this one cannot reach a browser.
+export const { CARDANO_STAKING_BFF_SECRET } = process.env
 export const botApiWappEnabled =
   (process.env.BOT_API_WAPP_ENABLED?.toString().toLowerCase() || 'true') === 'true'
 export const nodeProviderUrlSepolia = process.env.NODE_PROVIDER_SEPOLIA_URL
@@ -104,6 +107,7 @@ export const NFT_SHARE = 'https://api.whatsapp.com/send/?text=MESSAGE'
 export const STORAGE_KEY_TOKEN = `chatterpay_${APP_ENV}_jwtToken`
 export const STORAGE_KEY_SETTINGS = `chatterpay_${APP_ENV}_settings`
 export const CONTACT_EMAIL = 'contacto@chatterpay.com.ar'
+export const B2B_SANDBOX_URL = 'https://partners.chatterpay.net/en/sandbox'
 export const LAYERSWAP_BG = '#0c1526'
 export const LAYERSWAP_BASE_URL =
   process.env.NEXT_PUBLIC_LAYERSWAP_BASE_URL || 'https://testnet.layerswap.io/app'
