@@ -11,6 +11,8 @@ import { useTranslate } from 'src/locales'
 import { useStakingStyles } from './staking-style'
 import { STAKING_ACTION_ICONS } from './staking-operation-icons'
 
+import { hasOperationInFlight } from 'src/app/api/hooks/use-staking'
+
 import type { StakingView, StakingActionName } from 'src/app/api/hooks/use-staking'
 
 // ----------------------------------------------------------------------
@@ -41,12 +43,17 @@ const LEAVING_STATES = ['exit_pending', 'exit_submitted']
  *
  * A control for one of these describes a state the user can already see, so it is not rendered. Every
  * other refusal is one the user may be able to act on, so it is shown with its reason.
+ *
+ * `opted_out` is here because the membership card already carries the one control that lifts it.
+ * Rendering the refused action as well would show two controls for the same decision, one of them
+ * disabled until the opt-out is withdrawn.
  */
 const NOT_APPLICABLE = [
   'already_registered',
   'not_registered',
   'not_available',
-  'already_delegated'
+  'already_delegated',
+  'opted_out'
 ]
 
 // ----------------------------------------------------------------------
@@ -119,6 +126,8 @@ export default function StakingActions({
 
   const offered = offeredActions(staking, actions)
   const stoppable = includeStop && onLeave !== undefined && canStopStaking(staking)
+  // Stopping is not in `actions`, so the backend's in-flight refusal does not reach it on its own.
+  const inFlight = hasOperationInFlight(staking)
 
   if (offered.length === 0 && !stoppable) return null
 
@@ -181,7 +190,7 @@ export default function StakingActions({
             variant='outlined'
             size={compact ? 'small' : 'medium'}
             startIcon={<Iconify icon='solar:logout-2-bold' width={compact ? 16 : 18} />}
-            disabled={busy !== null}
+            disabled={busy !== null || inFlight}
             onClick={onLeave}
             data-testid='staking-action-stop'
             sx={buttonSx(theme.palette.error.main)}
