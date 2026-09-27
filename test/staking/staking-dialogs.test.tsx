@@ -199,6 +199,20 @@ describe('StakingPinDialog', () => {
     expect(screen.getByText(/^staking\.pin\.blockedUntil\|time=.+/)).toBeInTheDocument()
   })
 
+  it('explains a decision reason with the sentence the actions use for it', () => {
+    render(
+      <StakingPinDialog
+        open
+        action='register_and_delegate'
+        error={{ code: 'sponsored_reentry_limit' }}
+        onCancel={vi.fn()}
+        onConfirm={vi.fn()}
+      />
+    )
+
+    expect(screen.getByText('staking.refusals.sponsored_reentry_limit')).toBeInTheDocument()
+  })
+
   it('shows a refusal it cannot explain as it arrived', () => {
     // A diagnosable refusal is more use to whoever is reading it than a generic apology.
     render(
