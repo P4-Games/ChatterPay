@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 
 import { m } from 'framer-motion'
 
@@ -14,12 +14,13 @@ import { useAuthContext } from 'src/auth/hooks'
 
 import Logo from 'src/components/logo'
 import Scrollbar from 'src/components/scrollbar'
-import { useSettingsContext } from 'src/components/settings'
 import { NavSectionVertical } from 'src/components/nav-section'
 
 import { NAV } from '../config-layout'
 import NavUpgrade from '../common/nav-upgrade'
 import { useNavData } from './config-navigation'
+import { useNavWidth } from './use-nav-width'
+import NavToggleButton from './nav-toggle-button'
 
 // ----------------------------------------------------------------------
 
@@ -35,15 +36,14 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
 
   const lgUp = useResponsive('up', 'lg')
 
-  const settings = useSettingsContext()
-
   const navData = useNavData()
 
-  const [hovered, setHovered] = useState(false)
+  const { isMini, navWidth } = useNavWidth()
 
-  const isMini = settings.themeLayout === 'mini'
-
-  const collapsed = lgUp && isMini && !hovered
+  // Collapsing is driven only by the persisted preference. Hover no longer expands the rail: with an
+  // explicit control, a pointer crossing the rail would undo the choice the user just made, and it
+  // would also make the rendered width disagree with the width the header and main content compute.
+  const collapsed = lgUp && isMini
 
   useEffect(() => {
     if (openNav) {
@@ -75,6 +75,20 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
         <Logo />
       </Box>
 
+      {lgUp && (
+        <Box
+          sx={{
+            px: '16px',
+            pb: 1,
+            display: 'flex',
+            flexShrink: 0,
+            justifyContent: collapsed ? 'center' : 'flex-end'
+          }}
+        >
+          <NavToggleButton />
+        </Box>
+      )}
+
       <NavSectionVertical
         data={navData}
         slotProps={{
@@ -93,16 +107,14 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
     <Box
       sx={{
         flexShrink: { lg: 0 },
-        width: { lg: isMini ? NAV.W_MINI : NAV.W_VERTICAL }
+        width: { lg: navWidth }
       }}
     >
       {lgUp ? (
         <Stack
           component={m.div}
-          animate={{ width: collapsed ? NAV.W_MINI : NAV.W_VERTICAL }}
+          animate={{ width: navWidth }}
           transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
           sx={{
             height: 1,
             position: 'fixed',
@@ -112,9 +124,7 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
             overflow: 'hidden',
             bgcolor: (t) =>
               t.palette.mode === 'light' ? t.palette.grey[100] : t.palette.grey[800],
-            borderRight: (t) => `dashed 1px ${t.palette.divider}`,
-            // Expands over the content instead of pushing it — no page reflow on hover.
-            boxShadow: (t) => (isMini && hovered ? t.customShadows.z24 : 'none')
+            borderRight: (t) => `dashed 1px ${t.palette.divider}`
           }}
         >
           {renderContent}
