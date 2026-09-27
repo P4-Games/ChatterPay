@@ -9,7 +9,7 @@ import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
 
 import { useTranslate } from 'src/locales'
-import { CONTACT_EMAIL, CHATIZALO_PHONE_NUMBER } from 'src/config-global'
+import { CONTACT_EMAIL, B2B_SANDBOX_URL } from 'src/config-global'
 
 import Iconify from 'src/components/iconify'
 import { MotionViewport } from 'src/components/animate'
@@ -37,7 +37,6 @@ export default function B2BCta() {
   const { t } = useTranslate()
 
   const mailHref = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(t('b2b.hero.mail_subject'))}`
-  const whatsappHref = `https://wa.me/${CHATIZALO_PHONE_NUMBER}?text=${encodeURIComponent(t('b2b.hero.whatsapp_msg'))}`
 
   return (
     <Box
@@ -96,7 +95,7 @@ export default function B2BCta() {
 
               <Button
                 component='a'
-                href={whatsappHref}
+                href={B2B_SANDBOX_URL}
                 target='_blank'
                 rel='noopener'
                 variant='outlined'
@@ -111,7 +110,7 @@ export default function B2BCta() {
                   '&:hover': { borderColor: CHAT_GREEN, bgcolor: alpha(CHAT_GREEN, 0.08) }
                 }}
               >
-                {t('b2b.hero.cta_whatsapp')}
+                {t('b2b.hero.cta_sandbox')}
               </Button>
             </Stack>
           </Stack>
