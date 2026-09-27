@@ -126,6 +126,15 @@ export type StakingView = {
   balance: StakingBalance
   /** Whether the backend holds the keys. False means read-only, whatever the chain would allow. */
   signable: boolean
+  /**
+   * Whether an authorisation asks this user for the PIN.
+   *
+   * Decided by the backend: false when the PIN is off in the deployment or the user has none set.
+   * Absent from a backend that predates it, which is read as `true` so the PIN is still asked for.
+   */
+  pinRequired?: boolean
+  /** When the user's PIN stops being blocked (ISO 8601), or `null` when it is not blocked. */
+  pinBlockedUntil?: string | null
   actions: Partial<Record<StakingActionName, string | null>>
   rewards: StakingRewardView[]
   operations: StakingOperationView[]
@@ -180,9 +189,18 @@ export type GovernanceView = {
   }[]
 }
 
+/**
+ * What the security service reported about a refused PIN: the attempts left after a wrong one, and
+ * until when a blocked one stays blocked (ISO 8601).
+ */
+export type StakingPinRefusal = {
+  remainingAttempts: number | null
+  blockedUntil: string | null
+}
+
 export type StakingMutationResult =
   | { ok: true; data: Record<string, unknown> }
-  | { ok: false; message: string }
+  | { ok: false; message: string; pin?: StakingPinRefusal }
 
 // ----------------------------------------------------------------------
 
@@ -294,7 +312,8 @@ export async function setStakingConsent(
  *
  * @param walletId - The wallet.
  * @param action - What is being authorised.
- * @param pin - The user's PIN. Sent once, never stored.
+ * @param pin - The user's PIN, sent once and never stored. `null` when the position says none is
+ *   required.
  * @param recipientAddress - An exit's destination, or `null`.
  * @param governanceTarget - Where a vote delegation sends the voting power. Required for
  *   `delegate_vote` and refused for every other action.
@@ -302,7 +321,7 @@ export async function setStakingConsent(
 export async function authorizeStakingAction(
   walletId: string,
   action: StakingActionName,
-  pin: string,
+  pin: string | null,
   recipientAddress: string | null = null,
   governanceTarget: GovernanceTarget | null = null
 ): Promise<StakingMutationResult> {
@@ -352,9 +371,14 @@ async function mutate(url: string, body: Record<string, unknown>): Promise<Staki
     return { ok: true, data: (data ?? {}) as Record<string, unknown> }
   } catch (error) {
     const response = (
-      error as { response?: { data?: { error?: { code?: string; message?: string } } } }
+      error as {
+        response?: {
+          data?: { error?: { code?: string; message?: string; pin?: StakingPinRefusal } }
+        }
+      }
     ).response
     const failure = response?.data?.error
-    return { ok: false, message: failure?.code || failure?.message || 'UNKNOWN' }
+    const message = failure?.code || failure?.message || 'UNKNOWN'
+    return failure?.pin ? { ok: false, message, pin: failure.pin } : { ok: false, message }
   }
 }
