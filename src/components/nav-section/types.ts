@@ -30,6 +30,8 @@ export type NavItemBaseProps = {
   info?: React.ReactElement
   caption?: string
   disabled?: boolean
+  /** Routes that also light this item up, beyond its own path and what hangs below it. */
+  activePaths?: readonly string[]
   roles?: string[]
   children?: any
 }
