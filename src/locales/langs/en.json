@@ -723,6 +723,7 @@
       "cancel": "Cancel",
       "started": "Submitted to the network.",
       "startedWithTx": "Submitted to the network. Transaction {{tx}}",
+      "consentedNotRegistered": "Staking is on. The wallet will be registered once it can be: {{reason}}",
       "failed": "Could not be started: {{reason}}"
     },
     "refusals": {
