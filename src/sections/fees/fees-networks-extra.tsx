@@ -16,6 +16,12 @@ import type { LifiChainSummary } from 'src/app/api/hooks'
 /** Scroll is the origin balance every cross-network transfer starts from, so it is not a destination. */
 const ORIGIN_CHAIN_KEY = 'scl'
 
+/**
+ * Chains the networks table above already names, either as a ChatterPay network or as one that is
+ * not available yet. Repeating them here would read as an unrelated bridge destination.
+ */
+const TABLE_CHAIN_KEYS = new Set(['bas', 'arb', 'btc'])
+
 export default function FeesNetworksExtra() {
   const theme = useTheme()
   const { t } = useTranslate()
@@ -25,7 +31,7 @@ export default function FeesNetworksExtra() {
   const chains: LifiChainSummary[] = useMemo(() => {
     const all: LifiChainSummary[] = data?.chains || []
     return all
-      .filter((chain) => chain.key !== ORIGIN_CHAIN_KEY)
+      .filter((chain) => chain.key !== ORIGIN_CHAIN_KEY && !TABLE_CHAIN_KEYS.has(chain.key))
       .sort((a, b) => a.name.localeCompare(b.name))
   }, [data])
 
