@@ -91,13 +91,13 @@ describe('the deactivation copy', () => {
     it('points at this section and at the control by name', () => {
       const copy = (es as StakingCopy).staking.deactivate
 
-      expect(copy.howToReturn).toContain('Volver a activar staking')
+      expect(copy.howToReturn).toContain('Activar staking')
     })
 
     it('names the same control the screen then shows', () => {
       // If these two drift apart the instruction points at a button that does not exist under that
       // name, which is worse than no instruction.
-      expect((es as StakingCopy).staking.notices.optedOutRejoin).toBe('Volver a activar staking')
+      expect((es as StakingCopy).staking.notices.optedOutRejoin).toBe('Activar staking')
       expect((es as StakingCopy).staking.deactivate.howToReturn).toContain(
         (es as StakingCopy).staking.notices.optedOutRejoin
       )
