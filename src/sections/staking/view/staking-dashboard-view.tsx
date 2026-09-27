@@ -35,7 +35,7 @@ import { useCardanoAddress } from '../use-cardano-address'
 import { useStakingMode } from '../use-staking-mode'
 import { KeyValuePanel, MetricCard, NoticeCard, StakingModeToggle } from '../ui'
 
-import type { StakingView } from 'src/app/api/hooks/use-staking'
+import { hasOperationInFlight, type StakingView } from 'src/app/api/hooks/use-staking'
 
 // ----------------------------------------------------------------------
 
@@ -86,7 +86,7 @@ export default function StakingDashboardView(): JSX.Element {
   const [mode, setMode] = useStakingMode()
 
   const { address: cardanoAddress, loading: addressLoading } = useCardanoAddress()
-  const { data, isLoading, error } = useStakingState(cardanoAddress)
+  const { data, isLoading, error, mutate: refresh } = useStakingState(cardanoAddress)
   const staking = data?.staking
 
   const [busy, setBusy] = useState<StakingActionName | null>(null)
@@ -107,6 +107,10 @@ export default function StakingDashboardView(): JSX.Element {
    *
    * A failure between the two calls leaves nothing started and costs the user one more PIN entry rather
    * than an operation they did not intend.
+   *
+   * The controls stay disabled until the position has been read again. Releasing them as soon as the
+   * request is accepted would show the position from before the operation, with its controls enabled,
+   * and let the same operation be requested twice while the first is still on its way to the chain.
    */
   const run = async (action: StakingActionName, pin: string): Promise<void> => {
     if (!cardanoAddress) return
@@ -136,6 +140,7 @@ export default function StakingDashboardView(): JSX.Element {
         ? t('staking.actions.startedWithTx', { tx: `${txId.slice(0, 10)}…` })
         : t('staking.actions.started')
     )
+    await refresh()
     reset()
   }
 
@@ -144,6 +149,7 @@ export default function StakingDashboardView(): JSX.Element {
     setBusy('register_and_delegate')
     const result = await setStakingConsent(cardanoAddress, accept)
     if (!result.ok) setFailure(result.message)
+    await refresh()
     setBusy(null)
   }
 
@@ -284,7 +290,9 @@ function StakingMembershipCard({
   return (
     <StakingMembership
       staking={staking}
-      submitting={busy !== null}
+      // Nothing is started from this card while an operation is on its way to the chain: turning
+      // staking back on in the middle of leaving would contradict the operation already sent.
+      submitting={busy !== null || hasOperationInFlight(staking)}
       onJoin={onJoin}
       onLeave={onLeave}
     />
