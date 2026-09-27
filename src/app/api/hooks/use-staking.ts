@@ -260,6 +260,8 @@ export function useGovernance(walletId?: string) {
     isLoading: boolean
     error: unknown
     isValidating: boolean
+    /** Reads the options and the history again. Called after a delegation is sent. */
+    mutate: () => Promise<unknown>
   }
 }
 
