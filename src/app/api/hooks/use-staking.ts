@@ -186,8 +186,28 @@ export type StakingMutationResult =
 
 // ----------------------------------------------------------------------
 
+/** How often the position is read again while an operation is on its way to the chain. */
+const IN_FLIGHT_REFRESH_MS = 10_000
+
+/**
+ * Whether the backend reports an operation that has not reached a final status on the chain.
+ *
+ * Read from the refusals rather than from `operations`: the backend refuses every action with
+ * `operation_in_flight` exactly while such an operation exists, whereas an operation's `settled` flag
+ * stays false for outcomes that never become final and would hold the screen in that state forever.
+ *
+ * @param staking - The position.
+ * @returns `true` while an operation is in flight.
+ */
+export function hasOperationInFlight(staking: StakingView): boolean {
+  return Object.values(staking.actions).some((refusal) => refusal === 'operation_in_flight')
+}
+
 /**
  * The staking position of one wallet.
+ *
+ * Read again periodically while an operation is in flight, so the screen follows it to confirmation
+ * without the user reloading. Idle positions are not polled.
  *
  * @param walletId - The wallet address. `undefined` suspends the request, which is what keeps the page
  *   from firing a call before the authenticated wallet is known.
@@ -195,12 +215,16 @@ export type StakingMutationResult =
 export function useStakingState(walletId?: string) {
   return useGetCommon(
     walletId ? endpoints.dashboard.wallet.staking.root(walletId) : null,
-    walletId ? { headers: getAuthorizationHeader() } : {}
+    walletId ? { headers: getAuthorizationHeader() } : {},
+    (latest?: { staking?: StakingView }) =>
+      latest?.staking && hasOperationInFlight(latest.staking) ? IN_FLIGHT_REFRESH_MS : 0
   ) as {
     data?: { staking: StakingView }
     isLoading: boolean
     error: unknown
     isValidating: boolean
+    /** Reads the position again. Called after anything that changes it. */
+    mutate: () => Promise<unknown>
   }
 }
 
