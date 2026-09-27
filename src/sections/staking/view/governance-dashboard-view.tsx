@@ -64,7 +64,7 @@ export default function GovernanceDashboardView(): JSX.Element {
 
   const { address: cardanoAddress, loading: addressLoading } = useCardanoAddress()
   const { data, isLoading, error, mutate: refresh } = useStakingState(cardanoAddress)
-  const { data: governance } = useGovernance(cardanoAddress)
+  const { data: governance, mutate: refreshGovernance } = useGovernance(cardanoAddress)
   const staking = data?.staking
 
   // `null` means no dialog is open, so there is no state in which a PIN could be confirmed without a
@@ -125,6 +125,10 @@ export default function GovernanceDashboardView(): JSX.Element {
         : t('staking.actions.started')
     )
     setAsking(null)
+    // The control stays disabled until the position has been read again, as on the staking tab. The
+    // read from before the delegation still allows `delegate_vote`; the fresh one reports the operation
+    // in flight, which disables the control, shows the notice and polls until the chain settles it.
+    await Promise.all([refresh(), refreshGovernance()])
     setBusy(false)
   }
 
