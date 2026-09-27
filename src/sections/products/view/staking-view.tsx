@@ -82,9 +82,9 @@ export default function StakingView(): JSX.Element {
               <Grid item xs={12} md={7}>
                 <m.div {...FADE_IN}>
                   <Chip
-                    label={t('products.staking-view.badge', 'In development')}
+                    label={t('products.hero.states.live', 'Live')}
                     size='small'
-                    color='warning'
+                    color='success'
                     sx={{ mb: 2 }}
                   />
 

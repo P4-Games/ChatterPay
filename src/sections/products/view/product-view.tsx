@@ -129,7 +129,7 @@ export default function ProductView(): JSX.Element {
                     'products.hero.staking.description',
                     'Native Cardano staking and participation in ecosystem governance.'
                   )}
-                  badge={t('products.hero.states.dev', 'In development')}
+                  badge={t('products.hero.states.live', 'Live')}
                   cta={`${t('products.hero.cta', 'Learn more')} →`}
                 />
               </Grid>

@@ -1159,7 +1159,6 @@
       }
     },
     "staking-view": {
-      "badge": "In development",
       "hero": {
         "title": "Your ADA can earn rewards",
         "description": "Delegate your ADA from ChatterPay and take part in the Cardano ecosystem. The funds stay in your wallet and you keep control of them."
@@ -1172,11 +1171,11 @@
         },
         "delegate": {
           "title": "Automatic delegation",
-          "description": "Wallets that meet the requirements are delegated to a stake pool automatically, unless you turn staking off."
+          "description": "Wallets holding at least 5 ADA are delegated to a stake pool automatically."
         },
         "rewards": {
           "title": "Rewards",
-          "description": "Cardano calculates rewards per epoch. You will be able to check them from your dashboard once the feature is available."
+          "description": "Cardano calculates rewards per epoch. You can check them from your dashboard."
         },
         "control": {
           "title": "You decide",

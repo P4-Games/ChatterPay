@@ -1159,7 +1159,6 @@
       }
     },
     "staking-view": {
-      "badge": "Em desenvolvimento",
       "hero": {
         "title": "Seu ADA pode gerar recompensas",
         "description": "Delegue seu ADA pelo ChatterPay e participe do ecossistema Cardano. Os fundos ficam na sua carteira e você continua no controle."
@@ -1172,11 +1171,11 @@
         },
         "delegate": {
           "title": "Delegação automática",
-          "description": "As carteiras que cumprem os requisitos são delegadas a um stake pool automaticamente, a menos que você desative o staking."
+          "description": "As carteiras com pelo menos 5 ADA são delegadas a um stake pool automaticamente."
         },
         "rewards": {
           "title": "Recompensas",
-          "description": "A Cardano calcula as recompensas por época. Você vai poder consultá-las no seu dashboard quando a funcionalidade estiver disponível."
+          "description": "A Cardano calcula as recompensas por época. Você pode consultá-las no seu dashboard."
         },
         "control": {
           "title": "Você decide",
