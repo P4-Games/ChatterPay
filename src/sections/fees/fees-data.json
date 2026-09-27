@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-05T00:00:00",
+  "lastUpdated": "2026-09-24T00:00:00",
   "sections": [
     {
       "id": "free",
@@ -65,26 +65,68 @@
     },
     {
       "id": "networks",
+      "kind": "networks",
       "icon": "solar:global-bold-duotone",
-      "columns": ["network", "send", "swap"],
-      "rows": [
+      "tabs": [
         {
-          "id": "scroll",
-          "logo": "https://raw.githubusercontent.com/lifinance/types/main/src/assets/icons/chains/scroll.svg",
-          "cells": [
-            { "kind": "label" },
-            { "kind": "amount", "value": "$0.08" },
-            { "kind": "badge", "tone": "success", "value": "available" }
+          "id": "evm",
+          "logo": "https://raw.githubusercontent.com/lifinance/types/main/src/assets/icons/chains/base.svg",
+          "status": { "tone": "success", "value": "available" },
+          "columns": ["operation", "fee_status"],
+          "rows": [
+            {
+              "id": "send",
+              "cells": [{ "kind": "label" }, { "kind": "amount", "value": "$0.08" }]
+            },
+            {
+              "id": "swap",
+              "cells": [{ "kind": "label" }, { "kind": "amount", "value": "0.25%" }]
+            }
           ]
         },
         {
           "id": "cardano",
           "logo": "/assets/icons/networks/cardano.svg",
-          "cells": [
-            { "kind": "label" },
-            { "kind": "badge", "tone": "neutral", "value": "coming_soon" },
-            { "kind": "badge", "tone": "neutral", "value": "coming_soon" }
-          ]
+          "status": { "tone": "success", "value": "available" },
+          "columns": ["operation", "fee_status"],
+          "rows": [
+            {
+              "id": "send_ada",
+              "cells": [{ "kind": "label" }, { "kind": "amount", "value": "0.45 ADA" }]
+            },
+            {
+              "id": "send_token_held",
+              "cells": [
+                { "kind": "label" },
+                { "kind": "amount", "value": "0.45 ADA", "note": "in_token" }
+              ]
+            },
+            {
+              "id": "send_token_new",
+              "cells": [
+                { "kind": "label" },
+                { "kind": "amount", "value": "1.6 ADA", "note": "in_token" }
+              ]
+            },
+            {
+              "id": "swap",
+              "cells": [
+                { "kind": "label" },
+                { "kind": "badge", "tone": "neutral", "value": "coming_soon" }
+              ]
+            }
+          ],
+          "notes": ["covered"]
+        },
+        {
+          "id": "bitcoin",
+          "logo": "https://raw.githubusercontent.com/lifinance/types/main/src/assets/icons/chains/bitcoin.svg",
+          "status": { "tone": "neutral", "value": "coming_soon" }
+        },
+        {
+          "id": "stellar",
+          "logo": "https://raw.githubusercontent.com/lifinance/types/main/src/assets/icons/chains/stellar.svg",
+          "status": { "tone": "neutral", "value": "coming_soon" }
         }
       ]
     },
