@@ -44,3 +44,20 @@ export {
   useGetPolymarketTradesSWR,
   useGetPolymarketClosedPositionsSWR
 } from './use-polymarket'
+
+export {
+  useStakingState,
+  useGovernance,
+  useStakingExitQuote,
+  setStakingConsent,
+  authorizeStakingAction,
+  requestStakingAction,
+  type StakingView,
+  type StakingBalance,
+  type StakingActionName,
+  type StakingAccountState,
+  type StakingOperationView,
+  type StakingRewardView,
+  type GovernanceView,
+  type StakingExitQuote
+} from './use-staking'
