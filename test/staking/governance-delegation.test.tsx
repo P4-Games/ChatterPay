@@ -16,10 +16,8 @@ import { stakingView, governanceView } from './fixtures'
  * the cases below assert on what `onDelegate` is handed, not only that it fired: a button that fired
  * with the wrong target would delegate somebody's vote somewhere they did not choose.
  *
- * Two claims the screen must not make are also tested here, because both were made before and both are
- * wrong. The figure on the first card is the wallet's balance and is labelled as such, not as on-chain
- * voting power, which is a governance snapshot the backend does not report. And no representative is
- * recommended or pre-selected: the selector starts empty and the row says so in words.
+ * The figure on the first card is the wallet balance and is labelled as such. No representative is
+ * pre-selected: the selector starts empty.
  */
 
 /** A representative, as the backend lists one: canonical identifier and nothing that ranks it. */
@@ -83,7 +81,7 @@ describe('GovernanceDelegation', () => {
   })
 
   describe('the options', () => {
-    it('offers all three as rows', () => {
+    it('offers all three as one choice with a single button', () => {
       render(
         <GovernanceDelegation staking={stakingView()} governance={governanceView()} {...props} />
       )
@@ -91,6 +89,8 @@ describe('GovernanceDelegation', () => {
       expect(screen.getByTestId('governance-option-always_abstain')).toBeInTheDocument()
       expect(screen.getByTestId('governance-option-always_no_confidence')).toBeInTheDocument()
       expect(screen.getByTestId('governance-option-drep')).toBeInTheDocument()
+      expect(screen.getAllByRole('radio')).toHaveLength(3)
+      expect(screen.getAllByTestId('governance-delegate')).toHaveLength(1)
     })
 
     it('describes each one in a line of its own', () => {
@@ -103,16 +103,27 @@ describe('GovernanceDelegation', () => {
       expect(screen.getByText('governance.options.drepHint')).toBeInTheDocument()
     })
 
-    it('offers a control on every one of the three', () => {
-      // Every row is a real request now. A row that only listed an option a user could not choose is
-      // what this replaced.
+    it('starts on the delegation the credential already has', () => {
       render(
         <GovernanceDelegation staking={stakingView()} governance={governanceView()} {...props} />
       )
 
-      expect(screen.getByTestId('governance-delegate')).toBeInTheDocument()
-      expect(screen.getByTestId('governance-delegate-always_no_confidence')).toBeInTheDocument()
-      expect(screen.getByTestId('governance-delegate-drep')).toBeInTheDocument()
+      expect(
+        screen.getByTestId('governance-radio-always_abstain').querySelector('input')
+      ).toBeChecked()
+    })
+
+    it('starts with nothing selected for a credential that has not delegated', () => {
+      render(
+        <GovernanceDelegation
+          staking={stakingView({ governanceDelegation: { kind: 'none' } })}
+          governance={governanceView()}
+          {...props}
+        />
+      )
+
+      for (const radio of screen.getAllByRole('radio')) expect(radio).not.toBeChecked()
+      expect(screen.getByTestId('governance-delegate')).toBeDisabled()
     })
 
     it('hands over a vote of no confidence as its own target', async () => {
@@ -126,14 +137,13 @@ describe('GovernanceDelegation', () => {
         />
       )
 
-      await userEvent.click(screen.getByTestId('governance-delegate-always_no_confidence'))
+      await userEvent.click(screen.getByTestId('governance-option-always_no_confidence'))
+      await userEvent.click(screen.getByTestId('governance-delegate'))
 
       expect(onDelegate).toHaveBeenCalledWith({ kind: 'always_no_confidence' })
     })
 
     it('hands over an abstention as its own target', async () => {
-      // Reachable from a wallet that currently votes no confidence: the abstain row is only closed when
-      // the credential already abstains.
       const onDelegate = vi.fn()
       render(
         <GovernanceDelegation
@@ -144,156 +154,134 @@ describe('GovernanceDelegation', () => {
         />
       )
 
+      await userEvent.click(screen.getByTestId('governance-option-always_abstain'))
       await userEvent.click(screen.getByTestId('governance-delegate'))
 
       expect(onDelegate).toHaveBeenCalledWith({ kind: 'always_abstain' })
     })
 
-    it('carries the backend refusal, which applies to every row', () => {
-      // The refusal is a property of the action for this wallet, not of one target, so it closes all
-      // three rather than one.
+    it('carries the backend refusal, which applies to every option', async () => {
       render(
         <GovernanceDelegation
-          staking={stakingView({ actions: { delegate_vote: 'not_registered' } })}
+          staking={stakingView({ actions: { delegate_vote: 'operation_in_flight' } })}
           governance={governanceView({ dreps: [{ idCip129: DREP_ONE }] })}
           {...props}
         />
       )
 
+      await userEvent.click(screen.getByTestId('governance-option-always_no_confidence'))
+
       expect(screen.getByTestId('governance-delegate')).toBeDisabled()
-      expect(screen.getByTestId('governance-delegate-always_no_confidence')).toBeDisabled()
-      expect(screen.getByTestId('governance-delegate-drep')).toBeDisabled()
-      expect(screen.getByTestId('governance-reason-always_abstain')).toHaveTextContent(
-        'staking.refusals.not_registered'
+      expect(screen.getByTestId('governance-reason')).toHaveTextContent(
+        'staking.refusals.operation_in_flight'
       )
     })
 
-    it('closes the row the credential already delegates to', () => {
+    it('keeps the button closed while the selection is the current delegation', async () => {
       // Delegating where the vote already goes costs a network fee and changes nothing, and the backend
-      // refuses it. Saying so is better than offering a transaction that does nothing.
+      // refuses it.
       render(
         <GovernanceDelegation staking={stakingView()} governance={governanceView()} {...props} />
       )
 
       expect(screen.getByTestId('governance-delegate')).toBeDisabled()
-      expect(screen.getByTestId('governance-reason-always_abstain')).toHaveTextContent(
+      expect(screen.getByTestId('governance-reason')).toHaveTextContent(
         'governance.options.alreadyHere'
       )
-      expect(screen.getByTestId('governance-delegate-always_no_confidence')).toBeEnabled()
+
+      await userEvent.click(screen.getByTestId('governance-option-always_no_confidence'))
+
+      expect(screen.getByTestId('governance-delegate')).toBeEnabled()
+      expect(screen.queryByTestId('governance-reason')).toBeNull()
     })
 
-    it('says nothing under a row that is simply available', () => {
-      render(
-        <GovernanceDelegation staking={stakingView()} governance={governanceView()} {...props} />
-      )
-
-      expect(screen.queryByTestId('governance-reason-always_no_confidence')).toBeNull()
-    })
-
-    it('refuses everything while an operation is being sent', () => {
+    it('refuses while an operation is being sent', async () => {
       render(
         <GovernanceDelegation
-          staking={stakingView({ governanceDelegation: { kind: 'none' } })}
-          governance={governanceView({ dreps: [{ idCip129: DREP_ONE }] })}
+          staking={stakingView()}
+          governance={governanceView()}
           submitting
           onDelegate={vi.fn()}
         />
       )
 
+      await userEvent.click(screen.getByTestId('governance-option-always_no_confidence'))
+
       expect(screen.getByTestId('governance-delegate')).toBeDisabled()
-      expect(screen.getByTestId('governance-delegate-always_no_confidence')).toBeDisabled()
-      expect(screen.getByTestId('governance-delegate-drep')).toBeDisabled()
     })
   })
 
-  describe('the representative row', () => {
-    it('offers the representatives the backend listed', () => {
-      render(
-        <GovernanceDelegation
-          staking={stakingView()}
-          governance={governanceView({ dreps: [{ idCip129: DREP_ONE }, { idCip129: DREP_TWO }] })}
-          {...props}
-        />
-      )
+  describe('the representative option', () => {
+    const withDreps = governanceView({ dreps: [{ idCip129: DREP_ONE }, { idCip129: DREP_TWO }] })
+
+    it('shows the selector only once the option is chosen', async () => {
+      render(<GovernanceDelegation staking={stakingView()} governance={withDreps} {...props} />)
+
+      expect(screen.queryByTestId('governance-drep-select')).toBeNull()
+
+      await userEvent.click(screen.getByTestId('governance-option-drep'))
 
       expect(screen.getByTestId('governance-drep-select')).toBeInTheDocument()
-    })
-
-    it('recommends none of them, and says so', () => {
-      // A default selection in a governance control is an opinion about how somebody else's stake should
-      // vote. The row states the absence of a recommendation rather than leaving it to be inferred.
-      render(
-        <GovernanceDelegation
-          staking={stakingView()}
-          governance={governanceView({ dreps: [{ idCip129: DREP_ONE }, { idCip129: DREP_TWO }] })}
-          {...props}
-        />
-      )
-
       expect(screen.getByTestId('governance-drep-notice')).toHaveTextContent(
         'governance.options.drepNotice'
       )
     })
 
-    it('pre-selects nobody, so the row cannot be pressed until the user picks', () => {
-      render(
-        <GovernanceDelegation
-          staking={stakingView()}
-          governance={governanceView({ dreps: [{ idCip129: DREP_ONE }, { idCip129: DREP_TWO }] })}
-          {...props}
-        />
-      )
+    it('pre-selects nobody, so the button stays closed until the user picks', async () => {
+      render(<GovernanceDelegation staking={stakingView()} governance={withDreps} {...props} />)
 
-      expect(screen.getByTestId('governance-delegate-drep')).toBeDisabled()
-      expect(screen.getByTestId('governance-reason-drep')).toHaveTextContent(
+      await userEvent.click(screen.getByTestId('governance-option-drep'))
+
+      expect(screen.getByTestId('governance-delegate')).toBeDisabled()
+      expect(screen.getByTestId('governance-reason')).toHaveTextContent(
         'governance.options.drepRequired'
       )
     })
 
     it('hands over the representative the user chose', async () => {
-      // The identifier itself, not an index into a list. It is what the assertion and the grant are
-      // signed over, so a row that handed over the wrong one would authorise the wrong delegation.
+      // The identifier itself: it is what the assertion and the grant are signed over.
       const onDelegate = vi.fn()
       render(
         <GovernanceDelegation
           staking={stakingView()}
-          governance={governanceView({ dreps: [{ idCip129: DREP_ONE }, { idCip129: DREP_TWO }] })}
+          governance={withDreps}
           submitting={false}
           onDelegate={onDelegate}
         />
       )
 
+      await userEvent.click(screen.getByTestId('governance-option-drep'))
       await userEvent.click(screen.getByRole('combobox'))
       await userEvent.click(screen.getByRole('option', { name: new RegExp(DREP_TWO.slice(0, 12)) }))
-      await userEvent.click(screen.getByTestId('governance-delegate-drep'))
+      await userEvent.click(screen.getByTestId('governance-delegate'))
 
       expect(onDelegate).toHaveBeenCalledWith({ kind: 'drep', drepId: DREP_TWO })
     })
 
-    it('closes the row when the chosen representative is already the one followed', async () => {
-      const onDelegate = vi.fn()
+    it('closes the button when the chosen representative is already the one followed', async () => {
       render(
         <GovernanceDelegation
           staking={stakingView({ governanceDelegation: { kind: 'drep', idCip129: DREP_ONE } })}
-          governance={governanceView({ dreps: [{ idCip129: DREP_ONE }, { idCip129: DREP_TWO }] })}
-          submitting={false}
-          onDelegate={onDelegate}
+          governance={withDreps}
+          {...props}
         />
       )
 
       await userEvent.click(screen.getByRole('combobox'))
       await userEvent.click(screen.getByRole('option', { name: new RegExp(DREP_ONE.slice(0, 12)) }))
 
-      expect(screen.getByTestId('governance-delegate-drep')).toBeDisabled()
-      expect(screen.getByTestId('governance-reason-drep')).toHaveTextContent(
+      expect(screen.getByTestId('governance-delegate')).toBeDisabled()
+      expect(screen.getByTestId('governance-reason')).toHaveTextContent(
         'governance.options.alreadyHere'
       )
     })
 
-    it('says so when none could be listed, instead of an empty selector', () => {
+    it('says so when none could be listed, instead of an empty selector', async () => {
       render(
         <GovernanceDelegation staking={stakingView()} governance={governanceView()} {...props} />
       )
+
+      await userEvent.click(screen.getByTestId('governance-option-drep'))
 
       expect(screen.queryByTestId('governance-drep-select')).toBeNull()
       expect(screen.getByText('governance.options.empty')).toBeInTheDocument()

@@ -44,7 +44,7 @@ export const paths = {
     },
     staking: {
       root: `${ROOTS.DASHBOARD}/staking`,
-      governance: `${ROOTS.DASHBOARD}/governance`
+      governance: `${ROOTS.DASHBOARD}/staking/governance`
     },
     transfer: {
       all: `${ROOTS.DASHBOARD}/transfer/all`

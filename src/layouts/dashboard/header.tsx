@@ -4,6 +4,7 @@ import Toolbar from '@mui/material/Toolbar'
 import { useTheme } from '@mui/material/styles'
 import IconButton from '@mui/material/IconButton'
 
+import { bgBlur } from 'src/theme/css'
 import { useOffSetTop } from 'src/hooks/use-off-set-top'
 import { useResponsive } from 'src/hooks/use-responsive'
 
@@ -44,7 +45,7 @@ export default function Header({ onOpenNav }: Props) {
       {lgUp && isNavHorizontal && <Logo sx={{ mr: 2.5 }} />}
 
       {!lgUp && (
-        <IconButton onClick={onOpenNav} sx={{ pointerEvents: 'auto' }}>
+        <IconButton onClick={onOpenNav} sx={{ flexShrink: 0 }}>
           <SvgColor src='/assets/icons/navbar/ic_menu_item.svg' />
         </IconButton>
       )}
@@ -54,8 +55,8 @@ export default function Header({ onOpenNav }: Props) {
         direction='row'
         alignItems='center'
         justifyContent='flex-end'
-        spacing={{ xs: 0.5, sm: 1 }}
-        sx={{ '& > *': { pointerEvents: 'auto' } }}
+        spacing={{ xs: 0.25, sm: 1 }}
+        sx={{ minWidth: 0, flexWrap: 'nowrap', '& > *': { flexShrink: 0 } }}
       >
         <LanguagePopover />
 
@@ -73,14 +74,10 @@ export default function Header({ onOpenNav }: Props) {
       sx={{
         height: HEADER.H_MOBILE,
         zIndex: theme.zIndex.appBar + 1,
-        bgcolor: 'transparent',
-        backdropFilter: 'none',
+        // Fixed and opaque: the page scrolls underneath without showing through the controls. Above
+        // the page and below the drawer and the popovers, which sit on the modal layer.
+        ...bgBlur({ color: theme.palette.background.default, opacity: 0.94 }),
         boxShadow: 'none',
-        // The bar is transparent and fixed, so the page scrolls visibly underneath it. Without this
-        // the bar still hit-tests across its whole area and swallows clicks on the cards and buttons
-        // that pass below it; only its own controls opt back in. The horizontal layout keeps the
-        // default behaviour because there the bar is opaque and hides what is under it.
-        ...(!isNavHorizontal && { pointerEvents: 'none' }),
         transition: theme.transitions.create(['height', 'width'], {
           duration: theme.transitions.duration.shorter
         }),
@@ -103,7 +100,8 @@ export default function Header({ onOpenNav }: Props) {
       <Toolbar
         sx={{
           height: 1,
-          px: { lg: 5 }
+          // Narrow phones need the room: the menu button and the four controls stay on one row.
+          px: { xs: 1, sm: 2, lg: 5 }
         }}
       >
         {renderContent}

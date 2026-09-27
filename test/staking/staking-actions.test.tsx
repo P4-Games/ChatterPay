@@ -2,143 +2,167 @@ import { describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import StakingActions from 'src/sections/staking/staking-actions'
+import StakingActions, { StakingActionReasons } from 'src/sections/staking/staking-actions'
 
 import { stakingView } from './fixtures'
 
 // ----------------------------------------------------------------------
 
+/** Every operation either layout places somewhere on the staking tab. */
+const ALL_ACTIONS = ['register_and_delegate', 'withdraw_rewards', 'redelegate_pool'] as const
+
+const renderActions = (
+  props: Partial<Parameters<typeof StakingActions>[0]> = {}
+): ReturnType<typeof render> =>
+  render(
+    <StakingActions
+      staking={stakingView()}
+      actions={ALL_ACTIONS}
+      includeStop
+      onAction={vi.fn()}
+      onLeave={vi.fn()}
+      {...props}
+    />
+  )
+
 describe('StakingActions', () => {
-  it('enables an action the backend did not refuse', () => {
-    render(<StakingActions staking={stakingView()} onAction={vi.fn()} />)
+  describe('what the staking tab offers', () => {
+    it('offers only staking operations, never the governance or transfer ones', () => {
+      // Delegating the vote belongs to the governance tab, and sending the whole balance is a
+      // transfer. Both are allowed by the backend in the fixture and neither is offered here.
+      renderActions()
 
-    expect(screen.getByTestId('staking-action-exit_and_send_max')).toBeEnabled()
+      expect(screen.queryByTestId('staking-action-delegate_vote')).toBeNull()
+      expect(screen.queryByTestId('staking-action-exit_and_send_max')).toBeNull()
+      expect(screen.queryByTestId('staking-action-deregister')).toBeNull()
+    })
+
+    it('offers stopping staking only where the group asks for it', () => {
+      const { unmount } = renderActions()
+      expect(screen.getByTestId('staking-actions')).toContainElement(
+        screen.getByTestId('staking-action-stop')
+      )
+      unmount()
+
+      renderActions({ includeStop: false })
+      expect(screen.queryByTestId('staking-action-stop')).toBeNull()
+    })
+
+    it('opens the stop confirmation rather than starting an operation', async () => {
+      const onAction = vi.fn()
+      const onLeave = vi.fn()
+      renderActions({ onAction, onLeave })
+
+      await userEvent.click(screen.getByTestId('staking-action-stop'))
+
+      expect(onLeave).toHaveBeenCalled()
+      expect(onAction).not.toHaveBeenCalled()
+    })
+
+    it('does not offer starting staking to a wallet that is already registered', () => {
+      // The backend allows it in this case; the control would still describe what is already true.
+      renderActions({ staking: stakingView({ actions: { register_and_delegate: null } }) })
+
+      expect(screen.queryByTestId('staking-action-register_and_delegate')).toBeNull()
+    })
+
+    it('offers starting staking to a wallet that is not registered', () => {
+      renderActions({
+        staking: stakingView({ registered: false, actions: { register_and_delegate: null } })
+      })
+
+      expect(screen.getByTestId('staking-action-register_and_delegate')).toBeEnabled()
+      expect(screen.queryByTestId('staking-action-stop')).toBeNull()
+    })
+
+    it('offers only the operations the group was given', () => {
+      const staking = stakingView({ actions: { redelegate_pool: null } })
+
+      const { unmount } = renderActions({ staking, actions: ['withdraw_rewards'] })
+      expect(screen.queryByTestId('staking-action-redelegate_pool')).toBeNull()
+      unmount()
+
+      renderActions({ staking })
+      expect(screen.getByTestId('staking-action-redelegate_pool')).toBeEnabled()
+    })
+
+    it('does not offer an action that does not apply to this wallet', () => {
+      renderActions({ staking: stakingView() })
+
+      expect(screen.queryByTestId('staking-action-redelegate_pool')).toBeNull()
+    })
+
+    it('does not render an action the backend never mentioned', () => {
+      renderActions({ staking: stakingView({ actions: {} }) })
+
+      expect(screen.queryByTestId('staking-action-withdraw_rewards')).toBeNull()
+    })
   })
 
-  it('does not offer to stop staking, which the status card owns', () => {
-    // One entry point to the voluntary exit. Two controls for one decision is two places to keep
-    // the confirmation, and one of them eventually loses it.
-    render(<StakingActions staking={stakingView()} onAction={vi.fn()} />)
+  describe('enabling', () => {
+    it('disables an action the backend refused', () => {
+      renderActions()
 
-    expect(screen.queryByTestId('staking-action-deregister')).toBeNull()
-  })
+      expect(screen.getByTestId('staking-action-withdraw_rewards')).toBeDisabled()
+    })
 
-  it('does not offer an action that does not apply to this wallet', () => {
-    // "Start staking — already registered" describes a state the user can already see, and a line
-    // of explanation under every inapplicable control is how a card becomes a wall of text.
-    render(
-      <StakingActions
-        staking={stakingView({ actions: { register_and_delegate: 'already_registered' } })}
-        onAction={vi.fn()}
-      />
-    )
+    it('reports which action was chosen', async () => {
+      const onAction = vi.fn()
+      renderActions({ staking: stakingView({ actions: { withdraw_rewards: null } }), onAction })
 
-    expect(screen.queryByTestId('staking-action-register_and_delegate')).toBeNull()
-  })
+      await userEvent.click(screen.getByTestId('staking-action-withdraw_rewards'))
 
-  it('disables an action the backend refused', () => {
-    render(<StakingActions staking={stakingView()} onAction={vi.fn()} />)
+      expect(onAction).toHaveBeenCalledWith('withdraw_rewards')
+    })
 
-    expect(screen.getByTestId('staking-action-withdraw_rewards')).toBeDisabled()
-  })
+    it('disables everything while one action is running', () => {
+      renderActions({
+        staking: stakingView({ actions: { withdraw_rewards: null } }),
+        busy: 'withdraw_rewards'
+      })
 
-  it('does not render an action the backend never mentioned', () => {
-    // A deployment that does not offer something should not show a disabled control implying it exists.
-    render(
-      <StakingActions
-        staking={stakingView({ actions: { withdraw_rewards: null } })}
-        onAction={vi.fn()}
-      />
-    )
+      expect(screen.getByTestId('staking-action-withdraw_rewards')).toBeDisabled()
+      expect(screen.getByTestId('staking-action-stop')).toBeDisabled()
+    })
 
-    expect(screen.queryByTestId('staking-action-exit_and_send_max')).toBeNull()
-  })
-
-  it('reports which action was chosen', async () => {
-    const onAction = vi.fn()
-    render(<StakingActions staking={stakingView()} onAction={onAction} />)
-
-    await userEvent.click(screen.getByTestId('staking-action-exit_and_send_max'))
-
-    expect(onAction).toHaveBeenCalledWith('exit_and_send_max')
-  })
-
-  it('disables everything while one action is running', () => {
-    // Two staking operations cannot be live for one credential, so offering a second is offering a
-    // refusal.
-    render(<StakingActions staking={stakingView()} busy='withdraw_rewards' onAction={vi.fn()} />)
-
-    expect(screen.getByTestId('staking-action-exit_and_send_max')).toBeDisabled()
-    expect(screen.getByTestId('staking-action-delegate_vote')).toBeDisabled()
-  })
-
-  it('keeps the ways out available for a wallet that left', () => {
-    // Leaving must never become a reason to hold on to somebody's money, so these two stay enabled
-    // while the participation actions are refused.
-    render(
-      <StakingActions
-        staking={stakingView({
+    it('keeps withdrawing available for a wallet that left', () => {
+      // Leaving must never become a reason to hold on to somebody's rewards.
+      renderActions({
+        staking: stakingView({
           optOut: {
             at: '2026-03-15T10:00:00.000Z',
             reason: 'user_exit',
             source: 'web',
             preferenceVersion: 2
           },
-          actions: {
-            register_and_delegate: 'opted_out',
-            delegate_vote: 'opted_out',
-            withdraw_rewards: null,
-            deregister: null,
-            exit_and_send_max: null
-          }
-        })}
-        onAction={vi.fn()}
-      />
-    )
+          actions: { withdraw_rewards: null }
+        })
+      })
 
-    expect(screen.getByTestId('staking-action-withdraw_rewards')).toBeEnabled()
-    expect(screen.getByTestId('staking-action-exit_and_send_max')).toBeEnabled()
-    expect(screen.getByTestId('staking-action-delegate_vote')).toBeDisabled()
-  })
+      expect(screen.getByTestId('staking-action-withdraw_rewards')).toBeEnabled()
+      expect(screen.queryByTestId('staking-action-stop')).toBeNull()
+    })
 
-  it('refuses everything for a wallet it cannot sign for', () => {
-    render(
-      <StakingActions
-        staking={stakingView({
+    it('offers no stop control for a wallet it cannot sign for', () => {
+      renderActions({
+        staking: stakingView({
           signable: false,
-          actions: {
-            register_and_delegate: 'signer_unavailable',
-            delegate_vote: 'signer_unavailable',
-            withdraw_rewards: 'signer_unavailable',
-            deregister: 'signer_unavailable',
-            exit_and_send_max: 'signer_unavailable'
-          }
-        })}
-        onAction={vi.fn()}
-      />
-    )
+          actions: { withdraw_rewards: 'signer_unavailable' }
+        })
+      })
 
-    for (const action of [
-      'register_and_delegate',
-      'delegate_vote',
-      'withdraw_rewards',
-      'exit_and_send_max'
-    ]) {
-      expect(screen.getByTestId(`staking-action-${action}`)).toBeDisabled()
-    }
+      expect(screen.getByTestId('staking-action-withdraw_rewards')).toBeDisabled()
+      expect(screen.queryByTestId('staking-action-stop')).toBeNull()
+    })
   })
 
   describe('the reason an action is refused', () => {
     it('is shown as text under the control rather than in a tooltip', () => {
-      // A disabled button takes no pointer events, so a tooltip on it is unreachable — and on a phone
-      // there is no hover at all. "Delegate your voting power first" is something a user can act on;
-      // a greyed-out button is something they open a ticket about.
-      render(
-        <StakingActions
-          staking={stakingView({ actions: { withdraw_rewards: 'vote_delegation_required' } })}
-          onAction={vi.fn()}
-        />
-      )
+      // A disabled button takes no pointer events, so a tooltip on it is unreachable, and a phone has
+      // no hover at all.
+      renderActions({
+        staking: stakingView({ actions: { withdraw_rewards: 'vote_delegation_required' } })
+      })
 
       expect(screen.getByTestId('staking-action-reason-withdraw_rewards')).toHaveTextContent(
         'staking.refusals.vote_delegation_required'
@@ -146,14 +170,9 @@ describe('StakingActions', () => {
     })
 
     it('is never folded into the label', () => {
-      // A label that grows with the refusal is a label that wraps to two lines in one cell and one in
-      // the next, which is what makes the grid look broken.
-      render(
-        <StakingActions
-          staking={stakingView({ actions: { withdraw_rewards: 'vote_delegation_required' } })}
-          onAction={vi.fn()}
-        />
-      )
+      renderActions({
+        staking: stakingView({ actions: { withdraw_rewards: 'vote_delegation_required' } })
+      })
 
       const button = screen.getByTestId('staking-action-withdraw_rewards')
 
@@ -162,66 +181,70 @@ describe('StakingActions', () => {
     })
 
     it('is absent for an action that is allowed', () => {
-      render(<StakingActions staking={stakingView()} onAction={vi.fn()} />)
+      renderActions({ staking: stakingView({ actions: { withdraw_rewards: null } }) })
 
-      expect(screen.queryByTestId('staking-action-reason-exit_and_send_max')).toBeNull()
+      expect(screen.queryByTestId('staking-action-reason-withdraw_rewards')).toBeNull()
     })
 
     it('falls back to the backend code when there is no translation for it', () => {
-      render(
-        <StakingActions
-          staking={stakingView({ actions: { withdraw_rewards: 'something_new' } })}
-          onAction={vi.fn()}
-        />
-      )
+      renderActions({ staking: stakingView({ actions: { withdraw_rewards: 'something_new' } }) })
 
       expect(screen.getByTestId('staking-action-reason-withdraw_rewards')).toBeInTheDocument()
     })
   })
 
+  describe('the compact group for a card header', () => {
+    it('leaves the reason out of the header and in the card body', () => {
+      const staking = stakingView({ actions: { withdraw_rewards: 'vote_delegation_required' } })
+      render(
+        <>
+          <StakingActions
+            compact
+            staking={staking}
+            actions={['withdraw_rewards']}
+            onAction={vi.fn()}
+          />
+          <StakingActionReasons staking={staking} actions={['withdraw_rewards']} />
+        </>
+      )
+
+      expect(screen.getByTestId('staking-actions')).not.toContainElement(
+        screen.getByTestId('staking-action-reason-withdraw_rewards')
+      )
+      expect(screen.getByTestId('staking-action-reason-withdraw_rewards')).toHaveTextContent(
+        'staking.refusals.vote_delegation_required'
+      )
+    })
+
+    it('explains nothing when every offered action is allowed', () => {
+      const { container } = render(
+        <StakingActionReasons
+          staking={stakingView({ actions: { withdraw_rewards: null } })}
+          actions={['withdraw_rewards']}
+        />
+      )
+
+      expect(container).toBeEmptyDOMElement()
+    })
+  })
+
   describe('the layout', () => {
-    it('keeps what maintains a position apart from leaving with the balance', () => {
-      // Separated by position and by a group label rather than by colour, which survives a
-      // colourblind viewer and a greyscale screenshot.
-      render(<StakingActions staking={stakingView()} onAction={vi.fn()} />)
-
-      expect(screen.getByTestId('staking-actions-grid')).toBeInTheDocument()
-      expect(screen.getByTestId('staking-actions-leaving')).toBeInTheDocument()
-    })
-
-    it('holds only the actions the backend mentioned', () => {
-      render(
-        <StakingActions
-          staking={stakingView({ actions: { delegate_vote: null, withdraw_rewards: null } })}
-          onAction={vi.fn()}
-        />
-      )
-
-      expect(screen.getByTestId('staking-actions-grid').children).toHaveLength(2)
-      expect(screen.queryByTestId('staking-actions-leaving')).toBeNull()
-    })
-
     it('gives each control one button and at most one reason', () => {
-      render(
-        <StakingActions
-          staking={stakingView({ actions: { withdraw_rewards: 'no_rewards' } })}
-          onAction={vi.fn()}
-        />
-      )
+      renderActions()
 
-      const cell = screen.getByTestId('staking-actions-grid').children[0]
+      const cell = screen.getByTestId('staking-actions').children[0]
 
       expect(cell.children).toHaveLength(2)
     })
 
     it('renders nothing at all when no action applies', () => {
-      // An empty card titled "what you can do" is worse than no card.
-      const { container } = render(
-        <StakingActions
-          staking={stakingView({ actions: { register_and_delegate: 'already_registered' } })}
-          onAction={vi.fn()}
-        />
-      )
+      // An empty row in the hosting card is worse than none.
+      const { container } = renderActions({
+        staking: stakingView({
+          signable: false,
+          actions: { register_and_delegate: 'already_registered' }
+        })
+      })
 
       expect(container).toBeEmptyDOMElement()
     })

@@ -14,6 +14,9 @@ import StakingTabs from './staking-tabs'
 
 type Props = {
   title: string
+  subtitle?: string
+  /** A control aligned with the title, such as the layout switch. */
+  action?: React.ReactNode
   children: React.ReactNode
 }
 
@@ -30,7 +33,12 @@ type Props = {
  * the negative bottom margin pulls the following whitespace up under it so the colour reaches the
  * end of the viewport on a short page instead of stopping at a visible line.
  */
-export default function StakingPageShell({ title, children }: Props): JSX.Element {
+export default function StakingPageShell({
+  title,
+  subtitle,
+  action,
+  children
+}: Props): JSX.Element {
   const settings = useSettingsContext()
   const { isDark, heading } = useStakingStyles()
 
@@ -47,9 +55,24 @@ export default function StakingPageShell({ title, children }: Props): JSX.Elemen
       }}
     >
       <Container maxWidth={settings.themeStretch ? false : 'xl'} sx={{ pt: { xs: 3, md: 4 } }}>
-        <Typography variant='h5' sx={{ mb: 2, color: heading, fontWeight: 700 }}>
-          {title}
-        </Typography>
+        <Stack
+          direction={{ xs: 'column', sm: 'row' }}
+          alignItems={{ xs: 'flex-start', sm: 'center' }}
+          justifyContent='space-between'
+          spacing={1.5}
+        >
+          <Box sx={{ minWidth: 0 }}>
+            <Typography variant='h5' sx={{ color: heading, fontWeight: 700 }}>
+              {title}
+            </Typography>
+            {subtitle && (
+              <Typography variant='body2' sx={{ color: 'text.secondary', mt: 0.5 }}>
+                {subtitle}
+              </Typography>
+            )}
+          </Box>
+          {action}
+        </Stack>
 
         <StakingTabs />
 

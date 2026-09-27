@@ -150,6 +150,10 @@ export type StakingExitQuote = {
  * spelling of the same credential, carried for display beside it because explorers still print that
  * form; it is never what a request sends.
  *
+ * `name` is the name the representative published in its metadata, cleaned and shortened by the
+ * backend, or `null` when it published none. Anyone registering a representative chooses its name, so
+ * it is shown next to the identifier and never instead of it.
+ *
  * `votingPowerLovelace` is the stake delegated to that representative, when the provider reported it.
  * It is a property of the representative and says nothing about this wallet.
  *
@@ -159,6 +163,7 @@ export type StakingExitQuote = {
 export type GovernanceDRep = {
   idCip129: string
   idCip105?: string
+  name?: string | null
   credential?: { type: 'key_hash' | 'script_hash'; hashHex: string }
   status?: 'active' | 'retired' | 'unknown'
   votingPowerLovelace?: string | null

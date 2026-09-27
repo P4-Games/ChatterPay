@@ -713,7 +713,6 @@
     },
     "actions": {
       "leavingGroup": "Sair com o saldo",
-      "title": "Ações",
       "register_and_delegate": "Começar staking",
       "delegate_vote": "Delegar voto",
       "redelegate_pool": "Trocar pool",
@@ -790,16 +789,49 @@
     },
     "rewards": {
       "title": "Recompensas",
-      "empty": "Ainda não há recompensas. A primeira chega algumas épocas depois de começar.",
+      "empty": "Suas primeiras recompensas chegam de 3 a 4 <epoch>épocas</epoch> depois de começar. Cada época dura 5 dias.",
       "epoch": "Época",
       "amount": "Valor",
       "source": "Origem"
+    },
+    "mode": {
+      "label": "Visualização",
+      "simple": "Simples",
+      "advanced": "Avançada"
+    },
+    "cards": {
+      "available": {
+        "title": "Seu ADA",
+        "hint": "Durante o staking, todo o seu ADA fica na sua carteira e você pode enviar o saldo completo quando quiser.",
+        "description": "Inclui o depósito de staking de {{deposit}}, que volta para você ao parar o staking."
+      },
+      "status": {
+        "title": "Status do staking",
+        "hint": "Enquanto o staking está ativo, seu ADA ajuda a proteger a Cardano e gera recompensas.",
+        "active": "Seu ADA está gerando recompensas. Você pode parar o staking quando quiser.",
+        "inactive": "Suas recompensas começam quando o staking estiver ativo."
+      },
+      "rewards": {
+        "title": "Recompensas",
+        "hint": "As recompensas são pagas pela rede Cardano e podem ser sacadas para sua carteira.",
+        "pending": "{{amount}} em cálculo. Ficam disponíveis ao fim da <epoch>época</epoch> atual.",
+        "none": "Suas primeiras recompensas chegam de 3 a 4 <epoch>épocas</epoch> depois de começar. Cada época dura 5 dias."
+      }
+    },
+    "info": {
+      "title": "Quando recebo recompensas?",
+      "body": "As primeiras recompensas chegam de 3 a 4 <epoch>épocas</epoch> depois de começar, cerca de 15 a 20 dias. Depois disso, são adicionadas a cada época e você pode sacá-las quando quiser."
+    },
+    "details": {
+      "title": "Detalhes do staking",
+      "poolHint": "O pool para o qual seu ADA está delegado.",
+      "lastSync": "Última leitura"
     }
   },
   "governance": {
     "title": "Governança",
     "description": "Seu stake tem poder de voto. Delegá-lo habilita a retirada de recompensas.",
-    "readOnlyNotice": "Você pode delegar seu poder de voto. Registrar-se como DRep e votar direto não estão disponíveis.",
+    "readOnlyNotice": "Aqui você escolhe quem vota com o seu stake na governança da Cardano.",
     "current": {
       "title": "Sua delegação",
       "none": "Sem delegar",
@@ -808,23 +840,24 @@
       "drep": "Delegado a {{drep}}",
       "not_registered": "Esta carteira não está fazendo staking.",
       "stakeLabel": "Saldo desta carteira",
-      "stakeNotice": "É o saldo da carteira, não seu poder de voto na rede: esse vem do registro de cada época e a ChatterPay não o lê."
+      "stakeNotice": "Seu poder de voto se baseia neste saldo, conforme a rede o registra no início de cada <epoch>época</epoch>."
     },
     "options": {
       "title": "Delegar seu voto",
       "description": "Escolha para onde vai seu poder de voto. Você pode mudar quando quiser.",
       "always_abstain": "Abster-se",
-      "always_abstainHint": "Conta para o quórum, não vota em nada e desbloqueia suas recompensas.",
+      "always_abstainHint": "Seu stake conta para o quórum sem tomar partido, e suas recompensas ficam disponíveis para saque.",
       "always_no_confidence": "Sem confiança",
       "always_no_confidenceHint": "Seu stake vota contra toda ação de governança.",
-      "drep": "Representante delegado",
-      "drepHint": "Seu stake segue o voto do representante que você escolher.",
+      "drep": "Representante (DRep)",
+      "drepHint": "Seu stake vota da mesma forma que o <drep>DRep</drep> (representante delegado) que você escolher.",
       "drepLabel": "Representante",
       "delegate": "Delegar",
-      "drepNotice": "A ChatterPay não recomenda nenhum representante.",
+      "drepNotice": "A lista vem direto da rede Cardano. A escolha é sua.",
       "drepRequired": "Escolha um representante.",
       "alreadyHere": "Seu voto já está delegado aqui.",
-      "empty": "Não foi possível listar nenhum representante."
+      "empty": "Não foi possível listar nenhum representante.",
+      "drepSelect": "Escolha um representante"
     },
     "history": {
       "title": "Histórico",
@@ -834,6 +867,16 @@
       "actor": "Registrado por",
       "actorChain": "Lido da rede",
       "actorUser": "Você"
+    },
+    "simple": {
+      "title": "Sua escolha de voto atual",
+      "hint": "Como seu poder de voto está delegado na governança da Cardano.",
+      "delegated": "Delegado",
+      "delegatedBody": "Sua escolha de voto está registrada na rede. Você pode alterá-la quando quiser.",
+      "noneBody": "Delegue seu voto para poder sacar suas recompensas.",
+      "change": "Alterar minha escolha de voto",
+      "infoTitle": "O que isso significa?",
+      "infoBody": "Delegar seu voto define como seu stake participa da governança da Cardano. Seu ADA continua na sua carteira e você pode alterar sua escolha quando quiser."
     }
   },
   "chatterpoints": {

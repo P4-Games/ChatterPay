@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import Alert from '@mui/material/Alert'
 import Button from '@mui/material/Button'
@@ -66,6 +66,13 @@ export default function StakingPinDialog({
 }: Props): JSX.Element {
   const { t } = useTranslate()
   const [pin, setPin] = useState('')
+
+  // Cleared on every opening, not only on cancel: after a confirmed operation the parent closes the
+  // dialog without going through `close`, and the next action would otherwise find the previous PIN
+  // already typed in.
+  useEffect(() => {
+    if (open) setPin('')
+  }, [open])
 
   const close = (): void => {
     setPin('')

@@ -1,7 +1,10 @@
 'use client'
 
+import type { ReactNode } from 'react'
+
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
+import Stack from '@mui/material/Stack'
 import Table from '@mui/material/Table'
 import TableRow from '@mui/material/TableRow'
 import TableBody from '@mui/material/TableBody'
@@ -11,6 +14,7 @@ import Typography from '@mui/material/Typography'
 
 import { useTranslate } from 'src/locales'
 
+import StakingRichText from './staking-rich-text'
 import { useStakingStyles } from './staking-style'
 import { formatAdaWithUnit } from './staking-amount'
 
@@ -20,6 +24,10 @@ import type { StakingView } from 'src/app/api/hooks/use-staking'
 
 type Props = {
   staking: StakingView
+  /** The withdraw control, in the top-right corner. */
+  action?: ReactNode
+  /** Rendered under the history, for what the corner control cannot say, such as why it is refused. */
+  footer?: ReactNode
 }
 
 /**
@@ -29,26 +37,34 @@ type Props = {
  * long ago, so nothing here is summed into a total — the withdrawable figure lives in the summary
  * card, which reads it from the reward account rather than from this history.
  */
-export default function StakingRewards({ staking }: Props): JSX.Element {
+export default function StakingRewards({ staking, action, footer }: Props): JSX.Element {
   const { t } = useTranslate()
   const { card } = useStakingStyles()
+
+  const header = (
+    <Stack direction='row' alignItems='center' justifyContent='space-between' spacing={1}>
+      <Typography variant='subtitle2'>{t('staking.rewards.title')}</Typography>
+      {action}
+    </Stack>
+  )
+
+  const trailer = footer ? <Box sx={{ mt: 1.5 }}>{footer}</Box> : null
 
   if (staking.rewards.length === 0) {
     return (
       <Card sx={card}>
-        <Typography variant='subtitle2'>{t('staking.rewards.title')}</Typography>
+        {header}
         <Typography variant='caption' sx={{ color: 'text.secondary', display: 'block', mt: 0.5 }}>
-          {t('staking.rewards.empty')}
+          <StakingRichText text={t('staking.rewards.empty')} />
         </Typography>
+        {trailer}
       </Card>
     )
   }
 
   return (
     <Card sx={card}>
-      <Typography variant='subtitle2' sx={{ mb: 1 }}>
-        {t('staking.rewards.title')}
-      </Typography>
+      <Box sx={{ mb: 1 }}>{header}</Box>
 
       {/* Scrolls inside the card rather than widening the page, which is what keeps a phone from
           panning the whole screen sideways to read a column. */}
@@ -80,6 +96,7 @@ export default function StakingRewards({ staking }: Props): JSX.Element {
           </TableBody>
         </Table>
       </Box>
+      {trailer}
     </Card>
   )
 }

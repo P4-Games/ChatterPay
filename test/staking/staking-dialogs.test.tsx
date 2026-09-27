@@ -23,6 +23,19 @@ describe('StakingPinDialog', () => {
     )
   })
 
+  it('starts empty every time it opens, including after a confirmed operation', async () => {
+    // The page closes the dialog itself once an operation is sent, without going through cancel, and
+    // the next action reopens the same dialog.
+    const props = { action: 'withdraw_rewards' as const, onCancel: vi.fn(), onConfirm: vi.fn() }
+    const { rerender } = render(<StakingPinDialog open {...props} />)
+
+    await userEvent.type(screen.getByTestId('staking-pin-input'), '1234')
+    rerender(<StakingPinDialog open={false} {...props} />)
+    rerender(<StakingPinDialog open {...props} />)
+
+    expect(screen.getByTestId('staking-pin-input')).toHaveValue('')
+  })
+
   it('will not submit an empty PIN', () => {
     render(
       <StakingPinDialog open action='withdraw_rewards' onCancel={vi.fn()} onConfirm={vi.fn()} />

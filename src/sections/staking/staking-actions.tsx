@@ -1,7 +1,6 @@
 'use client'
 
 import Box from '@mui/material/Box'
-import Card from '@mui/material/Card'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 
@@ -18,42 +17,30 @@ import type { StakingView, StakingActionName } from 'src/app/api/hooks/use-staki
 
 type Props = {
   staking: StakingView
+  /** The operations this group may offer, in the order they are rendered. */
+  actions: readonly StakingActionName[]
+  /** Whether the group also carries the control that stops staking. */
+  includeStop?: boolean
   busy?: StakingActionName | null
   onAction: (action: StakingActionName) => void
+  /** Opens the confirmation for stopping staking. */
+  onLeave?: () => void
+  /**
+   * Smaller buttons with no reason under them, for a card header. The card then renders
+   * {@link StakingActionReasons} in its body, so a refusal is still explained.
+   */
+  compact?: boolean
+  testId?: string
 }
 
-/**
- * What keeps a position healthy, in the order it is offered.
- *
- * The icons come from the shared map so that an operation is drawn the same here and in the history
- * that records it.
- */
-const ROUTINE: { action: StakingActionName; icon: string }[] = [
-  { action: 'register_and_delegate', icon: STAKING_ACTION_ICONS.register_and_delegate },
-  { action: 'delegate_vote', icon: STAKING_ACTION_ICONS.delegate_vote },
-  { action: 'redelegate_pool', icon: STAKING_ACTION_ICONS.redelegate_pool },
-  { action: 'withdraw_rewards', icon: STAKING_ACTION_ICONS.withdraw_rewards }
-]
-
-/**
- * Leaving with the balance.
- *
- * Grouped apart rather than coloured like a warning. Stopping staking lives on the status card and
- * is the single way out of participation; this one also moves every lovelace to an address, so it is
- * separated by position and by a label naming the group — which survives a colourblind viewer and a
- * greyscale screenshot in a way a red border does not.
- */
-const LEAVING: { action: StakingActionName; icon: string }[] = [
-  { action: 'exit_and_send_max', icon: STAKING_ACTION_ICONS.exit_and_send_max }
-]
+/** States in which the position is being unwound and nothing else may be started. */
+const LEAVING_STATES = ['exit_pending', 'exit_submitted']
 
 /**
  * Refusals that mean the action does not apply to this wallet at all.
  *
- * A control for one of these is noise: "start staking — already registered" describes a state the
- * user can already see, and a line of explanation under every inapplicable button is how a card
- * becomes a wall of text. Every other refusal is one the user may be able to act on, so it is shown
- * with its reason.
+ * A control for one of these describes a state the user can already see, so it is not rendered. Every
+ * other refusal is one the user may be able to act on, so it is shown with its reason.
  */
 const NOT_APPLICABLE = [
   'already_registered',
@@ -65,132 +52,186 @@ const NOT_APPLICABLE = [
 // ----------------------------------------------------------------------
 
 /**
- * What the user can do, and why they cannot do the rest.
+ * Whether the position is an ordinary one the user can stop from this screen: registered, signed for
+ * by this deployment, not opted out and not already leaving.
  *
- * The backend answers with a refusal per action rather than a list of what is permitted, and that
- * shape is kept all the way to the screen: a control that is offered but refused carries the reason
- * as a short line under it. "Delegate your voting power first" is something a user can act on; a
- * greyed-out button with no explanation is something they file a support ticket about.
+ * @param staking - The position.
+ * @returns `true` when the stop control applies.
+ */
+export function canStopStaking(staking: StakingView): boolean {
+  return (
+    staking.registered &&
+    staking.signable &&
+    staking.optOut === null &&
+    !LEAVING_STATES.includes(staking.state)
+  )
+}
+
+/**
+ * The operations out of `actions` that get a control on this wallet.
  *
- * The reason is never folded into the label, because a label whose length depends on the wallet is
- * what makes a row of buttons ragged, and it is not hidden in a tooltip either, since a disabled
- * control takes no pointer events and a phone has no hover.
+ * Starting staking applies only to a wallet that is not registered; for a registered one the control
+ * would describe what is already true. An action the backend never mentioned, or refused as not
+ * applicable, gets no control either.
  *
- * Buttons are sized by their content and wrap. Equal cells across a wide screen produce controls
- * several times wider than their labels, which reads as a form to work through rather than as a set
- * of things one may do. They do stretch on a phone, where full width is the ordinary shape.
+ * @param staking - The position.
+ * @param actions - The candidates.
+ * @returns The candidates that apply, in their original order.
+ */
+export function offeredActions(
+  staking: StakingView,
+  actions: readonly StakingActionName[]
+): StakingActionName[] {
+  return actions.filter((action) => {
+    if (action === 'register_and_delegate' && staking.registered) return false
+    if (!(action in staking.actions)) return false
+    const refusal = staking.actions[action] ?? null
+    return refusal === null || !NOT_APPLICABLE.includes(refusal)
+  })
+}
+
+// ----------------------------------------------------------------------
+
+/**
+ * The controls for a set of staking operations, rendered inside the card the operation belongs to:
+ * withdrawing with the rewards, starting, changing the pool and stopping with the position.
  *
- * Deregistration is deliberately absent. It is the same decision as switching staking off, and it is
- * offered once, on the status card, so that the voluntary exit has a single entry point.
+ * Only staking operations are offered. Delegating the vote belongs to the governance tab, and moving
+ * the whole balance out is a transfer.
+ *
+ * A refused control carries the backend's reason as a short line under it, never in the label or a
+ * tooltip: a disabled control takes no pointer events and a phone has no hover.
+ *
+ * Renders nothing when no control applies, so the hosting card shows no empty row.
  */
 export default function StakingActions({
   staking,
+  actions,
+  includeStop = false,
   busy = null,
-  onAction
+  onAction,
+  onLeave,
+  compact = false,
+  testId = 'staking-actions'
 }: Props): JSX.Element | null {
   const { t } = useTranslate()
-  const { card, accent } = useStakingStyles()
+  const { accent, theme } = useStakingStyles()
 
-  /**
-   * Whether an action is worth a control for this wallet.
-   *
-   * @param entry - The action and its icon.
-   * @returns Whether to render it.
-   */
-  const offered = (entry: { action: StakingActionName }): boolean => {
-    if (!(entry.action in staking.actions)) return false
-    const refusal = staking.actions[entry.action] ?? null
-    return refusal === null || !NOT_APPLICABLE.includes(refusal)
-  }
+  const offered = offeredActions(staking, actions)
+  const stoppable = includeStop && onLeave !== undefined && canStopStaking(staking)
 
-  const routine = ROUTINE.filter(offered)
-  const leaving = LEAVING.filter(offered)
+  if (offered.length === 0 && !stoppable) return null
 
-  if (routine.length === 0 && leaving.length === 0) return null
+  const width = compact ? 'auto' : { xs: '100%', sm: 'auto' }
 
-  /**
-   * One control, with its reason when it has one.
-   *
-   * @param entry - The action and the icon it carries.
-   * @returns The control.
-   */
-  const control = (entry: { action: StakingActionName; icon: string }): JSX.Element => {
-    const refusal = staking.actions[entry.action] ?? null
+  const buttonSx = (color: string) => ({
+    height: compact ? 30 : 36,
+    px: compact ? 1.5 : 2,
+    width,
+    whiteSpace: 'nowrap',
+    color,
+    borderColor: color,
+    borderWidth: '0.5px',
+    '&:hover': { borderColor: color, borderWidth: '0.5px' }
+  })
 
-    return (
-      <Box key={entry.action} sx={{ width: { xs: '100%', sm: 'auto' } }}>
-        <Button
-          variant='outlined'
-          startIcon={<Iconify icon={entry.icon} width={18} />}
-          disabled={refusal !== null || busy !== null}
-          onClick={() => onAction(entry.action)}
-          data-testid={`staking-action-${entry.action}`}
-          sx={{
-            height: 42,
-            px: 2,
-            width: { xs: '100%', sm: 'auto' },
-            whiteSpace: 'nowrap',
-            color: accent,
-            borderColor: accent,
-            borderWidth: '0.5px',
-            '&:hover': { borderColor: accent, borderWidth: '0.5px' }
-          }}
-        >
-          {t(`staking.actions.${entry.action}`)}
-        </Button>
+  return (
+    <Box
+      data-testid={testId}
+      sx={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        alignItems: 'flex-start',
+        justifyContent: compact ? 'flex-end' : 'flex-start',
+        gap: compact ? 1 : 1.5
+      }}
+    >
+      {offered.map((action) => {
+        const refusal = staking.actions[action] ?? null
+        return (
+          <Box key={action} sx={{ width }}>
+            <Button
+              variant='outlined'
+              size={compact ? 'small' : 'medium'}
+              startIcon={<Iconify icon={STAKING_ACTION_ICONS[action]} width={compact ? 16 : 18} />}
+              disabled={refusal !== null || busy !== null}
+              onClick={() => onAction(action)}
+              data-testid={`staking-action-${action}`}
+              sx={buttonSx(accent)}
+            >
+              {t(`staking.actions.${action}`)}
+            </Button>
 
-        {refusal !== null && (
+            {refusal !== null && !compact && (
+              <Typography
+                variant='caption'
+                data-testid={`staking-action-reason-${action}`}
+                sx={{ display: 'block', mt: 0.5, color: 'text.disabled', lineHeight: 1.4 }}
+              >
+                {t(`staking.refusals.${refusal}`, { defaultValue: refusal })}
+              </Typography>
+            )}
+          </Box>
+        )
+      })}
+
+      {stoppable && (
+        <Box sx={{ width }}>
+          <Button
+            variant='outlined'
+            size={compact ? 'small' : 'medium'}
+            startIcon={<Iconify icon='solar:logout-2-bold' width={compact ? 16 : 18} />}
+            disabled={busy !== null}
+            onClick={onLeave}
+            data-testid='staking-action-stop'
+            sx={buttonSx(theme.palette.error.main)}
+          >
+            {t('staking.deactivate.confirm')}
+          </Button>
+        </Box>
+      )}
+    </Box>
+  )
+}
+
+// ----------------------------------------------------------------------
+
+/**
+ * Why each refused control in a compact group is disabled, one line per refusal.
+ *
+ * The compact group has no room under its buttons, so the card that hosts it renders this in its body.
+ * Renders nothing when every offered action is allowed.
+ */
+export function StakingActionReasons({
+  staking,
+  actions
+}: {
+  staking: StakingView
+  actions: readonly StakingActionName[]
+}): JSX.Element | null {
+  const { t } = useTranslate()
+
+  const refused = offeredActions(staking, actions).filter(
+    (action) => (staking.actions[action] ?? null) !== null
+  )
+
+  if (refused.length === 0) return null
+
+  return (
+    <Box>
+      {refused.map((action) => {
+        const refusal = staking.actions[action] as string
+        return (
           <Typography
+            key={action}
             variant='caption'
-            data-testid={`staking-action-reason-${entry.action}`}
-            sx={{ display: 'block', mt: 0.5, color: 'text.disabled', lineHeight: 1.4 }}
+            data-testid={`staking-action-reason-${action}`}
+            sx={{ display: 'block', color: 'text.disabled', lineHeight: 1.4 }}
           >
             {t(`staking.refusals.${refusal}`, { defaultValue: refusal })}
           </Typography>
-        )}
-      </Box>
-    )
-  }
-
-  return (
-    <Card sx={card}>
-      <Typography variant='subtitle2' sx={{ mb: 1.5 }}>
-        {t('staking.actions.title')}
-      </Typography>
-
-      {routine.length > 0 && (
-        <Box
-          data-testid='staking-actions-grid'
-          sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', gap: 1.5 }}
-        >
-          {routine.map(control)}
-        </Box>
-      )}
-
-      {leaving.length > 0 && (
-        <>
-          {/* A heading, styled as the card's own. Grey caption text is what a refused button's reason
-              looks like, and it sits under its control; reusing it above a button made one caption
-              read as the explanation of the other. */}
-          <Typography
-            variant='subtitle2'
-            sx={{
-              display: 'block',
-              mt: routine.length > 0 ? 2.5 : 0,
-              mb: 1.5
-            }}
-          >
-            {t('staking.actions.leavingGroup')}
-          </Typography>
-
-          <Box
-            data-testid='staking-actions-leaving'
-            sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', gap: 1.5 }}
-          >
-            {leaving.map(control)}
-          </Box>
-        </>
-      )}
-    </Card>
+        )
+      })}
+    </Box>
   )
 }
