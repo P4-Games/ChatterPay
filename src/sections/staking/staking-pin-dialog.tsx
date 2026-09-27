@@ -86,7 +86,13 @@ export function useStakingFailureMessage(): (failure: StakingFailure) => string 
     }
 
     const key = MESSAGE_OF[failure.code]
-    return key === undefined ? failure.code : t(key)
+    if (key !== undefined) return t(key)
+    // A decision's reason, such as `sponsored_reentry_limit`, has the same sentence the action
+    // buttons and the membership card show for it. Anything else is shown as it arrived.
+    if (/^[a-z0-9_]+$/.test(failure.code)) {
+      return t(`staking.refusals.${failure.code}`, { defaultValue: failure.code })
+    }
+    return failure.code
   }
 }
 

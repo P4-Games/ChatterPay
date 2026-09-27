@@ -163,8 +163,20 @@ export default function StakingDashboardView(): JSX.Element {
     })
 
     if (!started.ok) {
+      if (consenting) {
+        // The consent stands and the sweep enrols the wallet once it qualifies, so staking is on even
+        // though this registration was refused. Reported as that, with the reason, rather than as an
+        // error for something that went through.
+        setNotice(
+          t('staking.actions.consentedNotRegistered', {
+            reason: failureMessage({ code: started.message, pin: started.pin })
+          })
+        )
+        await refresh()
+        reset()
+        return
+      }
       setFailure({ code: started.message, pin: started.pin })
-      if (consenting) await refresh()
       setBusy(null)
       return
     }
