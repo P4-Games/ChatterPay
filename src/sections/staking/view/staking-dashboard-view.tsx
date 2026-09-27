@@ -22,7 +22,7 @@ import {
 } from 'src/app/api/hooks'
 
 import StakingActions, { canStopStaking, StakingActionReasons } from '../staking-actions'
-import StakingMembership from '../staking-membership'
+import StakingMembership, { needsConsent } from '../staking-membership'
 import StakingPageShell from '../staking-page-shell'
 import StakingDeactivateDialog from '../staking-deactivate-dialog'
 import StakingHistory from '../staking-history'
@@ -42,12 +42,14 @@ import { hasOperationInFlight, type StakingView } from 'src/app/api/hooks/use-st
 /** How much of a bech32 identifier is enough to recognise it. */
 const ID_PREFIX = 12
 
-/** The operations offered next to the position, in each layout. Stopping is added separately. */
-const POSITION_ACTIONS: readonly StakingActionName[] = ['register_and_delegate']
-const POSITION_ACTIONS_DETAILED: readonly StakingActionName[] = [
-  'register_and_delegate',
-  'redelegate_pool'
-]
+/**
+ * The operations offered next to the position, in each layout. Stopping is added separately.
+ *
+ * Starting is not among them: the membership card carries it as the one control of a wallet that is
+ * not staking, and a second copy here would offer the same decision twice.
+ */
+const POSITION_ACTIONS: readonly StakingActionName[] = []
+const POSITION_ACTIONS_DETAILED: readonly StakingActionName[] = ['redelegate_pool']
 
 /** The operations offered next to the rewards. */
 const REWARD_ACTIONS: readonly StakingActionName[] = ['withdraw_rewards']
@@ -111,9 +113,15 @@ export default function StakingDashboardView(): JSX.Element {
    * The controls stay disabled until the position has been read again. Releasing them as soon as the
    * request is accepted would show the position from before the operation, with its controls enabled,
    * and let the same operation be requested twice while the first is still on its way to the chain.
+   *
+   * Turning staking on records the consent between the two calls when the position needs one (see
+   * {@link needsConsent}). After the PIN, so a wrong PIN changes nothing; before the request, because
+   * the backend refuses to register a wallet that still carries an opt-out. If the registration is then
+   * refused, the consent stands and the sweep enrols the wallet once it qualifies, so the position is
+   * read again to show that rather than the state from before.
    */
   const run = async (action: StakingActionName, pin: string): Promise<void> => {
-    if (!cardanoAddress) return
+    if (!cardanoAddress || !staking) return
     setBusy(action)
     setFailure(null)
 
@@ -124,12 +132,23 @@ export default function StakingDashboardView(): JSX.Element {
       return
     }
 
+    const consenting = action === 'register_and_delegate' && needsConsent(staking)
+    if (consenting) {
+      const consented = await setStakingConsent(cardanoAddress, true)
+      if (!consented.ok) {
+        setFailure(consented.message)
+        setBusy(null)
+        return
+      }
+    }
+
     const started = await requestStakingAction(cardanoAddress, action, {
       pinGrant: String(authorised.data.grant ?? '')
     })
 
     if (!started.ok) {
       setFailure(started.message)
+      if (consenting) await refresh()
       setBusy(null)
       return
     }
@@ -182,7 +201,17 @@ export default function StakingDashboardView(): JSX.Element {
       setFailure(null)
       setPending(action)
     },
-    onJoin: () => void changeConsent(true),
+    // A registration still on chain has nothing to send: an exit that did not go through leaves the
+    // wallet registered with its opt-out recorded, and withdrawing the opt-out is the whole of
+    // turning staking on for it. Every other case registers, under the PIN.
+    onJoin: () => {
+      if (staking.registered) {
+        void changeConsent(true)
+        return
+      }
+      setFailure(null)
+      setPending('register_and_delegate')
+    },
     onLeave: () => setDeactivating(true)
   }
 
@@ -370,7 +399,9 @@ function StakingSimpleView(props: SectionProps): JSX.Element {
           <MetricCard
             testId='staking-status'
             title={t('staking.cards.status.title')}
-            value={t(`staking.state.${staking.state}`, { defaultValue: staking.state })}
+            value={t(`staking.state.${staking.state}`, {
+              defaultValue: staking.state
+            })}
             headerAction={position.header}
             description={
               active ? t('staking.cards.status.active') : t('staking.cards.status.inactive')
@@ -450,7 +481,9 @@ function StakingAdvancedView(props: SectionProps): JSX.Element {
           <Chip
             size='small'
             variant='outlined'
-            label={t(`staking.state.${staking.state}`, { defaultValue: staking.state })}
+            label={t(`staking.state.${staking.state}`, {
+              defaultValue: staking.state
+            })}
             color={STATE_COLORS[staking.state] ?? 'default'}
             sx={{ height: 24, fontSize: '0.75rem' }}
           />
