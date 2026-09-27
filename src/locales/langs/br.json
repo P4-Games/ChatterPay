@@ -723,6 +723,7 @@
       "cancel": "Cancelar",
       "started": "Enviado à rede.",
       "startedWithTx": "Enviado à rede. Transação {{tx}}",
+      "consentedNotRegistered": "Você ativou o staking. A carteira será registrada quando for possível: {{reason}}",
       "failed": "Não foi possível iniciar: {{reason}}"
     },
     "refusals": {
