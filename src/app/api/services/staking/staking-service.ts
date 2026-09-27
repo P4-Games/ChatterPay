@@ -36,9 +36,18 @@ type BackendResponseError = {
 
 type BackendResponse<TData extends object> = BackendResponseSuccess<TData> | BackendResponseError
 
+/**
+ * What the backend's security service reported about a refused PIN: the attempts left after a wrong
+ * one, and until when a blocked one stays blocked (ISO 8601).
+ */
+export type StakingPinRefusal = {
+  remainingAttempts: number | null
+  blockedUntil: string | null
+}
+
 export type StakingServiceResult<TData extends object> =
   | { ok: true; data: TData }
-  | { ok: false; status: number; code: string; message: string }
+  | { ok: false; status: number; code: string; message: string; pin?: StakingPinRefusal }
 
 // ----------------------------------------------------------------------
 
@@ -183,7 +192,8 @@ const headers = () => ({
  * received one code for all three could only show one message.
  *
  * `active` is the status the security service reports for a PIN that did not match but still has
- * attempts left.
+ * attempts left. `pin_required` is an authorisation sent without a PIN for a user who has one, which
+ * happens when the PIN was set after the screen read the position.
  */
 const SECURITY_GATE_CODES: Record<string, string> = {
   not_set: 'SECURITY_PIN_NOT_SET',
@@ -191,7 +201,26 @@ const SECURITY_GATE_CODES: Record<string, string> = {
   blocked: 'SECURITY_PIN_BLOCKED',
   pin_blocked: 'SECURITY_PIN_BLOCKED',
   active: 'SECURITY_PIN_REJECTED',
-  pin_rejected: 'SECURITY_PIN_REJECTED'
+  pin_rejected: 'SECURITY_PIN_REJECTED',
+  pin_required: 'SECURITY_PIN_REQUIRED'
+}
+
+/**
+ * Reads the PIN figures beside a refusal, keeping only well-typed values.
+ *
+ * @param raw - Whatever the backend sent as `data.pin`.
+ * @returns The figures, or `undefined` when there were none.
+ */
+function readPinRefusal(raw: unknown): StakingPinRefusal | undefined {
+  if (typeof raw !== 'object' || raw === null) return undefined
+  const { remainingAttempts, blockedUntil } = raw as {
+    remainingAttempts?: unknown
+    blockedUntil?: unknown
+  }
+  return {
+    remainingAttempts: typeof remainingAttempts === 'number' ? remainingAttempts : null,
+    blockedUntil: typeof blockedUntil === 'string' ? blockedUntil : null
+  }
 }
 
 /**
@@ -201,11 +230,20 @@ const SECURITY_GATE_CODES: Record<string, string> = {
  * screen distinguishes "you have no rewards" from "we cannot sign for this wallet" from "the security
  * gate says no", and a single error message would collapse all three into a shrug.
  */
-function toFailure(error: unknown): { ok: false; status: number; code: string; message: string } {
+function toFailure(error: unknown): {
+  ok: false
+  status: number
+  code: string
+  message: string
+  pin?: StakingPinRefusal
+} {
   if (axios.isAxiosError(error)) {
     const status = error.response?.status ?? 502
     const payload = error.response?.data as
-      | { data?: { message?: string; code?: number; details?: string }; message?: string }
+      | {
+          data?: { message?: string; code?: number; details?: string; pin?: unknown }
+          message?: string
+        }
       | undefined
     const message = payload?.data?.message ?? payload?.message ?? error.message
     const detail = (payload?.data?.details ?? '').trim()
@@ -213,7 +251,10 @@ function toFailure(error: unknown): { ok: false; status: number; code: string; m
       message === 'security_gate' && SECURITY_GATE_CODES[detail] !== undefined
         ? SECURITY_GATE_CODES[detail]
         : message
-    return { ok: false, status, code, message }
+    const pin = readPinRefusal(payload?.data?.pin)
+    return pin === undefined
+      ? { ok: false, status, code, message }
+      : { ok: false, status, code, message, pin }
   }
   return { ok: false, status: 500, code: 'UNKNOWN', message: 'Unexpected error' }
 }
@@ -299,7 +340,7 @@ export async function getStakingExitQuote(
 export async function authorizeStakingAction(
   phoneNumber: string,
   action: StakingAction,
-  pin: string,
+  pin: string | null,
   recipientAddress: string | null,
   governanceTarget: GovernanceTarget | null = null
 ): Promise<
