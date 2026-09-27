@@ -44,11 +44,16 @@ vi.mock('axios', () => {
 const PHONE = '5491133334444'
 
 /** An axios rejection shaped the way the backend's error envelope arrives. */
-function backendRefusal(status: number, message: string, details?: string): unknown {
+function backendRefusal(
+  status: number,
+  message: string,
+  details?: string,
+  pin?: Record<string, unknown>
+): unknown {
   return {
     isAxiosError: true,
     message: 'Request failed',
-    response: { status, data: { status: 'error', data: { code: status, message, details } } }
+    response: { status, data: { status: 'error', data: { code: status, message, details, pin } } }
   }
 }
 
@@ -129,6 +134,54 @@ describe('authorizeStakingAction', () => {
       status: 403,
       code: 'SECURITY_PIN_REJECTED'
     })
+  })
+
+  it('carries the attempts left after a wrong PIN', async () => {
+    vi.mocked(axios.post).mockRejectedValue(
+      backendRefusal(403, 'security_gate', 'active', { remainingAttempts: 2, blockedUntil: null })
+    )
+
+    await expect(
+      authorizeStakingAction(PHONE, 'delegate_vote', '246810', null)
+    ).resolves.toMatchObject({
+      code: 'SECURITY_PIN_REJECTED',
+      pin: { remainingAttempts: 2, blockedUntil: null }
+    })
+  })
+
+  it('carries until when a blocked PIN stays blocked', async () => {
+    vi.mocked(axios.post).mockRejectedValue(
+      backendRefusal(403, 'security_gate', 'blocked', {
+        remainingAttempts: null,
+        blockedUntil: '2030-01-01T00:05:00.000Z'
+      })
+    )
+
+    await expect(
+      authorizeStakingAction(PHONE, 'delegate_vote', '246810', null)
+    ).resolves.toMatchObject({
+      code: 'SECURITY_PIN_BLOCKED',
+      pin: { remainingAttempts: null, blockedUntil: '2030-01-01T00:05:00.000Z' }
+    })
+  })
+
+  it('tells an authorisation sent without the PIN a user has apart', async () => {
+    vi.mocked(axios.post).mockRejectedValue(backendRefusal(403, 'security_gate', 'pin_required'))
+
+    await expect(authorizeStakingAction(PHONE, 'delegate_vote', null, null)).resolves.toMatchObject(
+      {
+        code: 'SECURITY_PIN_REQUIRED'
+      }
+    )
+  })
+
+  it('sends no PIN for a user who has none set', async () => {
+    vi.mocked(axios.post).mockResolvedValue(backendGrant())
+
+    await authorizeStakingAction(PHONE, 'delegate_vote', null, null)
+
+    const [, body] = vi.mocked(axios.post).mock.calls[0] as [string, Record<string, unknown>]
+    expect(body.pin).toBeNull()
   })
 
   it('reads the gate reasons the action endpoint reports', async () => {

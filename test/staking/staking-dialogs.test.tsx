@@ -1,14 +1,33 @@
 import { describe, expect, it, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import StakingPinDialog from 'src/sections/staking/staking-pin-dialog'
+import StakingPinDialog, { isPinBlocked } from 'src/sections/staking/staking-pin-dialog'
 import StakingExitDialog from 'src/sections/staking/staking-exit-dialog'
 
 // ----------------------------------------------------------------------
 
 /** A well-formed Preprod address. Fictional: nothing here reaches a chain. */
 const RECIPIENT = 'addr_test1qtestrecipientaddressfortestsonly00000000000000000000000000'
+
+/** A PIN of the default `SECURITY_PIN_LENGTH`, which this suite does not configure. */
+const PIN = '246810'
+
+/** The PIN boxes, one per digit. Password inputs have no ARIA role, so they are read from the DOM. */
+function pinBoxes(): HTMLInputElement[] {
+  return Array.from(screen.getByTestId('staking-pin-input').querySelectorAll('input'))
+}
+
+/**
+ * Types into the first PIN box. The input moves the focus box by box, as it does for the user.
+ *
+ * @param digits - What to type.
+ */
+async function typePin(digits: string): Promise<void> {
+  const [first] = pinBoxes()
+  await userEvent.click(first)
+  await userEvent.keyboard(digits)
+}
 
 describe('StakingPinDialog', () => {
   it('names the operation the PIN authorises', () => {
@@ -23,17 +42,29 @@ describe('StakingPinDialog', () => {
     )
   })
 
+  it('asks for the PIN with the input the profile uses: one hidden box per digit', () => {
+    render(
+      <StakingPinDialog open action='withdraw_rewards' onCancel={vi.fn()} onConfirm={vi.fn()} />
+    )
+
+    const boxes = pinBoxes()
+    expect(boxes).toHaveLength(PIN.length)
+    for (const box of boxes) expect(box).toHaveAttribute('type', 'password')
+  })
+
   it('starts empty every time it opens, including after a confirmed operation', async () => {
     // The page closes the dialog itself once an operation is sent, without going through cancel, and
     // the next action reopens the same dialog.
     const props = { action: 'withdraw_rewards' as const, onCancel: vi.fn(), onConfirm: vi.fn() }
     const { rerender } = render(<StakingPinDialog open {...props} />)
 
-    await userEvent.type(screen.getByTestId('staking-pin-input'), '1234')
+    await typePin(PIN)
     rerender(<StakingPinDialog open={false} {...props} />)
     rerender(<StakingPinDialog open {...props} />)
 
-    expect(screen.getByTestId('staking-pin-input')).toHaveValue('')
+    await waitFor(() => {
+      for (const box of pinBoxes()) expect(box).toHaveValue('')
+    })
   })
 
   it('will not submit an empty PIN', () => {
@@ -44,24 +75,64 @@ describe('StakingPinDialog', () => {
     expect(screen.getByTestId('staking-pin-submit')).toBeDisabled()
   })
 
+  it('will not submit a PIN shorter than the configured length', async () => {
+    render(
+      <StakingPinDialog open action='withdraw_rewards' onCancel={vi.fn()} onConfirm={vi.fn()} />
+    )
+
+    await typePin(PIN.slice(0, 3))
+
+    expect(screen.getByTestId('staking-pin-submit')).toBeDisabled()
+  })
+
+  it('takes digits only', async () => {
+    render(
+      <StakingPinDialog open action='withdraw_rewards' onCancel={vi.fn()} onConfirm={vi.fn()} />
+    )
+
+    await typePin('ab')
+
+    for (const box of pinBoxes()) expect(box).toHaveValue('')
+  })
+
   it('hands the PIN over once', async () => {
     const confirm = vi.fn()
     render(
       <StakingPinDialog open action='withdraw_rewards' onCancel={vi.fn()} onConfirm={confirm} />
     )
 
-    await userEvent.type(screen.getByTestId('staking-pin-input'), '1234')
+    await typePin(PIN)
     await userEvent.click(screen.getByTestId('staking-pin-submit'))
 
-    expect(confirm).toHaveBeenCalledWith('1234')
+    await waitFor(() => expect(confirm).toHaveBeenCalledTimes(1))
+    expect(confirm).toHaveBeenCalledWith(PIN)
   })
 
-  it('shows what went wrong without clearing what was typed', async () => {
+  it('empties the boxes when the PIN is refused, so it is typed again rather than erased', async () => {
+    const props = { action: 'withdraw_rewards' as const, onCancel: vi.fn(), onConfirm: vi.fn() }
+    const { rerender } = render(<StakingPinDialog open {...props} />)
+
+    await typePin(PIN)
+    rerender(
+      <StakingPinDialog
+        open
+        {...props}
+        error={{ code: 'SECURITY_PIN_REJECTED', pin: { remainingAttempts: 2, blockedUntil: null } }}
+      />
+    )
+
+    await waitFor(() => {
+      for (const box of pinBoxes()) expect(box).toHaveValue('')
+    })
+    expect(pinBoxes()[0]).toHaveFocus()
+  })
+
+  it('shows what went wrong', () => {
     render(
       <StakingPinDialog
         open
         action='withdraw_rewards'
-        error='staking.pin.rejected'
+        error={{ code: 'SECURITY_PIN_REJECTED' }}
         onCancel={vi.fn()}
         onConfirm={vi.fn()}
       />
@@ -71,19 +142,20 @@ describe('StakingPinDialog', () => {
   })
 
   // A refusal the user resolves themselves is shown as a sentence. `security_gate` on screen tells them
-  // nothing they can act on, and the three situations behind it are resolved differently: set a PIN,
-  // wait for the block to lift, type it again.
+  // nothing they can act on, and the situations behind it are resolved differently: set a PIN, wait for
+  // the block to lift, type it again.
   it.each([
     ['SECURITY_PIN_NOT_SET', 'staking.pin.notSet'],
     ['SECURITY_PIN_BLOCKED', 'staking.pin.blocked'],
     ['SECURITY_PIN_REJECTED', 'staking.pin.rejected'],
+    ['SECURITY_PIN_REQUIRED', 'staking.pin.required'],
     ['security_gate', 'staking.pin.gate']
   ])('explains %s rather than showing the code', (code, key) => {
     render(
       <StakingPinDialog
         open
         action='delegate_vote'
-        error={code}
+        error={{ code }}
         onCancel={vi.fn()}
         onConfirm={vi.fn()}
       />
@@ -93,13 +165,47 @@ describe('StakingPinDialog', () => {
     expect(screen.queryByText(code)).not.toBeInTheDocument()
   })
 
+  it('says how many attempts are left after a wrong PIN', () => {
+    render(
+      <StakingPinDialog
+        open
+        action='withdraw_rewards'
+        error={{
+          code: 'SECURITY_PIN_REJECTED',
+          pin: { remainingAttempts: 2, blockedUntil: null }
+        }}
+        onCancel={vi.fn()}
+        onConfirm={vi.fn()}
+      />
+    )
+
+    expect(screen.getByText('staking.pin.rejectedAttempts|count=2')).toBeInTheDocument()
+  })
+
+  it('says until when a blocked PIN stays blocked', () => {
+    render(
+      <StakingPinDialog
+        open
+        action='withdraw_rewards'
+        error={{
+          code: 'SECURITY_PIN_BLOCKED',
+          pin: { remainingAttempts: null, blockedUntil: '2030-01-01T00:05:00.000Z' }
+        }}
+        onCancel={vi.fn()}
+        onConfirm={vi.fn()}
+      />
+    )
+
+    expect(screen.getByText(/^staking\.pin\.blockedUntil\|time=.+/)).toBeInTheDocument()
+  })
+
   it('shows a refusal it cannot explain as it arrived', () => {
     // A diagnosable refusal is more use to whoever is reading it than a generic apology.
     render(
       <StakingPinDialog
         open
         action='withdraw_rewards'
-        error='refused: rewards_blocked_by_governance'
+        error={{ code: 'refused: rewards_blocked_by_governance' }}
         onCancel={vi.fn()}
         onConfirm={vi.fn()}
       />
@@ -108,7 +214,7 @@ describe('StakingPinDialog', () => {
     expect(screen.getByText('refused: rewards_blocked_by_governance')).toBeInTheDocument()
   })
 
-  it('does not accept input while a submission is running', async () => {
+  it('does not accept input while a submission is running', () => {
     render(
       <StakingPinDialog
         open
@@ -119,9 +225,21 @@ describe('StakingPinDialog', () => {
       />
     )
 
-    await userEvent.type(screen.getByTestId('staking-pin-input'), '1234')
-
+    for (const box of pinBoxes()) expect(box).toBeDisabled()
     expect(screen.getByTestId('staking-pin-submit')).toBeDisabled()
+  })
+})
+
+describe('isPinBlocked', () => {
+  it('reads a block that has not lifted', () => {
+    expect(isPinBlocked(new Date(Date.now() + 60_000).toISOString())).toBe(true)
+  })
+
+  it('reads an expired block, an absent one and an unreadable one as not blocked', () => {
+    expect(isPinBlocked(new Date(Date.now() - 60_000).toISOString())).toBe(false)
+    expect(isPinBlocked(null)).toBe(false)
+    expect(isPinBlocked(undefined)).toBe(false)
+    expect(isPinBlocked('not a date')).toBe(false)
   })
 })
 

@@ -27,7 +27,11 @@ import StakingPageShell from '../staking-page-shell'
 import StakingDeactivateDialog from '../staking-deactivate-dialog'
 import StakingHistory from '../staking-history'
 import StakingNotices from '../staking-notices'
-import StakingPinDialog from '../staking-pin-dialog'
+import StakingPinDialog, {
+  isPinBlocked,
+  useStakingFailureMessage,
+  type StakingFailure
+} from '../staking-pin-dialog'
 import StakingRewards from '../staking-rewards'
 import StakingRichText from '../staking-rich-text'
 import { formatAdaWithUnit, isPositive } from '../staking-amount'
@@ -77,10 +81,13 @@ const STATE_COLORS: Record<string, 'success' | 'warning' | 'error'> = {
  *
  * Only staking operations are offered here. Vote delegation lives on the governance tab.
  *
- * Every action runs in three steps: choose it, authorise it with the PIN, then send it. The middle step
- * is what makes the PIN specific to an operation: what comes back from it is a grant that names this
- * action, so it cannot be carried to another one, and the action request carries that grant rather than
- * the PIN.
+ * Every action runs in three steps: choose it, authorise it, then send it. The middle step is what makes
+ * the PIN specific to an operation: what comes back from it is a grant that names this action, so it
+ * cannot be carried to another one, and the action request carries that grant rather than the PIN.
+ *
+ * Whether the middle step asks for the PIN follows the rule the bot applies before a transfer, as the
+ * backend reports it in `pinRequired`: a user with a PIN set types it, a user without one is authorised
+ * without it, and a blocked PIN stops the action before any dialog opens.
  */
 export default function StakingDashboardView(): JSX.Element {
   const { t } = useTranslate()
@@ -93,11 +100,12 @@ export default function StakingDashboardView(): JSX.Element {
 
   const [busy, setBusy] = useState<StakingActionName | null>(null)
   const [pending, setPending] = useState<StakingActionName | null>(null)
-  const [failure, setFailure] = useState<string | null>(null)
+  const [failure, setFailure] = useState<StakingFailure | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
   // Leaving is confirmed before it is recorded, because the consequence the user has to weigh is not
   // the one the button says: staking will not resume on its own afterwards.
   const [deactivating, setDeactivating] = useState(false)
+  const failureMessage = useStakingFailureMessage()
 
   const reset = (): void => {
     setPending(null)
@@ -105,7 +113,7 @@ export default function StakingDashboardView(): JSX.Element {
   }
 
   /**
-   * Authorises an action with the PIN, then sends it.
+   * Authorises an action, with the PIN when the user has one, then sends it.
    *
    * A failure between the two calls leaves nothing started and costs the user one more PIN entry rather
    * than an operation they did not intend.
@@ -120,15 +128,23 @@ export default function StakingDashboardView(): JSX.Element {
    * refused, the consent stands and the sweep enrols the wallet once it qualifies, so the position is
    * read again to show that rather than the state from before.
    */
-  const run = async (action: StakingActionName, pin: string): Promise<void> => {
+  const run = async (action: StakingActionName, pin: string | null): Promise<void> => {
     if (!cardanoAddress || !staking) return
     setBusy(action)
     setFailure(null)
 
     const authorised = await authorizeStakingAction(cardanoAddress, action, pin)
     if (!authorised.ok) {
-      setFailure(authorised.message)
+      setFailure({ code: authorised.message, pin: authorised.pin })
       setBusy(null)
+      // The PIN was set, or became blocked, after the position was read. Reading it again brings
+      // `pinRequired` and the block up to date; a PIN set since then opens the dialog for this action.
+      if (authorised.message === 'SECURITY_PIN_REQUIRED') {
+        setPending(action)
+        await refresh()
+      } else if (authorised.message === 'SECURITY_PIN_BLOCKED') {
+        await refresh()
+      }
       return
     }
 
@@ -136,7 +152,7 @@ export default function StakingDashboardView(): JSX.Element {
     if (consenting) {
       const consented = await setStakingConsent(cardanoAddress, true)
       if (!consented.ok) {
-        setFailure(consented.message)
+        setFailure({ code: consented.message })
         setBusy(null)
         return
       }
@@ -147,7 +163,7 @@ export default function StakingDashboardView(): JSX.Element {
     })
 
     if (!started.ok) {
-      setFailure(started.message)
+      setFailure({ code: started.message, pin: started.pin })
       if (consenting) await refresh()
       setBusy(null)
       return
@@ -163,11 +179,37 @@ export default function StakingDashboardView(): JSX.Element {
     reset()
   }
 
+  /**
+   * Starts an action: asks for the PIN when the backend says this user needs one, and authorises it
+   * directly otherwise.
+   *
+   * A blocked PIN is reported without opening the dialog, as the bot does: there is nothing the user
+   * could type that would be accepted before the block lifts.
+   */
+  const choose = (action: StakingActionName): void => {
+    setFailure(null)
+    if (!staking) return
+    // Absent from a backend that predates the field: ask, and let the backend decide.
+    const pinRequired = staking.pinRequired !== false
+    if (pinRequired && isPinBlocked(staking.pinBlockedUntil)) {
+      setFailure({
+        code: 'SECURITY_PIN_BLOCKED',
+        pin: { remainingAttempts: null, blockedUntil: staking.pinBlockedUntil ?? null }
+      })
+      return
+    }
+    if (pinRequired) {
+      setPending(action)
+      return
+    }
+    void run(action, null)
+  }
+
   const changeConsent = async (accept: boolean): Promise<void> => {
     if (!cardanoAddress) return
     setBusy('register_and_delegate')
     const result = await setStakingConsent(cardanoAddress, accept)
-    if (!result.ok) setFailure(result.message)
+    if (!result.ok) setFailure({ code: result.message })
     await refresh()
     setBusy(null)
   }
@@ -197,20 +239,16 @@ export default function StakingDashboardView(): JSX.Element {
 
   const flows = {
     busy,
-    onAction: (action: StakingActionName) => {
-      setFailure(null)
-      setPending(action)
-    },
+    onAction: choose,
     // A registration still on chain has nothing to send: an exit that did not go through leaves the
     // wallet registered with its opt-out recorded, and withdrawing the opt-out is the whole of
-    // turning staking on for it. Every other case registers, under the PIN.
+    // turning staking on for it. Every other case registers, under the PIN when the user has one.
     onJoin: () => {
       if (staking.registered) {
         void changeConsent(true)
         return
       }
-      setFailure(null)
-      setPending('register_and_delegate')
+      choose('register_and_delegate')
     },
     onLeave: () => setDeactivating(true)
   }
@@ -227,6 +265,18 @@ export default function StakingDashboardView(): JSX.Element {
         </Alert>
       )}
 
+      {/* A refusal with no dialog open to show it: a blocked PIN, or an action that did not ask for one. */}
+      {failure && pending === null && (
+        <Alert
+          severity='error'
+          onClose={() => setFailure(null)}
+          sx={{ py: 0.5 }}
+          data-testid='staking-failure'
+        >
+          {failureMessage(failure)}
+        </Alert>
+      )}
+
       <StakingNotices staking={staking} />
 
       {mode === 'simple' ? (
@@ -240,7 +290,10 @@ export default function StakingDashboardView(): JSX.Element {
         action={pending}
         submitting={busy !== null}
         error={failure}
-        onCancel={reset}
+        onCancel={() => {
+          setFailure(null)
+          reset()
+        }}
         onConfirm={(pin) => {
           if (pending) void run(pending, pin)
         }}
@@ -263,8 +316,7 @@ export default function StakingDashboardView(): JSX.Element {
           // never registered has nothing to undo on chain, and switching the preference off is the
           // whole of leaving for it.
           if (staking.registered) {
-            setFailure(null)
-            setPending('deregister')
+            choose('deregister')
             return
           }
           void changeConsent(false)

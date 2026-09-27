@@ -30,7 +30,8 @@ type IParams = {
  * one operation because its nonce becomes that operation's idempotency key.
  *
  * The PIN itself is never stored here and never returned. It goes to the backend, which owns the
- * verification and the failed-attempt counter, and what comes back is the grant.
+ * verification and the failed-attempt counter, and what comes back is the grant. It is absent for a
+ * user with no PIN set, who still gets a grant.
  *
  * For a vote delegation the named operation includes what the vote is delegated *to*. Abstaining,
  * voting no confidence and following a named representative are three different instructions, so a
@@ -75,12 +76,15 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
     )
   }
 
-  if (typeof body.pin !== 'string' || body.pin.trim() === '') {
+  // Optional: a user with no PIN set is authorised without one. Which users need one is the backend's
+  // decision, taken against the user's own security status.
+  if (body.pin !== undefined && body.pin !== null && typeof body.pin !== 'string') {
     return NextResponse.json(
-      { error: { code: 'INVALID_REQUEST_BODY', message: 'pin is required' } },
+      { error: { code: 'INVALID_REQUEST_BODY', message: 'pin must be a string' } },
       { status: 400 }
     )
   }
+  const pin = typeof body.pin === 'string' && body.pin.trim() !== '' ? body.pin : null
 
   const recipientAddress =
     typeof body.recipientAddress === 'string' && body.recipientAddress.trim() !== ''
@@ -120,13 +124,13 @@ export async function POST(req: NextRequest, { params }: { params: IParams }) {
   const result = await authorizeStakingAction(
     user.phone_number,
     action as StakingAction,
-    body.pin,
+    pin,
     recipientAddress,
     governance.target
   )
   if (!result.ok) {
     return NextResponse.json(
-      { error: { code: result.code, message: result.message } },
+      { error: { code: result.code, message: result.message, pin: result.pin } },
       { status: result.status }
     )
   }

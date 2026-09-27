@@ -76,15 +76,22 @@ test.describe('the staking page', () => {
     await expect(total.or(unavailable)).toBeVisible()
   })
 
-  test('asks for the PIN against a named operation', async ({ page }) => {
+  test('asks for the PIN against a named operation, when the user has one', async ({ page }) => {
+    const state = page.waitForResponse(
+      (response) =>
+        /\/api\/v1\/wallet\/[^/]+\/staking$/.test(new URL(response.url()).pathname) && response.ok()
+    )
     await page.goto('/dashboard/staking')
+    const pinRequired = ((await (await state).json()) as { staking?: { pinRequired?: boolean } })
+      .staking?.pinRequired
 
     const action = page.getByTestId('staking-action-deregister')
     await expect(action).toBeVisible()
 
-    // Only if the backend allows it for this wallet. A disabled button is a correct outcome here and the
-    // test says so rather than forcing a click that would fail for the right reason.
-    if (await action.isEnabled()) {
+    // Only if the backend allows it for this wallet, and only for a user with a PIN set: a user without
+    // one is authorised without the dialog, as the bot does. A disabled button is a correct outcome here
+    // and the test says so rather than forcing a click that would fail for the right reason.
+    if (pinRequired !== false && (await action.isEnabled())) {
       await action.click()
       await expect(page.getByTestId('staking-pin-input')).toBeVisible()
       await expect(page.getByTestId('staking-pin-submit')).toBeDisabled()
