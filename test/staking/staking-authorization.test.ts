@@ -208,6 +208,28 @@ describe('authorizeStakingAction', () => {
     })
   })
 
+  it('names a refused decision by its reason', async () => {
+    vi.mocked(axios.post).mockRejectedValue(
+      backendRefusal(409, 'refused', 'sponsored_reentry_limit: 1 in 30d')
+    )
+
+    await expect(
+      authorizeStakingAction(PHONE, 'delegate_vote', '246810', null)
+    ).resolves.toMatchObject({
+      ok: false,
+      status: 409,
+      code: 'sponsored_reentry_limit'
+    })
+  })
+
+  it('keeps `refused` when the decision gave no reason', async () => {
+    vi.mocked(axios.post).mockRejectedValue(backendRefusal(409, 'refused'))
+
+    await expect(
+      authorizeStakingAction(PHONE, 'delegate_vote', '246810', null)
+    ).resolves.toMatchObject({ code: 'refused' })
+  })
+
   it('carries every other refusal through untouched', async () => {
     vi.mocked(axios.post).mockRejectedValue(
       backendRefusal(401, 'assertion', 'missing: no assertion presented')
