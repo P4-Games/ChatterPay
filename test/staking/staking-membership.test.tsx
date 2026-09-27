@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import StakingMembership from 'src/sections/staking/staking-membership'
+import StakingMembership, { needsConsent } from 'src/sections/staking/staking-membership'
 
 import { stakingView } from './fixtures'
 
@@ -13,9 +13,8 @@ import { stakingView } from './fixtures'
  *
  * Two enrolment flows exist and a deployment setting chooses between them, so the same wallet has to
  * be described two different ways. Where the terms must be accepted, joining is an act the user
- * performs. Where they need not be, enrolment is automatic: there is nothing to accept, and a card
- * offering to start would describe a step that does not exist while the sweep enrols the wallet
- * regardless of whether it was pressed.
+ * performs. Where they need not be, there is nothing to accept: an eligible wallet is offered the
+ * same single control to turn staking on now, and the copy says the sweep enrols it otherwise.
  *
  * The case worth naming is the one that was broken: leaving used to be gated on `optedIn`, which
  * records whether somebody once switched staking on. A wallet enrolled automatically is registered,
@@ -26,7 +25,7 @@ describe('StakingMembership', () => {
   const noop = { onJoin: vi.fn(), onLeave: vi.fn() }
 
   describe('where the terms are not required', () => {
-    it('offers no way to join, because joining is not a step', () => {
+    it('asks for no terms', () => {
       const staking = stakingView({
         consentRequired: false,
         registered: false,
@@ -54,6 +53,22 @@ describe('StakingMembership', () => {
       expect(screen.getByTestId('staking-membership-pending')).toHaveTextContent(
         'staking.membership.pendingTitle'
       )
+    })
+
+    it('offers to turn staking on now, through the same flow as every other way in', async () => {
+      const onJoin = vi.fn()
+      const staking = stakingView({
+        consentRequired: false,
+        registered: false,
+        optedIn: false,
+        actions: { register_and_delegate: null }
+      })
+
+      render(<StakingMembership staking={staking} onJoin={onJoin} onLeave={vi.fn()} />)
+
+      await userEvent.click(screen.getByTestId('staking-membership-activate'))
+
+      expect(onJoin).toHaveBeenCalledOnce()
     })
 
     it('says what the minimum is when the balance is short of it', () => {
@@ -264,12 +279,53 @@ describe('StakingMembership', () => {
     })
 
     it('still describes a position that is already on chain', () => {
-      const staking = stakingView({ consentRequired: true, optedIn: true, registered: true })
+      const staking = stakingView({
+        consentRequired: true,
+        optedIn: true,
+        registered: true
+      })
 
       render(<StakingMembership staking={staking} {...noop} />)
 
       expect(screen.getByTestId('staking-membership-active')).toBeInTheDocument()
       expect(screen.getByTestId('staking-membership-leave')).toBeInTheDocument()
     })
+  })
+})
+
+describe('needsConsent', () => {
+  const left = {
+    at: '2026-01-02T00:00:00.000Z',
+    reason: 'user_request',
+    source: 'dashboard',
+    preferenceVersion: 1
+  } as const
+
+  it('is needed after an opt-out, even where the terms are not required', () => {
+    expect(needsConsent(stakingView({ consentRequired: false, optOut: left }))).toBe(true)
+  })
+
+  it('is not needed where the terms are not required and nobody opted out', () => {
+    expect(needsConsent(stakingView({ consentRequired: false, optedIn: false }))).toBe(false)
+  })
+
+  it('is needed where the terms are required and were never accepted', () => {
+    expect(needsConsent(stakingView({ consentRequired: true, optedIn: false }))).toBe(true)
+  })
+
+  it('is needed where the accepted terms are an older version', () => {
+    expect(
+      needsConsent(
+        stakingView({
+          consentRequired: true,
+          termsVersion: 'v1',
+          currentTermsVersion: 'v2'
+        })
+      )
+    ).toBe(true)
+  })
+
+  it('is not needed where the current terms were accepted', () => {
+    expect(needsConsent(stakingView({ consentRequired: true }))).toBe(false)
   })
 })
