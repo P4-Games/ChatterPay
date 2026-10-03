@@ -19,12 +19,12 @@ import { MotionViewport } from 'src/components/animate'
 const CHAT_GREEN = '#25D366'
 
 const OFFER_ITEMS = [
-  { key: 'payments', icon: 'solar:card-transfer-bold-duotone' },
-  { key: 'agents', icon: 'solar:magic-stick-bold-duotone' },
+  { key: 'operations', icon: 'solar:card-transfer-bold-duotone' },
+  { key: 'api', icon: 'solar:code-square-bold-duotone' },
   { key: 'crm', icon: 'solar:users-group-rounded-bold-duotone' },
-  { key: 'marketing', icon: 'solar:chart-2-bold-duotone' },
+  { key: 'networks', icon: 'solar:global-bold-duotone' },
   { key: 'security', icon: 'solar:shield-check-bold-duotone' },
-  { key: 'defi', icon: 'solar:link-round-bold' }
+  { key: 'engagement', icon: 'solar:chat-round-dots-bold-duotone' }
 ] as const
 
 const ANIMATIONS: Record<string, Variants> = {

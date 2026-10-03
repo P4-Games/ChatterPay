@@ -170,6 +170,17 @@ export const endpoints = {
         getFullUIEndpoint(
           `wallet/${id}/notifications?lazy=true&pageIndex=${pageIndex}&pageSize=${pageSize}`
         ),
+      staking: {
+        root: (id: string) => getFullUIEndpoint(`wallet/${id}/staking`),
+        consent: (id: string) => getFullUIEndpoint(`wallet/${id}/staking/consent`),
+        exitQuote: (id: string, recipientAddress: string) =>
+          getFullUIEndpoint(
+            `wallet/${id}/staking/exit-quote?recipientAddress=${encodeURIComponent(recipientAddress)}`
+          ),
+        authorize: (id: string) => getFullUIEndpoint(`wallet/${id}/staking/authorize`),
+        action: (id: string) => getFullUIEndpoint(`wallet/${id}/staking/action`)
+      },
+      governance: (id: string) => getFullUIEndpoint(`wallet/${id}/governance`),
       nfts: {
         root: (id: string, params?: { allChains?: boolean }) =>
           getFullUIEndpoint(`wallet/${id}/nfts${params?.allChains ? '?scope=user' : ''}`),

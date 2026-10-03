@@ -4,7 +4,7 @@ import Stack from '@mui/material/Stack'
 import Popover from '@mui/material/Popover'
 
 import { usePathname } from 'src/routes/hooks'
-import { useActiveLink } from 'src/routes/hooks/use-active-link'
+import { useActiveLink, matchesActivePath } from 'src/routes/hooks/use-active-link'
 
 import NavItem from './nav-item'
 import type { NavListProps, NavSubListProps } from '../types'
@@ -16,7 +16,8 @@ export default function NavList({ data, depth, slotProps }: NavListProps) {
 
   const pathname = usePathname()
 
-  const active = useActiveLink(data.path, !!data.children)
+  const active =
+    useActiveLink(data.path, !!data.children) || matchesActivePath(pathname, data.activePaths)
 
   const [openMenu, setOpenMenu] = useState(false)
 

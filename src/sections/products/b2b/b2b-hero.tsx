@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography'
 import { alpha, styled } from '@mui/material/styles'
 
 import { useTranslate } from 'src/locales'
-import { CONTACT_EMAIL, CHATIZALO_PHONE_NUMBER } from 'src/config-global'
+import { CONTACT_EMAIL, B2B_SANDBOX_URL } from 'src/config-global'
 
 import Iconify from 'src/components/iconify'
 import { varFade, MotionContainer } from 'src/components/animate'
@@ -104,12 +104,11 @@ const CacCounter = () => {
 
 // ----------------------------------------------------------------------
 
-/** B2B hero: the acquisition-cost pitch with mail and WhatsApp calls to action. */
+/** B2B hero: the acquisition-cost pitch with mail and sandbox calls to action. */
 export default function B2BHero() {
   const { t } = useTranslate()
 
   const mailHref = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(t('b2b.hero.mail_subject'))}`
-  const whatsappHref = `https://wa.me/${CHATIZALO_PHONE_NUMBER}?text=${encodeURIComponent(t('b2b.hero.whatsapp_msg'))}`
 
   return (
     <StyledRoot>
@@ -191,7 +190,7 @@ export default function B2BHero() {
 
                 <Button
                   component='a'
-                  href={whatsappHref}
+                  href={B2B_SANDBOX_URL}
                   target='_blank'
                   rel='noopener'
                   variant='outlined'
@@ -204,7 +203,7 @@ export default function B2BHero() {
                     '&:hover': { borderColor: CHAT_GREEN, bgcolor: alpha(CHAT_GREEN, 0.08) }
                   }}
                 >
-                  {t('b2b.hero.cta_whatsapp')}
+                  {t('b2b.hero.cta_sandbox')}
                 </Button>
               </Stack>
             </m.div>
