@@ -1399,7 +1399,7 @@
   },
   "b2b": {
     "hero": {
-      "eyebrow": "Infraestrutura de pagamentos via WhatsApp",
+      "eyebrow": "Infraestrutura de WhatsApp para operações blockchain",
       "title": "Seus usuários já estão no WhatsApp. Encontre-os lá.",
       "subtitle": "Adquirir um usuário fintech pelo funil das app stores custa ~$100 e a maioria nunca o compensa. Uma mensagem de WhatsApp substitui o funil inteiro.",
       "cac_old_label": "funil das app stores",
@@ -1411,7 +1411,7 @@
     "loop": {
       "eyebrow": "Distribuição",
       "title": "Cada transferência traz seu próximo usuário",
-      "description": "Sem funil de app stores, sem cadastro. A distribuição se compõe organicamente, transferência a transferência.",
+      "description": "Seus usuários já têm WhatsApp. Ofereça operações blockchain sem outro app nem cadastro: cada interação vira uma oportunidade de distribuição, e menos atrito no onboarding significa custos de aquisição muito menores.",
       "step1": {
         "title": "A paga B pelo WhatsApp",
         "description": "Uma transferência comum entre dois contatos - no mesmo chat que já usam todos os dias."
@@ -1462,29 +1462,29 @@
       "eyebrow": "O que você recebe",
       "title": "Infraestrutura, não mais um app",
       "description": "Uma API white-label sobre 60+ blockchains, com KYC controlado pelo parceiro. Tudo o que seu produto precisa para mover dinheiro pelo WhatsApp.",
-      "payments": {
-        "title": "Pagamentos via WhatsApp",
-        "description": "Envie, receba e troque stablecoins pelo chat. Qualquer número pode receber fundos."
+      "operations": {
+        "title": "Operações blockchain",
+        "description": "Transferências, swaps, staking e outras operações suportadas em múltiplas redes blockchain. Qualquer número pode receber fundos."
       },
-      "agents": {
-        "title": "Agentes de IA sob medida",
-        "description": "Agentes conversacionais que entendem texto e áudio, com a voz da sua marca."
+      "api": {
+        "title": "API e SDK",
+        "description": "Um único modelo de integração para contas, operações, redes, ativos e o ciclo de vida completo de cada transação, com status, webhooks e conciliação."
       },
       "crm": {
         "title": "CRM de WhatsApp",
         "description": "Gerencie cada conversa e transação dos clientes em um CRM próprio."
       },
-      "marketing": {
-        "title": "Ferramentas de marketing",
-        "description": "Campanhas, transmissões e ciclos de indicação onde seus usuários já conversam."
+      "networks": {
+        "title": "Infraestrutura multi-rede",
+        "description": "Opere em redes EVM e não EVM suportadas, incluindo swaps e rotas cross-chain, por meio de uma camada de integração consistente."
       },
       "security": {
-        "title": "Ferramentas de segurança",
-        "description": "Limites de transação, PIN, fluxos de recuperação e monitoramento - com KYC controlado pelo parceiro."
+        "title": "Segurança e assinatura",
+        "description": "Assinatura gerenciada pelo parceiro: as chaves ficam no seu ambiente e a ChatterPay verifica cada assinatura antes de transmitir. Limites de transação, políticas e KYC controlado pelo parceiro."
       },
-      "defi": {
-        "title": "DeFi e integrações externas",
-        "description": "Swaps, rendimento e contratos DeFi em 60+ blockchains, prontos para o seu produto."
+      "engagement": {
+        "title": "Relacionamento com clientes",
+        "description": "Ferramentas complementares de CRM, campanhas e indicações que funcionam nas mesmas conversas que suas operações."
       }
     },
     "cta": {
